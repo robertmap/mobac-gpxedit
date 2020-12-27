@@ -61,6 +61,17 @@ public class ClassReader extends ByteArrayInputStream {
 	private static final int CONSTANT_Double = 6;
 	private static final int CONSTANT_NameAndType = 12;
 	private static final int CONSTANT_Utf8 = 1;
+
+	/*java 8 9 10 11 new tokens https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html*/
+	private static final int CONSTANT_MethodHandle = 15;
+	private static final int CONSTANT_MethodType = 16;
+	private static final int CONSTANT_Dynamic = 17;
+	private static final int CONSTANT_InvokeDynamic = 18;
+	private static final int CONSTANT_Module = 19;
+	private static final int CONSTANT_Package = 20;
+	/*end of ava 8 9 10 11 new tokens*/
+
+
 	/**
 	 * the constant pool. constant pool indices in the class file directly index
 	 * into this array. The value stored in this array is the position in the
@@ -75,9 +86,8 @@ public class ClassReader extends ByteArrayInputStream {
 	 * Loads the bytecode for a given class, by using the class's defining
 	 * classloader and assuming that for a class named P.C, the bytecodes are in
 	 * a resource named /P/C.class.
-	 * 
-	 * @param c
-	 *            the class of interest
+	 *
+	 * @param c the class of interest
 	 * @return Returns a byte array containing the bytecode
 	 * @throws IOException
 	 */
@@ -316,46 +326,66 @@ public class ClassReader extends ByteArrayInputStream {
 			cpoolIndex[i] = super.pos;
 			switch (c) // constant pool tag
 			{
-			case CONSTANT_Fieldref:
-			case CONSTANT_Methodref:
-			case CONSTANT_InterfaceMethodref:
-			case CONSTANT_NameAndType:
+				case CONSTANT_Fieldref:
+				case CONSTANT_Methodref:
+				case CONSTANT_InterfaceMethodref:
+				case CONSTANT_NameAndType:
 
-				readShort(); // class index or (12) name index
-				// fall through
+					readShort(); // class index or (12) name index
+					// fall through
 
-			case CONSTANT_Class:
-			case CONSTANT_String:
+				case CONSTANT_Class:
+				case CONSTANT_String:
 
-				readShort(); // string index or class index
-				break;
+					readShort(); // string index or class index
+					break;
 
-			case CONSTANT_Long:
-			case CONSTANT_Double:
+				case CONSTANT_Long:
+				case CONSTANT_Double:
 
-				readInt(); // hi-value
+					readInt(); // hi-value
 
-				// see jvm spec section 4.4.5 - double and long cpool
-				// entries occupy two "slots" in the cpool table.
-				i++;
-				// fall through
+					// see jvm spec section 4.4.5 - double and long cpool
+					// entries occupy two "slots" in the cpool table.
+					i++;
+					// fall through
 
-			case CONSTANT_Integer:
-			case CONSTANT_Float:
+				case CONSTANT_Integer:
+				case CONSTANT_Float:
 
-				readInt(); // value
-				break;
+					readInt(); // value
+					break;
 
-			case CONSTANT_Utf8:
+				case CONSTANT_Utf8:
 
-				int len = readShort();
-				skipFully(len);
-				break;
+					int len = readShort();
+					skipFully(len);
+					break;
 
-			default:
-				// corrupt class file
-				throw new IllegalStateException(
-						"Error looking for paramter names in bytecode: unexpected bytes in file");
+				case CONSTANT_MethodHandle:
+
+					read(); // reference kind
+					readShort(); // reference index
+					break;
+
+				case CONSTANT_MethodType:
+
+					readShort(); // descriptor index
+					break;
+				case CONSTANT_Dynamic:
+					readShort(); // bootstrap method attr index
+					readShort(); // name and type index
+					break;
+				case CONSTANT_InvokeDynamic:
+
+					readShort(); // bootstrap method attr index
+					readShort(); // name and type index
+					break;
+
+				default:
+					// corrupt class file
+					throw new IllegalStateException(
+							"Error looking for paramter names in bytecode: unexpected bytes in file");
 			}
 		}
 	}
@@ -386,7 +416,7 @@ public class ClassReader extends ByteArrayInputStream {
 
 			if (m != null) {
 				try {
-					m.invoke(this, new Object[] {});
+					m.invoke(this, new Object[]{});
 				} catch (IllegalAccessException e) {
 					pos = curPos;
 					skipFully(attrLen);
@@ -413,7 +443,7 @@ public class ClassReader extends ByteArrayInputStream {
 
 	/**
 	 * Reads a code attribute.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void readCode() throws IOException {
