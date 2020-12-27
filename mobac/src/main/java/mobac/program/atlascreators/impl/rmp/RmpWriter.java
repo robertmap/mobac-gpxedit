@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -22,24 +22,22 @@
 
 package mobac.program.atlascreators.impl.rmp;
 
+import mobac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
+import mobac.program.atlascreators.impl.rmp.rmpfile.RmpIni;
+import mobac.utilities.Utilities;
+import mobac.utilities.stream.CountingOutputStream;
+import mobac.utilities.stream.RandomAccessFileOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
-import mobac.program.atlascreators.impl.rmp.interfaces.RmpFileEntry;
-import mobac.program.atlascreators.impl.rmp.rmpfile.RmpIni;
-import mobac.utilities.Utilities;
-import mobac.utilities.stream.CountingOutputStream;
-import mobac.utilities.stream.RandomAccessFileOutputStream;
-
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.log4j.Logger;
-
 /**
  * Class that writes files in RMP archive format
- * 
  */
 public class RmpWriter {
 
@@ -59,8 +57,7 @@ public class RmpWriter {
 
 	/**
 	 * @param imageName
-	 * @param layerCount
-	 *            projected number of layers that will be written to this rmp file
+	 * @param layerCount projected number of layers that will be written to this rmp file
 	 * @param rmpFile
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -109,7 +106,7 @@ public class RmpWriter {
 		info.extendsion = entry.getFileExtension();
 		long pos = rmpOutputFile.getFilePointer();
 		info.offset = pos;
-		CountingOutputStream cout = new CountingOutputStream(new NullOutputStream());
+		CountingOutputStream cout = new CountingOutputStream(NullOutputStream.NULL_OUTPUT_STREAM);
 		entry.writeFileContent(cout);
 		info.length = cout.getBytesWritten();
 		long newPos = pos + info.length;
@@ -152,9 +149,8 @@ public class RmpWriter {
 
 	/**
 	 * Writes the directory of the archive into the rmp file
-	 * 
-	 * @throws IOException
-	 *             Error accessing disk
+	 *
+	 * @throws IOException Error accessing disk
 	 */
 	public void writeDirectory() throws IOException {
 		if (projectedEntryCount != entries.size())

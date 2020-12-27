@@ -150,12 +150,6 @@ public class MySocketImplFactory implements SocketImplFactory {
 		}
 
 		@Override
-		protected void finalize() throws Throwable {
-			close();
-			super.finalize();
-		}
-
-		@Override
 		protected void accept(SocketImpl s) throws IOException {
 			log.trace("[" + socketId + "] accept(...)");
 			try {

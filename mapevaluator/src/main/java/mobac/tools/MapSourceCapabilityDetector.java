@@ -1,31 +1,21 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.tools;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.util.List;
-import java.util.Map;
-
-import mobac.program.download.TileDownLoader;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.HttpMapSource.TileUpdate;
 import mobac.program.interfaces.MapSpace;
@@ -33,8 +23,17 @@ import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
-
 import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.util.List;
+import java.util.Map;
 
 public class MapSourceCapabilityDetector {
 
@@ -59,13 +58,13 @@ public class MapSourceCapabilityDetector {
 	private String contentType = "?";
 
 	public MapSourceCapabilityDetector(Class<? extends HttpMapSource> mapSourceClass,
-			EastNorthCoordinate coordinate, int zoom) throws InstantiationException,
-			IllegalAccessException {
-		this(mapSourceClass.newInstance(), coordinate, zoom);
+	                                   EastNorthCoordinate coordinate, int zoom) throws InstantiationException,
+			IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+		this(mapSourceClass.getConstructor().newInstance(), coordinate, zoom);
 	}
 
 	public MapSourceCapabilityDetector(HttpMapSource mapSource, EastNorthCoordinate coordinate,
-			int zoom) {
+	                                   int zoom) {
 		this.mapSource = mapSource;
 		if (mapSource == null)
 			throw new NullPointerException("MapSource not set");
@@ -214,7 +213,6 @@ public class MapSourceCapabilityDetector {
 		sw.append("If-Modified-Since.: " + b2s(ifModifiedSinceSupported) + "\n");
 		sw.append("LastModified......: " + b2s(lastModifiedTimePresent) + "\n");
 		sw.append("Expires...........: " + b2s(expirationTimePresent) + "\n");
-
 		return sw.toString();
 	}
 
@@ -273,9 +271,9 @@ public class MapSourceCapabilityDetector {
 			return "-";
 	}
 
-	static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3',
+	static final byte[] HEX_CHAR_TABLE = {(byte) '0', (byte) '1', (byte) '2', (byte) '3',
 			(byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a',
-			(byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
+			(byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f'};
 
 	public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
 		byte[] hex = new byte[2 * raw.length];

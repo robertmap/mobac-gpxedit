@@ -10,6 +10,11 @@ println("SVN revision $svntools.info.revisionNumber")
 
 allprojects {
 
+    /*tasks.withType(JavaCompile) {
+        options.compilerArgs << '-Xlint:unchecked'
+        options.deprecation = true
+    }*/
+
     repositories {
         mavenCentral()
         maven {
@@ -62,6 +67,10 @@ task distSrcArchive(type: Zip) {
     from("/mobac") {
         exclude "**/build/**"
         into "/mobac"
+    }
+    from("/mapevaluator") {
+        exclude "**/build/**"
+        into "/mapevaluator"
     }
     from("/mappacks") {
         exclude "**/build/**"

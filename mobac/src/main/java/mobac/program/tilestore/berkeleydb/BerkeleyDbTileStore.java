@@ -1,20 +1,43 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.tilestore.berkeleydb;
+
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.EnvironmentLockedException;
+import com.sleepycat.persist.EntityCursor;
+import com.sleepycat.persist.EntityStore;
+import com.sleepycat.persist.PrimaryIndex;
+import com.sleepycat.persist.StoreConfig;
+import com.sleepycat.persist.evolve.Mutations;
+import com.sleepycat.persist.evolve.Renamer;
+import mobac.exceptions.TileStoreException;
+import mobac.program.interfaces.MapSource;
+import mobac.program.model.Settings;
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.TileStoreEntry;
+import mobac.program.tilestore.TileStoreInfo;
+import mobac.program.tilestore.berkeleydb.TileDbEntry.TileDbKey;
+import mobac.utilities.GUIExceptionHandler;
+import mobac.utilities.Utilities;
+import mobac.utilities.file.DeleteFileFilter;
+import mobac.utilities.file.DirInfoFileFilter;
+import mobac.utilities.file.DirectoryFileFilter;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -31,30 +54,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.EnvironmentLockedException;
-import com.sleepycat.persist.EntityCursor;
-import com.sleepycat.persist.EntityStore;
-import com.sleepycat.persist.PrimaryIndex;
-import com.sleepycat.persist.StoreConfig;
-import com.sleepycat.persist.evolve.Mutations;
-import com.sleepycat.persist.evolve.Renamer;
-
-import mobac.exceptions.TileStoreException;
-import mobac.program.interfaces.MapSource;
-import mobac.program.model.Settings;
-import mobac.program.tilestore.TileStore;
-import mobac.program.tilestore.TileStoreEntry;
-import mobac.program.tilestore.TileStoreInfo;
-import mobac.program.tilestore.berkeleydb.TileDbEntry.TileDbKey;
-import mobac.utilities.GUIExceptionHandler;
-import mobac.utilities.Utilities;
-import mobac.utilities.file.DeleteFileFilter;
-import mobac.utilities.file.DirInfoFileFilter;
-import mobac.utilities.file.DirectoryFileFilter;
 
 /**
  * The new database based tile store implementation.
@@ -142,7 +141,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	@Override
 	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires,
-			String eTag) {
+	                                     String eTag) {
 		return new TileDbEntry(x, y, zoom, data, timeLastModified, timeExpires, eTag);
 	}
 
@@ -151,7 +150,7 @@ public class BerkeleyDbTileStore extends TileStore {
 		long time = System.currentTimeMillis();
 		long timeExpires = time + Settings.getInstance().tileDefaultExpirationTime;
 		// We set the tile data to an empty array because we can not store null
-		return new TileDbEntry(x, y, zoom, new byte[] {}, time, timeExpires, "");
+		return new TileDbEntry(x, y, zoom, new byte[]{}, time, timeExpires, "");
 	}
 
 	private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
@@ -227,7 +226,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	@Override
 	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
-			long timeExpires, String eTag) throws IOException {
+	                        long timeExpires, String eTag) throws IOException {
 		TileDbEntry tile = new TileDbEntry(x, y, zoom, tileData, timeLastModified, timeExpires, eTag);
 		TileDatabase db = null;
 		try {
@@ -317,9 +316,8 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	/**
 	 * This method returns the amount of tiles in the store of tiles which is specified by the {@link MapSource} object.
-	 * 
-	 * @param mapSourceName
-	 *            the store to calculate number of tiles in
+	 *
+	 * @param mapSourceName the store to calculate number of tiles in
 	 * @return the amount of tiles in the specified store.
 	 * @throws InterruptedException
 	 */
@@ -395,7 +393,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
 	/**
 	 * Returns <code>true</code> if the tile store directory of the specified {@link MapSource} exists.
-	 * 
+	 *
 	 * @param mapSource
 	 * @return
 	 */
@@ -407,7 +405,7 @@ public class BerkeleyDbTileStore extends TileStore {
 	/**
 	 * Returns the directory used for storing the tile database of the {@link MapSource} specified by
 	 * <code>mapSource</code>
-	 * 
+	 *
 	 * @param mapSource
 	 * @return
 	 */
@@ -549,7 +547,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			int width = tileNumMax.x - tileNumMin.x + 1;
 			int height = tileNumMax.y - tileNumMin.y + 1;
 			byte ff = (byte) 0xFF;
-			byte[] colors = new byte[] { 120, 120, 120, 120, // alpha-gray
+			byte[] colors = new byte[]{120, 120, 120, 120, // alpha-gray
 					10, ff, 0, 120 // alpha-green
 			};
 			IndexColorModel colorModel = new IndexColorModel(2, 2, colors, 0, true);
@@ -634,12 +632,6 @@ public class BerkeleyDbTileStore extends TileStore {
 					close();
 				t.resumeInterrupt();
 			}
-		}
-
-		@Override
-		protected void finalize() throws Throwable {
-			close();
-			super.finalize();
 		}
 
 	}
