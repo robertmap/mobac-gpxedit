@@ -1,20 +1,18 @@
 package mobac.mapsources;
 
-import java.util.Vector;
-
-import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.interfaces.MapSource;
+
+import java.util.Vector;
 
 public class MapEvaluatorMapSourcesManager extends MapSourcesManager {
 
-	private Vector<MapSource> mapSources = new Vector<MapSource>();
+	private Vector<MapSource> mapSources = new Vector<>();
 
 	public static void initialitze() {
 		MapSourcesManager.INSTANCE = new MapEvaluatorMapSourcesManager();
 	}
 
 	private MapEvaluatorMapSourcesManager() {
-		mapSources.add(new Mapnik());
 	}
 
 	@Override

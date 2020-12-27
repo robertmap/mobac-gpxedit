@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
+import mobac.mapsources.MapSourcesManager;
 import org.apache.log4j.Logger;
 
 import bsh.EvalError;
@@ -37,10 +38,7 @@ import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
 import mobac.mapsources.MapEvaluatorBeanShellHttpMapSource;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
-import mobac.mapsources.custom.CustomCloudMade;
 import mobac.mapsources.loader.CustomMapSourceLoader;
-import mobac.mapsources.mappacks.openstreetmap.CloudMade;
-import mobac.mapsources.mappacks.openstreetmap.Mapnik;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
@@ -61,6 +59,8 @@ public class MapEvaluator extends JFrame {
 
 	private final CustomMapSourceLoader xmlLoader;
 
+	private final MapSource defaultOsmMapSource;
+
 	public MapEvaluator() throws HeadlessException {
 		super(ProgramInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
@@ -72,6 +72,8 @@ public class MapEvaluator extends JFrame {
 		// previewMap.setMapMarkerVisible(true);
 
 		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
+
+		defaultOsmMapSource = MapSourcesManager.getInstance().getDefaultMapSource();
 
 		xmlLoader = new CustomMapSourceLoader(null, null);
 		mapSourceEditor = new LineNumberedPaper(3, 60);
@@ -104,7 +106,7 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				try {
 					String[] options = { "Empty", "OpenStreetMap Mapnik" };
 					int a = JOptionPane.showOptionDialog(MapEvaluator.this,
@@ -133,7 +135,7 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				try {
 					BufferedReader br = new BufferedReader(
 							new InputStreamReader(new FileInputStream("mapsource.bsh")));
@@ -160,7 +162,7 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				try {
 					BufferedWriter bw = new BufferedWriter(
 							new OutputStreamWriter(new FileOutputStream("mapsource.bsh")));
@@ -181,7 +183,7 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				executeCode();
 			}
 		});
@@ -192,8 +194,9 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				previewMap.setMapSource(new Mapnik());
+			public void actionPerformed(ActionEvent event) {
+
+				previewMap.setMapSource(defaultOsmMapSource);
 			}
 		});
 		toolBar.add(button);
@@ -202,7 +205,7 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				previewMap.setTileGridVisible(!previewMap.isTileGridVisible());
 			}
 		});
@@ -215,7 +218,7 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				testCapabilities();
 			}
 		});
@@ -271,7 +274,6 @@ public class MapEvaluator extends JFrame {
 	}
 
 	private void executeXMLCode(String code) {
-		CustomCloudMade.CLOUD_MADE_CLASS = CloudMade.class;
 		try {
 			InputStream in = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
 			MapSource mapSource = xmlLoader.loadCustomMapSource(in);

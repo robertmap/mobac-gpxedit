@@ -78,7 +78,7 @@ public class MapPackManager {
 
 	public MapPackManager(File mapPackDir) throws CertificateException, IOException {
 		this.mapPackDir = mapPackDir;
-		requiredMapPackVersion = Integer.parseInt(System.getProperty("mobac.mappackversion"));
+		requiredMapPackVersion = Integer.parseInt(System.getProperty("mobac.mappackversion", "1"));
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		Collection<? extends Certificate> certs = cf
 				.generateCertificates(Utilities.loadResourceAsStream("cert/MapPack.cer"));

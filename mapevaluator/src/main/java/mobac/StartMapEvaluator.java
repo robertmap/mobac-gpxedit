@@ -1,6 +1,7 @@
 package mobac;
 
 import mobac.gui.MapEvaluator;
+import mobac.mapsources.DefaultMapSourcesManager;
 import mobac.mapsources.MapEvaluatorMapSourcesManager;
 import mobac.program.DirectoryManager;
 import mobac.program.Logging;
@@ -22,7 +23,8 @@ public class StartMapEvaluator {
 		ProgramInfo.initialize();
 		Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
 		DirectoryManager.initialize();
-		MapEvaluatorMapSourcesManager.initialitze();
+		//MapEvaluatorMapSourcesManager.initialitze();
+		DefaultMapSourcesManager.initialize();
 		try {
 			Settings.load();
 		} catch (Exception e) {

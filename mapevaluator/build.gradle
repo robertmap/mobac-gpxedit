@@ -12,3 +12,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+jar{
+    archiveFileName = "MapEvaluator.jar"
+    manifest {
+        attributes "Main-Class": "mobac.StartMapEvaluator"
+        attributes "Class-Path": "Mobile_Atlas_Creator.jar"
+    }
+}

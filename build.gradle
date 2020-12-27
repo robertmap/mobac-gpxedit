@@ -21,7 +21,7 @@ allprojects {
     }
 }
 
-task distArchive(type: Zip, dependsOn: ['mobac:createExe', 'mappacks:openstreetmap:jar']) {
+task distArchive(type: Zip, dependsOn: ['mobac:createExe', 'mappacks:openstreetmap:jar', "mapevaluator:jar"]) {
 
     from("mobac/build/libs") {
         include "*.jar"
@@ -42,6 +42,10 @@ task distArchive(type: Zip, dependsOn: ['mobac:createExe', 'mappacks:openstreetm
     }
     from (project(':mappacks').subprojects.collect { it.tasks.withType(Jar) }) {
         into "/mapsources/"
+    }
+    from("mapevaluator/build/libs") {
+        include "MapEvaluator.jar"
+        into "/"
     }
 
     archiveFileName = "Mobile Atlas Creator ${project.version}.zip"
@@ -79,4 +83,7 @@ task distSrcArchive(type: Zip) {
     }
     archiveFileName = "Mobile Atlas Creator ${project.version} src.zip"
     destinationDirectory = new File(".")
+}
+task dist {
+    dependsOn(distArchive, distSrcArchive)
 }
