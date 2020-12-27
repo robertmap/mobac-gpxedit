@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<customMultiLayerMapSource>
+    <name>Hikebikemap without Hillshade</name>
+    <tileType>PNG</tileType>
+    <layers>
+        <mapSource>
+            <name>HikebikemapTiles</name>
+        </mapSource>
+    </layers>
+</customMultiLayerMapSource>

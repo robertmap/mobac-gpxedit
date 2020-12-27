@@ -1,0 +1,84 @@
+plugins {
+    id 'java-library'
+    id 'edu.sc.seis.launch4j' version '2.4.9'
+}
+
+dependencies {
+    def mapsforgeVersion = '0.9.1'
+
+    implementation "org.mapsforge:mapsforge-core:${mapsforgeVersion}"
+    implementation "org.mapsforge:mapsforge-map:${mapsforgeVersion}"
+    implementation "org.mapsforge:mapsforge-map-awt:${mapsforgeVersion}"
+    implementation "org.mapsforge:mapsforge-map-reader:${mapsforgeVersion}"
+    implementation "org.mapsforge:mapsforge-themes:${mapsforgeVersion}"
+    implementation 'org.beanshell:bsh:2.0b5'
+    api 'commons-codec:commons-codec:1.4'
+    api 'commons-io:commons-io:2.8.0'
+    api 'org.apache.commons:commons-lang3:3.3.2'
+    api 'log4j:log4j:1.2.17'
+    api 'com.github.kerner1000:javapng:2.1.2'
+    api 'org.xerial:sqlite-jdbc:3.34.0'
+    implementation 'net.sf.jtidy:jtidy:r938'
+    implementation 'com.itextpdf:itextpdf:5.1.3'
+    implementation 'javax.media:jai-core:1.1.3'
+    implementation 'com.sleepycat:je:4.0.92'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.0.1'
+    implementation 'javax.activation:activation:1.1.1'
+    testImplementation 'org.jboss.resteasy:tjws:2.3.10.Final'
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation 'javax.servlet:servlet-api:2.5'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+processResources {
+    doLast {
+        def targetDir = new File(sourceSets.main.output.resourcesDir, "mobac")
+        targetDir.mkdirs()
+        def rev = "$svntools.info.revisionNumber"
+        def props = new Properties()
+        props.setProperty("mobac.revision", "$rev")
+        props.setProperty("mobac.version", "${project.rootProject.version}")
+        new File(targetDir, "mobac-rev.properties").withWriter { props.store(it, null) }
+    }
+}
+jar {
+    manifest {
+        attributes "Main-Class": "mobac.StartMOBAC"
+    }
+    archiveBaseName = "Mobile_Atlas_Creator"
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    // We only support 64 bit common architectures and platforms, remove the rest
+    exclude("org/sqlite/native/Windows/x86/**")
+    exclude("org/sqlite/native/Linux/arm*/**")
+    exclude("org/sqlite/native/Linux/android-arm/**")
+    exclude("org/sqlite/native/Linux/x86/**")
+    exclude("org/sqlite/native/Linux/ppc64/**")
+    exclude("org/sqlite/native/Linux-Alpine/**")
+    exclude("org/sqlite/native/FreeBSD/**")
+    exclude("org/sqlite/native/DragonFlyBSD/**")
+}
+
+launch4j {
+    productName = "Mobile Atlas Creator"
+    fileDescription = "Mobile Atlas Creator Windows Launcher"
+    // only take the number+dot part at the beginning
+    version = project.rootProject.version.toString().replaceAll('^([0-9\\.]+).*', '$1')
+    textVersion = project.rootProject.version
+    copyright = "MOBAC developers"
+    companyName = ""
+    icon = "${projectDir}/launch4j/mobac.ico"
+    downloadUrl = "https://adoptopenjdk.net"
+    jreRuntimeBits = "64"
+    dontWrapJar = "true"
+    libraryDir = ""
+    copyConfigurable = [] //["${project.buildDir}/libs/Mobile_Atlas_Creator.jar"]
+    jar = "Mobile_Atlas_Creator.jar"
+    outfile = "Mobile Atlas Creator.exe"
+}
+
+test {
+    useJUnitPlatform()
+}

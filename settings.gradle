@@ -1,0 +1,11 @@
+rootProject.name = 'mobac'
+include 'mobac'
+include 'mappacks'
+include 'mappacks:openstreetmap'
+include 'mappacks:region_america_north'
+include 'mappacks:region_europe'
+include 'mappacks:region_europe_east'
+include 'mappacks:region_oceania'
+include 'mobac-run'
+include 'mapevaluator'
+

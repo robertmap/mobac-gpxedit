@@ -1,0 +1,45 @@
+plugins {
+}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'at.bxm.svntools'
+
+    dependencies {
+        compileOnly project(':mobac')
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    }
+
+    jar {
+        archiveFileName = "mp-${project.name}.jar"
+        manifest {
+            attributes "MapPackVersion": "1"
+            attributes "MapPackName": "${project.name}"
+            attributes "MapPackBuild-Date": new Date().toString()
+            attributes "MapPackRevision": "$svntools.info.revisionNumber"
+        }
+        doLast {
+            def keystore = file("../../keys/keystore.jks")
+            if (keystore.exists()) {
+                def keystoreProps = new Properties()
+                file("../../keys/keystore.properties").withInputStream { keystoreProps.load(it) }
+                println("Signing map pack ${project.name}")
+                ant.signjar(
+                        jar: "build/libs/mp-${project.name}.jar",
+                        destDir: "build/libs/",
+                        alias: "mappack",
+                        storetype: "jks",
+                        keystore: "../../keys/keystore.jks",
+                        storepass: keystoreProps.getProperty("keystore.password"),
+                        verbose: false,
+                        preservelastmodified: "true"
+                )
+            }
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}

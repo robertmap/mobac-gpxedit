@@ -1,0 +1,82 @@
+plugins {
+    id 'distribution'
+    id "at.bxm.svntools" version "2.2.1"
+}
+
+group 'mobac.sourceforge.io'
+version '2.2.0-gradle-test1'
+
+println("SVN revision $svntools.info.revisionNumber")
+
+allprojects {
+
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
+        }
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}
+
+task distArchive(type: Zip, dependsOn: ['mobac:createExe', 'mappacks:openstreetmap:jar']) {
+
+    from("mobac/build/libs") {
+        include "*.jar"
+        into "/"
+    }
+    from("mobac/build/launch4j") {
+        include "*.exe"
+        into "/"
+    }
+    from(".") {
+        include "CHANGELOG.txt"
+        include "ReleaseNotes.txt"
+        include "gpl.txt"
+        include "README.HTM"
+        include "start.sh"
+        include "world.map"
+        into "/"
+    }
+    from (project(':mappacks').subprojects.collect { it.tasks.withType(Jar) }) {
+        into "/mapsources/"
+    }
+
+    archiveFileName = "Mobile Atlas Creator ${project.version}.zip"
+    destinationDirectory = new File(".")
+}
+
+task distSrcArchive(type: Zip) {
+
+    from("/keys") {
+        include "keystore.txt"
+        include "*.cer"
+        into "/keys"
+    }
+    from("/mobac") {
+        exclude "**/build/**"
+        into "/mobac"
+    }
+    from("/mappacks") {
+        exclude "**/build/**"
+        into "/mappacks"
+    }
+    from("/") {
+        include "log4j.xml"
+        include "gpl.txt"
+        include "README.HTM"
+        include "README-DEV.HTM"
+        include "CHANGELOG.txt"
+        include "start.sh"
+        include "world.map"
+        include "gradle/**"
+        include "gradle*"
+        include "settings.gradle"
+        include "gradle*"
+        include "build.gradle"
+    }
+    archiveFileName = "Mobile Atlas Creator ${project.version} src.zip"
+    destinationDirectory = new File(".")
+}

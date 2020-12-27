@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'distribution'
+}
+
+dependencies {
+    implementation project(':mobac')
+    implementation project(':mappacks:openstreetmap')
+    implementation project(':mappacks:region_america_north')
+    implementation project(':mappacks:region_europe')
+    implementation project(':mappacks:region_europe_east')
+    implementation project(':mappacks:region_oceania')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+test {
+    useJUnitPlatform()
+}

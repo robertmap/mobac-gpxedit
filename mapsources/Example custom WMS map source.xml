@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<customWmsMapSource>
+  <!-- Map source name as it appears in the map sources list.  Additionally used for the tile store name --> 
+  <name>USGS EROS Ortho WMS</name>
+
+  <minZoom>0</minZoom>
+  <maxZoom>22</maxZoom>
+  
+  <!-- Tile format (PNG, JPG or GIF) -->
+  <tileType>PNG</tileType>
+
+  <!-- WMS version -->
+  <version>1.1.1</version>
+  
+  <!-- WMS layer parameter -->
+  <layers>0</layers>
+
+  <!-- WMS base URL -->
+  <url>http://isse.cr.usgs.gov/arcgis/services/Orthoimagery/USGS_EROS_Ortho/ImageServer/WMSServer?</url>
+
+  <!-- Currently only EPSG:4326 is supported --> 
+  <coordinatesystem>EPSG:4326</coordinatesystem>
+
+  <!-- 
+    Optional: Additional parameters appended to the WMS url. 
+    It is recommended to wrap any field that has special charcters, such as an ampersand, inside a `<![CDATA[ ]]>` element.
+    Otherwise you have to use their XML encoding, such as `&amp;`
+  --> 
+  <aditionalparameters><![CDATA[&STYLES=default]]></aditionalparameters>
+
+  <!-- Transparent background -->
+  <backgroundColor>#000000</backgroundColor>
+
+</customWmsMapSource>

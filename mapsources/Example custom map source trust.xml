@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customMapSource>
+	<name>Custom OSM Mapnik with trusted public key</name>
+	<minZoom>0</minZoom>
+	<maxZoom>16</maxZoom>
+	<tileType>png</tileType>
+	<tileUpdate>IfNoneMatch</tileUpdate>
+	<url>https://tile.openstreetmap.org/{$z}/{$x}/{$y}.png</url>
+	<backgroundColor>#000000</backgroundColor>
+	<!-- The following part is optional and only required for servers that use 
+		a non-trusted certificate (requires MOBAC 2.1.3 or higher) -->
+	<trustedPublicKeys>
+		<!-- sha-256 hash hex encoded lowercase of the public key of the server's 
+			certificate -->
+		<publicKeyHash>05d2da7427002876221dc2c0dc2d5231dfa89316ba26545543ee9e73fb9315ac</publicKeyHash>
+	</trustedPublicKeys>
+</customMapSource>

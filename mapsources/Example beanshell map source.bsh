@@ -1,0 +1,38 @@
+/**
+ OpenStreetMap Example
+**/
+
+name = "Custom_4uMaps"; // required internal name - do not use special characters not supported by your file-system 
+
+displayName = "OpenStreetMap 4UMaps.eu as custom map :!'#"; // optional name shown in MOBAC 
+
+tileType = "png"; // required; valid values: "jpg" "png" or "gif" 
+
+// Default size of each tile is 256x256 pixel
+tileSize = 256; // optional
+minZoom = 2;    // optional
+maxZoom = 15;   // optional
+tileUpdate = TileUpdate.IfModifiedSince; // optional
+backgroundColor = "#ffffff"; // optional - supported since MOBAC 1.9.1
+ignoreError = "True"; // optional since MOBAC 1.9.4
+
+// SHA-256 hash (hex) of the public key inside the server's HTTPS certificate - optional since MOBAC 2.1.3
+trustedPublicKeyHash = "c63cf835c6c40143249ad638aa2743a4b51700bb3935d88cfd7ec085f9e1e34d";
+
+/**
+ This method is called for each tile: input parameters for this script: "zoom", "x" and "y"
+**/
+String getTileUrl( int zoom, int x, int y ) {
+   return "https://tileserver.4umaps.com/" + zoom + "/" + x + "/" + y + ".png";
+} 
+
+/**
+ This method is called also for each tile (implementation optional)
+ It allows to set HTTP headers like "Referer" or cookies the server 
+ wants to see.
+**/
+void addHeaders( java.net.HttpURLConnection conn) {
+  conn.addRequestProperty("Cookie","test=12345");
+  conn.addRequestProperty("Referer","http://www.openstreetmap.org");
+}
+
