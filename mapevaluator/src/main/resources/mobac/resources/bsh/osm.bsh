@@ -1,0 +1,10 @@
+/**
+ OpenStreetMap Example:
+ Input parameters for this script: "zoom", "x" and "y"
+**/
+String getTileUrl( int zoom, int x, int y ) {
+  baseUrl "http://tileserver.4umaps.eu/"; // maps4u    
+  return baseUrl + zoom + "/" + x + "/" + y + ".png";    
+}
+tileType = "png";
+tileUpdate = TileUpdate.IfModifiedSince;

@@ -1,0 +1,22 @@
+/**
+ OpenStreetMap Example:
+ Input parameters for this script: "zoom", "x" and "y"
+**/
+String getTileUrl( int zoom, int x, int y ) {
+   return "https://tileserver.4umaps.com/" + zoom + "/" + x + "/" + y + ".png";    
+} 
+void addHeaders( java.net.HttpURLConnection conn) {
+  // Optional: set HTTP Referer or Cookies 
+  conn.addRequestProperty("Cookie","test=12345");
+  conn.addRequestProperty("Referer","http://www.openstreetmap.org");
+}
+
+tileType = "png"; // required - image format "png" "jpg" or "gif"
+
+// Default size of each tile is 256x256 pixel
+tileSize = 256; // optional
+minZoom = 0;    // optional
+maxZoom = 22;   // optional
+
+tileUpdate = TileUpdate.None; // optional - possibilities: 
+// TileUpdate.IfNoneMatch, TileUpdate.ETag, TileUpdate.IfModifiedSince, TileUpdate.LastModified, TileUpdate.None 
