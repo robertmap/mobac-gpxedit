@@ -10,11 +10,6 @@ println("SVN revision $svntools.info.revisionNumber")
 
 allprojects {
 
-    /*tasks.withType(JavaCompile) {
-        options.compilerArgs << '-Xlint:unchecked'
-        options.deprecation = true
-    }*/
-
     repositories {
         mavenCentral()
         maven {
@@ -23,6 +18,10 @@ allprojects {
     }
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+        // options.compilerArgs << '-Xlint:unchecked'
+        // options.deprecation = true
     }
 }
 
