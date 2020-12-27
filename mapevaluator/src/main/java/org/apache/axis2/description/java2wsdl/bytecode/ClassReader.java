@@ -385,7 +385,7 @@ public class ClassReader extends ByteArrayInputStream {
 				default:
 					// corrupt class file
 					throw new IllegalStateException(
-							"Error looking for paramter names in bytecode: unexpected bytes in file");
+							"Error looking for parameter names in bytecode: unexpected bytes in file");
 			}
 		}
 	}
