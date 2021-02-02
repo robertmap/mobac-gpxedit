@@ -1,44 +1,14 @@
 package mobac.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
-
-import mobac.mapsources.MapSourcesManager;
-import org.apache.log4j.Logger;
-
 import bsh.EvalError;
 import mobac.gui.actions.HelpAction;
 import mobac.gui.components.LineNumberedPaper;
 import mobac.gui.mapview.LogPreviewMap;
 import mobac.mapsources.MapEvaluatorBeanShellHttpMapSource;
+import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.mapsources.loader.CustomMapSourceLoader;
+import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSource;
@@ -47,6 +17,36 @@ import mobac.tools.MapSourceCapabilityDetector;
 import mobac.tools.MapSourceCapabilityGUI;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
+import org.apache.log4j.Logger;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapEvaluator extends JFrame {
 
@@ -61,6 +61,10 @@ public class MapEvaluator extends JFrame {
 
 	private final MapSource defaultOsmMapSource;
 
+	private File chooserDir;
+
+	private File loadedFile;
+
 	public MapEvaluator() throws HeadlessException {
 		super(ProgramInfo.getCompleteTitle());
 		log = Logger.getLogger(this.getClass());
@@ -69,11 +73,13 @@ public class MapEvaluator extends JFrame {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		previewMap = new LogPreviewMap();
-		// previewMap.setMapMarkerVisible(true);
 
+		// previewMap.setMapMarkerVisible(true);
 		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
 
 		defaultOsmMapSource = MapSourcesManager.getInstance().getDefaultMapSource();
+
+		chooserDir = DirectoryManager.mapSourcesDir;
 
 		xmlLoader = new CustomMapSourceLoader(null, null);
 		mapSourceEditor = new LineNumberedPaper(3, 60);
@@ -108,18 +114,18 @@ public class MapEvaluator extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
-					String[] options = { "Empty", "OpenStreetMap Mapnik" };
+					String[] options = {"Empty", "OpenStreetMap Mapnik"};
 					int a = JOptionPane.showOptionDialog(MapEvaluator.this,
 							"Please select an template", "Select template", 0,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					String code = "";
 					switch (a) {
-					case (0):
-						code = Utilities.loadTextResource("bsh/empty.bsh");
-						break;
-					case (1):
-						code = Utilities.loadTextResource("bsh/osm.bsh");
-						break;
+						case (0):
+							code = Utilities.loadTextResource("bsh/empty.bsh");
+							break;
+						case (1):
+							code = Utilities.loadTextResource("bsh/osm.bsh");
+							break;
 					}
 
 					mapSourceEditor.setText(code);
@@ -131,22 +137,26 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("Load", Utilities.loadResourceImageIcon("open-icon.png"));
-		button.setToolTipText("Load custom code from file \"mapsource.bsh\"");
+		button.setToolTipText("Load custom map source from file");
 		button.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
-					BufferedReader br = new BufferedReader(
-							new InputStreamReader(new FileInputStream("mapsource.bsh")));
-					StringWriter sw = new StringWriter();
-					String line = br.readLine();
-					while (line != null) {
-						sw.write(line + "\n");
-						line = br.readLine();
+					final JFileChooser fc = getMapSourceFileChooser(false);
+					int returnVal = fc.showOpenDialog(MapEvaluator.this);
+					if (returnVal != JFileChooser.APPROVE_OPTION) {
+						return;
 					}
-					br.close();
+					chooserDir = fc.getSelectedFile().getParentFile();
+					List<String> lines = Files.readAllLines(fc.getSelectedFile().toPath(), StandardCharsets.UTF_8);
+					StringWriter sw = new StringWriter();
+					for (String s : lines) {
+						sw.write(s);
+						sw.write("\n");
+					}
 					mapSourceEditor.setText(sw.toString());
+					loadedFile = fc.getSelectedFile();
 				} catch (IOException e) {
 					log.error("", e);
 					JOptionPane.showMessageDialog(MapEvaluator.this,
@@ -158,16 +168,20 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 
 		button = new JButton("Save", Utilities.loadResourceImageIcon("save-icon.png"));
-		button.setToolTipText("Save custom code to file \"mapsource.bsh\"");
+		button.setToolTipText("Save custom map source to file");
 		button.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				try {
-					BufferedWriter bw = new BufferedWriter(
-							new OutputStreamWriter(new FileOutputStream("mapsource.bsh")));
+				final JFileChooser fc = getMapSourceFileChooser(true);
+				int returnVal = fc.showOpenDialog(MapEvaluator.this);
+				if (returnVal != JFileChooser.APPROVE_OPTION) {
+					return;
+				}
+				chooserDir = fc.getSelectedFile().getParentFile();
+				try (BufferedWriter bw = new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(fc.getSelectedFile()), StandardCharsets.UTF_8))) {
 					bw.write(mapSourceEditor.getText());
-					bw.close();
 				} catch (IOException e) {
 					log.error("", e);
 					JOptionPane.showMessageDialog(MapEvaluator.this,
@@ -230,11 +244,32 @@ public class MapEvaluator extends JFrame {
 		toolBar.add(button);
 	}
 
+
+	private JFileChooser getMapSourceFileChooser(boolean save) {
+		final JFileChooser fc = new JFileChooser();
+		if (save) {
+			fc.setDialogTitle("Save custom map source");
+			fc.setDialogType(JFileChooser.SAVE_DIALOG);
+			fc.setSelectedFile(loadedFile);
+		} else {
+			fc.setDialogTitle("Load custom map source");
+			fc.setDialogType(JFileChooser.OPEN_DIALOG);
+		}
+		fc.setCurrentDirectory(chooserDir);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		FileNameExtensionFilter defaultFilter = new FileNameExtensionFilter("MOBAC custom map source", "bsh", "xml");
+		fc.addChoosableFileFilter(defaultFilter);
+		fc.addChoosableFileFilter(new FileNameExtensionFilter("Beanshell map source", "bsh"));
+		fc.addChoosableFileFilter(new FileNameExtensionFilter("Custom XML map source", "xml"));
+		fc.setFileFilter(defaultFilter);
+		return fc;
+	}
+
 	private void testCapabilities() {
 		final MapSource mapSource = previewMap.getMapSource();
 		final EastNorthCoordinate coordinate = previewMap.getCenterCoordinate();
 
-		final List<MapSourceCapabilityDetector> result = new ArrayList<MapSourceCapabilityDetector>();
+		final List<MapSourceCapabilityDetector> result = new ArrayList<>();
 		Runnable r = new Runnable() {
 
 			@Override
@@ -274,8 +309,7 @@ public class MapEvaluator extends JFrame {
 	}
 
 	private void executeXMLCode(String code) {
-		try {
-			InputStream in = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
+		try (InputStream in = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8))){
 			MapSource mapSource = xmlLoader.loadCustomMapSource(in);
 			previewMap.setMapSource(mapSource);
 		} catch (Exception e) {
@@ -309,6 +343,7 @@ public class MapEvaluator extends JFrame {
 			}
 		}
 	}
+
 
 	public static void log(String msg) {
 		INSTANCE.previewMap.addLog(msg);
