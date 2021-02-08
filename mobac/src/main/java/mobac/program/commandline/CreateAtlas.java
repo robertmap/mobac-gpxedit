@@ -18,7 +18,7 @@ package mobac.program.commandline;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import mobac.program.AtlasThread;
 import mobac.program.interfaces.AtlasInterface;

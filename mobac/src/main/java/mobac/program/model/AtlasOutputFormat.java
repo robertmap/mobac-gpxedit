@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.AFTrack;

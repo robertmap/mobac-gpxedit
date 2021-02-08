@@ -22,8 +22,8 @@
 		@XmlJavaTypeAdapter(value = PolygonAdapter.class, type = java.awt.Polygon.class) })
 package mobac.program.model;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import mobac.program.jaxb.DimensionAdapter;
 import mobac.program.jaxb.PointAdapter;

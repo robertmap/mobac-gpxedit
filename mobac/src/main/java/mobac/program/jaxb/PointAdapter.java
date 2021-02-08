@@ -18,8 +18,8 @@ package mobac.program.jaxb;
 
 import java.awt.Point;
 
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.UnmarshalException;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Required {@link XmlAdapter} implementation for serializing a {@link Point} as

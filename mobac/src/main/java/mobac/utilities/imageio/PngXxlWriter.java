@@ -58,7 +58,7 @@ import java.util.zip.CRC32;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import javax.activation.UnsupportedDataTypeException;
+import mobac.exceptions.UnsupportedDataTypeException;
 
 /**
  * A PNG writer that is able to write extra large PNG images using incremental

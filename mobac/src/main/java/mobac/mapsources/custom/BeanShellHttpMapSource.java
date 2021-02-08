@@ -34,6 +34,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import jakarta.xml.bind.UnmarshalException;
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractHttpMapSource;
@@ -137,7 +138,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 		if (o != null) {
 			try {
 				backgroundColor = ColorAdapter.parseColor((String) o);
-			} catch (javax.xml.bind.UnmarshalException e) {
+			} catch (UnmarshalException e) {
 				throw new EvalError(e.getMessage(), null, null);
 			}
 		}

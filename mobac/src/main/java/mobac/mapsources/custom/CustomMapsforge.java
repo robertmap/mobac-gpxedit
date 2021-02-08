@@ -16,15 +16,18 @@
  ******************************************************************************/
 package mobac.mapsources.custom;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import mobac.program.jaxb.ColorAdapter;
 import org.apache.log4j.Logger;
 
 import mobac.exceptions.MapSourceInitializationException;
@@ -59,6 +62,10 @@ public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMap
 
 	@XmlElement(defaultValue = "20")
 	private int maxZoom = 20;
+
+	@XmlElement(defaultValue = "#FFFFFF")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	private Color backgroundColor = Color.WHITE;
 
 	public CustomMapsforge() {
 		super();
@@ -133,6 +140,11 @@ public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMap
 
 	public int getMinZoom() {
 		return minZoom;
+	}
+
+	@Override
+	public Color getBackgroundColor() {
+		return backgroundColor;
 	}
 
 	@Override

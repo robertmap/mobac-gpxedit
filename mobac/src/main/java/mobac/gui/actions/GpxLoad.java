@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;

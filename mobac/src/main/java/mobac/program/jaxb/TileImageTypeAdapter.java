@@ -16,7 +16,7 @@
  ******************************************************************************/
 package mobac.program.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 import mobac.program.model.TileImageType;
 

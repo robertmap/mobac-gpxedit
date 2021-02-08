@@ -29,7 +29,7 @@ import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 import org.apache.log4j.Logger;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;

@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.exceptions.TileException;

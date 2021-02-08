@@ -19,7 +19,7 @@ package mapsources;
 import java.net.HttpURLConnection;
 import java.util.HashSet;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import junit.framework.TestSuite;
 import mobac.mapsources.AbstractMultiLayerMapSource;

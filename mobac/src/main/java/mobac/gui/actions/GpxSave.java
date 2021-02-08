@@ -22,7 +22,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;

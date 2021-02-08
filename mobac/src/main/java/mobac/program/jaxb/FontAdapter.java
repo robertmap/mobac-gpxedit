@@ -17,7 +17,7 @@
 package mobac.program.jaxb;
 
 import java.awt.Font;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 import mobac.gui.dialogs.FontChooser;
 

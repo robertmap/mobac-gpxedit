@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import org.apache.log4j.Logger;
 import org.mapsforge.core.graphics.Bitmap;

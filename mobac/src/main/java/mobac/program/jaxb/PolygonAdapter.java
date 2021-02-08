@@ -20,7 +20,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Vector;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Required {@link XmlAdapter} implementation for serializing a {@link Polygon}

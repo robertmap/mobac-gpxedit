@@ -19,8 +19,8 @@ package mobac.program.model;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import mobac.gui.mapview.WgsGrid.WgsDensity;
 import mobac.program.jaxb.ColorAdapter;

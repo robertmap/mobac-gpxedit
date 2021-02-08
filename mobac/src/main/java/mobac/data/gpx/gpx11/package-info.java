@@ -21,14 +21,14 @@
 // Generated on: 2009.08.04 at 03:45:03 PM MESZ 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.topografix.com/GPX/1/1", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.topografix.com/GPX/1/1", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 @XmlJavaTypeAdapters({ @XmlJavaTypeAdapter(value = BigDecimalAdapter.class, type = BigDecimal.class) })
 package mobac.data.gpx.gpx11;
 
 import java.math.BigDecimal;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import mobac.program.jaxb.BigDecimalAdapter;
 

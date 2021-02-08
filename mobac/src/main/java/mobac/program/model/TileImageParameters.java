@@ -16,11 +16,12 @@
  ******************************************************************************/
 package mobac.program.model;
 
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAnyAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.awt.Dimension;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAnyAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public final class TileImageParameters implements Cloneable {

@@ -19,8 +19,8 @@ package mobac.program.model;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import mobac.program.interfaces.MapSpace;
 import mobac.utilities.Utilities;
