@@ -1,35 +1,34 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
 import jakarta.xml.bind.annotation.XmlElement;
-
+import mobac.exceptions.MapSourceInitializationException;
+import mobac.exceptions.NotImplementedException;
+import mobac.exceptions.UnrecoverableDownloadException;
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.interfaces.CloneableMapSource;
+import mobac.program.interfaces.FileBasedMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.RefreshableMapSource;
+import mobac.program.model.Atlas;
+import mobac.program.model.MapSourceLoaderInfo;
+import mobac.program.model.TileImageType;
 import org.apache.log4j.Logger;
 import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.core.graphics.GraphicFactory;
@@ -56,18 +55,17 @@ import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 import org.mapsforge.map.rendertheme.rule.RenderThemeFuture;
 
-import mobac.exceptions.MapSourceInitializationException;
-import mobac.exceptions.NotImplementedException;
-import mobac.exceptions.UnrecoverableDownloadException;
-import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.interfaces.CloneableMapSource;
-import mobac.program.interfaces.FileBasedMapSource;
-import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.RefreshableMapSource;
-import mobac.program.model.Atlas;
-import mobac.program.model.MapSourceLoaderInfo;
-import mobac.program.model.TileImageType;
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MapsforgeMapSource implements MapSource, FileBasedMapSource, RefreshableMapSource, CloneableMapSource {
 
@@ -201,7 +199,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, UnrecoverableDownloadException, InterruptedException {
-		try (ByteArrayOutputStream buf = new ByteArrayOutputStream(16000)){
+		try (ByteArrayOutputStream buf = new ByteArrayOutputStream(16000)) {
 			BufferedImage image = getTileImage(zoom, x, y, loadMethod);
 			if (image == null)
 				return null;
@@ -266,7 +264,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 
 	/**
 	 * Clone the Mapforge map source but clear the label cache. This prevents rendering problems with defect labels.
-	 * 
+	 * <p>
 	 * This methods is executed while creating an deep clone of an {@link Atlas} (before atlas creation starts).
 	 */
 	@Override

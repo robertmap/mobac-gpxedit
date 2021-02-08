@@ -15,7 +15,6 @@
  ! MOBAC build system changed to Gradle
  + Support for ARM based MacOS systems (SQLite library)
  - Support for 32bit systems dropped
- + backgroundColor added for custom <mapsforge> maps
 
 2.1.4 (2020-12-22)
  + Russian translation added (thanks to xmember)

@@ -1,35 +1,23 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.custom;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JOptionPane;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import mobac.program.jaxb.ColorAdapter;
-import org.apache.log4j.Logger;
-
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapsforgeMapSource;
 import mobac.program.DirectoryManager;
@@ -37,11 +25,16 @@ import mobac.program.interfaces.ReloadableMapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.Utilities;
+import org.apache.log4j.Logger;
+
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Requires the OpenStreetMap
- * 
- * 
  */
 @XmlRootElement(name = "mapsforge")
 public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMapSource<CustomMapsforge> {
@@ -62,10 +55,6 @@ public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMap
 
 	@XmlElement(defaultValue = "20")
 	private int maxZoom = 20;
-
-	@XmlElement(defaultValue = "#FFFFFF")
-	@XmlJavaTypeAdapter(ColorAdapter.class)
-	private Color backgroundColor = Color.WHITE;
 
 	public CustomMapsforge() {
 		super();
@@ -140,11 +129,6 @@ public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMap
 
 	public int getMinZoom() {
 		return minZoom;
-	}
-
-	@Override
-	public Color getBackgroundColor() {
-		return backgroundColor;
 	}
 
 	@Override
