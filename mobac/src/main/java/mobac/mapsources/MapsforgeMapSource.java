@@ -201,16 +201,15 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, UnrecoverableDownloadException, InterruptedException {
-		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-		try {
+		try (ByteArrayOutputStream buf = new ByteArrayOutputStream(16000)){
 			BufferedImage image = getTileImage(zoom, x, y, loadMethod);
 			if (image == null)
 				return null;
 			ImageIO.write(image, "png", buf);
+			return buf.toByteArray();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return buf.toByteArray();
 	}
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
