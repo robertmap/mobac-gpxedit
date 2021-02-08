@@ -103,11 +103,8 @@ public class OSMTracker extends AtlasCreator {
 
 		protected void writeTile(File file, byte[] tileData) throws IOException {
 			Utilities.mkDirs(file.getParentFile());
-			FileOutputStream out = new FileOutputStream(file);
-			try {
+			try (FileOutputStream out = new FileOutputStream(file)){
 				out.write(tileData);
-			} finally {
-				Utilities.closeStream(out);
 			}
 		}
 
