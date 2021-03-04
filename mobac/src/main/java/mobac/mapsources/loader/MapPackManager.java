@@ -96,7 +96,7 @@ public class MapPackManager {
 		}
 		File[] newMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.new"));
 		if (newMapPacks == null) {
-			throw new IOException("Failed to enumerate installable mappacks");
+			throw new IOException("Failed to enumerate installable map packs in directory " + mapPackDir);
 		}
 		for (File newMapPack : newMapPacks) {
 			try {
@@ -115,7 +115,7 @@ public class MapPackManager {
 				}
 			} catch (CertificateException e) {
 				Utilities.deleteFile(newMapPack);
-				log.error("Map pack certificate cerificateion failed (" + newMapPack.getName()
+				log.error("Map pack certificate verification failed (" + newMapPack.getName()
 						+ ") installation aborted and file was deleted");
 			}
 		}
@@ -256,10 +256,10 @@ public class MapPackManager {
 	 * Performs on map sources online update
 	 *
 	 * @return <ul>
-	 *         <li>0: no change in online md5 sum file (based on ETag)</li>
-	 *         <li>-1: Online md5 file is empty indicationg that this MOBAc versiosn is no longer supported</li>
-	 *         <li>x>0: Number of updated map packs</li>
-	 *         </ul>
+	 * <li>0: no change in online md5 sum file (based on ETag)</li>
+	 * <li>-1: Online md5 file is empty indicationg that this MOBAc versiosn is no longer supported</li>
+	 * <li>x>0: Number of updated map packs</li>
+	 * </ul>
 	 * @throws IOException
 	 */
 	public int updateMapPacks() throws UpdateFailedException, UnrecoverableDownloadException, IOException {
