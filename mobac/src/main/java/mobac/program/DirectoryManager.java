@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,183 +40,187 @@ import java.util.regex.Pattern;
  */
 public class DirectoryManager {
 
-	public static final File currentDir;
-	public static final File programDir;
-	public static final File userHomeDir;
-	public static final File tempDir;
-	public static final File userAppDataDir;
+    public static final File currentDir;
+    public static final File programDir;
+    public static final File userHomeDir;
+    public static final File tempDir;
+    public static final File userAppDataDir;
 
-	public static final File userSettingsDir;
-	public static final File mapSourcesDir;
-	public static final File toolsDir;
-	public static final File atlasProfilesDir;
-	public static final File tileStoreDir;
+    public static final File userSettingsDir;
+    public static final File mapSourcesDir;
+    public static final File toolsDir;
+    public static final File atlasProfilesDir;
+    public static final File tileStoreDir;
 
-	private static Properties dirConfig = null;
+    private static Properties dirConfig = null;
 
-	static {
-		currentDir = new File(System.getProperty("user.dir"));
-		userHomeDir = new File(System.getProperty("user.home"));
-		programDir = getProgramDir();
-		loadDirectoriesIni();
+    static {
+        currentDir = new File(System.getProperty("user.dir"));
+        userHomeDir = new File(System.getProperty("user.home"));
+        programDir = getProgramDir();
+        loadDirectoriesIni();
 
-		userAppDataDir = getUserAppDataDir();
-		tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
+        userAppDataDir = getUserAppDataDir();
+        tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
 
-		mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
-		toolsDir = applyDirConfig("mobac.toolsdir", new File(programDir, "tools"));
-		userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
-		atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
-		tileStoreDir = applyDirConfig("mobac.tilestoredir", new File(programDir, "tilestore"));
-	}
+        mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
+        toolsDir = applyDirConfig("mobac.toolsdir", new File(programDir, "tools"));
+        userSettingsDir = applyDirConfig("mobac.usersettingsdir", programDir);
+        atlasProfilesDir = applyDirConfig("mobac.atlasprofilesdir", currentDir);
+        tileStoreDir = applyDirConfig("mobac.tilestoredir", new File(programDir, "tilestore"));
+    }
 
-	private static File applyDirConfig(String propertyName, File defaultDir) {
-		if (dirConfig == null)
-			return defaultDir;
-		try {
-			final String dirCfg = dirConfig.getProperty(propertyName);
-			if (dirCfg == null) {
-				return defaultDir;
-			} else {
-				return expandCommandLine(dirCfg);
-			}
-		} catch (Exception e) {
-			Logging.LOG.error("Error reading directory configuration: " + e.getMessage(), e);
-			JOptionPane
-					.showMessageDialog(null,
-							"<html><p>Failed to load directory.ini - entry \"" + propertyName + "\":<p><p>"
-									+ e.getMessage() + "</p></html>",
-							"Faile do load directory.ini", JOptionPane.ERROR_MESSAGE);
-			return defaultDir;
-		}
-	}
+    private static File applyDirConfig(String propertyName, File defaultDir) {
+        if (dirConfig == null)
+            return defaultDir;
+        try {
+            final String dirCfg = dirConfig.getProperty(propertyName);
+            if (dirCfg == null) {
+                return defaultDir;
+            } else {
+                return expandCommandLine(dirCfg);
+            }
+        } catch (Exception e) {
+            Logging.LOG.error("Error reading directory configuration: " + e.getMessage(), e);
+            JOptionPane
+                    .showMessageDialog(null,
+                            "<html><p>Failed to load directory.ini - entry \"" + propertyName + "\":<p><p>"
+                                    + e.getMessage() + "</p></html>",
+                            "Faile do load directory.ini", JOptionPane.ERROR_MESSAGE);
+            return defaultDir;
+        }
+    }
 
-	/**
-	 * Modified version of
-	 * http://stackoverflow.com/questions/2090647/evaluation-of-environment-variables-in-command-run-
-	 * by-javas-runtime-exec
-	 *
-	 * @param cmd
-	 * @return
-	 */
-	private static File expandCommandLine(final String cmd) {
-		final Pattern vars = Pattern.compile("[$]\\{(\\S+)\\}");
-		final Matcher m = vars.matcher(cmd.trim());
+    /**
+     * Modified version of
+     * http://stackoverflow.com/questions/2090647/evaluation-of-environment-variables-in-command-run-
+     * by-javas-runtime-exec
+     *
+     * @param cmd
+     * @return
+     */
+    private static File expandCommandLine(final String cmd) {
+        final Pattern vars = Pattern.compile("[$]\\{(\\S+)\\}");
+        final Matcher m = vars.matcher(cmd.trim());
 
-		final StringBuffer sb = new StringBuffer(cmd.length());
-		int lastMatchEnd = 0;
-		while (m.find()) {
-			sb.append(cmd.substring(lastMatchEnd, m.start()));
-			final String envVar = m.group(1);
-			String envVal = System.getenv(envVar);
-			if (envVal == null) {
-				File defPath = null;
+        final StringBuffer sb = new StringBuffer(cmd.length());
+        int lastMatchEnd = 0;
+        while (m.find()) {
+            sb.append(cmd.substring(lastMatchEnd, m.start()));
+            final String envVar = m.group(1);
+            String envVal = System.getenv(envVar);
+            if (envVal == null) {
+                File defPath = null;
 
-				if ("mobac-prog".equalsIgnoreCase(envVar))
-					defPath = programDir;
-				else if ("home".equalsIgnoreCase(envVar))
-					defPath = userHomeDir;
-				else if ("XDG_CONFIG_HOME".equalsIgnoreCase(envVar))
-					defPath = new File(userHomeDir, ".config");
-				else if ("XDG_CACHE_HOME".equalsIgnoreCase(envVar))
-					defPath = new File(userHomeDir, ".cache");
-				else if ("XDG_DATA_HOME".equalsIgnoreCase(envVar)) {
-					File localDataDir = new File(userHomeDir, ".local");
-					defPath = new File(localDataDir, "share");
-				}
+                if ("mobac-prog".equalsIgnoreCase(envVar))
+                    defPath = programDir;
+                else if ("home".equalsIgnoreCase(envVar))
+                    defPath = userHomeDir;
+                else if ("XDG_CONFIG_HOME".equalsIgnoreCase(envVar))
+                    defPath = new File(userHomeDir, ".config");
+                else if ("XDG_CACHE_HOME".equalsIgnoreCase(envVar))
+                    defPath = new File(userHomeDir, ".cache");
+                else if ("XDG_DATA_HOME".equalsIgnoreCase(envVar)) {
+                    File localDataDir = new File(userHomeDir, ".local");
+                    defPath = new File(localDataDir, "share");
+                }
 
-				if (defPath != null)
-					envVal = defPath.getAbsolutePath();
-			}
-			if (envVal == null)
-				sb.append(cmd.substring(m.start(), m.end()));
-			else
-				sb.append(envVal);
-			lastMatchEnd = m.end();
-		}
-		sb.append(cmd.substring(lastMatchEnd));
+                if (defPath != null)
+                    envVal = defPath.getAbsolutePath();
+            }
+            if (envVal == null)
+                sb.append(cmd.substring(m.start(), m.end()));
+            else
+                sb.append(envVal);
+            lastMatchEnd = m.end();
+        }
+        sb.append(cmd.substring(lastMatchEnd));
 
-		return new File(sb.toString());
-	}
+        return new File(sb.toString());
+    }
 
-	public static void initialize() {
-		if (currentDir == null || userAppDataDir == null || tempDir == null || programDir == null)
-			throw new RuntimeException("DirectoryManager failed");
-	}
+    public static void initialize() {
+        if (currentDir == null || userAppDataDir == null || tempDir == null || programDir == null)
+            throw new RuntimeException("DirectoryManager failed");
+    }
 
-	private static void loadDirectoriesIni() {
-		File dirIniFile = new File(programDir, "directories.ini");
-		if (!dirIniFile.isFile())
-			return;
-		dirConfig = new Properties();
-		try (FileInputStream in = new FileInputStream(dirIniFile)) {
-			dirConfig.load(in);
-		} catch (IOException e) {
-			System.err.println("Failed to load " + dirIniFile.getName());
-			e.printStackTrace();
-		}
-	}
+    private static void loadDirectoriesIni() {
+        File dirIniFile = new File(programDir, "directories.ini");
+        if (!dirIniFile.isFile())
+            return;
+        dirConfig = new Properties();
+        try (FileInputStream in = new FileInputStream(dirIniFile)) {
+            dirConfig.load(in);
+        } catch (IOException e) {
+            System.err.println("Failed to load " + dirIniFile.getName());
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Returns the directory from which this java program is executed
-	 *
-	 * @return
-	 */
-	private static File getProgramDir() {
-		File f = null;
-		try {
-			f = Utilities.getClassLocation(DirectoryManager.class);
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			return currentDir;
-		}
-		String path = f.getPath();
-		if ("bin".equals(f.getName())) {
-			// happens only when executing MOBAC from within Eclipse
-			// remove the bin dir -> this usually
-			return f.getParentFile();
-		} else if (path.endsWith("mobac" + File.separator + "build" + File.separator + "libs")) {
-			// happens only when executing MOBAC from within IntelliJ using Gradle
-			return f.getParentFile().getParentFile().getParentFile();
-		} else if (path.endsWith("target" + File.separator + "classes")) {
-			// happens only when executing MOBAC from within Eclipse using Maven
-			return f.getParentFile().getParentFile();
-		} else {
-			return f;
-		}
-	}
+    /**
+     * Returns the directory from which this java program is executed
+     *
+     * @return
+     */
+    private static File getProgramDir() {
+        Path path = null;
+        try {
+            path = Utilities.getClassLocation(DirectoryManager.class);
+        } catch (Exception e) {
+            System.err.println("Unable to get program directory: " + e.getMessage());
+            return currentDir;
+        }
+        if (Files.isRegularFile(path)) {
+            // Class is executed from inside of a JAR -> return the directory the JAR file is located in
+            return path.getParent().toFile();
+        }
+        if (Files.isDirectory(path)) {
+            // The compiled classes are in a directory structure, thus we are running from an Java development IDE
+            // We try to find the project root dir by searching for the gradlew script
+            Path p = path;
+            while (p != null) {
+                if (Files.isRegularFile(p.resolve("gradlew"))) {
+                    // project root dir found;
+                    return p.toFile();
+                }
+                p = p.getParent();
+            }
+        }
+        System.err.println("Unable to get program directory");
+        return currentDir;
+    }
 
-	/**
-	 * Returns the directory where Mobile Atlas Creator saves it's application settings.
-	 * <p>
-	 * Examples:
-	 * <ul>
-	 * <li>English Windows XP:<br>
-	 * <tt>C:\Document and Settings\%username%\Application Data\Mobile Atlas Creator</tt>
-	 * <li>Vista:<br>
-	 * <tt>C:\Users\%username%\Application Data\Mobile Atlas Creator</tt>
-	 * <li>Linux:<br>
-	 * <tt>/home/$username$/.mobac</tt></li>
-	 * </ul>
-	 *
-	 * @return
-	 */
-	private static File getUserAppDataDir() {
-		String appData = System.getenv("APPDATA");
-		if (appData != null) {
-			File appDataDir = new File(appData);
-			if (appDataDir.isDirectory()) {
-				File mobacDataDir = new File(appData, "Mobile Atlas Creator");
-				if (mobacDataDir.isDirectory() || mobacDataDir.mkdir())
-					return mobacDataDir;
-				else
-					throw new RuntimeException("Unable to create directory \"" + mobacDataDir.getAbsolutePath() + "\"");
-			}
-		}
-		File userDir = new File(System.getProperty("user.home"));
-		File mobacUserDir = new File(userDir, ".mobac");
-		if (!mobacUserDir.exists() && !mobacUserDir.mkdir())
-			throw new RuntimeException("Unable to create directory \"" + mobacUserDir.getAbsolutePath() + "\"");
-		return mobacUserDir;
-	}
+    /**
+     * Returns the directory where Mobile Atlas Creator saves it's application settings.
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>English Windows XP:<br>
+     * <tt>C:\Document and Settings\%username%\Application Data\Mobile Atlas Creator</tt>
+     * <li>Vista:<br>
+     * <tt>C:\Users\%username%\Application Data\Mobile Atlas Creator</tt>
+     * <li>Linux:<br>
+     * <tt>/home/$username$/.mobac</tt></li>
+     * </ul>
+     *
+     * @return
+     */
+    private static File getUserAppDataDir() {
+        String appData = System.getenv("APPDATA");
+        if (appData != null) {
+            File appDataDir = new File(appData);
+            if (appDataDir.isDirectory()) {
+                File mobacDataDir = new File(appData, "Mobile Atlas Creator");
+                if (mobacDataDir.isDirectory() || mobacDataDir.mkdir())
+                    return mobacDataDir;
+                else
+                    throw new RuntimeException("Unable to create directory \"" + mobacDataDir.getAbsolutePath() + "\"");
+            }
+        }
+        File userDir = new File(System.getProperty("user.home"));
+        File mobacUserDir = new File(userDir, ".mobac");
+        if (!mobacUserDir.exists() && !mobacUserDir.mkdir())
+            throw new RuntimeException("Unable to create directory \"" + mobacUserDir.getAbsolutePath() + "\"");
+        return mobacUserDir;
+    }
 }

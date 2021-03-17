@@ -44,10 +44,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.text.DecimalFormat;
@@ -516,31 +517,20 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns the file path for the selected class. If the class is located inside a JAR file the return value contains
-	 * the directory that contains the JAR file. If the class file is executed outside of an JAR the root directory
-	 * holding the class/package structure is returned.
+	 * Returns the file path for the selected class. If the class is located inside a JAR file the return if the JAR file.
+	 * If the class file is executed outside of an JAR the root directory holding the class/package structure is returned.
 	 *
 	 * @param mainClass
 	 * @return
-	 * @throws URISyntaxException
 	 */
-	public static File getClassLocation(Class<?> mainClass) {
+	public static Path getClassLocation(Class<?> mainClass) {
 		ProtectionDomain pDomain = mainClass.getProtectionDomain();
 		CodeSource cSource = pDomain.getCodeSource();
-		File f;
 		try {
-			URL loc = cSource.getLocation(); // file:/c:/almanac14/examples/
-			f = new File(loc.toURI());
+			URL loc = cSource.getLocation();
+			return Paths.get(loc.toURI());
 		} catch (Exception e) {
 			throw new RuntimeException("Unable to determine program directory: ", e);
-		}
-		if (f.isDirectory()) {
-			// Class is executed from class/package structure from file system
-			return f;
-		} else {
-			// Class is executed from inside of a JAR -> f references the JAR
-			// file
-			return f.getParentFile();
 		}
 	}
 
@@ -642,7 +632,7 @@ public class Utilities {
 	}
 
 	/**
-	 * @param revsision SVN revision string like <code>"1223"</code>, <code>"1224M"</code> or <code>"1616:1622M"</code>
+	 * @param revision SVN revision string like <code>"1223"</code>, <code>"1224M"</code> or <code>"1616:1622M"</code>
 	 * @return parsed svn revision
 	 */
 	public static int parseSVNRevision(String revision) {
