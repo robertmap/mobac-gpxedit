@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -171,7 +172,12 @@ public class DirectoryManager {
             return currentDir;
         }
         if (Files.isRegularFile(path)) {
-            // Class is executed from inside of a JAR -> return the directory the JAR file is located in
+            // Class is executed from inside of a JAR
+            String pathStr = path.getParent().toString();
+            String intellijMobacRunPath = Paths.get("mobac","mobac", "build", "libs").toString();
+            if (pathStr.endsWith(intellijMobacRunPath)) {
+                return path.getParent().getParent().getParent().getParent().toFile();
+            }
             return path.getParent().toFile();
         }
         if (Files.isDirectory(path)) {
@@ -195,10 +201,8 @@ public class DirectoryManager {
      * <p>
      * Examples:
      * <ul>
-     * <li>English Windows XP:<br>
-     * <tt>C:\Document and Settings\%username%\Application Data\Mobile Atlas Creator</tt>
-     * <li>Vista:<br>
-     * <tt>C:\Users\%username%\Application Data\Mobile Atlas Creator</tt>
+     * <li>Windows 10:<br>
+     * <tt>C:\Users\%username%\AppData\Roaming\Mobile Atlas Creator</tt>
      * <li>Linux:<br>
      * <tt>/home/$username$/.mobac</tt></li>
      * </ul>

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mobac.sourceforge.io'
-version '2.2.0-gradle-test3'
+version '2.2.0-gradle-test5'
 
 println("SVN revision $svntools.info.revisionNumber")
 
