@@ -43,6 +43,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.CodeSigner;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -94,29 +97,31 @@ public class MapPackManager {
         if (!mapPackDir.isDirectory()) {
             throw new IOException("Map pack directory does not exist: " + mapPackDir);
         }
-        File[] newMapPacks = mapPackDir.listFiles(new FileExtFilter(".jar.new"));
-        if (newMapPacks == null) {
-            throw new IOException("Failed to enumerate installable map packs in directory \"" + mapPackDir + "\"");
-        }
-        for (File newMapPack : newMapPacks) {
-            try {
-                testMapPack(newMapPack);
-                String name = newMapPack.getName();
-                name = name.substring(0, name.length() - 4); // remove ".new"
-                File oldMapPack = new File(mapPackDir, name);
-                if (oldMapPack.isFile()) {
-                    // TODO: Check if new map pack file is still compatible
-                    // TODO: Check if the downloaded version is newer
-                    File oldMapPack2 = new File(mapPackDir, name + ".old");
-                    Utilities.renameFile(oldMapPack, oldMapPack2);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(mapPackDir.toPath())) {
+            for (Path path : stream) {
+                if (!path.getFileName().toString().endsWith(".jar.new")) {
+                    continue;
                 }
-                if (!newMapPack.renameTo(oldMapPack)) {
-                    throw new IOException("Failed to rename file: " + newMapPack);
+                File newMapPack = path.toFile();
+                try {
+                    testMapPack(newMapPack);
+                    String name = newMapPack.getName();
+                    name = name.substring(0, name.length() - 4); // remove ".new"
+                    File oldMapPack = new File(mapPackDir, name);
+                    if (oldMapPack.isFile()) {
+                        // TODO: Check if new map pack file is still compatible
+                        // TODO: Check if the downloaded version is newer
+                        File oldMapPack2 = new File(mapPackDir, name + ".old");
+                        Utilities.renameFile(oldMapPack, oldMapPack2);
+                    }
+                    if (!newMapPack.renameTo(oldMapPack)) {
+                        throw new IOException("Failed to rename file: " + newMapPack);
+                    }
+                } catch (CertificateException e) {
+                    Utilities.deleteFile(newMapPack);
+                    log.error("Map pack certificate verification failed (" + newMapPack.getName()
+                            + ") installation aborted and file was deleted");
                 }
-            } catch (CertificateException e) {
-                Utilities.deleteFile(newMapPack);
-                log.error("Map pack certificate verification failed (" + newMapPack.getName()
-                        + ") installation aborted and file was deleted");
             }
         }
     }
