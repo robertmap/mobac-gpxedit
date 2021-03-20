@@ -59,7 +59,7 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			String server = SERVERS[SERVER_NUM];
 			SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
-			return String.format("http://%s.tiles.wmflabs.org/hikebike/%d/%d/%d.png", server, zoom, tilex, tiley);
+			return String.format("https://%s.tiles.wmflabs.org/hikebike/%d/%d/%d.png", server, zoom, tilex, tiley);
 		}
 
 	}
@@ -80,7 +80,7 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			String server = SERVERS[SERVER_NUM];
 			SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
-			return String.format("http://%s.tiles.wmflabs.org/hillshading/%d/%d/%d.png", server, zoom, tilex, tiley);
+			return String.format("https://%s.tiles.wmflabs.org/hillshading/%d/%d/%d.png", server, zoom, tilex, tiley);
 		}
 
 		@Override
