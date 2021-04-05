@@ -53,13 +53,13 @@ public class GpxLoad implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent event) {
-		if (!GPXUtils.checkJAXBVersion())
-			return;
 		JFileChooser fc = new JFileChooser();
+		String gpxFileChooserDir = Settings.getInstance().gpxFileChooserDir;
 		try {
-			File dir = new File(Settings.getInstance().gpxFileChooserDir);
+			File dir = new File(gpxFileChooserDir);
 			fc.setCurrentDirectory(dir); // restore the saved directory
 		} catch (Exception e) {
+			log.error("Failed to change the current directory to " + gpxFileChooserDir, e);
 		}
 		fc.setMultiSelectionEnabled(true);
 		fc.addChoosableFileFilter(new GpxFileFilter(false));

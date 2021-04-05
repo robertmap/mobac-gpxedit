@@ -38,8 +38,6 @@ public class GpxNew implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent event) {
-		if (!GPXUtils.checkJAXBVersion())
-			return;
 		newGpx();
 		MainGUI.getMainGUI().previewMap.repaint();
 	}

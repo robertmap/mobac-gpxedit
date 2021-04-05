@@ -16,98 +16,79 @@
  ******************************************************************************/
 package mobac.data.gpx;
 
-import mobac.data.gpx.gpx11.Gpx;
-import mobac.program.Logging;
-import mobac.utilities.Utilities;
-import org.w3c.dom.Document;
-
-import javax.swing.JOptionPane;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.util.JAXBResult;
+import mobac.data.gpx.gpx11.Gpx;
+import mobac.program.Logging;
+import mobac.utilities.Utilities;
+import org.w3c.dom.Document;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class GPXUtils {
 
-	public static boolean checkJAXBVersion() {
-		boolean res = Utilities.checkJAXBVersion();
-		if (!res)
-			JOptionPane.showMessageDialog(null,
-					"Outdated Java Runtime Environment and JAXB version",
-					"Mobile Atlas Creator has detected that your used "
-							+ "Java Runtime Environment is too old.\n Please update "
-							+ "the Java Runtime Environment to at least \nversion "
-							+ "1.6.0_14 and restart Mobile Atlas Creator.",
-					JOptionPane.ERROR_MESSAGE);
-		return res;
-	}
+    public static Gpx loadGpxFile(File f) throws JAXBException {
+        // Create GPX 1.1 JAXB context
+        JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
-	public static Gpx loadGpxFile(File f) throws JAXBException {
-		// Create GPX 1.1 JAXB context
-		JAXBContext context = JAXBContext.newInstance(Gpx.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        try (InputStream is = new FileInputStream(f)) {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder loader = factory.newDocumentBuilder();
+            Document document = loader.parse(is);
+            String namespace = document.getDocumentElement().getNamespaceURI();
+            if ("http://www.topografix.com/GPX/1/1".equals(namespace)) {
+                return (Gpx) unmarshaller.unmarshal(document);
+            }
+            if ("http://www.topografix.com/GPX/1/0".equals(namespace)) {
+                Source xmlSource = new javax.xml.transform.dom.DOMSource(document);
+                Source xsltSource = new StreamSource(Utilities
+                        .loadResourceAsStream("xsl/gpx10to11.xsl"));
+                JAXBResult result = new JAXBResult(unmarshaller);
+                TransformerFactory transFact = TransformerFactory.newInstance();
+                Transformer trans = transFact.newTransformer(xsltSource);
+                trans.transform(xmlSource, result);
+                return (Gpx) result.getResult();
+            }
+            throw new JAXBException("Expected GPX 1.0 or GPX1.1 namespace but found \n\""
+                    + namespace + "\"");
+        } catch (JAXBException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new JAXBException(e);
+        }
+    }
 
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		try (InputStream is = new FileInputStream(f)) {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder loader = factory.newDocumentBuilder();
-			Document document = loader.parse(is);
-			String namespace = document.getDocumentElement().getNamespaceURI();
-			if ("http://www.topografix.com/GPX/1/1".equals(namespace)) {
-				return (Gpx) unmarshaller.unmarshal(document);
-			}
-			if ("http://www.topografix.com/GPX/1/0".equals(namespace)) {
-				Source xmlSource = new javax.xml.transform.dom.DOMSource(document);
-				Source xsltSource = new StreamSource(Utilities
-						.loadResourceAsStream("xsl/gpx10to11.xsl"));
-				JAXBResult result = new JAXBResult(unmarshaller);
-				TransformerFactory transFact = TransformerFactory.newInstance();
-				Transformer trans = transFact.newTransformer(xsltSource);
-				trans.transform(xmlSource, result);
-				return (Gpx) result.getResult();
-			}
-			throw new JAXBException("Expected GPX 1.0 or GPX1.1 namespace but found \n\""
-					+ namespace + "\"");
-		} catch (JAXBException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new JAXBException(e);
-		}
-	}
+    public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
+        // Create GPX 1.1 JAXB context
+        JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
-	public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
-		// Create GPX 1.1 JAXB context
-		JAXBContext context = JAXBContext.newInstance(Gpx.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        try (OutputStream os = new FileOutputStream(f)) {
+            marshaller.marshal(gpx, os);
+        } catch (IOException e) {
+            throw new JAXBException(e);
+        }
+    }
 
-		Marshaller marshaller = context.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		try (OutputStream os = new FileOutputStream(f)) {
-			marshaller.marshal(gpx, os);
-		} catch (IOException e) {
-			throw new JAXBException(e);
-		}
-	}
-
-	public static void main(String[] args) {
-		Logging.configureConsoleLogging();
-		try {
-			loadGpxFile(new File("misc/samples/gpx/gpx11 wpt.gpx"));
-			loadGpxFile(new File("misc/samples/gpx/gpx10 wpt.gpx"));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void main(String[] args) {
+        Logging.configureConsoleLogging();
+        try {
+            loadGpxFile(new File("misc/samples/gpx/gpx11 wpt.gpx"));
+            loadGpxFile(new File("misc/samples/gpx/gpx10 wpt.gpx"));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
 }
