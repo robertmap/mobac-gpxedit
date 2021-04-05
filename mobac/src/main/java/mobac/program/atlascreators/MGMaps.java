@@ -176,7 +176,7 @@ public class MGMaps extends AtlasCreator {
 							raf.writeChar(count);
 						}
 					} finally {
-						Utilities.closeFile(raf);
+						Utilities.closeQuietly(raf);
 					}
 					if (count == 0) {
 						// the file doesn't contain any tiles

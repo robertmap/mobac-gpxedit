@@ -194,7 +194,7 @@ public class GCLive extends AtlasCreator {
 
 		private void prepareDataFile() throws IOException {
 			if (currentDataFile != null)
-				Utilities.closeFile(currentDataFile);
+				Utilities.closeQuietly(currentDataFile);
 			currentDataFile = null;
 			File dataDir = new File(mapDir, Integer.toString(dataDirCounter));
 			Utilities.mkDir(dataDir);
@@ -224,7 +224,7 @@ public class GCLive extends AtlasCreator {
 
 		public void finalizeMap() throws IOException {
 			int dataPos = (int) currentDataFile.getFilePointer();
-			Utilities.closeFile(currentDataFile);
+			Utilities.closeQuietly(currentDataFile);
 			Collections.sort(headerEntries);
 
 			RandomAccessFile indexFile;
@@ -244,7 +244,7 @@ public class GCLive extends AtlasCreator {
 				System.out.println(entry);
 			}
 			headerEntries = null;
-			Utilities.closeFile(indexFile);
+			Utilities.closeQuietly(indexFile);
 		}
 	}
 

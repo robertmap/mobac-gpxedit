@@ -69,7 +69,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 
 	@Override
 	public void abortAtlasCreation() throws IOException {
-		Utilities.closeStream(cacheOutStream);
+		Utilities.closeQuietly(cacheOutStream);
 		super.abortAtlasCreation();
 	}
 

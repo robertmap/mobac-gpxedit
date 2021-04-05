@@ -229,12 +229,9 @@ public class TrekBuddy extends AtlasCreator {
 					imageFormat);
 
 			File f = new File(setFolder, tileFileName);
-			FileOutputStream out = new FileOutputStream(f);
 			setFileWriter.write(tileFileName + "\r\n");
-			try {
+			try (FileOutputStream out = new FileOutputStream(f)){
 				out.write(tileData);
-			} finally {
-				Utilities.closeStream(out);
 			}
 		}
 
@@ -244,7 +241,7 @@ public class TrekBuddy extends AtlasCreator {
 			} catch (IOException e) {
 				log.error("", e);
 			}
-			Utilities.close(setFileWriter);
+			Utilities.closeQuietly(setFileWriter);
 		}
 	}
 

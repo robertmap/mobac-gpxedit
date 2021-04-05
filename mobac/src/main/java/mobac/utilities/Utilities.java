@@ -266,29 +266,11 @@ public class Utilities {
             throw new RuntimeException(new InterruptedException());
     }
 
-    public static void closeFile(RandomAccessFile file) {
-        if (file == null)
-            return;
-        try {
-            file.close();
-        } catch (IOException e) {
-        }
-    }
-
-    public static void close(Closeable c) {
+    public static void closeQuietly(Closeable c) {
         if (c == null)
             return;
         try {
             c.close();
-        } catch (IOException e) {
-        }
-    }
-
-    public static void closeStream(OutputStream out) {
-        if (out == null)
-            return;
-        try {
-            out.close();
         } catch (IOException e) {
         }
     }
@@ -520,43 +502,6 @@ public class Utilities {
     }
 
     /**
-     * Saves <code>data</code> to the file specified by <code>filename</code>.
-     *
-     * @param filename
-     * @param data
-     * @throws IOException
-     */
-    public static void saveBytes(String filename, byte[] data) throws IOException {
-        FileOutputStream fo = null;
-        try {
-            fo = new FileOutputStream(filename);
-            fo.write(data);
-        } finally {
-            closeStream(fo);
-        }
-    }
-
-    /**
-     * Saves <code>data</code> to the file specified by <code>filename</code>.
-     *
-     * @param filename
-     * @param data
-     * @return Data has been saved successfully?
-     */
-    public static boolean saveBytesEx(String filename, byte[] data) {
-        FileOutputStream fo = null;
-        try {
-            fo = new FileOutputStream(filename);
-            fo.write(data);
-            return true;
-        } catch (IOException e) {
-            return false;
-        } finally {
-            closeStream(fo);
-        }
-    }
-
-    /**
      * Tries to delete a file or directory and throws an {@link IOException} if that fails.
      *
      * @param fileToDelete
@@ -585,11 +530,8 @@ public class Utilities {
         int responseCode = conn.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK)
             throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
-        InputStream in = conn.getInputStream();
-        try {
+        try (InputStream in = conn.getInputStream()) {
             return Utilities.getInputBytes(in);
-        } finally {
-            in.close();
         }
     }
 

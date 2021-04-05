@@ -49,199 +49,197 @@ import java.util.Locale;
 @SupportedParameters(names = {Name.format, Name.height, Name.width})
 public class Maplorer extends AtlasCreator {
 
-	private static final String FILENAME_PATTERN = "map_%s%d.%s";
+    private static final String FILENAME_PATTERN = "map_%s%d.%s";
 
-	protected File layerFolder = null;
-	protected File mapFolder = null;
-	protected MapTileWriter mapTileWriter;
+    protected File layerFolder = null;
+    protected File mapFolder = null;
+    protected MapTileWriter mapTileWriter;
 
-	protected int tileXmax = 0;
-	protected int tileYmax = 0;
+    protected int tileXmax = 0;
+    protected int tileYmax = 0;
 
-	public boolean testMapSource(MapSource mapSource) {
-		MapSpace mapSpace = mapSource.getMapSpace();
-		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
-				.getProjectionCategory()));
-	}
+    public boolean testMapSource(MapSource mapSource) {
+        MapSpace mapSpace = mapSource.getMapSpace();
+        return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
+                .getProjectionCategory()));
+    }
 
-	protected void createCustomTiles() throws InterruptedException, MapCreationException {
-		log.debug("Starting map creation using custom parameters: " + parameters);
+    protected void createCustomTiles() throws InterruptedException, MapCreationException {
+        log.debug("Starting map creation using custom parameters: " + parameters);
 
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
-			mapDlTileProvider = ctp;
+        CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+        try {
+            mapDlTileProvider = ctp;
 
-			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
-			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
-			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
-		}
-	}
+            MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
+            atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+            mapTileBuilder.createTiles();
+        } finally {
+            ctp.cleanup();
+        }
+    }
 
-	public void createMap() throws MapCreationException, InterruptedException {
-		try {
-			Utilities.mkDirs(mapFolder);
+    public void createMap() throws MapCreationException, InterruptedException {
+        try {
+            Utilities.mkDirs(mapFolder);
 
-			mapTileWriter = new FileTileWriter();
+            mapTileWriter = new FileTileWriter();
 
-			// Select the tile creator instance based on whether tile image
-			// parameters has been set or not
-			if (parameters != null)
-				createCustomTiles();
-			else
-				createTiles();
+            // Select the tile creator instance based on whether tile image
+            // parameters has been set or not
+            if (parameters != null)
+                createCustomTiles();
+            else
+                createTiles();
 
-			mapTileWriter.finalizeMap();
-		} catch (MapCreationException e) {
-			throw e;
-		} catch (InterruptedException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new MapCreationException(map, e);
-		}
-	}
+            mapTileWriter.finalizeMap();
+        } catch (MapCreationException e) {
+            throw e;
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new MapCreationException(map, e);
+        }
+    }
 
-	@Override
-	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-		super.initializeMap(map, mapTileProvider);
-		LayerInterface layer = map.getLayer();
-		layerFolder = new File(atlasDir, layer.getName());
-		mapFolder = new File(layerFolder, map.getName());
-	}
+    @Override
+    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+        super.initializeMap(map, mapTileProvider);
+        LayerInterface layer = map.getLayer();
+        layerFolder = new File(atlasDir, layer.getName());
+        mapFolder = new File(layerFolder, map.getName());
+    }
 
-	protected void createTiles() throws InterruptedException, MapCreationException {
-		int tilex = 0;
-		int tiley = 0;
+    protected void createTiles() throws InterruptedException, MapCreationException {
+        int tilex = 0;
+        int tiley = 0;
 
-		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+        atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
-		ImageIO.setUseCache(false);
-		byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
-		String tileType = mapSource.getTileImageType().getFileExt();
-		for (int x = xMin; x <= xMax; x++) {
-			tiley = 0;
-			for (int y = yMin; y <= yMax; y++) {
-				checkUserAbort();
-				atlasProgress.incMapCreationProgress();
-				try {
-					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null) {
-						mapTileWriter.writeTile(tilex, tiley, tileType, sourceTileData);
-					} else {
-						log.trace(String.format("Tile x=%d y=%d not found in tile archive - creating default", tilex,
-								tiley));
-						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
-					}
-				} catch (IOException e) {
-					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-				}
-				tiley++;
-			}
-			tilex++;
-		}
-	}
+        ImageIO.setUseCache(false);
+        byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
+        String tileType = mapSource.getTileImageType().getFileExt();
+        for (int x = xMin; x <= xMax; x++) {
+            tiley = 0;
+            for (int y = yMin; y <= yMax; y++) {
+                checkUserAbort();
+                atlasProgress.incMapCreationProgress();
+                try {
+                    byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+                    if (sourceTileData != null) {
+                        mapTileWriter.writeTile(tilex, tiley, tileType, sourceTileData);
+                    } else {
+                        log.trace(String.format("Tile x=%d y=%d not found in tile archive - creating default", tilex,
+                                tiley));
+                        mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
+                    }
+                } catch (IOException e) {
+                    throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+                }
+                tiley++;
+            }
+            tilex++;
+        }
+    }
 
-	public class FileTileWriter implements MapTileWriter {
+    public class FileTileWriter implements MapTileWriter {
 
-		File setFolder;
+        File setFolder;
 
-		int tileHeight = 256;
-		int tileWidth = 256;
+        int tileHeight = 256;
+        int tileWidth = 256;
 
-		public FileTileWriter() throws IOException {
-			super();
-			setFolder = mapFolder; // don't need an extra sub folder for MAPLORER maps
-			log.debug("Writing tiles to set folder: " + setFolder);
+        public FileTileWriter() throws IOException {
+            super();
+            setFolder = mapFolder; // don't need an extra sub folder for MAPLORER maps
+            log.debug("Writing tiles to set folder: " + setFolder);
 
-			if (parameters != null) {
-				tileHeight = parameters.getHeight();
-				tileWidth = parameters.getWidth();
-			}
-		}
+            if (parameters != null) {
+                tileHeight = parameters.getHeight();
+                tileWidth = parameters.getWidth();
+            }
+        }
 
-		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
-			String tileFileName = String.format(FILENAME_PATTERN, IntToLetter(tilex + 1), tiley + 1, imageFormat);
+        public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
+            String tileFileName = String.format(FILENAME_PATTERN, IntToLetter(tilex + 1), tiley + 1, imageFormat);
 
-			File f = new File(setFolder, tileFileName);
-			FileOutputStream out = new FileOutputStream(f);
-			try {
-				out.write(tileData);
-			} finally {
-				Utilities.closeStream(out);
-			}
+            File f = new File(setFolder, tileFileName);
+            try (FileOutputStream out = new FileOutputStream(f)) {
+                out.write(tileData);
+            }
 
-			tileXmax = tilex;
-			tileYmax = tiley;
-		}
+            tileXmax = tilex;
+            tileYmax = tiley;
+        }
 
-		private String IntToLetter(int i) throws IOException {
-			if (i > 26)
-				throw new IOException("Maximum tile column overflow - map too wide!");
-			char c = (char) (i + 64);
-			return Character.toString(c);
-		}
+        private String IntToLetter(int i) throws IOException {
+            if (i > 26) {
+                throw new IOException("Maximum tile column overflow - map too wide!");
+            }
+            char c = (char) (i + 64);
+            return Character.toString(c);
+        }
 
-		public void finalizeMap() throws IOException {
+        public void finalizeMap() throws IOException {
 
-			MapSpace mapSpace = mapSource.getMapSpace();
+            MapSpace mapSpace = mapSource.getMapSpace();
 
-			// compute corner coordinates for the entire map (all .JPG files)
-			double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
-			double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize - 1, zoom);
-			double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize - 1, zoom);
-			double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
+            // compute corner coordinates for the entire map (all .JPG files)
+            double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
+            double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize - 1, zoom);
+            double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize - 1, zoom);
+            double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
 
-			double widthInPixel = map.getMaxTileCoordinate().x - map.getMinTileCoordinate().x;
-			double heihgtInPixel = map.getMaxTileCoordinate().y - map.getMinTileCoordinate().y;
+            double widthInPixel = map.getMaxTileCoordinate().x - map.getMinTileCoordinate().x;
+            double heihgtInPixel = map.getMaxTileCoordinate().y - map.getMinTileCoordinate().y;
 
-			double pix2longitude = (longitudeMax - longitudeMin) / widthInPixel;
-			double pix2latitude = (latitudeMax - latitudeMin) / heihgtInPixel;
+            double pix2longitude = (longitudeMax - longitudeMin) / widthInPixel;
+            double pix2latitude = (latitudeMax - latitudeMin) / heihgtInPixel;
 
-			// compute corner coordinates for one tile (one JPG file)
-			double lonBL = longitudeMin;
-			double latBL = latitudeMax - tileHeight * pix2latitude;
-			double lonTR = longitudeMin + tileWidth * pix2longitude;
-			double latTR = latitudeMax;
+            // compute corner coordinates for one tile (one JPG file)
+            double lonBL = longitudeMin;
+            double latBL = latitudeMax - tileHeight * pix2latitude;
+            double lonTR = longitudeMin + tileWidth * pix2longitude;
+            double latTR = latitudeMax;
 
-			// write POS files
-			for (int tilex = 0; tilex <= tileXmax; tilex++) {
-				latBL = latitudeMax - tileHeight * pix2latitude;
-				latTR = latitudeMax;
+            // write POS files
+            for (int tilex = 0; tilex <= tileXmax; tilex++) {
+                latBL = latitudeMax - tileHeight * pix2latitude;
+                latTR = latitudeMax;
 
-				for (int tiley = 0; tiley <= tileYmax; tiley++) {
-					String posFileName = String.format(FILENAME_PATTERN, IntToLetter(tilex + 1), tiley + 1, "POS");
-					File posFile = new File(setFolder, posFileName);
+                for (int tiley = 0; tiley <= tileYmax; tiley++) {
+                    String posFileName = String.format(FILENAME_PATTERN, IntToLetter(tilex + 1), tiley + 1, "POS");
+                    File posFile = new File(setFolder, posFileName);
 
-					lonBL = Math.max(longitudeMin, lonBL); // for tiles at the edges (might be smaller)
-					latBL = Math.max(latitudeMin, latBL);
-					lonTR = Math.min(longitudeMax, lonTR);
-					latTR = Math.min(latitudeMax, latTR);
+                    lonBL = Math.max(longitudeMin, lonBL); // for tiles at the edges (might be smaller)
+                    latBL = Math.max(latitudeMin, latBL);
+                    lonTR = Math.min(longitudeMax, lonTR);
+                    latTR = Math.min(latitudeMax, latTR);
 
-					try (PrintWriter writer = new PrintWriter(new FileWriter(posFile))) {
-						String posLine = "LonBL = %2.6f";
-						writer.println(String.format(Locale.ENGLISH, posLine, lonBL));
+                    try (PrintWriter writer = new PrintWriter(new FileWriter(posFile))) {
+                        String posLine = "LonBL = %2.6f";
+                        writer.println(String.format(Locale.ENGLISH, posLine, lonBL));
 
-						posLine = "LatBL = %2.6f";
-						writer.println(String.format(Locale.ENGLISH, posLine, latBL));
+                        posLine = "LatBL = %2.6f";
+                        writer.println(String.format(Locale.ENGLISH, posLine, latBL));
 
-						posLine = "LonTR = %2.6f";
-						writer.println(String.format(Locale.ENGLISH, posLine, lonTR));
+                        posLine = "LonTR = %2.6f";
+                        writer.println(String.format(Locale.ENGLISH, posLine, lonTR));
 
-						posLine = "LatTR = %2.6f";
-						writer.println(String.format(Locale.ENGLISH, posLine, latTR));
-					}
+                        posLine = "LatTR = %2.6f";
+                        writer.println(String.format(Locale.ENGLISH, posLine, latTR));
+                    }
 
-					latBL = latBL - tileHeight * pix2latitude;
-					latTR = latTR - tileHeight * pix2latitude;
+                    latBL = latBL - tileHeight * pix2latitude;
+                    latTR = latTR - tileHeight * pix2latitude;
 
-				} // for y
+                } // for y
 
-				lonBL = lonBL + tileWidth * pix2longitude;
-				lonTR = lonTR + tileWidth * pix2longitude;
+                lonBL = lonBL + tileWidth * pix2longitude;
+                lonTR = lonTR + tileWidth * pix2longitude;
 
-			} // for x
+            } // for x
 
-		}
-	}
+        }
+    }
 }

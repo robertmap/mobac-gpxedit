@@ -107,7 +107,7 @@ public class AFTrack extends OSMTracker {
 				}
 				zipStream.writeStoredEntry("Manifest.txt", bout.toByteArray());
 			}
-			Utilities.closeStream(zipStream);
+			Utilities.closeQuietly(zipStream);
 		}
 
 	}

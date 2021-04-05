@@ -59,7 +59,7 @@ public class TarTmiArchive extends TarArchive {
 
 	@Override
 	public void close() throws IOException {
-		Utilities.close(tmiWriter);
+		Utilities.closeQuietly(tmiWriter);
 		super.close();
 	}
 

@@ -60,13 +60,13 @@ public class Osmdroid extends OSMTracker {
 
 	@Override
 	public void abortAtlasCreation() throws IOException {
-		Utilities.closeStream(zipStream);
+		Utilities.closeQuietly(zipStream);
 		super.abortAtlasCreation();
 	}
 
 	@Override
 	public void finishAtlasCreation() throws IOException, InterruptedException {
-		Utilities.closeStream(zipStream);
+		Utilities.closeQuietly(zipStream);
 		super.finishAtlasCreation();
 	}
 

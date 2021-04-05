@@ -512,7 +512,7 @@ public class TwoNavRMAP extends AtlasCreator {
 		try {
 			rmapFile.setLength(0);
 		} finally {
-			Utilities.closeFile(rmapFile);
+			Utilities.closeQuietly(rmapFile);
 		}
 		super.abortAtlasCreation();
 	}

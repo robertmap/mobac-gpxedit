@@ -51,9 +51,8 @@ public class Glopus extends Ozi {
 	}
 
 	private void writeKalFile() throws MapCreationException {
-		FileOutputStream fout = null;
-		try {
-			fout = new FileOutputStream(new File(layerDir, mapName + ".kal"));
+		File kalFile = new File(layerDir, mapName + ".kal");
+		try (FileOutputStream fout = new FileOutputStream(kalFile)){
 			OutputStreamWriter mapWriter = new OutputStreamWriter(fout, TEXT_FILE_CHARSET);
 
 			MapSpace mapSpace = mapSource.getMapSpace();
@@ -94,8 +93,6 @@ public class Glopus extends Ozi {
 			mapWriter.close();
 		} catch (IOException e) {
 			throw new MapCreationException(map, e);
-		} finally {
-			Utilities.closeStream(fout);
 		}
 	}
 }

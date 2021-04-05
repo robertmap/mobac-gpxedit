@@ -190,7 +190,7 @@ public class CacheBox extends AtlasCreator {
 	@Override
 	public void abortAtlasCreation() throws IOException {
 		mapInfos = null;
-		Utilities.closeFile(packRaFile);
+		Utilities.closeQuietly(packRaFile);
 		packRaFile = null;
 		if (packFile != null)
 			Utilities.deleteFile(packFile);
