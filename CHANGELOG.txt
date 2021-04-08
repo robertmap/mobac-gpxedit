@@ -15,6 +15,8 @@
  ! MOBAC build system changed to Gradle
  + Support for ARM based MacOS systems (SQLite library)
  - Support for 32bit systems dropped
+ ! fixed Jaxb problem causing a NullPointerException with defineClass
+     is null (#355)
 
 2.1.4 (2020-12-22)
  + Russian translation added (thanks to xmember)

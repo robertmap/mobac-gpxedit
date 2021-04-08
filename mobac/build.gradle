@@ -15,6 +15,7 @@ dependencies {
     api 'commons-codec:commons-codec:1.15'
     api 'commons-io:commons-io:2.8.0'
     api 'org.apache.commons:commons-lang3:3.11'
+    api 'org.apache.commons:commons-text:1.9'
     api 'log4j:log4j:1.2.17'
     api 'com.github.kerner1000:javapng:2.1.2'
     api 'org.xerial:sqlite-jdbc:3.34.0'
@@ -44,6 +45,11 @@ processResources {
 jar {
     manifest {
         attributes "Main-Class": "mobac.StartMOBAC"
+
+        // This entry is required by jaxb-runtime to work properly on Java 16+ - otherwise you will encounter
+        // java.lang.NullPointerException: Cannot invoke "java.lang.reflect.Method.invoke(Object, Object[])" because
+        // "com.sun.xml.bind.v2.runtime.reflect.opt.Injector.defineClass" is null
+        attributes "Multi-Release": "true"
     }
     archiveBaseName = "Mobile_Atlas_Creator"
     from {
