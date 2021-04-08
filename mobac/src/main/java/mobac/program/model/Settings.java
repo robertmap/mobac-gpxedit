@@ -66,15 +66,14 @@ import mobac.utilities.stream.ThrottledInputStream;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class Settings {
 
-	private static Logger log = Logger.getLogger(Settings.class);
-	private static Settings instance = new Settings();
+	private static final Logger log = Logger.getLogger(Settings.class);
 
 	public static final File FILE = new File(DirectoryManager.userSettingsDir, "settings.xml");
-
-	private static long SETTINGS_LAST_MODIFIED = 0;
-
 	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
 	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
+
+	private static long SETTINGS_LAST_MODIFIED = 0;
+	private static Settings instance = new Settings();
 
 	@XmlElement(defaultValue = "")
 	private String version;
@@ -230,7 +229,7 @@ public class Settings {
 		 * Last ETag value retrieved while online map source update.
 		 * 
 		 * @see MapSourcesManager#mapsourcesOnlineUpdate()
-		 * @see http://en.wikipedia.org/wiki/HTTP_ETag
+		 * @see https://en.wikipedia.org/wiki/HTTP_ETag
 		 */
 		public String etag;
 

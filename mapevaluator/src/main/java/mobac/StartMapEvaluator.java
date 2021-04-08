@@ -26,7 +26,9 @@ public class StartMapEvaluator {
 		//MapEvaluatorMapSourcesManager.initialitze();
 		DefaultMapSourcesManager.initialize();
 		try {
-			Settings.load();
+			if (Settings.FILE.isFile()) {
+				Settings.load();
+			}
 		} catch (Exception e) {
 			// Load settings.xml only if it exists
 		}
