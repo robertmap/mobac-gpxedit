@@ -11,7 +11,7 @@
 
 =======
 
-2.2.0 (2021-??-??)
+2.2.0 (2021-04-10)
  ! MOBAC build system changed to Gradle
  + Support for ARM based MacOS systems (SQLite library)
  - Support for 32bit systems dropped
