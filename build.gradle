@@ -9,12 +9,15 @@ version '2.2.0'
 println("SVN revision $svntools.info.revisionNumber")
 
 allprojects {
-
     repositories {
         mavenCentral()
         maven {
+            // required for javax.media:jai-core:1.1.3
             url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
         }
+    }
+    ext {
+        svnRevision = "$svntools.info.revisionNumber"
     }
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'

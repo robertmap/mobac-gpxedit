@@ -35,16 +35,19 @@ processResources {
     doLast {
         def targetDir = new File(sourceSets.main.output.resourcesDir, "mobac")
         targetDir.mkdirs()
-        def rev = "$svntools.info.revisionNumber"
         def props = new Properties()
-        props.setProperty("mobac.revision", "$rev")
-        props.setProperty("mobac.version", "${project.rootProject.version}")
+        props.setProperty("mobac.revision", "$svnRevision")
+        props.setProperty("mobac.version", project.rootProject.version)
         new File(targetDir, "mobac-rev.properties").withWriter { props.store(it, null) }
     }
 }
 jar {
+    println("SVN revision $svnRevision")
+
     manifest {
         attributes "Main-Class": "mobac.StartMOBAC"
+        attributes "Version": project.rootProject.version
+        attributes "SVN-Revision": "$svnRevision"
 
         // This entry is required by jaxb-runtime to work properly on Java 16+ - otherwise you will encounter
         // java.lang.NullPointerException: Cannot invoke "java.lang.reflect.Method.invoke(Object, Object[])" because
