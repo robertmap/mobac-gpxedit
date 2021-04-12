@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,7 @@ import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.ValidationEventHandler;
 import jakarta.xml.bind.ValidationEventLocator;
 
+import mobac.exceptions.AbortedByUserException;
 import org.apache.log4j.Logger;
 
 import mobac.gui.panels.JProfilesPanel;
@@ -60,17 +62,17 @@ public class Profile implements Comparable<Profile> {
             .compile(PROFILE_FILENAME_PREFIX + "(" + PROFILE_NAME_REGEX + ").xml");
 
     public static final Profile DEFAULT = new Profile();
+    private static Vector<Profile> profiles = new Vector<>();
 
-    private File file;
-    private String name;
-    private static Vector<Profile> profiles = new Vector<Profile>();
+    private final File file;
+    private final String name;
 
     /**
      * Profiles management method
      */
     public static void updateProfiles() {
         File profilesDir = DirectoryManager.atlasProfilesDir;
-        final Set<Profile> deletedProfiles = new HashSet<Profile>();
+        final Set<Profile> deletedProfiles = new HashSet<>();
         deletedProfiles.addAll(profiles);
         profilesDir.list(new FilenameFilter() {
 
@@ -174,15 +176,12 @@ public class Profile implements Comparable<Profile> {
     public AtlasInterface load() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Atlas.class);
         Unmarshaller um = context.createUnmarshaller();
+        AtomicBoolean loadAborted = new AtomicBoolean(false);
         um.setEventHandler(new ValidationEventHandler() {
 
             public boolean handleEvent(ValidationEvent event) {
                 ValidationEventLocator loc = event.getLocator();
-                String file = loc.getURL().getFile();
-                int lastSlash = file.lastIndexOf('/');
-                if (lastSlash > 0) {
-                    file = file.substring(lastSlash + 1);
-                }
+                String fileName = file.getName();
                 String message = event.getMessage();
                 if (message == null) {
                     // No message - try to find an error message in the linked Exceptions
@@ -197,18 +196,25 @@ public class Profile implements Comparable<Profile> {
                     }
                 }
                 int ret = JOptionPane.showConfirmDialog(null,
-                        String.format(I18nUtils.localizedStringForKey("msg_error_load_atlas_profile"), message, file,
+                        String.format(I18nUtils.localizedStringForKey("msg_error_load_atlas_profile"), message, fileName,
                                 loc.getLineNumber(), loc.getColumnNumber()),
                         I18nUtils.localizedStringForKey("msg_error_load_atlas_profile_title"),
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
                 log.error(event.toString());
-                return (ret == JOptionPane.YES_OPTION);
+                boolean continueLoading = (ret == JOptionPane.YES_OPTION);
+                if (!continueLoading) {
+                    loadAborted.set(true);
+                }
+                return continueLoading;
             }
         });
         try {
             AtlasInterface newAtlas = (AtlasInterface) um.unmarshal(file);
             return newAtlas;
         } catch (Exception e) {
+            if (loadAborted.get()) {
+                throw new AbortedByUserException();
+            }
             throw new JAXBException(e.getMessage(), e);
         }
     }

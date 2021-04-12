@@ -11,6 +11,9 @@
 
 =======
 
+2.2.1 (2021-??-??)
+ ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
+
 2.2.0 (2021-04-10)
  ! MOBAC build system changed to Gradle
  + Support for ARM based MacOS systems (SQLite library)

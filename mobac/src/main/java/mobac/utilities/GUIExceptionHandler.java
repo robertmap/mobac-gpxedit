@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import mobac.exceptions.AbortedByUserException;
 import org.apache.log4j.Logger;
 
 import com.sleepycat.je.ExceptionEvent;
@@ -169,6 +170,10 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                     }
                 }
             }
+            if (ignoreException(t)) {
+                log.info("Ignored Exception: " + t);
+                return;
+            }
 
             StringBuilder sb = new StringBuilder(2048);
             if (message != null)
@@ -294,6 +299,13 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+    }
+
+    private static boolean ignoreException(Throwable t) {
+        if (t instanceof AbortedByUserException) {
+            return true;
+        }
+        return false;
     }
 
     public static void installToolkitEventQueueProxy() {
