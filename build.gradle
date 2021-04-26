@@ -21,10 +21,9 @@ allprojects {
     }
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+        options.fork = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-        // options.compilerArgs << '-Xlint:unchecked'
-        // options.deprecation = true
     }
 }
 

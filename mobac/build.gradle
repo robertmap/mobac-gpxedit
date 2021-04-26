@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'edu.sc.seis.launch4j' version '2.4.9'
+    id 'edu.sc.seis.launch4j' version '2.5.0'
 }
 
 dependencies {
@@ -37,7 +37,7 @@ processResources {
         targetDir.mkdirs()
         def props = new Properties()
         props.setProperty("mobac.revision", "$svnRevision")
-        props.setProperty("mobac.version", project.rootProject.version)
+        props.setProperty("mobac.version", project.rootProject.version.toString())
         new File(targetDir, "mobac-rev.properties").withWriter { props.store(it, null) }
     }
 }
@@ -54,7 +54,7 @@ jar {
         // "com.sun.xml.bind.v2.runtime.reflect.opt.Injector.defineClass" is null
         attributes "Multi-Release": "true"
     }
-    archiveBaseName = "Mobile_Atlas_Creator"
+    getArchiveBaseName().set("Mobile_Atlas_Creator")
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
