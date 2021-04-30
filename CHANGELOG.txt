@@ -13,6 +13,8 @@
 
 2.2.1 (2021-??-??)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
+ ! "OsmAnd tile storage" atlas format: fixed file name scheme of generated
+     map tiles to "YYYYYYpng.tile" (#356)
 
 2.2.0 (2021-04-10)
  ! MOBAC build system changed to Gradle

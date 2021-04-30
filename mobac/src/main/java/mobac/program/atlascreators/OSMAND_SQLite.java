@@ -20,7 +20,7 @@ import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapSource;
 
-@AtlasCreatorName(value = "OSMAND SQLite", type = "OSMAND_SQLite")
+@AtlasCreatorName(value = "OsmAnd SQLite", type = "OSMAND_SQLite")
 public class OSMAND_SQLite extends RMapsSQLite {
 
 	@Override

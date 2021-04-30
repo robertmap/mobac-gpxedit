@@ -25,8 +25,7 @@ import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.model.TileImageParameters.Name;
 
 /**
- * Annotation for {@link AtlasCreator} implementations. The {@link #names()} field holds the parameter names supported
- * by the specific atlas format. The full list of available parameters is defined in {@link Name}.
+ * Annotation for {@link AtlasCreator} implementations.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -136,8 +136,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		Class<? extends AtlasCreator> atlasCreatorClass = newAtlasOutputFormat.getMapCreatorClass();
 		SupportedParameters params = atlasCreatorClass.getAnnotation(SupportedParameters.class);
 		if (params != null) {
-			TreeSet<Name> paramNames = new TreeSet<Name>(
-					Arrays.asList(params.names()));
+			TreeSet<Name> paramNames = new TreeSet<>(Arrays.asList(params.names()));
 			if (paramNames.contains(Name.format)) {
 				formatPngEnabled = true;
 				formatJpgEnabled = true;
