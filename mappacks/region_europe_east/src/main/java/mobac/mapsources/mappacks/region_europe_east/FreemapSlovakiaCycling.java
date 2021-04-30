@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -25,24 +25,24 @@ import mobac.program.model.TileImageType;
  */
 public class FreemapSlovakiaCycling extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
-	public FreemapSlovakiaCycling() {
-		super("FreemapSlovakiaCyclo", 6, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
-	}
+    public FreemapSlovakiaCycling() {
+        super("FreemapSlovakiaCyclo", 6, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
+    }
 
-	public String getTileUrl(int zoom, int tilex, int tiley) {
-		return "http://a.freemap.sk/data/layers/presets/C/" + zoom + "/" + tilex + "/" + tiley + ".png";
-	}
+    public String getTileUrl(int zoom, int tilex, int tiley) {
+        return "https://a.freemap.sk/data/layers/presets/C/" + zoom + "/" + tilex + "/" + tiley + ".png";
+    }
 
-	@Override
-	public String toString() {
-		return "Freemap Slovakia Cycle Map";
-	}
+    @Override
+    public String toString() {
+        return "Freemap Slovakia Cycle Map";
+    }
 
-	public String getAttributionText() {
-		return "© OpenStreetMap contributors, CC-BY-SA";
-	}
+    public String getAttributionText() {
+        return "© OpenStreetMap contributors, CC-BY-SA";
+    }
 
-	public String getAttributionLinkURL() {
-		return "http://openstreetmap.org";
-	}
+    public String getAttributionLinkURL() {
+        return "http://openstreetmap.org";
+    }
 }
