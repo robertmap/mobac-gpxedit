@@ -1,0 +1,9 @@
+
+usage: 
+	java -jar ts-util.jar merge <db-src-directory> <db-destination-directory>
+	java -jar ts-util.jar extract <db-src-directory> <destination-directory>
+	java -jar ts-util.jar deletetiles <db-directory> <tile-coordinates> 
+	java -jar ts-util.jar delete <db-directory> <condition(s)>
+	java -jar ts-util.jar purge <db-directory>
+	java -jar ts-util.jar print <db-directory>
+	

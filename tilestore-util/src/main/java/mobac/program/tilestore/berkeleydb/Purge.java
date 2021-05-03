@@ -1,0 +1,36 @@
+package mobac.program.tilestore.berkeleydb;
+
+import java.io.File;
+import java.security.InvalidParameterException;
+
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
+import mobac.ts_util.Main;
+import mobac.ts_util.ParamTests;
+
+public class Purge implements Runnable {
+
+	final File databaseDir;
+
+	public Purge(String databaseDir) {
+		this.databaseDir = new File(databaseDir);
+		if (!ParamTests.testBerkelyDbDir(this.databaseDir))
+			throw new InvalidParameterException();
+	}
+
+	public void run() {
+		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
+		TileDatabase tileDatabase = null;
+		try {
+			tileDatabase = tileStore.new TileDatabase("Source", databaseDir);
+			Main.log.info("Database purge initiated");
+			tileDatabase.purge();
+			Main.log.info("Database purge completed");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			tileDatabase.close(false);
+		}
+	}
+
+}
