@@ -10,27 +10,24 @@ import mobac.ts_util.ParamTests;
 
 public class Purge implements Runnable {
 
-	final File databaseDir;
+    private final File databaseDir;
 
-	public Purge(String databaseDir) {
-		this.databaseDir = new File(databaseDir);
-		if (!ParamTests.testBerkelyDbDir(this.databaseDir))
-			throw new InvalidParameterException();
-	}
+    public Purge(String databaseDir) {
+        this.databaseDir = new File(databaseDir);
+        if (!ParamTests.testBerkelyDbDir(this.databaseDir)) {
+            throw new InvalidParameterException();
+        }
+    }
 
-	public void run() {
-		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
-		TileDatabase tileDatabase = null;
-		try {
-			tileDatabase = tileStore.new TileDatabase("Source", databaseDir);
-			Main.log.info("Database purge initiated");
-			tileDatabase.purge();
-			Main.log.info("Database purge completed");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			tileDatabase.close(false);
-		}
-	}
+    public void run() {
+        BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
+        try (TileDatabase db = tileStore.new TileDatabase("Source", databaseDir)) {
+            Main.log.info("Database purge initiated");
+            db.purge();
+            Main.log.info("Database purge completed");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
