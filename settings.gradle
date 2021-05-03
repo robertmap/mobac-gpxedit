@@ -8,4 +8,5 @@ include 'mappacks:region_europe_east'
 include 'mappacks:region_oceania'
 include 'mobac-run'
 include 'mapevaluator'
+include 'tilestore-util'
 

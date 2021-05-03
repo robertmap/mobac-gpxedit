@@ -1,0 +1,10 @@
+plugins {
+    id 'java'
+}
+dependencies {
+    implementation project(':mobac')
+}
+
+test {
+    useJUnitPlatform()
+}
