@@ -99,10 +99,10 @@ public class GeoPackage extends AbstractSQLite {
 			throws IOException, AtlasTestException, InterruptedException {
 		super.startAtlasCreation(atlas, customAtlasDir);
 		Utilities.mkDir(atlasDir);
-		minLat = Double.MAX_VALUE;
-		minLon = Double.MAX_VALUE;
-		maxLat = Double.MIN_VALUE;
-		maxLon = Double.MIN_VALUE;
+		minLat = Double.POSITIVE_INFINITY;
+		minLon = Double.POSITIVE_INFINITY;
+		maxLat = Double.NEGATIVE_INFINITY;
+		maxLon = Double.NEGATIVE_INFINITY;
 	}
 
 	@Override

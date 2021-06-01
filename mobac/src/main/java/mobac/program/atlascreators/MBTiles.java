@@ -116,10 +116,10 @@ public class MBTiles extends RMapsSQLite {
 			stat.executeUpdate(TABLE_METADATA);
 			stat.executeUpdate(INDEX_METADATA);
 		}
-		boundsLatMin = Double.MAX_VALUE;
-		boundsLatMax = Double.MIN_VALUE;
-		boundsLonMin = Double.MAX_VALUE;
-		boundsLonMax = Double.MIN_VALUE;
+		boundsLatMin = Double.POSITIVE_INFINITY;
+		boundsLatMax = Double.NEGATIVE_INFINITY;
+		boundsLonMin = Double.POSITIVE_INFINITY;
+		boundsLonMax = Double.NEGATIVE_INFINITY;
 	}
 
 	@Override

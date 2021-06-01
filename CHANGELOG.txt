@@ -19,6 +19,7 @@
  - Non-working maps "OSMapa-Topo..." removed
  - Non-working map "FAA Sectional Charts" removed
  - Non-working map "MoldovaPointMd" removed
+ ! Fixed bounds calculation for negative lat/lon values (MBTiles & GeoPackage)
 
 2.2.0 (2021-04-10)
  ! MOBAC build system changed to Gradle
