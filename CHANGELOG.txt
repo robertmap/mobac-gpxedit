@@ -11,7 +11,7 @@
 
 =======
 
-2.2.1 (2021-??-??)
+2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
  ! "OsmAnd tile storage" atlas format: fixed file name scheme of generated
      map tiles to "YYYYYYpng.tile" (#356)
@@ -19,7 +19,8 @@
  - Non-working maps "OSMapa-Topo..." removed
  - Non-working map "FAA Sectional Charts" removed
  - Non-working map "MoldovaPointMd" removed
- ! Fixed bounds calculation for negative lat/lon values (MBTiles & GeoPackage)
+ ! Fixed bounds calculation for negative lat/lon values for MBTiles and
+    GeoPackage maps (#358)
 
 2.2.0 (2021-04-10)
  ! MOBAC build system changed to Gradle

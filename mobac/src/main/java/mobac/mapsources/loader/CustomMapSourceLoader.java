@@ -83,7 +83,7 @@ public class CustomMapSourceLoader {
         }
     }
 
-    public List<File> getCustomMapSourceFiles() {
+    public List<File> getMapSourceFiles() {
         List<File> customMapSourceFiles = Utilities.traverseFolder(mapSourcesDir, new DirOrFileExtFilter(".xml"));
         /*
          * It is important to sort the files to be loaded, otherwise the order would be random which makes it difficult
@@ -103,7 +103,7 @@ public class CustomMapSourceLoader {
 
     public void loadCustomMapSources() {
 
-        for (File f : getCustomMapSourceFiles()) {
+        for (File f : getMapSourceFiles()) {
             try {
                 MapSource customMapSource = loadCustomMapSource(f);
                 if (customMapSource == null) {
