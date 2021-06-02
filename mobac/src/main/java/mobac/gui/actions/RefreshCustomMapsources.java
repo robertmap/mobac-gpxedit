@@ -16,6 +16,24 @@
  ******************************************************************************/
 package mobac.gui.actions;
 
+import jakarta.xml.bind.JAXBException;
+import mobac.exceptions.MapSourceCreateException;
+import mobac.exceptions.MapSourceInitializationException;
+import mobac.gui.MainGUI;
+import mobac.mapsources.MapSourcesManager;
+import mobac.mapsources.loader.CustomMapSourceLoader;
+import mobac.program.interfaces.FileBasedMapSource;
+import mobac.program.interfaces.MapSource;
+import mobac.program.model.MapSourceLoaderInfo;
+import mobac.program.model.MapSourceLoaderInfo.LoaderType;
+import mobac.program.model.Settings;
+import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,28 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-
-import jakarta.xml.bind.JAXBException;
-
-import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
-
-import mobac.exceptions.MapSourceCreateException;
-import mobac.exceptions.MapSourceInitializationException;
-import mobac.gui.MainGUI;
-import mobac.mapsources.MapSourcesManager;
-import mobac.mapsources.loader.CustomMapSourceLoader;
-import mobac.program.interfaces.FileBasedMapSource;
-import mobac.program.interfaces.MapSource;
-import mobac.program.model.Settings;
 
 public class RefreshCustomMapsources implements ActionListener {
 
@@ -76,12 +73,18 @@ public class RefreshCustomMapsources implements ActionListener {
 
         for (final MapSource mapSource : manager.getAllAvailableMapSources()) {
             String relPath = "";
-            if (mapSource.getLoaderInfo() != null && mapSource.getLoaderInfo().getSourceFile() != null) {
-                relPath = mapSourcesDirPath.relativize(mapSource.getLoaderInfo().getSourceFile().toPath()).toString();
+            if (mapSource.getLoaderInfo() != null) {
+                MapSourceLoaderInfo loaderInfo = mapSource.getLoaderInfo();
+                if (loaderInfo.getLoaderType() == LoaderType.MAPPACK) {
+                    continue; // skip map sources from map packs
+                }
+                if (loaderInfo.getSourceFile() != null) {
+                    relPath = mapSourcesDirPath.relativize(loaderInfo.getSourceFile().toPath()).toString();
+                }
             }
             try {
                 boolean reloaded = false;
-                boolean datarefreshed = false;
+                boolean dataRefreshed = false;
                 try {
                     reloaded = cmsl.reloadCustomMapSource(mapSource);
                 } catch (MapSourceCreateException | JAXBException | IOException | SAXException
@@ -91,9 +94,9 @@ public class RefreshCustomMapsources implements ActionListener {
                 if (mapSource instanceof FileBasedMapSource) {
                     FileBasedMapSource fbms = (FileBasedMapSource) mapSource;
                     fbms.reinitialize();
-                    datarefreshed = true;
+                    dataRefreshed = true;
                 }
-                if (reloaded || datarefreshed) {
+                if (reloaded || dataRefreshed) {
                     count++;
                     if (mapSource.equals(selectedMapSource)) {
                         updateGui = true;
@@ -103,7 +106,7 @@ public class RefreshCustomMapsources implements ActionListener {
                 if (reloaded) {
                     status = "reloaded";
                 }
-                if (datarefreshed) {
+                if (dataRefreshed) {
                     if (status.length() > 0) {
                         status += " & ";
                     }
