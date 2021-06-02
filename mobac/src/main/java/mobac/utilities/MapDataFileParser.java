@@ -89,10 +89,10 @@ public class MapDataFileParser {
 		}
 		System.out.println("File version: " + fileVersion);
 		// System.out.println("Callibration / map border points:");
-		double lat_max = Double.MIN_VALUE;
-		double lon_max = Double.MIN_VALUE;
-		double lat_min = Double.MAX_VALUE;
-		double lon_min = Double.MAX_VALUE;
+		double lat_max = Double.NEGATIVE_INFINITY;
+		double lon_max = Double.NEGATIVE_INFINITY;
+		double lat_min = Double.POSITIVE_INFINITY;
+		double lon_min = Double.POSITIVE_INFINITY;
 		for (MapPoint p : mapPoints) {
 			// System.out.println("\t" + p);
 			lat_max = Math.max(lat_max, p.lat);
