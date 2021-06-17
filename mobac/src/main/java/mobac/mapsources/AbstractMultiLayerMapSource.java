@@ -122,11 +122,11 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
 
     public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, InterruptedException,
             TileException {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
         BufferedImage image = getTileImage(zoom, x, y, loadMethod);
         if (image == null) {
             return null;
         }
+        ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
         ImageIO.write(image, tileType.getFileExt(), buf);
         return buf.toByteArray();
     }
