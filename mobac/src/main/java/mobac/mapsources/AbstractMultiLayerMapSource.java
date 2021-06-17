@@ -149,7 +149,7 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
 				}
 			}
 
-			image = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_3BYTE_BGR);
+			image = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_4BYTE_ABGR);
 			g2 = image.createGraphics();
 			g2.setColor(getBackgroundColor());
 			g2.fillRect(0, 0, maxSize, maxSize);

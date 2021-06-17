@@ -11,6 +11,9 @@
 
 =======
 
+2.2.2 (2021-??-??)
+ ~ Allow transparent background on CustomMultiLayerMap (#359)
+
 2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
  ! "OsmAnd tile storage" atlas format: fixed file name scheme of generated
