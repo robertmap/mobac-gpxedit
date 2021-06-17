@@ -60,6 +60,9 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
         this.tileType = tileImageType;
     }
 
+    protected AbstractMultiLayerMapSource() {
+    }
+
     protected void initializeValues() {
         MapSource refMapSource = mapSources[0];
         mapSpace = refMapSource.getMapSpace();
