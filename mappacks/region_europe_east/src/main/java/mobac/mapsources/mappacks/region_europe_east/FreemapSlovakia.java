@@ -27,12 +27,17 @@ import mobac.program.model.TileImageType;
  */
 public class FreemapSlovakia extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
+    private static final String[] SERVERS = {"a", "b", "c", "d"};
+    private static int SERVER_NUM = 0;
+
     public FreemapSlovakia() {
         super("FreemapSlovakia", 5, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
     }
 
     public String getTileUrl(int zoom, int tilex, int tiley) {
-        return "https://a.freemap.sk/data/layers/presets/A/" + zoom + "/" + tilex + "/" + tiley + ".png";
+        String server = SERVERS[SERVER_NUM];
+        SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
+        return String.format("https://%s.freemap.sk/A/%d/%d/%d.png", server, zoom, tilex, tiley);
     }
 
     @Override
