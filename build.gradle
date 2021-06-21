@@ -1,6 +1,11 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
 plugins {
     id 'distribution'
     id "at.bxm.svntools" version "2.2.1"
+    id 'org.gradle.crypto.checksum' version '1.1.0'
 }
 
 group 'mobac.sourceforge.io'
@@ -46,7 +51,7 @@ task distArchive(type: Zip, dependsOn: ['mobac:createExe', 'mappacks:openstreetm
         include "world.map"
         into "/"
     }
-    from (project(':mappacks').subprojects.collect { it.tasks.withType(Jar) }) {
+    from(project(':mappacks').subprojects.collect { it.tasks.withType(Jar) }) {
         into "/mapsources/"
     }
     from("mapevaluator/build/libs") {
@@ -96,4 +101,30 @@ task distSrcArchive(type: Zip) {
 }
 task dist {
     dependsOn(distArchive, distSrcArchive)
+}
+
+/**
+ * Generate MD5 file for map packs online update. This task is irreelvant for regular MOBAC users/developers
+ */
+task mappacksMd5 {
+    var mapPackDir = "${project.projectDir}/mappacks"
+    var writer = new StringWriter()
+    var updDir = project.file('mapsources-updates').toPath()
+    delete updDir
+    Files.createDirectories(updDir);
+    fileTree("$mapPackDir").matching {
+        include "**/build/libs/mp-*.jar"
+    }.each {
+        // do some operations
+        var p = it.toPath()
+        var dest = updDir.resolve(it.getName())
+        Files.copy(p, dest, StandardCopyOption.REPLACE_EXISTING)
+        println(dest)
+
+        var bytes = Files.readAllBytes(dest)
+        var md5 = MessageDigest.getInstance("MD5").digest(bytes).encodeHex().toString()
+        writer.append(String.format("%s %s\n", md5, it.name))
+    }
+    println(writer.toString())
+    Files.writeString(updDir.resolve("mappacks-md5.txt"), writer.toString())
 }
