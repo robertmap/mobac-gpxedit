@@ -22,14 +22,11 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 public class BooleanAdapter extends XmlAdapter<String, Boolean> {
     @Override
     public Boolean unmarshal(String v) throws Exception {
-        if (v != null) {
-            v = v.trim();
-            if ("true".equals(v)) {
-                return true;
-            }
-            if ("false".equals(v)) {
-                return false;
-            }
+        if ("true".equals(v)) {
+            return true;
+        }
+        if ("false".equals(v)) {
+            return false;
         }
         throw new UnmarshalException("Invalid boolean value: \"" + v +
                 "\" - allowed is \"true\" or \"false\"");
