@@ -14,6 +14,8 @@
 2.2.2 (2021-??-??)
  ~ Allow transparent background on CustomMultiLayerMap (#359)
  ! FreemapSlovakia maps updated
+ ~ Boolean fields in custom map sources that can be true or false now only
+     accept one of those values
 
 2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException

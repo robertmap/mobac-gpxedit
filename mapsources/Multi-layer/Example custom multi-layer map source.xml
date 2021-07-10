@@ -26,9 +26,6 @@ top of the OSM Mapnik layer.
             <tileUpdate>None</tileUpdate>
             <url>http://tile.openstreetmap.org/{$z}/{$x}/{$y}.png</url>
             
-            <!-- Optional: IgnoreErrors - change to true for maps where only some tiles exist -->
-            <ignoreErrors>false</ignoreErrors>
-            
         </customMapSource>
         <customMapSource>
             <name>Custom transparent hillshade</name>
@@ -36,6 +33,9 @@ top of the OSM Mapnik layer.
             <maxZoom>18</maxZoom>
             <tileUpdate>None</tileUpdate>
             <url>http://www.wanderreitkarte.de/hills/{$z}/{$x}/{$y}.png</url>
+
+            <!-- Optional: IgnoreErrors - change to true for maps where only some tiles exist -->
+            <ignoreErrors>false</ignoreErrors>
         </customMapSource>
         <!--
         Also possible: Custom atlas as map source / locally generated tiles (see README.HTM) 
