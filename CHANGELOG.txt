@@ -17,6 +17,8 @@
  ~ Boolean fields in custom map sources that can be true or false now only
      accept one of those values
  + BSH Tools method "alert" added
+ ! BSH map sources did not correctly apply ignoreError=true setting in
+     multi-layer maps and other occasions
 
 2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException

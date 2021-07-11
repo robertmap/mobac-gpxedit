@@ -16,39 +16,31 @@
  ******************************************************************************/
 package mobac.mapsources.custom;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.net.ssl.SSLSocketFactory;
-
 import bsh.EvalError;
 import bsh.Interpreter;
 import jakarta.xml.bind.UnmarshalException;
-import mobac.exceptions.MapSourceInitializationException;
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.MobacSSLHelper;
-import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSpace;
-import mobac.program.interfaces.ReloadableMapSource;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
 import org.apache.commons.io.FileUtils;
+
+import javax.net.ssl.SSLSocketFactory;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
 
 public class BeanShellHttpMapSource extends AbstractHttpMapSource {
 
@@ -195,9 +187,20 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
     }
 
     @Override
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
-            InterruptedException {
+    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException, InterruptedException {
+        try {
+            return super.getTileImage(zoom, x, y, loadMethod);
+        } catch (Exception e) {
+            if (ignoreError) {
+                log.error("Ignored error: " + e);
+                return null;
+            }
+            throw e;
+        }
+    }
 
+    @Override
+    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException, InterruptedException {
         try {
             return super.getTileData(zoom, x, y, loadMethod);
         } catch (Exception e) {
