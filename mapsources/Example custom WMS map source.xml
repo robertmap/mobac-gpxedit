@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <customWmsMapSource>
   <!-- Map source name as it appears in the map sources list.  Additionally used for the tile store name --> 
-  <name>USGS EROS Ortho WMS</name>
+  <name>USGS ImageryTopo WMS</name>
 
   <minZoom>0</minZoom>
   <maxZoom>22</maxZoom>
@@ -16,7 +16,7 @@
   <layers>0</layers>
 
   <!-- WMS base URL -->
-  <url>http://isse.cr.usgs.gov/arcgis/services/Orthoimagery/USGS_EROS_Ortho/ImageServer/WMSServer?</url>
+  <url>https://basemap.nationalmap.gov:443/arcgis/services/USGSImageryTopo/MapServer/WmsServer?</url>
 
   <!-- Currently only EPSG:4326 is supported --> 
   <coordinatesystem>EPSG:4326</coordinatesystem>
