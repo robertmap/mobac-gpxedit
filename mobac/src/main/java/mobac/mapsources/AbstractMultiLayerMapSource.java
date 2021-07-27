@@ -139,9 +139,9 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
             int maxSize = mapSpace.getTileSize();
             for (MapSource layerMapSource : mapSources) {
                 BufferedImage layerImage = layerMapSource.getTileImage(zoom, x, y, loadMethod);
+                layerImages.add(layerImage);
                 if (layerImage != null) {
-                    log.debug("Multi layer loading: " + layerMapSource + " " + x + " " + y + " " + zoom);
-                    layerImages.add(layerImage);
+                    log.debug("Multi layer image loaded: " + layerMapSource + " " + x + " " + y + " " + zoom);
                     int size = layerImage.getWidth();
                     if (size > maxSize) {
                         maxSize = size;
@@ -156,8 +156,11 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
 
             for (int i = 0; i < layerImages.size(); i++) {
                 BufferedImage layerImage = layerImages.get(i);
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getLayerAlpha(i)));
-                g2.drawImage(layerImage, 0, 0, maxSize, maxSize, null);
+                if (layerImage != null) {
+                    float alpha = getLayerAlpha(i);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+                    g2.drawImage(layerImage, 0, 0, maxSize, maxSize, null);
+                }
             }
             return image;
         } finally {

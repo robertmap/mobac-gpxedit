@@ -19,6 +19,8 @@
  + BSH Tools method "alert" added
  ! BSH map sources did not correctly apply ignoreError=true setting in
      multi-layer maps and other occasions
+ ! Custom multi-layer XML map source: fixed a minor problem with mapping
+     alpha values to layers in case not all layers return an image
 
 2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
