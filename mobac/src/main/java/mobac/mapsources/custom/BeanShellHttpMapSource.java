@@ -19,6 +19,7 @@ package mobac.mapsources.custom;
 import bsh.EvalError;
 import bsh.Interpreter;
 import jakarta.xml.bind.UnmarshalException;
+import mobac.exceptions.MapSourceInitializationException;
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.AbstractHttpMapSource;
@@ -26,6 +27,7 @@ import mobac.mapsources.mapspace.MapSpaceFactory;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.MobacSSLHelper;
 import mobac.program.interfaces.MapSpace;
+import mobac.program.interfaces.ReloadableMapSource;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
 import org.apache.commons.io.FileUtils;
@@ -42,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-public class BeanShellHttpMapSource extends AbstractHttpMapSource {
+public class BeanShellHttpMapSource extends AbstractHttpMapSource implements ReloadableMapSource<BeanShellHttpMapSource> {
 
     private static final String AH_ERROR = "Sourced file: inline evaluation of: "
             + "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
@@ -50,6 +52,8 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
     private static int NUM = 0;
 
     private final String bshMapName;
+
+    private String code;
 
     private Interpreter interpreter;
 
@@ -70,6 +74,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
     public BeanShellHttpMapSource(String code, String bshMapName) throws EvalError {
         super("", 0, 0, TileImageType.PNG, TileUpdate.None);
         this.bshMapName = bshMapName;
+        this.code = code;
         name = "BeanShell map source " + NUM++;
         prepareInterpreter(code);
     }
@@ -226,6 +231,19 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
     }
 
     @Override
+    public void applyChangesFrom(BeanShellHttpMapSource reloadedMapSource) throws MapSourceInitializationException {
+        if (!name.equals(reloadedMapSource.getName())) {
+            throw new MapSourceInitializationException("The map name has changed");
+        }
+        this.code = reloadedMapSource.code;
+        try {
+            prepareInterpreter(code);
+        } catch (EvalError e) {
+            throw new MapSourceInitializationException(e);
+        }
+    }
+
+    @Override
     public MapSpace getMapSpace() {
         return mapSpace;
     }
@@ -261,5 +279,6 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource {
     public Color getBackgroundColor() {
         return backgroundColor;
     }
+
 
 }
