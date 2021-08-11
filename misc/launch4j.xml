@@ -8,7 +8,7 @@
   <cmdLine></cmdLine>
   <chdir></chdir>
   <priority>normal</priority>
-  <downloadUrl>https://adoptopenjdk.net/installation.html?variant=openjdk11&amp;jvmVariant=hotspot#x64_win-jre</downloadUrl>
+  <downloadUrl>https://mobac.sourceforge.io/OpenJDK/</downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
