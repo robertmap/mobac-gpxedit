@@ -16,6 +16,8 @@
  ******************************************************************************/
 package mobac.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -40,6 +42,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
@@ -74,7 +77,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 	private JProgressBar mapDownloadProgressBar;
 	private JProgressBar mapCreationProgressBar;
 
-	private Container background;
+	private JPanel background;
 
 	private long initialTotalTime;
 	private long initialMapDownloadTime;
@@ -164,7 +167,6 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		setIconImages(MainGUI.MOBAC_ICONS);
-		setLayout(new GridBagLayout());
 		updateTask = new UpdateTask();
 		guiUpdater = new GUIUpdater();
 
@@ -310,11 +312,12 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		bottomPanel.add(openProgramFolderButton, gbcRight);
 
 		background.add(bottomPanel, gbcEolFillI);
+		background.add(Box.createVerticalStrut(10), gbcEol);
+		background.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		JPanel borderPanel = new JPanel(new GridBagLayout());
-		borderPanel.add(background, GBC.std().insets(10, 10, 10, 10).anchor(GBC.NORTH).fill());
-
-		add(borderPanel, GBC.std().fill().anchor(GBC.NORTH));
+		Container contentPanel = getContentPane();
+		contentPanel.setLayout(new BorderLayout());
+		contentPanel.add(background, BorderLayout.NORTH);
 
 		abortAtlasCreationButton.addActionListener(this);
 		dismissWindowButton.addActionListener(this);
@@ -501,7 +504,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		return downloadControlListener;
 	}
 
-	public void setDownloadControlerListener(AtlasCreationController threadControlListener) {
+	public void setDownloadControllerListener(AtlasCreationController threadControlListener) {
 		this.downloadControlListener = threadControlListener;
 	}
 

@@ -124,7 +124,7 @@ public class AtlasThread extends Thread
 		log.info("Starting creation of " + atlas.getOutputFormat() + " atlas \"" + atlas.getName() + "\"");
 		if (customAtlasDir != null)
 			log.debug("Target directory: " + customAtlasDir);
-		ap.setDownloadControlerListener(this);
+		ap.setDownloadControllerListener(this);
 		try {
 			createAtlas();
 			log.info("Altas creation finished");
