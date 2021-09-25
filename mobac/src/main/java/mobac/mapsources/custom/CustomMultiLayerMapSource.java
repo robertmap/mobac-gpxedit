@@ -102,36 +102,4 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource {
 
 		return layersAlpha.get(layerIndex);
 	}
-
-	// public static void main(String[] args) {
-	// OutputStream os = null;
-	// try {
-	// JAXBContext context = JAXBContext.newInstance(new Class[] { CustomMultiLayerMapSource.class,
-	// CustomMapSource.class });
-	//
-	// Marshaller marshaller = context.createMarshaller();
-	// marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-	// CustomMultiLayerMapSource ms = new CustomMultiLayerMapSource();
-	// os = new FileOutputStream(new File("mapsources/Custom multi-layer map source.xml"));
-	// marshaller.marshal(ms, os);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// Utilities.closeStream(os);
-	// }
-	// }
-	// public static void main(String[] args) {
-	// try {
-	// JAXBContext context = JAXBContext.newInstance(new Class[] { CustomMultiLayerMapSource.class,
-	// CustomMapSource.class });
-	//
-	// Unmarshaller unmarshaller = context.createUnmarshaller();
-	// CustomMultiLayerMapSource ms = (CustomMultiLayerMapSource) unmarshaller.unmarshal(new
-	// File("mapsources/Example custom multi-layer map source.xml"));
-	// System.out.println(ms);
-	// System.out.println(ms.layers);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
 }

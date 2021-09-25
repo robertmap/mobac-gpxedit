@@ -12,6 +12,7 @@
 =======
 
 2.2.2 (2021-??-??)
+ - Dropped support for Java 8 - Java 11+ is now required
  ~ Allow transparent background on CustomMultiLayerMap (#359)
  ! FreemapSlovakia maps updated
  ~ Boolean fields in custom map sources that can be true or false now only

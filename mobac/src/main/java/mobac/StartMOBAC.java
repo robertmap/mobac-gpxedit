@@ -64,8 +64,9 @@ public class StartMOBAC {
 
 	protected static void checkVersion() {
 		String ver = System.getProperty("java.specification.version");
-		if (ver == null)
+		if (ver == null) {
 			ver = "Unknown";
+		}
 		String[] v = ver.split("\\.");
 		int major = 0;
 		int minor = 0;
@@ -77,10 +78,10 @@ public class StartMOBAC {
 		int version = (major * 1000) + minor;
 		// 1.5 -> 1005; 1.6 -> 1006; 1.7 -> 1007; 1.8 -> 1008
 		// 11 -> 11000; 12 -> 12000
-		if (version < 1008) {
+		if (version < 11000) {
 			JOptionPane.showMessageDialog(null,
 					"The used Java Runtime Environment does not meet the minimum requirements.\n\n"
-							+ "Mobile Atlas Creator requires at least Java 8 (1.8) or higher.\n"
+							+ "Mobile Atlas Creator requires at least Java 11 or higher.\n"
 							+ "Please update your Java Runtime before starting Mobile Atlas Creator.\n\n"
 							+ "Detected Java Runtime Version: " + ver, "Java Runtime version problem detected",
 					JOptionPane.ERROR_MESSAGE);

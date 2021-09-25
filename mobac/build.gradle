@@ -83,7 +83,7 @@ launch4j {
     companyName = ""
     icon = "${projectDir}/launch4j/mobac.ico"
     downloadUrl = "https://mobac.sourceforge.io/AdoptOpenJDK/"
-    jreMinVersion = '1.8.0'
+    jreMinVersion = '1.11.0'
     jreRuntimeBits = "64"
     jvmOptions = ['-XX:+UseG1GC']
     dontWrapJar = "true"
