@@ -161,7 +161,11 @@ public class Utilities {
         BufferedImage emptyImage = createEmptyTileImage(mapSource);
         ByteArrayOutputStream buf = new ByteArrayOutputStream(4096);
         try {
-            ImageIO.write(emptyImage, mapSource.getTileImageType().getFileExt(), buf);
+            TileImageType tileImageType = mapSource.getTileImageType();
+            if (!ImageIO.write(emptyImage, tileImageType.getFileExt(), buf)) {
+                throw new IOException(String.format("Failed to create empty tile of type %s", tileImageType.getFileExt()));
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -162,9 +162,13 @@ public class CustomLocalImageFileMapSource
             throws IOException, TileException, InterruptedException {
         ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
         BufferedImage image = getTileImage(zoom, x, y, loadMethod);
-        if (image == null)
+        if (image == null) {
             return null;
-        ImageIO.write(image, tileImageType.getFileExt(), buf);
+        }
+        if (!ImageIO.write(image, tileImageType.getFileExt(), buf)) {
+            throw new IOException(String.format("Failed to write image %d/%d/z%d type %s", x, y, zoom,
+                    tileImageType.getFileExt()));
+        }
         return buf.toByteArray();
     }
 
