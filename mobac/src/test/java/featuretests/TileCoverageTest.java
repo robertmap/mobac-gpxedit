@@ -19,6 +19,7 @@ package featuretests;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -47,7 +48,9 @@ public class TileCoverageTest {
 				BufferedImage image = tileStore.getCacheCoverage(
 						MapSourcesManager.getInstance().getSourceByName("Google Maps"), zoom, new Point(80, 85),
 						new Point(1 << zoom, 1 << zoom));
-				ImageIO.write(image, "png", new File("test.png"));
+				if (!ImageIO.write(image, "png", new File("test.png"))) {
+					throw new IOException("ImageIO failed");
+				}
 				JFrame f = new JFrame("Example");
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				f.getContentPane().add(
