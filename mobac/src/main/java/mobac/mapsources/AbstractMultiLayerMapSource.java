@@ -50,9 +50,9 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
     protected TileImageType tileType = TileImageType.PNG;
     protected MapSource[] mapSources;
 
-    private int maxZoom;
-    private int minZoom;
-    private MapSpace mapSpace;
+    protected int maxZoom;
+    protected int minZoom;
+    protected MapSpace mapSpace;
     protected MapSourceLoaderInfo loaderInfo = null;
 
     public AbstractMultiLayerMapSource(String name, TileImageType tileImageType) {
@@ -127,7 +127,9 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
             return null;
         }
         ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-        ImageIO.write(image, tileType.getFileExt(), buf);
+        if (!ImageIO.write(image, tileType.getFileExt(), buf)) {
+            throw new IOException(String.format("Failed to write image %d/%d/z%d type %s", x, y, zoom, tileType.getFileExt()));
+        }
         return buf.toByteArray();
     }
 
@@ -148,8 +150,15 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
                     }
                 }
             }
-
-            BufferedImage image = new BufferedImage(maxSize, maxSize, BufferedImage.TYPE_4BYTE_ABGR);
+            int type;
+            if (tileType == TileImageType.PNG || tileType == TileImageType.GIF) {
+                // PNG supports alpha transparency
+                // GIF supports simple transparency - does not cause problems
+                type = BufferedImage.TYPE_4BYTE_ABGR;
+            } else {
+                type = BufferedImage.TYPE_3BYTE_BGR;
+            }
+            BufferedImage image = new BufferedImage(maxSize, maxSize, type);
             g2 = image.createGraphics();
             g2.setColor(getBackgroundColor());
             g2.fillRect(0, 0, maxSize, maxSize);
