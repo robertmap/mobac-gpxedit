@@ -12,19 +12,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 import jakarta.xml.bind.JAXBException;
-
 import mobac.data.gpx.GPXUtils;
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.gui.MainGUI;
@@ -33,6 +25,12 @@ import mobac.gui.panels.JGpxPanel;
 import mobac.program.model.Settings;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.file.GpxFileFilter;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 
 public class GpxSave implements ActionListener {

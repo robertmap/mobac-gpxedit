@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources;
 
@@ -29,7 +29,6 @@ import mobac.program.interfaces.RefreshableMapSource;
 import mobac.program.model.Atlas;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
-import org.apache.log4j.Logger;
 import org.mapsforge.core.graphics.Bitmap;
 import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.core.graphics.TileBitmap;
@@ -54,6 +53,8 @@ import org.mapsforge.map.rendertheme.XmlRenderThemeMenuCallback;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
 import org.mapsforge.map.rendertheme.rule.RenderThemeFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -69,14 +70,11 @@ import java.util.Set;
 
 public class MapsforgeMapSource implements MapSource, FileBasedMapSource, RefreshableMapSource, CloneableMapSource {
 
-    private static final Logger LOG = Logger.getLogger(MapsforgeMapSource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MapsforgeMapSource.class);
 
     private static final String name = "MapsforgeWorld";
 
     protected MapSourceLoaderInfo loaderInfo = null;
-
-    private MapSpace mapSpace = MercatorPower2MapSpace.INSTANCE_256;
-
     protected List<File> mapFileList = new ArrayList<>();
     protected DatabaseRenderer renderer;
     protected XmlRenderTheme xmlRenderTheme;
@@ -85,16 +83,13 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
     protected MultiMapDataStore multiMapDataStore;
     protected RenderThemeFuture renderThemeFuture;
     protected XmlRenderThemeStyleMenu renderThemeStyleMenu;
-
     protected MapsForgeCache labelInfoCache = new MapsForgeCache();
-
     protected TileBasedLabelStore tileBasedLabelStore = new MyTileBasedLabelStore(1000);
-
     @XmlElement(defaultValue = "false")
     protected boolean transparent = false;
-
     @XmlElement(defaultValue = "1.0")
     protected float textScale = 1.0f;
+    private MapSpace mapSpace = MercatorPower2MapSpace.INSTANCE_256;
 
     public MapsforgeMapSource() {
         this("world.map");
@@ -238,13 +233,13 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
         return AwtGraphicFactory.getBitmap(tileBitmap);
     }
 
+    public float getUserScaleFactor() {
+        return displayModel.getUserScaleFactor();
+    }
+
     @XmlElement
     public void setUserScaleFactor(float scaleFactor) {
         displayModel.setUserScaleFactor(scaleFactor);
-    }
-
-    public float getUserScaleFactor() {
-        return displayModel.getUserScaleFactor();
     }
 
     public TileImageType getTileImageType() {

@@ -28,34 +28,33 @@ import java.io.InputStream;
  */
 public class ThrottledInputStream extends FilterInputStream {
 
-	// --- Data Field(s) ---
+    // --- Data Field(s) ---
 
-	private static ThrottleSupport ts = new ThrottleSupport();
-	private int unused = 0;
+    private static ThrottleSupport ts = new ThrottleSupport();
+    private int unused = 0;
 
-	// --- Constructor(s) ---
+    // --- Constructor(s) ---
 
-	/**
-	 * @param in
-	 *            {@link InputStream} with implemented/working {@link InputStream#available()} method.
-	 */
-	public ThrottledInputStream(InputStream in) {
-		super(in);
-	}
+    /**
+     * @param in {@link InputStream} with implemented/working {@link InputStream#available()} method.
+     */
+    public ThrottledInputStream(InputStream in) {
+        super(in);
+    }
 
-	// --- Method(s) ---
+    // --- Method(s) ---
 
-	public static void setBandwidth(long newValue) {
-		ts.setBandwidth(newValue);
-	}
+    public static void setBandwidth(long newValue) {
+        ts.setBandwidth(newValue);
+    }
 
-	public int read(byte[] b, int off, int len) throws IOException {
-		int allowedlen = ts.allocate(len);
-		if (allowedlen < len) {
-			allowedlen = Math.min(allowedlen + unused, len);
-		}
-		int read = in.read(b, off, allowedlen);
-		unused = len - read;
-		return read;
-	}
+    public int read(byte[] b, int off, int len) throws IOException {
+        int allowedlen = ts.allocate(len);
+        if (allowedlen < len) {
+            allowedlen = Math.min(allowedlen + unused, len);
+        }
+        int read = in.read(b, off, allowedlen);
+        unused = len - read;
+        return read;
+    }
 }

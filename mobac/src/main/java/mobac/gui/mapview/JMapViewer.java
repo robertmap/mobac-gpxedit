@@ -12,12 +12,32 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.mapview;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
+import mobac.gui.mapview.interfaces.MapLayer;
+import mobac.gui.mapview.interfaces.MapTileLayer;
+import mobac.gui.mapview.interfaces.TileLoaderListener;
+import mobac.gui.mapview.layer.DefaultMapTileLayer;
+import mobac.gui.mapview.layer.MapGridLayer;
+import mobac.program.interfaces.MapSource;
+import mobac.program.interfaces.MapSourceInitialDisplayPosition;
+import mobac.program.interfaces.MapSpace;
+import mobac.utilities.I18nUtils;
+import mobac.utilities.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,27 +52,6 @@ import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.apache.log4j.Logger;
-
-import mobac.gui.mapview.interfaces.MapLayer;
-import mobac.gui.mapview.interfaces.MapTileLayer;
-import mobac.gui.mapview.interfaces.TileLoaderListener;
-import mobac.gui.mapview.layer.DefaultMapTileLayer;
-import mobac.gui.mapview.layer.MapGridLayer;
-import mobac.program.interfaces.MapSource;
-import mobac.program.interfaces.MapSourceInitialDisplayPosition;
-import mobac.program.interfaces.MapSpace;
-import mobac.utilities.I18nUtils;
-import mobac.utilities.Utilities;
-
 /**
  * Provides a simple panel that displays pre-rendered map tiles loaded from the OpenStreetMap project.
  *
@@ -60,29 +59,22 @@ import mobac.utilities.Utilities;
  */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
-    private static final long serialVersionUID = 1L;
-
-    private static Logger log = Logger.getLogger(JMapViewer.class);
-
+    public static final int MAX_ZOOM = 22;
+    public static final int MIN_ZOOM = 0;
     /**
      * Vectors for clock-wise tile painting
      */
     protected static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
-
-    public static final int MAX_ZOOM = 22;
-    public static final int MIN_ZOOM = 0;
-
+    private static final long serialVersionUID = 1L;
+    private static Logger log = LoggerFactory.getLogger(JMapViewer.class);
+    public List<MapLayer> mapLayers;
     protected TileLoader tileLoader;
     protected MemoryTileCache tileCache;
     protected MapSource mapSource;
     protected boolean usePlaceHolderTiles = true;
-
     protected boolean mapMarkersVisible;
     protected MapGridLayer mapGridLayer = null;
-
     protected List<MapTileLayer> mapTileLayers;
-    public List<MapLayer> mapLayers;
-
     /**
      * x- and y-position of the center of this map-panel on the world map denoted in screen pixel regarding the current
      * zoom level.
@@ -408,6 +400,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         return zoom;
     }
 
+    public void setZoom(int zoom) {
+        setZoom(zoom, new Point(getWidth() / 2, getHeight() / 2));
+        repaint();
+    }
+
     /**
      * Increases the current zoom level by one
      */
@@ -445,11 +442,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setDisplayPositionByLatLon(mapPoint, zoomPos.x, zoomPos.y, zoom);
     }
 
-    public void setZoom(int zoom) {
-        setZoom(zoom, new Point(getWidth() / 2, getHeight() / 2));
-        repaint();
-    }
-
     /**
      * Every time the zoom level changes this method is called. Override it in derived implementations for adapting zoom
      * dependent values. The new zoom level can be obtained via {@link #getZoom()}.
@@ -485,14 +477,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         return mapMarkersVisible;
     }
 
+    public boolean getZoomContolsVisible() {
+        return zoomSlider.isVisible();
+    }
+
     public void setZoomContolsVisible(boolean visible) {
         zoomSlider.setVisible(visible);
         zoomInButton.setVisible(visible);
         zoomOutButton.setVisible(visible);
-    }
-
-    public boolean getZoomContolsVisible() {
-        return zoomSlider.isVisible();
     }
 
     public MemoryTileCache getTileImageCache() {

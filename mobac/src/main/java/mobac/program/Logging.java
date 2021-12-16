@@ -1,222 +1,197 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.filter.ThresholdFilter;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import mobac.StartMOBAC;
+import mobac.utilities.GUIExceptionHandler;
+import mobac.utilities.OSUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Enumeration;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.logging.Handler;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.xml.DOMConfigurator;
-
-import mobac.StartMOBAC;
-import mobac.utilities.GUIExceptionHandler;
-import mobac.utilities.Juli2Log4jHandler;
-import mobac.utilities.OSUtilities;
 
 public class Logging {
 
-	protected static final String CONFIG_FILENAME = "log4j.xml";
+    public static final Logger LOG = LoggerFactory.getLogger("MAC");
 
-	protected static final String LOG_FILENAME = "Mobile Atlas Creator.log";
+    public static void configureLogging() {
+        // We test for the configuration file, if it exists we use it, otherwise
+        // we keep  simple logging to the console (configured by logback.xml in src/main/resources)
+        if (!loadLog4JConfigXml()) {
+            configureDefaultFileLogging();
+            LOG.info("logback.xml not found - enabling default error log to console");
+        }
+    }
 
-	protected static File CONFIG_FILE = null;
+    public static boolean loadLog4JConfigXml() {
+        if (loadLogbackConfigXmlFromDir(DirectoryManager.mobacUserAppDataDir)) {
+            return true;
+        }
+        if (loadLogbackConfigXmlFromDir(DirectoryManager.userSettingsDir)) {
+            return true;
+        }
+        if (loadLogbackConfigXmlFromDir(DirectoryManager.currentDir)) {
+            return true;
+        }
+        if (loadLogbackConfigXmlFromDir(DirectoryManager.programDir)) {
+            return true;
+        }
+        return false;
+    }
 
-	public static final Logger LOG = Logger.getLogger("MAC");
+    public static void configureDefaultFileLogging() {
+        Path errorLog = DirectoryManager.mobacUserAppDataDir.toPath().resolve("Mobile Atlas Creator.log");
+        createFileLogger(errorLog, Level.INFO);
+    }
 
-	public static final Layout ADVANCED_LAYOUT = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
+    public static boolean loadLogbackConfigXmlFromDir(File dir) {
+        Path logbackXml = dir.toPath().resolve("logback.xml");
+        if (!Files.isRegularFile(logbackXml)) {
+            return false;
+        }
+        return loadLogbackXml(logbackXml);
+    }
 
-	protected static boolean CONFIGURED = false;
+    public static boolean loadLogbackXml(Path logbackXml) {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        JoranConfigurator configurator = new JoranConfigurator();
+        try (InputStream configStream = Files.newInputStream(logbackXml)) {
+            configurator.setContext(loggerContext);
+            loggerContext.reset();
+            configurator.doConfigure(configStream);
+            StatusPrinter.printInCaseOfErrorsOrWarnings(loggerContext);
+            Logger logger = LoggerFactory.getLogger("LogSystem");
+            logger.info("Logging configured by \"{}\"", logbackXml.toAbsolutePath());
+            return true;
+        } catch (IOException | JoranException e) {
+            LOG.error("Failed to load logback configuration file {}", logbackXml.toAbsolutePath(), e);
+        }
+        return false;
+    }
 
-	public static void configureLogging() {
-		// We test for the configuration file, if it exists we use it, otherwise
-		// we perform simple logging to the console
-		if (!loadLog4JConfigXml()) {
-			configureDefaultErrorLogging();
-			Logger logger = Logger.getRootLogger();
-			logger.info("log4j.xml not found - enabling default error log to console");
-		}
-	}
+    private static FileAppender createFileLogger(Path logFile, Level levelFilter) {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        PatternLayoutEncoder patternLayoutEncoder = new PatternLayoutEncoder();
 
-	public static boolean loadLog4JConfigXml() {
-		if (loadLog4JConfigXml(DirectoryManager.userAppDataDir))
-			return true;
-		if (loadLog4JConfigXml(DirectoryManager.userSettingsDir))
-			return true;
-		if (loadLog4JConfigXml(DirectoryManager.currentDir))
-			return true;
-		if (loadLog4JConfigXml(DirectoryManager.programDir))
-			return true;
-		return false;
-	}
+        patternLayoutEncoder.setPattern("%date %-5level %logger %msg%n");
+        patternLayoutEncoder.setContext(loggerContext);
+        patternLayoutEncoder.start();
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender();
+        fileAppender.setFile(logFile.toAbsolutePath().normalize().toString());
+        fileAppender.setEncoder(patternLayoutEncoder);
+        fileAppender.setContext(loggerContext);
+        fileAppender.setAppend(false);
 
-	public static boolean loadLog4JConfigXml(File directory) {
-		File f = new File(directory, CONFIG_FILENAME);
-		if (!f.isFile())
-			return false;
-		try {
-			DOMConfigurator.configure(f.getAbsolutePath());
-		} catch (Exception e) {
-			System.err.println("Error loading log4j config file \"" + f.getAbsolutePath() + "\"");
-			return false;
-		}
-		Logger logger = Logger.getLogger("LogSystem");
-		logger.setLevel(Level.INFO);
-		logger.info("Logging configured by \"" + f.getAbsolutePath() + "\"");
-		CONFIGURED = true;
-		return true;
-	}
+        if (levelFilter != null) {
+            ThresholdFilter filter = new ThresholdFilter();
+            filter.setContext(loggerContext);
+            filter.setLevel(levelFilter.toString());
+            filter.start();
+            fileAppender.addFilter(filter);
+        }
+        fileAppender.start();
 
-	public static void configureDefaultErrorLogging() {
-		Logger.getRootLogger().setLevel(Level.INFO);
-		configureConsoleLogging(Level.TRACE, new SimpleLayout());
-		configureLogFileLogging(Level.TRACE);
-	}
+        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        logger.addAppender(fileAppender);
+        return fileAppender;
+    }
 
-	public static void configureConsoleLogging() {
-		configureConsoleLogging(Level.ERROR, new SimpleLayout());
-	}
+    /**
+     * returns the first configured {@link FileAppender} or <code>null</code>.
+     *
+     * @return
+     */
+    public static String getLogFile() {
+        ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        Iterator<Appender<ILoggingEvent>> it = logger.iteratorForAppenders();
+        while (it.hasNext()) {
+            Appender<ILoggingEvent> appender = it.next();
+            if (appender instanceof FileAppender) {
+                FileAppender fileAppender = (FileAppender) appender;
+                return fileAppender.getFile();
+            }
+        }
+        return null;
+    }
 
-	public static void configureConsoleLogging(Level level) {
-		configureConsoleLogging(level, new SimpleLayout());
-	}
-
-	public static void configureConsoleLogging(Level level, Layout layout) {
-		Logger logger = Logger.getRootLogger();
-		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-		if (level != null)
-			consoleAppender.setThreshold(level);
-		logger.addAppender(consoleAppender);
-		CONFIGURED = true;
-	}
-
-	public static void configureLogFileLogging(Level level) {
-		Logger logger = Logger.getRootLogger();
-		File logFileDir = DirectoryManager.userAppDataDir;
-		String logFilename = new File(logFileDir, LOG_FILENAME).getAbsolutePath();
-		Layout layout = new PatternLayout("%d{ISO8601} %-5p [%t] %c{1}: %m%n");
-		FileAppender fileAppender;
-		try {
-			fileAppender = new FileAppender(layout, logFilename, false);
-			if (level != null)
-				fileAppender.setThreshold(level);
-			logger.addAppender(fileAppender);
-		} catch (Exception e) {
-			Logger log = Logger.getLogger("LogSystem");
-			log.error("", e);
-		}
-	}
-
-	public static void disableLogging() {
-		Logger logger = Logger.getRootLogger();
-		logger.setLevel(Level.OFF);
-	}
-
-	public static void enableJAXBLogging() {
-		java.util.logging.Logger logger;
-		Handler h = new Juli2Log4jHandler();
-		logger = java.util.logging.Logger.getLogger("javax.xml.bind");
-		logger.setLevel(java.util.logging.Level.ALL);
-		logger.addHandler(h);
-		logger = java.util.logging.Logger.getLogger("com.sun.xml.internal.bind");
-		logger.setLevel(java.util.logging.Level.ALL);
-		logger.addHandler(h);
-	}
-
-	public static void logSystemInfo() {
-		Logger log = Logger.getLogger("SysInfo");
-		if (log.isInfoEnabled()) {
-			String n = System.getProperty("line.separator");
-			log.info("Version: " + ProgramInfo.getCompleteTitle());
-			log.info("Platform: " + GUIExceptionHandler.prop("os.name") + " (" + GUIExceptionHandler.prop("os.version")
-					+ ")");
-			log.info("Java VM: " + GUIExceptionHandler.prop("java.vm.name") + " ("
-					+ GUIExceptionHandler.prop("java.runtime.version") + ")");
-			log.info("Available processors: " + Runtime.getRuntime().availableProcessors());
-			log.info("Directories:" /**/
-					+ n + "currentDir: \t\t" + DirectoryManager.currentDir /**/
-					+ n + "programDir: \t\t" + DirectoryManager.programDir /**/
-					+ n + "mapSourcesDir: \t\t" + DirectoryManager.mapSourcesDir /**/
-					+ n + "tempDir:     \t\t" + DirectoryManager.tempDir /**/
-					+ n + "userHomeDir: \t\t" + DirectoryManager.userHomeDir /**/
-					+ n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
-					+ n + "atlasProfilesDir: \t" + DirectoryManager.atlasProfilesDir /**/
-					+ n + "userAppDataDir: \t" + DirectoryManager.userAppDataDir /**/
-			);
-			log.info("System console available: " + (System.console() != null));
-			log.info("Startup arguments (count=" + StartMOBAC.ARGS.length + "):");
-			for (int i = 0; i < StartMOBAC.ARGS.length; i++)
-				log.info("\t" + i + ": " + StartMOBAC.ARGS[i]);
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("Detected operating system: " + OSUtilities.detectOs() + " (" + System.getProperty("os.name")
-					+ ")");
-			boolean desktopSupport = Desktop.isDesktopSupported();
-			log.debug("Desktop support: " + desktopSupport);
-			if (desktopSupport) {
-				Desktop d = Desktop.getDesktop();
-				for (Action a : Action.values()) {
-					log.debug("Desktop action " + a + " supported: " + d.isSupported(a));
-				}
-			}
-		}
-		if (log.isTraceEnabled()) {
-			Properties props = System.getProperties();
-			StringWriter sw = new StringWriter(8192);
-			sw.write("System properties:\n");
-			TreeMap<Object, Object> sortedProps = new TreeMap<>(props);
-			for (Entry<Object, Object> entry : sortedProps.entrySet()) {
-				sw.write(entry.getKey() + " = " + entry.getValue() + "\n");
-			}
-			log.trace(sw.toString());
-		}
-	}
-
-	/**
-	 * returns the first configured {@link FileAppender} or <code>null</code>.
-	 * 
-	 * @return
-	 */
-	public static String getLogFile() {
-		Enumeration<?> enu = Logger.getRootLogger().getAllAppenders();
-		while (enu.hasMoreElements()) {
-			Object o = enu.nextElement();
-			if (o instanceof FileAppender) {
-				FileAppender fa = (FileAppender) o;
-				return fa.getFile();
-			}
-		}
-		return null;
-	}
-
-	public static boolean isCONFIGURED() {
-		return CONFIGURED;
-	}
-
+    public static void logSystemInfo() {
+        Logger log = LoggerFactory.getLogger("SysInfo");
+        if (log.isInfoEnabled()) {
+            String n = System.getProperty("line.separator");
+            log.info("Version: {}", ProgramInfo.getCompleteTitle());
+            log.info("Platform: {} ({})", GUIExceptionHandler.prop("os.name"), GUIExceptionHandler.prop("os.version"));
+            log.info("Java VM: {} ({})", GUIExceptionHandler.prop("java.vm.name"), GUIExceptionHandler.prop("java.runtime.version"));
+            log.info("Available processors: {}", Runtime.getRuntime().availableProcessors());
+            log.info("Directories:" /**/
+                    + n + "currentDir: \t\t" + DirectoryManager.currentDir /**/
+                    + n + "programDir: \t\t" + DirectoryManager.programDir /**/
+                    + n + "mapSourcesDir: \t\t" + DirectoryManager.mapSourcesDir /**/
+                    + n + "tempDir:     \t\t" + DirectoryManager.tempDir /**/
+                    + n + "userHomeDir: \t\t" + DirectoryManager.userHomeDir /**/
+                    + n + "userSettingsDir: \t" + DirectoryManager.userSettingsDir /**/
+                    + n + "atlasProfilesDir: \t" + DirectoryManager.atlasProfilesDir /**/
+                    + n + "mobacUserAppDataDir: \t" + DirectoryManager.mobacUserAppDataDir /**/
+            );
+            log.info("System console available: {}", (System.console() != null));
+            log.info("Startup arguments (count={}):", StartMOBAC.ARGS.length);
+            for (int i = 0; i < StartMOBAC.ARGS.length; i++)
+                log.info("\t{}:{}", i, StartMOBAC.ARGS[i]);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Detected operating system: {} ({})", OSUtilities.detectOs(), System.getProperty("os.name"));
+            boolean desktopSupport = Desktop.isDesktopSupported();
+            log.debug("Desktop support: {}", desktopSupport);
+            if (desktopSupport) {
+                Desktop d = Desktop.getDesktop();
+                for (Action a : Action.values()) {
+                    log.debug("Desktop action {}  supported: {}", a, d.isSupported(a));
+                }
+            }
+        }
+        if (log.isTraceEnabled()) {
+            Properties props = System.getProperties();
+            StringWriter sw = new StringWriter(8192);
+            sw.write("System properties:\n");
+            TreeMap<Object, Object> sortedProps = new TreeMap<>(props);
+            for (Entry<Object, Object> entry : sortedProps.entrySet()) {
+                sw.write(entry.getKey() + " = " + entry.getValue() + "\n");
+            }
+            log.trace(sw.toString());
+        }
+    }
 }

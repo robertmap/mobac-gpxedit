@@ -1,30 +1,11 @@
 package mobac.mapsources.loader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import javax.swing.JOptionPane;
-
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEvent;
 import jakarta.xml.bind.ValidationEventHandler;
 import jakarta.xml.bind.ValidationEventLocator;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.*;
-
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
-
 import mobac.exceptions.MapSourceCreateException;
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapSourcesManager;
@@ -44,11 +25,41 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.DirOrFileExtFilter;
+import org.apache.commons.text.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.StreamFilter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class CustomMapSourceLoader {
 
     private static final String MOBAC_IGNORE_TAG = "mobac-ignore:";
-    private final Logger log = Logger.getLogger(MapPackManager.class);
+    private final Logger log = LoggerFactory.getLogger(MapPackManager.class);
     private final MapSourcesManager mapSourcesManager;
     private final File mapSourcesDir;
 

@@ -1,5 +1,14 @@
 package mobac.utilities.beanshell;
 
+import mobac.mapsources.MapSourceTools;
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
+import mobac.program.DirectoryManager;
+import mobac.program.interfaces.MapSpace;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
+
+import javax.swing.JOptionPane;
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,24 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.security.SecureRandom;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
-
-import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.mapspace.MercatorPower2MapSpace;
-import mobac.program.DirectoryManager;
-import mobac.program.interfaces.MapSpace;
-
-import javax.swing.JOptionPane;
-
 public class Tools {
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface MethodDescription {
-        String value();
-    }
 
     public static final SecureRandom RND = new SecureRandom();
     public static final MapSpace OSM_MERCATOR = MercatorPower2MapSpace.INSTANCE_256;
@@ -33,7 +25,6 @@ public class Tools {
      * Calculates latitude and longitude of the upper left corner of the specified tile of <code>OSM_MERCATOR</code>
      * regarding the zoom level specified by <code>zoom</code>.
      *
-     * @param mapSpace
      * @param zoom
      * @param tilex
      * @param tiley
@@ -116,7 +107,7 @@ public class Tools {
             case "toolsDir":
                 return DirectoryManager.toolsDir;
             case "userAppDataDir":
-                return DirectoryManager.userAppDataDir;
+                return DirectoryManager.mobacUserAppDataDir;
             case "userHomeDir":
                 return DirectoryManager.userHomeDir;
             case "userSettingsDir":
@@ -128,6 +119,12 @@ public class Tools {
     @MethodDescription("Open an dialog box and display the message (useful for debugging, available since MOBAc 2.2.2)")
     public static void alert(Object message) {
         JOptionPane.showMessageDialog(null, message);
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface MethodDescription {
+        String value();
     }
 
 }

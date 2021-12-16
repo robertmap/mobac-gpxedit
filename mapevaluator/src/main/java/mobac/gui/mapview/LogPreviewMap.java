@@ -1,5 +1,8 @@
 package mobac.gui.mapview;
 
+import mobac.gui.mapview.layer.MapGridLayer;
+import mobac.mapsources.AbstractHttpMapSource;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -9,12 +12,9 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.TimerTask;
 
-import mobac.gui.mapview.layer.MapGridLayer;
-import mobac.mapsources.AbstractHttpMapSource;
-
 public class LogPreviewMap extends PreviewMap {
 
-	private final LinkedList<LogEntry> logLines = new LinkedList<LogEntry>();
+	private final LinkedList<LogEntry> logLines = new LinkedList();
 	private Font logFont = new Font("Sans Serif", Font.BOLD, 14);
 	private Font tileInfoFont = new Font("Sans Serif", Font.BOLD, 12);
 

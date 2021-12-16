@@ -12,18 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.impl;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.SecureRandom;
-
-import javax.imageio.ImageIO;
 
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.gui.mapview.PreviewMap;
@@ -34,6 +25,14 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.beanshell.Tools;
+
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.SecureRandom;
 
 /**
  * A {@link FileBasedMapSource} for debugging and testing purposes
@@ -85,12 +84,12 @@ public class DebugTransparentLocalMapSource implements MapSource, FileBasedMapSo
     public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
             UnrecoverableDownloadException, InterruptedException {
         if (imageData != null) {
-			return imageData;
-		}
+            return imageData;
+        }
         synchronized (this) {
             if (imageData != null) {
-				return imageData;
-			}
+                return imageData;
+            }
             ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
             BufferedImage image = getTileImage(zoom, x, y, loadMethod);
             if (image == null) {
@@ -107,12 +106,12 @@ public class DebugTransparentLocalMapSource implements MapSource, FileBasedMapSo
     public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
             UnrecoverableDownloadException, InterruptedException {
         if (image != null) {
-			return image;
-		}
+            return image;
+        }
         synchronized (this) {
             if (image != null) {
-				return image;
-			}
+                return image;
+            }
             BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = image.createGraphics();
             SecureRandom rnd = Tools.RND;

@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.tilestore.berkeleydb;
 
@@ -26,52 +26,52 @@ import java.util.concurrent.ThreadFactory;
  */
 public class DelayedInterruptThread extends Thread {
 
-	private boolean interruptPaused = false;
-	private boolean interruptedWhilePaused = false;
+    private boolean interruptPaused = false;
+    private boolean interruptedWhilePaused = false;
 
-	public DelayedInterruptThread(String name) {
-		super(name);
-	}
+    public DelayedInterruptThread(String name) {
+        super(name);
+    }
 
-	public DelayedInterruptThread(Runnable target) {
-		super(target);
-	}
+    public DelayedInterruptThread(Runnable target) {
+        super(target);
+    }
 
-	public DelayedInterruptThread(Runnable target, String name) {
-		super(target, name);
-	}
+    public DelayedInterruptThread(Runnable target, String name) {
+        super(target, name);
+    }
 
-	@Override
-	public void interrupt() {
-		if (interruptPaused)
-			interruptedWhilePaused = true;
-		else
-			super.interrupt();
-	}
+    public static ThreadFactory createThreadFactory() {
+        return new DIThreadFactory();
+    }
 
-	public void pauseInterrupt() {
-		interruptPaused = true;
-	}
+    @Override
+    public void interrupt() {
+        if (interruptPaused)
+            interruptedWhilePaused = true;
+        else
+            super.interrupt();
+    }
 
-	public void resumeInterrupt() {
-		interruptPaused = false;
-		if (interruptedWhilePaused)
-			this.interrupt();
-	}
+    public void pauseInterrupt() {
+        interruptPaused = true;
+    }
 
-	public boolean interruptedWhilePaused() {
-		return interruptedWhilePaused;
-	}
+    public void resumeInterrupt() {
+        interruptPaused = false;
+        if (interruptedWhilePaused)
+            this.interrupt();
+    }
 
-	public static ThreadFactory createThreadFactory() {
-		return new DIThreadFactory();
-	}
+    public boolean interruptedWhilePaused() {
+        return interruptedWhilePaused;
+    }
 
-	private static class DIThreadFactory implements ThreadFactory {
+    private static class DIThreadFactory implements ThreadFactory {
 
-		public Thread newThread(Runnable r) {
-			return new DelayedInterruptThread(r);
-		}
+        public Thread newThread(Runnable r) {
+            return new DelayedInterruptThread(r);
+        }
 
-	}
+    }
 }

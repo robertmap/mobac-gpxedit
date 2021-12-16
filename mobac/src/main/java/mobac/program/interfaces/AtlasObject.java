@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.interfaces;
 
@@ -24,42 +24,42 @@ import mobac.exceptions.InvalidNameException;
  */
 public interface AtlasObject {
 
-	public String getName();
+    public String getName();
 
-	public void setName(String newName) throws InvalidNameException;
+    public void setName(String newName) throws InvalidNameException;
 
-	/**
-	 * Called after loading the complete atlas from a profile.
-	 * 
-	 * @return any problems found? <code>true</code>=yes
-	 */
-	public boolean checkData();
+    /**
+     * Called after loading the complete atlas from a profile.
+     *
+     * @return any problems found? <code>true</code>=yes
+     */
+    public boolean checkData();
 
-	/**
-	 * minimum latitude (corresponds to row/y value)
-	 * 
-	 * @return
-	 */
-	public double getMinLat();
+    /**
+     * minimum latitude (corresponds to row/y value)
+     *
+     * @return
+     */
+    public double getMinLat();
 
-	/**
-	 * maximum latitude (corresponds to row/y value)
-	 * 
-	 * @return
-	 */
-	public double getMaxLat();
+    /**
+     * maximum latitude (corresponds to row/y value)
+     *
+     * @return
+     */
+    public double getMaxLat();
 
-	/**
-	 * minimum longitude (corresponds to column/x value)
-	 * 
-	 * @return
-	 */
-	public double getMinLon();
+    /**
+     * minimum longitude (corresponds to column/x value)
+     *
+     * @return
+     */
+    public double getMinLon();
 
-	/**
-	 * maximum longitude (corresponds to column/x value)
-	 * 
-	 * @return
-	 */
-	public double getMaxLon();
+    /**
+     * maximum longitude (corresponds to column/x value)
+     *
+     * @return
+     */
+    public double getMaxLon();
 }

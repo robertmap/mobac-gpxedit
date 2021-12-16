@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.actions;
 
@@ -27,7 +27,8 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.program.model.Settings;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.swing.JFrame;
@@ -48,7 +49,15 @@ import java.util.Set;
 
 public class RefreshCustomMapsources implements ActionListener {
 
-    private final Logger log = Logger.getLogger(RefreshCustomMapsources.class);
+    private static final String[] COL_NAMES = new String[]{"Map name", "File path", "Status", "Restart required"};
+    private final Logger log = LoggerFactory.getLogger(RefreshCustomMapsources.class);
+
+    public static void main(String[] args) {
+        List<ReloadTableEntry> list = new ArrayList<>();
+        list.add(new ReloadTableEntry("name", "path", "status", false));
+        ReloadInfoDialog dialog = new ReloadInfoDialog(list);
+        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
 
     public void actionPerformed(ActionEvent event) {
         MapSourcesManager manager = MapSourcesManager.getInstance();
@@ -170,8 +179,6 @@ public class RefreshCustomMapsources implements ActionListener {
 
     }
 
-    private static final String[] COL_NAMES = new String[]{"Map name", "File path", "Status", "Restart required"};
-
     private static class ReloadTableModel extends AbstractTableModel {
 
         final List<ReloadTableEntry> entries;
@@ -233,12 +240,5 @@ public class RefreshCustomMapsources implements ActionListener {
             return relativeFilePath.compareTo(o.relativeFilePath);
         }
 
-    }
-
-    public static void main(String[] args) {
-        List<ReloadTableEntry> list = new ArrayList<>();
-        list.add(new ReloadTableEntry("name", "path", "status", false));
-        ReloadInfoDialog dialog = new ReloadInfoDialog(list);
-        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }

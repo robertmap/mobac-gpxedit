@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.atlascreators;
 
@@ -46,128 +46,128 @@ import java.io.Writer;
 @SupportedParameters(names = {Name.height, Name.width})
 public class NFComPass extends AtlasCreator {
 
-	private File layerDir;
-	private File mapDir;
+    private File layerDir;
+    private File mapDir;
 
-	@Override
-	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-		super.initializeMap(map, mapTileProvider);
-		LayerInterface layer = map.getLayer();
-		layerDir = new File(atlasDir, layer.getName());
-		mapDir = new File(layerDir, map.getName());
-		if (parameters == null) {
-			parameters = new TileImageParameters(64, 64, TileImageFormat.PNG);
-		}
-	}
+    @Override
+    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+        super.initializeMap(map, mapTileProvider);
+        LayerInterface layer = map.getLayer();
+        layerDir = new File(atlasDir, layer.getName());
+        mapDir = new File(layerDir, map.getName());
+        if (parameters == null) {
+            parameters = new TileImageParameters(64, 64, TileImageFormat.PNG);
+        }
+    }
 
-	@Override
-	public boolean testMapSource(MapSource mapSource) {
-		MapSpace mapSpace = mapSource.getMapSpace();
-		return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
-				.getProjectionCategory()));
-	}
+    @Override
+    public boolean testMapSource(MapSource mapSource) {
+        MapSpace mapSpace = mapSource.getMapSpace();
+        return (mapSpace instanceof MercatorPower2MapSpace && ProjectionCategory.SPHERE.equals(mapSpace
+                .getProjectionCategory()));
+    }
 
-	@Override
-	public void initLayerCreation(LayerInterface layer) throws IOException {
-		super.initLayerCreation(layer);
-		if (layer.getMapCount() == 0)
-			return;
-		int lastZoom = layer.getMap(0).getZoom();
-		File datFile = new File(atlasDir, "nfComPass.dat");
-		try (Writer w = new BufferedWriter(new FileWriter(datFile, true))) {
-			w.append("[" + layer.getName() + "]\r\n");
-			w.append("SIZEXY = extern\r\n");
-			w.append("MAPPATH =\r\n");
-			w.append("VMAX = 160\r\n");
-			w.append("WIDTH = 5\r\n");
-			w.append("LASTZOOM = " + lastZoom + "\r\n\r\n");
-		}
-	}
+    @Override
+    public void initLayerCreation(LayerInterface layer) throws IOException {
+        super.initLayerCreation(layer);
+        if (layer.getMapCount() == 0)
+            return;
+        int lastZoom = layer.getMap(0).getZoom();
+        File datFile = new File(atlasDir, "nfComPass.dat");
+        try (Writer w = new BufferedWriter(new FileWriter(datFile, true))) {
+            w.append("[" + layer.getName() + "]\r\n");
+            w.append("SIZEXY = extern\r\n");
+            w.append("MAPPATH =\r\n");
+            w.append("VMAX = 160\r\n");
+            w.append("WIDTH = 5\r\n");
+            w.append("LASTZOOM = " + lastZoom + "\r\n\r\n");
+        }
+    }
 
-	@Override
-	public void createMap() throws MapCreationException, InterruptedException {
-		try {
-			Utilities.mkDirs(mapDir);
-		} catch (IOException e) {
-			throw new MapCreationException(map, e);
-		}
-		createKalFile(map);
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
-			mapDlTileProvider = ctp;
+    @Override
+    public void createMap() throws MapCreationException, InterruptedException {
+        try {
+            Utilities.mkDirs(mapDir);
+        } catch (IOException e) {
+            throw new MapCreationException(map, e);
+        }
+        createKalFile(map);
+        CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+        try {
+            mapDlTileProvider = ctp;
 
-			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, new TileImagePngDataWriterBuilder(),
-					new NFCompassTileWriter(), true);
-			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
-			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
-		}
+            MapTileBuilder mapTileBuilder = new MapTileBuilder(this, new TileImagePngDataWriterBuilder(),
+                    new NFCompassTileWriter(), true);
+            atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+            mapTileBuilder.createTiles();
+        } finally {
+            ctp.cleanup();
+        }
 
-	}
+    }
 
-	protected void createKalFile(MapInterface map) throws MapCreationException {
-		MapSpace mapSpace = map.getMapSource().getMapSpace();
-		double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
-		double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize - 1, zoom);
-		double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize - 1, zoom);
-		double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
+    protected void createKalFile(MapInterface map) throws MapCreationException {
+        MapSpace mapSpace = map.getMapSource().getMapSpace();
+        double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
+        double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize - 1, zoom);
+        double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize - 1, zoom);
+        double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
 
-		int width = (xMax - xMin + 1) * tileSize;
-		int height = (yMax - yMin + 1) * tileSize;
+        int width = (xMax - xMin + 1) * tileSize;
+        int height = (yMax - yMin + 1) * tileSize;
 
-		File kalFile = new File(mapDir, map.getName() + ".kal");
-		try (Writer w = new BufferedWriter(new FileWriter(kalFile, true))) {
-			w.append("[" + map.getName() + "]\r\n");
-			w.append(String.format("TILEXY = %dx%d\r\n", parameters.getWidth(), parameters.getHeight()));
-			w.append("X0LON = " + longitudeMin + "\r\n");
-			w.append("Y0LAT = " + latitudeMax + "\r\n");
-			w.append("X1LON = " + longitudeMax + "\r\n");
-			w.append("Y1LAT = " + latitudeMin + "\r\n");
-			w.append(String.format("SIZEXY = %dx%d\r\n", width, height));
-		} catch (IOException e) {
-			throw new MapCreationException(map, e);
-		}
+        File kalFile = new File(mapDir, map.getName() + ".kal");
+        try (Writer w = new BufferedWriter(new FileWriter(kalFile, true))) {
+            w.append("[" + map.getName() + "]\r\n");
+            w.append(String.format("TILEXY = %dx%d\r\n", parameters.getWidth(), parameters.getHeight()));
+            w.append("X0LON = " + longitudeMin + "\r\n");
+            w.append("Y0LAT = " + latitudeMax + "\r\n");
+            w.append("X1LON = " + longitudeMax + "\r\n");
+            w.append("Y1LAT = " + latitudeMin + "\r\n");
+            w.append(String.format("SIZEXY = %dx%d\r\n", width, height));
+        } catch (IOException e) {
+            throw new MapCreationException(map, e);
+        }
 
-	}
+    }
 
-	public class NFCompassTileWriter implements MapTileWriter {
-		int tileHeight = 256;
-		int tileWidth = 256;
+    public class NFCompassTileWriter implements MapTileWriter {
+        int tileHeight = 256;
+        int tileWidth = 256;
 
-		int ff_x;
-		int ff_y;
+        int ff_x;
+        int ff_y;
 
-		public NFCompassTileWriter() {
-			super();
-			if (parameters != null) {
-				tileHeight = parameters.getHeight();
-				tileWidth = parameters.getWidth();
-			}
-			int highest_bit_x = Utilities.getHighestBitSet(tileWidth) + 2;
-			int highest_bit_y = Utilities.getHighestBitSet(tileHeight) + 2;
+        public NFCompassTileWriter() {
+            super();
+            if (parameters != null) {
+                tileHeight = parameters.getHeight();
+                tileWidth = parameters.getWidth();
+            }
+            int highest_bit_x = Utilities.getHighestBitSet(tileWidth) + 2;
+            int highest_bit_y = Utilities.getHighestBitSet(tileHeight) + 2;
 
-			ff_x = Integer.MAX_VALUE << (highest_bit_x);
-			ff_y = Integer.MAX_VALUE << (highest_bit_y);
-		}
+            ff_x = Integer.MAX_VALUE << (highest_bit_x);
+            ff_y = Integer.MAX_VALUE << (highest_bit_y);
+        }
 
-		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-			int x = tilex * tileWidth;
-			int y = tiley * tileHeight;
-			String folderName = String.format("%dx%d", (x & ff_x), (y & ff_y));
-			String tileFileName = String.format("%d_%d.png", x, y);
+        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+            int x = tilex * tileWidth;
+            int y = tiley * tileHeight;
+            String folderName = String.format("%dx%d", (x & ff_x), (y & ff_y));
+            String tileFileName = String.format("%d_%d.png", x, y);
 
-			File folder = new File(mapDir, folderName);
-			Utilities.mkDir(folder);
-			File f = new File(folder, tileFileName);
-			try (FileOutputStream out = new FileOutputStream(f)) {
-				out.write(tileData);
-			}
-		}
+            File folder = new File(mapDir, folderName);
+            Utilities.mkDir(folder);
+            File f = new File(folder, tileFileName);
+            try (FileOutputStream out = new FileOutputStream(f)) {
+                out.write(tileData);
+            }
+        }
 
-		public void finalizeMap() throws IOException {
+        public void finalizeMap() throws IOException {
 
-		}
+        }
 
-	}
+    }
 }

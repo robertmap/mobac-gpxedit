@@ -12,10 +12,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.custom;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import mobac.exceptions.TileException;
+import mobac.gui.mapview.PreviewMap;
+import mobac.mapsources.MapSourceTools;
+import mobac.mapsources.mapspace.MapSpaceFactory;
+import mobac.program.interfaces.FileBasedMapSource;
+import mobac.program.interfaces.MapSpace;
+import mobac.program.jaxb.BooleanAdapter;
+import mobac.program.jaxb.ColorAdapter;
+import mobac.program.model.MapSourceLoaderInfo;
+import mobac.program.model.TileImageType;
+import mobac.utilities.I18nUtils;
+import mobac.utilities.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -28,33 +49,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
-
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import mobac.program.jaxb.BooleanAdapter;
-import org.apache.log4j.Logger;
-
-import mobac.exceptions.TileException;
-import mobac.gui.mapview.PreviewMap;
-import mobac.mapsources.MapSourceTools;
-import mobac.mapsources.mapspace.MapSpaceFactory;
-import mobac.program.interfaces.FileBasedMapSource;
-import mobac.program.interfaces.MapSpace;
-import mobac.program.jaxb.ColorAdapter;
-import mobac.program.model.MapSourceLoaderInfo;
-import mobac.program.model.TileImageType;
-import mobac.utilities.I18nUtils;
-import mobac.utilities.Utilities;
-
 @XmlRootElement(name = "localTileFiles")
 public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 
-    private static final Logger log = Logger.getLogger(CustomLocalTileFilesMapSource.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomLocalTileFilesMapSource.class);
 
     private MapSourceLoaderInfo loaderInfo = null;
 

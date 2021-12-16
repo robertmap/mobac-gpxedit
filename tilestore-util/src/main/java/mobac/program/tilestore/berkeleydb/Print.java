@@ -12,19 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.tilestore.berkeleydb;
 
-import java.io.File;
-import java.security.InvalidParameterException;
-
+import com.sleepycat.persist.EntityCursor;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
 import mobac.ts_util.Main;
 import mobac.ts_util.ParamTests;
 
-import com.sleepycat.persist.EntityCursor;
+import java.io.File;
+import java.security.InvalidParameterException;
 
 public class Print implements Runnable {
 

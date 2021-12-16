@@ -12,24 +12,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.ts_util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Properties;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-
-import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
@@ -39,6 +25,16 @@ import mobac.program.tilestore.berkeleydb.Extract;
 import mobac.program.tilestore.berkeleydb.Merge;
 import mobac.program.tilestore.berkeleydb.Print;
 import mobac.program.tilestore.berkeleydb.Purge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Properties;
 
 public class Main {
 
@@ -49,10 +45,9 @@ public class Main {
     static Runnable commandImplementation = null;
 
     public static void main(String[] args) {
-        Logger.getRootLogger().removeAllAppenders();
-        Logging.configureConsoleLogging(Level.INFO, new PatternLayout("%d{HH:mm:ss} %-5p %c{1}: %m%n"));
-        log = Logger.getLogger("TileStoreUtil");
-        log.setLevel(Level.DEBUG);
+        // Logger.getRootLogger().removeAllAppenders();
+        // Logging.configureConsoleLogging(Level.INFO, new PatternLayout("%d{HH:mm:ss} %-5p %c{1}: %m%n"));
+        log = LoggerFactory.getLogger("TileStoreUtil");
         ProgramInfo.initialize(); // Load revision info
 
         Properties prop = new Properties();

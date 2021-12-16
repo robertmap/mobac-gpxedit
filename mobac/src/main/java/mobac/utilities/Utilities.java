@@ -12,18 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.utilities;
 
 import mobac.Main;
 import mobac.exceptions.MOBACOutOfMemoryException;
-import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 import mobac.utilities.file.DirOrFileExtFilter;
 import mobac.utilities.file.DirectoryFileFilter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.Action;
@@ -41,8 +41,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
@@ -72,19 +70,23 @@ public class Utilities {
     public static final DecimalFormat FORMAT_6_DEC = new DecimalFormat("#0.######");
     public static final DecimalFormat FORMAT_6_DEC_ENG = new DecimalFormat("#0.######", DFS_ENG);
     public static final DecimalFormat FORMAT_2_DEC = new DecimalFormat("0.00");
-    private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
-    private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
-
-    private static final Logger log = Logger.getLogger(Utilities.class);
-
     public static final long SECONDS_PER_HOUR = TimeUnit.HOURS.toSeconds(1);
     public static final long SECONDS_PER_DAY = TimeUnit.DAYS.toSeconds(1);
+    private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
+    private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
+    private static final Logger log = LoggerFactory.getLogger(Utilities.class);
+    private static final byte[] PNG = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
+    private static final byte[] JPG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, (byte) 0x00,
+            0x10, 'J', 'F', 'I', 'F'};
+    private static final byte[] GIF_1 = "GIF87a".getBytes();
+    private static final byte[] GIF_2 = "GIF89a".getBytes();
 
     public static boolean testJaiColorQuantizerAvailable() {
         try {
             Class<?> c = Class.forName("javax.media.jai.operator.ColorQuantizerDescriptor");
-            if (c != null)
+            if (c != null) {
                 return true;
+            }
         } catch (NoClassDefFoundError e) {
             return false;
         } catch (Throwable t) {
@@ -165,19 +167,11 @@ public class Utilities {
             if (!ImageIO.write(emptyImage, tileImageType.getFileExt(), buf)) {
                 throw new IOException(String.format("Failed to create empty tile of type %s", tileImageType.getFileExt()));
             }
-
+            return buf.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        byte[] emptyTileData = buf.toByteArray();
-        return emptyTileData;
     }
-
-    private static final byte[] PNG = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
-    private static final byte[] JPG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, (byte) 0x00,
-            0x10, 'J', 'F', 'I', 'F'};
-    private static final byte[] GIF_1 = "GIF87a".getBytes();
-    private static final byte[] GIF_2 = "GIF89a".getBytes();
 
     public static TileImageType getImageType(byte[] imageData) {
         if (imageData == null)
@@ -192,11 +186,14 @@ public class Utilities {
     }
 
     public static boolean startsWith(byte[] data, byte[] startTest) {
-        if (data.length < startTest.length)
+        if (data.length < startTest.length) {
             return false;
-        for (int i = 0; i < startTest.length; i++)
-            if (data[i] != startTest[i])
+        }
+        for (int i = 0; i < startTest.length; i++) {
+            if (data[i] != startTest[i]) {
                 return false;
+            }
+        }
         return true;
     }
 
@@ -304,12 +301,15 @@ public class Utilities {
      * @return Formatted {@link String}
      */
     public static String formatBytes(long bytes) {
-        if (bytes < 1000)
+        if (bytes < 1000) {
             return Long.toString(bytes) + " " + I18nUtils.localizedStringForKey("Bytes");
-        if (bytes < 1000000)
+        }
+        if (bytes < 1000000) {
             return FORMAT_2_DEC.format(bytes / 1024d) + " " + I18nUtils.localizedStringForKey("KiByte");
-        if (bytes < 1000000000)
+        }
+        if (bytes < 1000000000) {
             return FORMAT_2_DEC.format(bytes / 1048576d) + " " + I18nUtils.localizedStringForKey("MiByte");
+        }
         return FORMAT_2_DEC.format(bytes / 1073741824d) + " " + I18nUtils.localizedStringForKey("GiByte");
     }
 
@@ -323,8 +323,9 @@ public class Utilities {
         int months = (int) (days * 12d / 365d);
         String m = (months == 1) ? "month" : "months";
 
-        if (years > 5)
+        if (years > 5) {
             return String.format("%d years", years);
+        }
         if (years > 0) {
             String y = (years == 1) ? "year" : "years";
             return String.format("%d %s %d %s", years, y, months, m);
@@ -337,31 +338,38 @@ public class Utilities {
         long hours = TimeUnit.SECONDS.toHours(x);
         String h = (hours == 1) ? "hour" : "hours";
         x -= hours * SECONDS_PER_HOUR;
-        if (days > 0)
+        if (days > 0) {
             return String.format("%d %s %d %s", days, d, hours, h);
+        }
         long minutes = TimeUnit.SECONDS.toMinutes(x);
         String min = (minutes == 1) ? "minute" : "minutes";
-        if (hours > 0)
+        if (hours > 0) {
             return String.format("%d %s %d %s", hours, h, minutes, min);
-        else
-            return String.format("%d %s", minutes, min);
+        }
+        return String.format("%d %s", minutes, min);
     }
 
     public static void mkDir(File dir) throws IOException {
-        if (dir.isDirectory())
+        if (dir.isDirectory()) {
             return;
-        if (!dir.mkdir())
+        }
+        if (!dir.mkdir()) {
             throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
+        }
     }
 
     public static void mkDirs(File dir) throws IOException {
-        if (dir.isDirectory())
+        if (dir.isDirectory()) {
             return;
-        if (dir.mkdirs())
-            return;
+        }
 
-        if (Logging.isCONFIGURED())
-            Logging.LOG.error("mkDirs creation failed first time - one retry left");
+        if (dir.mkdirs()) {
+            return;
+        }
+
+//        if (Logging.isCONFIGURED()) {
+//            Logging.LOG.error("mkDirs creation failed first time - one retry left");
+//        }
 
         // Wait some time and then retry it.
         // See for details:
@@ -371,8 +379,9 @@ public class Utilities {
             Thread.sleep(100);
         } catch (InterruptedException e) {
         }
-        if (dir.mkdirs())
+        if (dir.mkdirs()) {
             return;
+        }
 
         throw new IOException("Failed to create directory \"" + dir.getAbsolutePath() + "\"");
     }

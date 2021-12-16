@@ -12,12 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources;
 
 import mobac.program.model.Settings;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,45 +28,42 @@ import java.util.Properties;
 
 public class MapSourcesPropertiesManager {
 
-	private static final Logger log = Logger.getLogger(MapSourcesPropertiesManager.class);
+    public static final Properties PROPERTIES = new Properties();
+    private static final Logger log = LoggerFactory.getLogger(MapSourcesPropertiesManager.class);
+    private static final String FILENAME = "mapsources.properties";
+    private static boolean SHUTDOWN_HOOK_REGISTERED = false;
 
-	private static final String FILENAME = "mapsources.properties";
+    public static void load() {
+        File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+        File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
+        if (!mapSourcesProperties.isFile())
+            return;
+        try (FileInputStream in = new FileInputStream(mapSourcesProperties)) {
+            PROPERTIES.load(in);
+        } catch (IOException e) {
+            log.error("Failed to load mapsources.properties", e);
+        }
+        if (!SHUTDOWN_HOOK_REGISTERED) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
 
-	public static final Properties PROPERTIES = new Properties();
+                @Override
+                public void run() {
+                    save();
+                }
 
-	private static boolean SHUTDOWN_HOOK_REGISTERED = false;
+            });
+        }
+    }
 
-	public static void load() {
-		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
-		File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
-		if (!mapSourcesProperties.isFile())
-			return;
-		try (FileInputStream in = new FileInputStream(mapSourcesProperties)) {
-			PROPERTIES.load(in);
-		} catch (IOException e) {
-			log.error("Failed to load mapsources.properties", e);
-		}
-		if (!SHUTDOWN_HOOK_REGISTERED) {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-
-				@Override
-				public void run() {
-					save();
-				}
-
-			});
-		}
-	}
-
-	public static void save() {
-		if (PROPERTIES.size() == 0)
-			return;
-		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
-		File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
-		try (FileOutputStream out = new FileOutputStream(mapSourcesProperties)) {
-			PROPERTIES.store(out, "");
-		} catch (IOException e) {
-			log.error("", e);
-		}
-	}
+    public static void save() {
+        if (PROPERTIES.size() == 0)
+            return;
+        File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+        File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
+        try (FileOutputStream out = new FileOutputStream(mapSourcesProperties)) {
+            PROPERTIES.store(out, "");
+        } catch (IOException e) {
+            log.error("", e);
+        }
+    }
 }

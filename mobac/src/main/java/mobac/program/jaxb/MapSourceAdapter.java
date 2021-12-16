@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.jaxb;
 
@@ -24,14 +24,14 @@ import mobac.program.interfaces.MapSource;
 
 public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 
-	@Override
-	public String marshal(MapSource mapSource) throws Exception {
-		return mapSource.getName();
-	}
+    @Override
+    public String marshal(MapSource mapSource) throws Exception {
+        return mapSource.getName();
+    }
 
-	@Override
-	public MapSource unmarshal(String name) throws Exception {
-		return MapSourcesManager.getInstance().getSourceByName(name);
-	}
+    @Override
+    public MapSource unmarshal(String name) throws Exception {
+        return MapSourcesManager.getInstance().getSourceByName(name);
+    }
 
 }

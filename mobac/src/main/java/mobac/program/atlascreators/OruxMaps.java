@@ -12,19 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.atlascreators;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
@@ -44,263 +34,268 @@ import mobac.program.model.TileImageParameters;
 import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.Utilities;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+
 /**
  * Creates maps using the OruxMaps (Android) atlas format.
  *
  * @author orux
  */
 @AtlasCreatorName("OruxMaps")
-@SupportedParameters(names = { Name.format })
+@SupportedParameters(names = {Name.format})
 public class OruxMaps extends AtlasCreator {
 
-	// Calibration file extension
-	protected static final String ORUXMAPS_EXT = ".otrk2.xml";
+    // Calibration file extension
+    protected static final String ORUXMAPS_EXT = ".otrk2.xml";
 
-	// OruxMaps tile size
-	protected static final int TILE_SIZE = 512;
+    // OruxMaps tile size
+    protected static final int TILE_SIZE = 512;
+    // OruxMaps background color
+    protected static final Color BG_COLOR = new Color(0xcb, 0xd3, 0xf3);
+    protected String calVersionCode;
+    // Each layer is a Main map for OruxMaps
+    protected File oruxMapsMainDir;
 
-	protected String calVersionCode;
+    // Each map is a Layer map for OruxMaps
+    protected File oruxMapsLayerDir;
 
-	// OruxMaps background color
-	protected static final Color BG_COLOR = new Color(0xcb, 0xd3, 0xf3);
+    // Images directory for each map
+    protected File oruxMapsImagesDir;
 
-	// Each layer is a Main map for OruxMaps
-	protected File oruxMapsMainDir;
+    protected LayerInterface currentLayer;
 
-	// Each map is a Layer map for OruxMaps
-	protected File oruxMapsLayerDir;
+    // We need to override the map name, All maps must have the same prefix (layer name)
+    protected String mapName;
 
-	// Images directory for each map
-	protected File oruxMapsImagesDir;
+    public OruxMaps() {
+        super();
+        calVersionCode = "2.1";
+    }
 
-	protected LayerInterface currentLayer;
+    @Override
+    public boolean testMapSource(MapSource mapSource) {
 
-	// We need to override the map name, All maps must have the same prefix (layer name)
-	protected String mapName;
+        return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
+    }
 
-	public OruxMaps() {
-		super();
-		calVersionCode = "2.1";
-	}
+    @Override
+    protected void testAtlas() throws AtlasTestException {
 
-	@Override
-	public boolean testMapSource(MapSource mapSource) {
+        for (LayerInterface layer : atlas) {
+            int cont = layer.getMapCount();
+            for (int i = 0; i < cont; i++) {
+                MapInterface currMap = layer.getMap(i);
+                int currZoomLevel = currMap.getZoom();
+                for (int j = i + 1; j < cont; j++) {
+                    MapInterface nextMap = layer.getMap(j);
+                    int nextZoomLevel = nextMap.getZoom();
+                    if (currZoomLevel == nextZoomLevel)
+                        throw new AtlasTestException(
+                                "Unable to create a map with more than a layer with the same zoom level: " + currMap
+                                        + " & " + nextMap + "\nPossible causes:\n"
+                                        + "You are combining several layers (using drag & drop in 'Atlas Content')\n"
+                                        + "You are creating a large map, and you have not selected the maximum value in 'Settings - Map size'");
+                }
+            }
+        }
+    }
 
-		return (mapSource.getMapSpace() instanceof MercatorPower2MapSpace);
-	}
+    /*
+     * @see mobac.program.atlascreators.AtlasCreator#initLayerCreation(mobac.program .interfaces.LayerInterface)
+     */
+    @Override
+    public void initLayerCreation(LayerInterface layer) throws IOException {
 
-	@Override
-	protected void testAtlas() throws AtlasTestException {
+        super.initLayerCreation(layer);
+        currentLayer = layer;
+        oruxMapsMainDir = new File(atlasDir, layer.getName());
+        Utilities.mkDirs(oruxMapsMainDir);
 
-		for (LayerInterface layer : atlas) {
-			int cont = layer.getMapCount();
-			for (int i = 0; i < cont; i++) {
-				MapInterface currMap = layer.getMap(i);
-				int currZoomLevel = currMap.getZoom();
-				for (int j = i + 1; j < cont; j++) {
-					MapInterface nextMap = layer.getMap(j);
-					int nextZoomLevel = nextMap.getZoom();
-					if (currZoomLevel == nextZoomLevel)
-						throw new AtlasTestException(
-								"Unable to create a map with more than a layer with the same zoom level: " + currMap
-										+ " & " + nextMap + "\nPossible causes:\n"
-										+ "You are combining several layers (using drag & drop in 'Atlas Content')\n"
-										+ "You are creating a large map, and you have not selected the maximum value in 'Settings - Map size'");
-				}
-			}
-		}
-	}
+    }
 
-	/*
-	 * @see mobac.program.atlascreators.AtlasCreator#initLayerCreation(mobac.program .interfaces.LayerInterface)
-	 */
-	@Override
-	public void initLayerCreation(LayerInterface layer) throws IOException {
+    @Override
+    public void finishLayerCreation() throws IOException {
 
-		super.initLayerCreation(layer);
-		currentLayer = layer;
-		oruxMapsMainDir = new File(atlasDir, layer.getName());
-		Utilities.mkDirs(oruxMapsMainDir);
+        super.finishLayerCreation();
+        writeMainOtrk2File(currentLayer.getName());
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see mobac.program.atlascreators.AtlasCreator#initializeMap(mobac.program. interfaces.MapInterface,
+     * mobac.utilities.tar.TarIndex)
+     */
+    @Override
+    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 
-	@Override
-	public void finishLayerCreation() throws IOException {
+        super.initializeMap(map, mapTileProvider);
+        // OruxMaps default image format, jpeg90; always TILE_SIZE=512;
+        if (parameters == null)
+            parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);
+        else
+            parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, parameters.getFormat());
+        mapName = String.format("%s %02d", currentLayer.getName(), map.getZoom());
+    }
 
-		super.finishLayerCreation();
-		writeMainOtrk2File(currentLayer.getName());
-	}
+    @Override
+    public void createMap() throws MapCreationException, InterruptedException {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see mobac.program.atlascreators.AtlasCreator#initializeMap(mobac.program. interfaces.MapInterface,
-	 * mobac.utilities.tar.TarIndex)
-	 */
-	@Override
-	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+        oruxMapsLayerDir = new File(oruxMapsMainDir, mapName);
+        oruxMapsImagesDir = new File(oruxMapsLayerDir, "set");
+        try {
+            Utilities.mkDirs(oruxMapsImagesDir);
+            writeOtrk2File();
+            createTiles();
+        } catch (InterruptedException e) {
+            // User has aborted process
+            return;
+        } catch (Exception e) {
+            throw new MapCreationException(map, e);
+        }
+    }
 
-		super.initializeMap(map, mapTileProvider);
-		// OruxMaps default image format, jpeg90; always TILE_SIZE=512;
-		if (parameters == null)
-			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);
-		else
-			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, parameters.getFormat());
-		mapName = String.format("%s %02d", currentLayer.getName(), map.getZoom());
-	}
+    protected void createTiles() throws InterruptedException, MapCreationException {
 
-	@Override
-	public void createMap() throws MapCreationException, InterruptedException {
+        CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+        try {
+            mapDlTileProvider = ctp;
 
-		oruxMapsLayerDir = new File(oruxMapsMainDir, mapName);
-		oruxMapsImagesDir = new File(oruxMapsLayerDir, "set");
-		try {
-			Utilities.mkDirs(oruxMapsImagesDir);
-			writeOtrk2File();
-			createTiles();
-		} catch (InterruptedException e) {
-			// User has aborted process
-			return;
-		} catch (Exception e) {
-			throw new MapCreationException(map, e);
-		}
-	}
+            OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, new OruxMapTileWriter());
+            atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+            mapTileBuilder.createTiles();
+        } finally {
+            ctp.cleanup();
+        }
+    }
 
-	protected void createTiles() throws InterruptedException, MapCreationException {
+    /**
+     * Main calibration file
+     *
+     * @param name
+     */
+    private void writeMainOtrk2File(String name) {
 
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
-			mapDlTileProvider = ctp;
+        File otrk2 = new File(oruxMapsMainDir, name + ORUXMAPS_EXT);
 
-			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, new OruxMapTileWriter());
-			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
-			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
-		}
-	}
+        StringWriter sw = new StringWriter();
+        sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        sw.append("<OruxTracker " + "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n" + " versionCode=\""
+                + calVersionCode + "\">\n");
+        sw.append("<MapCalibration layers=\"true\" layerLevel=\"0\">\n");
+        sw.append("<MapName><![CDATA[" + name + "]]></MapName>\n");
 
-	/**
-	 * Main calibration file
-	 *
-	 * @param name
-	 */
-	private void writeMainOtrk2File(String name) {
+        sw.append(appendMapContent());
 
-		File otrk2 = new File(oruxMapsMainDir, name + ORUXMAPS_EXT);
+        sw.append("</MapCalibration>\n");
+        sw.append("</OruxTracker>\n");
 
-		StringWriter sw = new StringWriter();
-		sw.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sw.append("<OruxTracker " + "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n" + " versionCode=\""
-				+ calVersionCode + "\">\n");
-		sw.append("<MapCalibration layers=\"true\" layerLevel=\"0\">\n");
-		sw.append("<MapName><![CDATA[" + name + "]]></MapName>\n");
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(otrk2), StandardCharsets.UTF_8)) {
+            writer.write(sw.toString());
+        } catch (IOException e) {
+            log.error("", e);
+        }
+    }
 
-		sw.append(appendMapContent());
+    protected String appendMapContent() {
+        return "";
+    }
 
-		sw.append("</MapCalibration>\n");
-		sw.append("</OruxTracker>\n");
+    /**
+     * Main calibration file per layer
+     */
+    protected void writeOtrk2File() {
+        File otrk2File = new File(oruxMapsLayerDir, mapName + ORUXMAPS_EXT);
+        String data = prepareOtrk2File();
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(otrk2File),
+                StandardCharsets.UTF_8)) {
+            writer.write(data);
+        } catch (IOException e) {
+            log.error("", e);
+        }
+    }
 
-		try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(otrk2), StandardCharsets.UTF_8)) {
-			writer.write(sw.toString());
-		} catch (IOException e) {
-			log.error("", e);
-		}
-	}
+    /**
+     * Main calibration file per layer
+     */
+    protected String prepareOtrk2File() {
 
-	protected String appendMapContent() {
-		return "";
-	}
+        StringBuilder mapWriter = new StringBuilder();
+        MapSpace mapSpace = mapSource.getMapSpace();
+        double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
+        double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
+        double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
+        double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
+        mapWriter.append(
+                "<OruxTracker " + "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n" + " versionCode=\"2.1\">\n");
+        mapWriter.append("<MapCalibration layers=\"false\" layerLevel=\"" + map.getZoom() + "\">\n");
+        mapWriter.append("<MapName><![CDATA[" + mapName + "]]></MapName>\n");
 
-	/**
-	 * Main calibration file per layer
-	 *
-	 */
-	protected void writeOtrk2File() {
-		File otrk2File = new File(oruxMapsLayerDir, mapName + ORUXMAPS_EXT);
-		String data = prepareOtrk2File();
-		try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(otrk2File),
-				StandardCharsets.UTF_8)) {
-			writer.write(data);
-		} catch (IOException e) {
-			log.error("", e);
-		}
-	}
+        // convert ampersands and others
+        String mapFileName = mapName;
+        mapFileName = mapFileName.replaceAll("&", "&amp;");
+        mapFileName = mapFileName.replaceAll("<", "&lt;");
+        mapFileName = mapFileName.replaceAll(">", "&gt;");
+        mapFileName = mapFileName.replaceAll("\"", "&quot;");
+        mapFileName = mapFileName.replaceAll("'", "&apos;");
 
-	/**
-	 * Main calibration file per layer
-	 *
-	 */
-	protected String prepareOtrk2File() {
+        int mapWidth = (xMax - xMin + 1) * tileSize;
+        int mapHeight = (yMax - yMin + 1) * tileSize;
+        int numXimg = (mapWidth + TILE_SIZE - 1) / TILE_SIZE;
+        int numYimg = (mapHeight + TILE_SIZE - 1) / TILE_SIZE;
+        mapWriter.append("<MapChunks xMax=\"" + numXimg + "\" yMax=\"" + numYimg + "\" datum=\"" + "WGS84"
+                + "\" projection=\"" + "Mercator" + "\" img_height=\"" + TILE_SIZE + "\" img_width=\"" + TILE_SIZE
+                + "\" file_name=\"" + mapFileName + "\" />\n");
+        mapWriter.append("<MapDimensions height=\"" + mapHeight + "\" width=\"" + mapWidth + "\" />\n");
+        mapWriter.append("<MapBounds minLat=\"" + latitudeMin + "\" maxLat=\"" + latitudeMax + "\" minLon=\""
+                + longitudeMin + "\" maxLon=\"" + longitudeMax + "\" />\n");
+        mapWriter.append("<CalibrationPoints>\n");
+        String cb = "<CalibrationPoint corner=\"%s\" lon=\"%2.6f\" lat=\"%2.6f\" />\n";
+        mapWriter.append(String.format(Locale.ENGLISH, cb, "TL", longitudeMin, latitudeMax));
+        mapWriter.append(String.format(Locale.ENGLISH, cb, "BR", longitudeMax, latitudeMin));
+        mapWriter.append(String.format(Locale.ENGLISH, cb, "TR", longitudeMax, latitudeMax));
+        mapWriter.append(String.format(Locale.ENGLISH, cb, "BL", longitudeMin, latitudeMin));
+        mapWriter.append("</CalibrationPoints>\n");
+        mapWriter.append("</MapCalibration>\n");
+        mapWriter.append("</OruxTracker>\n");
+        return mapWriter.toString();
+    }
 
-		StringBuilder mapWriter = new StringBuilder();
-		MapSpace mapSpace = mapSource.getMapSpace();
-		double longitudeMin = mapSpace.cXToLon(xMin * tileSize, zoom);
-		double longitudeMax = mapSpace.cXToLon((xMax + 1) * tileSize, zoom);
-		double latitudeMin = mapSpace.cYToLat((yMax + 1) * tileSize, zoom);
-		double latitudeMax = mapSpace.cYToLat(yMin * tileSize, zoom);
-		mapWriter.append(
-				"<OruxTracker " + "xmlns=\"http://oruxtracker.com/app/res/calibration\"\n" + " versionCode=\"2.1\">\n");
-		mapWriter.append("<MapCalibration layers=\"false\" layerLevel=\"" + map.getZoom() + "\">\n");
-		mapWriter.append("<MapName><![CDATA[" + mapName + "]]></MapName>\n");
+    protected class OruxMapTileBuilder extends MapTileBuilder {
 
-		// convert ampersands and others
-		String mapFileName = mapName;
-		mapFileName = mapFileName.replaceAll("&", "&amp;");
-		mapFileName = mapFileName.replaceAll("<", "&lt;");
-		mapFileName = mapFileName.replaceAll(">", "&gt;");
-		mapFileName = mapFileName.replaceAll("\"", "&quot;");
-		mapFileName = mapFileName.replaceAll("'", "&apos;");
+        public OruxMapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter) {
+            super(atlasCreator, mapTileWriter, false);
+        }
 
-		int mapWidth = (xMax - xMin + 1) * tileSize;
-		int mapHeight = (yMax - yMin + 1) * tileSize;
-		int numXimg = (mapWidth + TILE_SIZE - 1) / TILE_SIZE;
-		int numYimg = (mapHeight + TILE_SIZE - 1) / TILE_SIZE;
-		mapWriter.append("<MapChunks xMax=\"" + numXimg + "\" yMax=\"" + numYimg + "\" datum=\"" + "WGS84"
-				+ "\" projection=\"" + "Mercator" + "\" img_height=\"" + TILE_SIZE + "\" img_width=\"" + TILE_SIZE
-				+ "\" file_name=\"" + mapFileName + "\" />\n");
-		mapWriter.append("<MapDimensions height=\"" + mapHeight + "\" width=\"" + mapWidth + "\" />\n");
-		mapWriter.append("<MapBounds minLat=\"" + latitudeMin + "\" maxLat=\"" + latitudeMax + "\" minLon=\""
-				+ longitudeMin + "\" maxLon=\"" + longitudeMax + "\" />\n");
-		mapWriter.append("<CalibrationPoints>\n");
-		String cb = "<CalibrationPoint corner=\"%s\" lon=\"%2.6f\" lat=\"%2.6f\" />\n";
-		mapWriter.append(String.format(Locale.ENGLISH, cb, "TL", longitudeMin, latitudeMax));
-		mapWriter.append(String.format(Locale.ENGLISH, cb, "BR", longitudeMax, latitudeMin));
-		mapWriter.append(String.format(Locale.ENGLISH, cb, "TR", longitudeMax, latitudeMax));
-		mapWriter.append(String.format(Locale.ENGLISH, cb, "BL", longitudeMin, latitudeMin));
-		mapWriter.append("</CalibrationPoints>\n");
-		mapWriter.append("</MapCalibration>\n");
-		mapWriter.append("</OruxTracker>\n");
-		return mapWriter.toString();
-	}
+        @Override
+        protected void prepareTile(Graphics2D graphics) {
+            graphics.setColor(BG_COLOR);
+            graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+        }
 
-	protected class OruxMapTileBuilder extends MapTileBuilder {
+    }
 
-		public OruxMapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter) {
-			super(atlasCreator, mapTileWriter, false);
-		}
+    private class OruxMapTileWriter implements MapTileWriter {
 
-		@Override
-		protected void prepareTile(Graphics2D graphics) {
-			graphics.setColor(BG_COLOR);
-			graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-		}
+        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+            String tileFileName = String.format("%s_%d_%d.omc2", mapName, tilex, tiley);
+            File tileFile = new File(oruxMapsImagesDir, tileFileName);
+            try (FileOutputStream out = new FileOutputStream(tileFile)) {
+                out.write(tileData);
+            }
+        }
 
-	}
+        public void finalizeMap() {
+            // Nothing to do
+        }
 
-	private class OruxMapTileWriter implements MapTileWriter {
-
-		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-			String tileFileName = String.format("%s_%d_%d.omc2", mapName, tilex, tiley);
-			File tileFile = new File(oruxMapsImagesDir, tileFileName);
-			try (FileOutputStream out = new FileOutputStream(tileFile)) {
-				out.write(tileData);
-			}
-		}
-
-		public void finalizeMap() {
-			// Nothing to do
-		}
-
-	}
+    }
 }

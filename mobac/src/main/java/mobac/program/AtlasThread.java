@@ -1,30 +1,20 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program;
-
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import org.apache.log4j.Logger;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapDownloadSkippedException;
@@ -54,442 +44,454 @@ import mobac.utilities.I18nUtils;
 import mobac.utilities.Utilities;
 import mobac.utilities.tar.TarIndex;
 import mobac.utilities.tar.TarIndexedArchive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
 
 public class AtlasThread extends Thread
-		implements DownloadJobListener, AtlasCreationController, MapSourceCallerThreadInfo {
+        implements DownloadJobListener, AtlasCreationController, MapSourceCallerThreadInfo {
 
-	{
-		ImageIO.setUseCache(false);
-	}
+    private static final Logger LOG = LoggerFactory.getLogger(AtlasThread.class);
+    private static int threadNum = 0;
+    private File customAtlasDir = null;
+    private boolean quitMobacAfterAtlasCreation = false;
+    private DownloadJobProducerThread djp = null;
+    private JobDispatcher downloadJobDispatcher;
+    private AtlasProgress ap; // The GUI showing the progress
+    private AtlasInterface atlas;
+    private AtlasCreator atlasCreator = null;
+    private PauseResumeHandler pauseResumeHandler;
+    private int activeDownloads = 0;
+    private int jobsCompleted = 0;
+    private int jobsRetryError = 0;
+    private int jobsPermanentError = 0;
+    private int maxDownloadRetries = 1;
 
-	private static final Logger log = Logger.getLogger(AtlasThread.class);
-	private static int threadNum = 0;
+    {
+        ImageIO.setUseCache(false);
+    }
 
-	private File customAtlasDir = null;
-	private boolean quitMobacAfterAtlasCreation = false;
+    public AtlasThread(AtlasInterface atlas) throws AtlasTestException {
+        this(atlas, atlas.getOutputFormat().createAtlasCreatorInstance());
+    }
 
-	private DownloadJobProducerThread djp = null;
-	private JobDispatcher downloadJobDispatcher;
-	private AtlasProgress ap; // The GUI showing the progress
+    public AtlasThread(AtlasInterface atlas, AtlasCreator atlasCreator) throws AtlasTestException {
+        super("AtlasThread " + getNextThreadNum());
+        ap = new AtlasProgress(this);
+        this.atlas = atlas;
+        this.atlasCreator = atlasCreator;
+        testAtlas();
+        TileStore.getInstance().closeAll();
+        maxDownloadRetries = Settings.getInstance().downloadRetryCount;
+        pauseResumeHandler = new PauseResumeHandler();
+    }
 
-	private AtlasInterface atlas;
-	private AtlasCreator atlasCreator = null;
-	private PauseResumeHandler pauseResumeHandler;
+    private static synchronized int getNextThreadNum() {
+        threadNum++;
+        return threadNum;
+    }
 
-	private int activeDownloads = 0;
-	private int jobsCompleted = 0;
-	private int jobsRetryError = 0;
-	private int jobsPermanentError = 0;
-	private int maxDownloadRetries = 1;
+    private static long getFileBasedTileCount(MapInterface map) {
+        if (map instanceof FileBasedMapSource) {
+            return map.calculateTilesToDownload();
+        }
+        if (map instanceof AbstractMultiLayerMapSource) {
+            long result = 0;
+            AbstractMultiLayerMapSource mlMapSource = (AbstractMultiLayerMapSource) map;
+            long tilesPerLayer = map.calculateTilesToDownload() / mlMapSource.getLayerMapSources().length;
+            for (MapSource ms : mlMapSource) {
+                // check all layers if they are file-based
+                if (ms instanceof FileBasedMapSource) {
+                    result += tilesPerLayer;
+                }
+            }
+            return result;
+        }
+        return 0;
+    }
 
-	public AtlasThread(AtlasInterface atlas) throws AtlasTestException {
-		this(atlas, atlas.getOutputFormat().createAtlasCreatorInstance());
-	}
+    private void testAtlas() throws AtlasTestException {
+        try {
+            for (LayerInterface layer : atlas) {
+                for (MapInterface map : layer) {
+                    MapSource mapSource = map.getMapSource();
+                    if (!atlasCreator.testMapSource(mapSource))
+                        throw new AtlasTestException("The selected atlas output format \"" + atlas.getOutputFormat()
+                                + "\" does not support the map source \"" + map.getMapSource() + "\"", map);
+                }
+            }
+        } catch (AtlasTestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AtlasTestException(e);
+        }
+    }
 
-	public AtlasThread(AtlasInterface atlas, AtlasCreator atlasCreator) throws AtlasTestException {
-		super("AtlasThread " + getNextThreadNum());
-		ap = new AtlasProgress(this);
-		this.atlas = atlas;
-		this.atlasCreator = atlasCreator;
-		testAtlas();
-		TileStore.getInstance().closeAll();
-		maxDownloadRetries = Settings.getInstance().downloadRetryCount;
-		pauseResumeHandler = new PauseResumeHandler();
-	}
+    public void run() {
+        GUIExceptionHandler.registerForCurrentThread();
+        LOG.info("Starting creation of {} atlas \"{}\"", atlas.getOutputFormat(), atlas.getName());
+        if (customAtlasDir != null) {
+            LOG.debug("Target directory: {}", customAtlasDir);
+        }
+        ap.setDownloadControllerListener(this);
+        try {
+            createAtlas();
+            LOG.info("Atlas creation finished");
+            if (quitMobacAfterAtlasCreation) {
+                System.exit(0);
+            }
+        } catch (OutOfMemoryError e) {
+            System.gc();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    String message = I18nUtils.localizedStringForKey("msg_out_of_memory_head");
+                    int maxMem = Utilities.getJavaMaxHeapMB();
+                    if (maxMem > 0)
+                        message += String.format(I18nUtils.localizedStringForKey("msg_out_of_memory_detail"), maxMem);
+                    JOptionPane.showMessageDialog(null, message,
+                            I18nUtils.localizedStringForKey("msg_out_of_memory_title"), JOptionPane.ERROR_MESSAGE);
+                    ap.closeWindow();
+                }
+            });
+            LOG.error("Out of memory: ", e);
+        } catch (InterruptedException e) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_atlas_download_abort"),
+                            I18nUtils.localizedStringForKey("Information"), JOptionPane.INFORMATION_MESSAGE);
+                    ap.closeWindow();
+                }
+            });
+            LOG.info("Atlas creation was interrupted by user");
+        } catch (Exception e) {
+            LOG.error("Atlas creation aborted because of an error: ", e);
+            GUIExceptionHandler.showExceptionDialog(e);
+        }
+        System.gc();
+        if (quitMobacAfterAtlasCreation) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+            }
+            System.exit(1);
+        }
+    }
 
-	private void testAtlas() throws AtlasTestException {
-		try {
-			for (LayerInterface layer : atlas) {
-				for (MapInterface map : layer) {
-					MapSource mapSource = map.getMapSource();
-					if (!atlasCreator.testMapSource(mapSource))
-						throw new AtlasTestException("The selected atlas output format \"" + atlas.getOutputFormat()
-								+ "\" does not support the map source \"" + map.getMapSource() + "\"", map);
-				}
-			}
-		} catch (AtlasTestException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new AtlasTestException(e);
-		}
-	}
+    /**
+     * Create atlas: For each map download the tiles and perform atlas/map creation
+     */
+    protected void createAtlas() throws InterruptedException, IOException {
 
-	private static synchronized int getNextThreadNum() {
-		threadNum++;
-		return threadNum;
-	}
+        long totalNrOfOnlineTiles = atlas.calculateTilesToDownload();
 
-	public void run() {
-		GUIExceptionHandler.registerForCurrentThread();
-		log.info("Starting creation of " + atlas.getOutputFormat() + " atlas \"" + atlas.getName() + "\"");
-		if (customAtlasDir != null)
-			log.debug("Target directory: " + customAtlasDir);
-		ap.setDownloadControllerListener(this);
-		try {
-			createAtlas();
-			log.info("Altas creation finished");
-			if (quitMobacAfterAtlasCreation)
-				System.exit(0);
-		} catch (OutOfMemoryError e) {
-			System.gc();
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					String message = I18nUtils.localizedStringForKey("msg_out_of_memory_head");
-					int maxMem = Utilities.getJavaMaxHeapMB();
-					if (maxMem > 0)
-						message += String.format(I18nUtils.localizedStringForKey("msg_out_of_memory_detail"), maxMem);
-					JOptionPane.showMessageDialog(null, message,
-							I18nUtils.localizedStringForKey("msg_out_of_memory_title"), JOptionPane.ERROR_MESSAGE);
-					ap.closeWindow();
-				}
-			});
-			log.error("Out of memory: ", e);
-		} catch (InterruptedException e) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_atlas_download_abort"),
-							I18nUtils.localizedStringForKey("Information"), JOptionPane.INFORMATION_MESSAGE);
-					ap.closeWindow();
-				}
-			});
-			log.info("Altas creation was interrupted by user");
-		} catch (Exception e) {
-			log.error("Altas creation aborted because of an error: ", e);
-			GUIExceptionHandler.showExceptionDialog(e);
-		}
-		System.gc();
-		if (quitMobacAfterAtlasCreation) {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-			}
-			System.exit(1);
-		}
-	}
+        for (LayerInterface l : atlas) {
+            for (MapInterface m : l) {
+                // Offline map sources are not relevant for the maximum tile limit.
+                totalNrOfOnlineTiles -= getFileBasedTileCount(m);
+            }
+        }
 
-	/**
-	 * Create atlas: For each map download the tiles and perform atlas/map creation
-	 */
-	protected void createAtlas() throws InterruptedException, IOException {
+        if (totalNrOfOnlineTiles > 500000) {
+            // NumberFormat f = DecimalFormat.getInstance();
+            JOptionPane.showMessageDialog(null,
+                    String.format(I18nUtils.localizedStringForKey("msg_too_many_tiles_msg"), 500000,
+                            totalNrOfOnlineTiles),
+                    I18nUtils.localizedStringForKey("msg_too_many_tiles_title"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            atlasCreator.startAtlasCreation(atlas, customAtlasDir);
+        } catch (AtlasTestException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Atlas format restriction violated",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-		long totalNrOfOnlineTiles = atlas.calculateTilesToDownload();
+        ap.initAtlas(atlas);
+        ap.setVisible(true);
 
-		for (LayerInterface l : atlas) {
-			for (MapInterface m : l) {
-				// Offline map sources are not relevant for the maximum tile limit.
-				totalNrOfOnlineTiles -= getFileBasedTileCount(m);
-			}
-		}
+        Settings s = Settings.getInstance();
 
-		if (totalNrOfOnlineTiles > 500000) {
-			// NumberFormat f = DecimalFormat.getInstance();
-			JOptionPane.showMessageDialog(null,
-					String.format(I18nUtils.localizedStringForKey("msg_too_many_tiles_msg"), 500000,
-							totalNrOfOnlineTiles),
-					I18nUtils.localizedStringForKey("msg_too_many_tiles_title"), JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			atlasCreator.startAtlasCreation(atlas, customAtlasDir);
-		} catch (AtlasTestException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Atlas format restriction violated",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+        downloadJobDispatcher = new JobDispatcher(this, s.downloadThreadCount, pauseResumeHandler, ap);
+        try {
+            for (LayerInterface layer : atlas) {
+                atlasCreator.initLayerCreation(layer);
+                for (MapInterface map : layer) {
+                    try {
+                        while (!createMap(map)) {
+                        }
+                    } catch (InterruptedException e) {
+                        throw e; // User has aborted
+                    } catch (MapDownloadSkippedException e) {
+                        // Do nothing and continue with next map
+                    } catch (Exception e) {
+                        LOG.error("", e);
+                        String[] options = {I18nUtils.localizedStringForKey("Continue"),
+                                I18nUtils.localizedStringForKey("Abort"),
+                                I18nUtils.localizedStringForKey("dlg_download_show_error_report")};
+                        int a = JOptionPane.showOptionDialog(null,
+                                I18nUtils.localizedStringForKey("dlg_download_erro_head") + e.getMessage() + "\n["
+                                        + e.getClass().getSimpleName() + "]\n\n",
+                                I18nUtils.localizedStringForKey("Error"), 0, JOptionPane.ERROR_MESSAGE, null, options,
+                                options[0]);
+                        switch (a) {
+                            case 2:
+                                GUIExceptionHandler.processException(e);
+                            case 1:
+                                throw new InterruptedException();
+                        }
+                    }
+                }
+                atlasCreator.finishLayerCreation();
+            }
+        } catch (InterruptedException e) {
+            atlasCreator.abortAtlasCreation();
+            throw e;
+        } catch (Error e) {
+            atlasCreator.abortAtlasCreation();
+            throw e;
+        } finally {
+            // In case of an abort: Stop create new download jobs
+            if (djp != null) {
+                djp.cancel();
+            }
+            downloadJobDispatcher.terminateAllWorkerThreads();
+            if (!atlasCreator.isAborted()) {
+                atlasCreator.finishAtlasCreation();
+            }
+            ap.atlasCreationFinished();
+        }
 
-		ap.initAtlas(atlas);
-		ap.setVisible(true);
+    }
 
-		Settings s = Settings.getInstance();
+    /**
+     * @param map
+     * @return true if map creation process was finished and false if something went wrong and the user decided to retry
+     * map download
+     * @throws Exception
+     */
+    public boolean createMap(MapInterface map) throws Exception {
+        TarIndex tileIndex = null;
+        TarIndexedArchive tileArchive = null;
 
-		downloadJobDispatcher = new JobDispatcher(this, s.downloadThreadCount, pauseResumeHandler, ap);
-		try {
-			for (LayerInterface layer : atlas) {
-				atlasCreator.initLayerCreation(layer);
-				for (MapInterface map : layer) {
-					try {
-						while (!createMap(map)) {
-						}
-					} catch (InterruptedException e) {
-						throw e; // User has aborted
-					} catch (MapDownloadSkippedException e) {
-						// Do nothing and continue with next map
-					} catch (Exception e) {
-						log.error("", e);
-						String[] options = { I18nUtils.localizedStringForKey("Continue"),
-								I18nUtils.localizedStringForKey("Abort"),
-								I18nUtils.localizedStringForKey("dlg_download_show_error_report") };
-						int a = JOptionPane.showOptionDialog(null,
-								I18nUtils.localizedStringForKey("dlg_download_erro_head") + e.getMessage() + "\n["
-										+ e.getClass().getSimpleName() + "]\n\n",
-								I18nUtils.localizedStringForKey("Error"), 0, JOptionPane.ERROR_MESSAGE, null, options,
-								options[0]);
-						switch (a) {
-						case 2:
-							GUIExceptionHandler.processException(e);
-						case 1:
-							throw new InterruptedException();
-						}
-					}
-				}
-				atlasCreator.finishLayerCreation();
-			}
-		} catch (InterruptedException e) {
-			atlasCreator.abortAtlasCreation();
-			throw e;
-		} catch (Error e) {
-			atlasCreator.abortAtlasCreation();
-			throw e;
-		} finally {
-			// In case of an abort: Stop create new download jobs
-			if (djp != null)
-				djp.cancel();
-			downloadJobDispatcher.terminateAllWorkerThreads();
-			if (!atlasCreator.isAborted())
-				atlasCreator.finishAtlasCreation();
-			ap.atlasCreationFinished();
-		}
+        jobsCompleted = 0;
+        jobsRetryError = 0;
+        jobsPermanentError = 0;
 
-	}
+        ap.initMapDownload(map);
 
-	/**
-	 * 
-	 * @param map
-	 * @return true if map creation process was finished and false if something went wrong and the user decided to retry
-	 *         map download
-	 * @throws Exception
-	 */
-	public boolean createMap(MapInterface map) throws Exception {
-		TarIndex tileIndex = null;
-		TarIndexedArchive tileArchive = null;
+        if (map.getMapSource() instanceof InitializableMapSource) {
+            ((InitializableMapSource) map.getMapSource()).initialize();
+        }
 
-		jobsCompleted = 0;
-		jobsRetryError = 0;
-		jobsPermanentError = 0;
+        if (currentThread().isInterrupted()) {
+            throw new InterruptedException();
+        }
 
-		ap.initMapDownload(map);
+        // Prepare the tile store directory
+        // ts.prepareTileStore(map.getMapSource());
 
-		if (map.getMapSource() instanceof InitializableMapSource) {
-			((InitializableMapSource) map.getMapSource()).initialize();
-		}
+        /***
+         * In this section of code below, tiles for Atlas is being downloaded and saved in the temporary layer tar file
+         * in the system temp directory.
+         **/
+        int zoom = map.getZoom();
 
-		if (currentThread().isInterrupted())
-			throw new InterruptedException();
+        final int tileCount = (int) map.calculateTilesToDownload();
 
-		// Prepare the tile store directory
-		// ts.prepareTileStore(map.getMapSource());
+        ap.setZoomLevel(zoom);
+        try {
+            tileArchive = null;
+            TileProvider mapTileProvider;
+            if (!(map.getMapSource() instanceof FileBasedMapSource)) {
+                // For online maps we download the tiles first and then start creating the map if
+                // we are sure we got all tiles
+                if (!AtlasOutputFormat.TILESTORE.equals(atlas.getOutputFormat())) {
+                    String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
+                    File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
+                    // If something goes wrong the temp file only persists until the VM exits
+                    tileArchiveFile.deleteOnExit();
+                    LOG.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
+                    tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
+                } else {
+                    LOG.debug("Downloading to tile store only");
+                }
 
-		/***
-		 * In this section of code below, tiles for Atlas is being downloaded and saved in the temporary layer tar file
-		 * in the system temp directory.
-		 **/
-		int zoom = map.getZoom();
+                djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive,
+                        (DownloadableElement) map);
 
-		final int tileCount = (int) map.calculateTilesToDownload();
+                boolean failedMessageAnswered = false;
 
-		ap.setZoomLevel(zoom);
-		try {
-			tileArchive = null;
-			TileProvider mapTileProvider;
-			if (!(map.getMapSource() instanceof FileBasedMapSource)) {
-				// For online maps we download the tiles first and then start creating the map if
-				// we are sure we got all tiles
-				if (!AtlasOutputFormat.TILESTORE.equals(atlas.getOutputFormat())) {
-					String tempSuffix = "MOBAC_" + atlas.getName() + "_" + zoom + "_";
-					File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
-					// If something goes wrong the temp file only persists until the VM exits
-					tileArchiveFile.deleteOnExit();
-					log.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
-					tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
-				} else
-					log.debug("Downloading to tile store only");
+                while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
+                        || downloadJobDispatcher.isAtLeastOneWorkerActive()) {
+                    Thread.sleep(500);
+                    if (!failedMessageAnswered && (jobsRetryError > 50) && !ap.ignoreDownloadErrors()) {
+                        pauseResumeHandler.pause();
+                        String[] answers = new String[]{I18nUtils.localizedStringForKey("Continue"),
+                                I18nUtils.localizedStringForKey("Retry"), I18nUtils.localizedStringForKey("Skip"),
+                                I18nUtils.localizedStringForKey("Abort")};
+                        int answer = JOptionPane.showOptionDialog(ap,
+                                I18nUtils.localizedStringForKey("dlg_download_errors_todo_msg"),
+                                I18nUtils.localizedStringForKey("dlg_download_errors_todo"), 0,
+                                JOptionPane.QUESTION_MESSAGE, null, answers, answers[0]);
+                        failedMessageAnswered = true;
+                        switch (answer) {
+                            case 0: // Continue
+                                pauseResumeHandler.resume();
+                                break;
+                            case 1: // Retry
+                                djp.cancel();
+                                djp = null;
+                                downloadJobDispatcher.cancelOutstandingJobs();
+                                return false;
+                            case 2: // Skip
+                                downloadJobDispatcher.cancelOutstandingJobs();
+                                throw new MapDownloadSkippedException();
+                            default: // Abort or close dialog
+                                downloadJobDispatcher.cancelOutstandingJobs();
+                                downloadJobDispatcher.terminateAllWorkerThreads();
+                                throw new InterruptedException();
+                        }
+                    }
+                }
+                djp = null;
+                LOG.debug("All download jobs has been completed!");
+                if (tileArchive != null) {
+                    tileArchive.writeEndofArchive();
+                    tileArchive.close();
+                    tileIndex = tileArchive.getTarIndex();
+                    if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
+                        int missing = tileCount - tileIndex.size();
+                        LOG.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
+                                + " missing: " + missing);
+                        int answer = JOptionPane.showConfirmDialog(ap,
+                                String.format(I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile_msg"),
+                                        missing),
+                                I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile"),
+                                JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                        if (answer != JOptionPane.YES_OPTION)
+                            throw new InterruptedException();
+                    }
+                }
+                downloadJobDispatcher.cancelOutstandingJobs();
+                LOG.debug("Starting to create atlas from downloaded tiles");
+                mapTileProvider = new DownloadedTileProvider(tileIndex, map);
+            } else {
+                // We don't need to download anything. Everything is already stored locally therefore we can just use it
+                mapTileProvider = new FilteredMapSourceProvider(map, LoadMethod.DEFAULT);
+            }
+            atlasCreator.initializeMap(map, mapTileProvider);
+            atlasCreator.createMap();
+        } catch (Error e) {
+            LOG.error("Error in createMap: " + e.getMessage(), e);
+            throw e;
+        } finally {
+            if (tileIndex != null) {
+                tileIndex.closeAndDelete();
+            } else if (tileArchive != null) {
+                tileArchive.delete();
+            }
+        }
+        return true;
+    }
 
-				djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive,
-						(DownloadableElement) map);
+    public void pauseResumeAtlasCreation() {
+        if (pauseResumeHandler.isPaused()) {
+            LOG.debug("Atlas creation resumed");
+            pauseResumeHandler.resume();
+        } else {
+            LOG.debug("Atlas creation paused");
+            pauseResumeHandler.pause();
+        }
+    }
 
-				boolean failedMessageAnswered = false;
+    public boolean isPaused() {
+        return pauseResumeHandler.isPaused();
+    }
 
-				while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
-						|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
-					Thread.sleep(500);
-					if (!failedMessageAnswered && (jobsRetryError > 50) && !ap.ignoreDownloadErrors()) {
-						pauseResumeHandler.pause();
-						String[] answers = new String[] { I18nUtils.localizedStringForKey("Continue"),
-								I18nUtils.localizedStringForKey("Retry"), I18nUtils.localizedStringForKey("Skip"),
-								I18nUtils.localizedStringForKey("Abort") };
-						int answer = JOptionPane.showOptionDialog(ap,
-								I18nUtils.localizedStringForKey("dlg_download_errors_todo_msg"),
-								I18nUtils.localizedStringForKey("dlg_download_errors_todo"), 0,
-								JOptionPane.QUESTION_MESSAGE, null, answers, answers[0]);
-						failedMessageAnswered = true;
-						switch (answer) {
-						case 0: // Continue
-							pauseResumeHandler.resume();
-							break;
-						case 1: // Retry
-							djp.cancel();
-							djp = null;
-							downloadJobDispatcher.cancelOutstandingJobs();
-							return false;
-						case 2: // Skip
-							downloadJobDispatcher.cancelOutstandingJobs();
-							throw new MapDownloadSkippedException();
-						default: // Abort or close dialog
-							downloadJobDispatcher.cancelOutstandingJobs();
-							downloadJobDispatcher.terminateAllWorkerThreads();
-							throw new InterruptedException();
-						}
-					}
-				}
-				djp = null;
-				log.debug("All download jobs has been completed!");
-				if (tileArchive != null) {
-					tileArchive.writeEndofArchive();
-					tileArchive.close();
-					tileIndex = tileArchive.getTarIndex();
-					if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
-						int missing = tileCount - tileIndex.size();
-						log.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
-								+ " missing: " + missing);
-						int answer = JOptionPane.showConfirmDialog(ap,
-								String.format(I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile_msg"),
-										missing),
-								I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile"),
-								JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-						if (answer != JOptionPane.YES_OPTION)
-							throw new InterruptedException();
-					}
-				}
-				downloadJobDispatcher.cancelOutstandingJobs();
-				log.debug("Starting to create atlas from downloaded tiles");
-				mapTileProvider = new DownloadedTileProvider(tileIndex, map);
-			} else {
-				// We don't need to download anything. Everything is already stored locally therefore we can just use it
-				mapTileProvider = new FilteredMapSourceProvider(map, LoadMethod.DEFAULT);
-			}
-			atlasCreator.initializeMap(map, mapTileProvider);
-			atlasCreator.createMap();
-		} catch (Error e) {
-			log.error("Error in createMap: " + e.getMessage(), e);
-			throw e;
-		} finally {
-			if (tileIndex != null)
-				tileIndex.closeAndDelete();
-			else if (tileArchive != null)
-				tileArchive.delete();
-		}
-		return true;
-	}
+    public PauseResumeHandler getPauseResumeHandler() {
+        return pauseResumeHandler;
+    }
 
-	public void pauseResumeAtlasCreation() {
-		if (pauseResumeHandler.isPaused()) {
-			log.debug("Atlas creation resumed");
-			pauseResumeHandler.resume();
-		} else {
-			log.debug("Atlas creation paused");
-			pauseResumeHandler.pause();
-		}
-	}
+    /**
+     * Stop listener from {@link AtlasProgress}
+     */
+    public void abortAtlasCreation() {
+        try {
+            DownloadJobProducerThread djp_ = djp;
+            if (djp_ != null)
+                djp_.cancel();
+            if (downloadJobDispatcher != null)
+                downloadJobDispatcher.terminateAllWorkerThreads();
+            pauseResumeHandler.resume();
+            this.interrupt();
+        } catch (Exception e) {
+            LOG.error("Exception thrown in stopDownload()" + e.getMessage());
+        }
+    }
 
-	public boolean isPaused() {
-		return pauseResumeHandler.isPaused();
-	}
+    public int getActiveDownloads() {
+        return activeDownloads;
+    }
 
-	public PauseResumeHandler getPauseResumeHandler() {
-		return pauseResumeHandler;
-	}
+    public synchronized void jobStarted() {
+        activeDownloads++;
+    }
 
-	/**
-	 * Stop listener from {@link AtlasProgress}
-	 */
-	public void abortAtlasCreation() {
-		try {
-			DownloadJobProducerThread djp_ = djp;
-			if (djp_ != null)
-				djp_.cancel();
-			if (downloadJobDispatcher != null)
-				downloadJobDispatcher.terminateAllWorkerThreads();
-			pauseResumeHandler.resume();
-			this.interrupt();
-		} catch (Exception e) {
-			log.error("Exception thrown in stopDownload()" + e.getMessage());
-		}
-	}
+    public void jobFinishedSuccessfully(int bytesDownloaded) {
+        synchronized (this) {
+            ap.incMapDownloadProgress();
+            activeDownloads--;
+            jobsCompleted++;
+        }
+        ap.updateGUI();
+    }
 
-	public int getActiveDownloads() {
-		return activeDownloads;
-	}
+    public void jobFinishedWithError(boolean retry) {
+        synchronized (this) {
+            activeDownloads--;
+            if (retry)
+                jobsRetryError++;
+            else {
+                jobsPermanentError++;
+                ap.incMapDownloadProgress();
+            }
+        }
+        if (!ap.ignoreDownloadErrors()) {
+            Toolkit.getDefaultToolkit().beep();
+        }
+        ap.setErrorCounter(jobsRetryError, jobsPermanentError);
+        ap.updateGUI();
+    }
 
-	public synchronized void jobStarted() {
-		activeDownloads++;
-	}
+    public int getMaxDownloadRetries() {
+        return maxDownloadRetries;
+    }
 
-	public void jobFinishedSuccessfully(int bytesDownloaded) {
-		synchronized (this) {
-			ap.incMapDownloadProgress();
-			activeDownloads--;
-			jobsCompleted++;
-		}
-		ap.updateGUI();
-	}
+    public AtlasProgress getAtlasProgress() {
+        return ap;
+    }
 
-	public void jobFinishedWithError(boolean retry) {
-		synchronized (this) {
-			activeDownloads--;
-			if (retry)
-				jobsRetryError++;
-			else {
-				jobsPermanentError++;
-				ap.incMapDownloadProgress();
-			}
-		}
-		if (!ap.ignoreDownloadErrors())
-			Toolkit.getDefaultToolkit().beep();
-		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
-		ap.updateGUI();
-	}
+    public File getCustomAtlasDir() {
+        return customAtlasDir;
+    }
 
-	public int getMaxDownloadRetries() {
-		return maxDownloadRetries;
-	}
+    public void setCustomAtlasDir(File customAtlasDir) {
+        this.customAtlasDir = customAtlasDir;
+    }
 
-	public AtlasProgress getAtlasProgress() {
-		return ap;
-	}
+    public void setQuitMobacAfterAtlasCreation(boolean quitMobacAfterAtlasCreation) {
+        this.quitMobacAfterAtlasCreation = quitMobacAfterAtlasCreation;
+    }
 
-	public File getCustomAtlasDir() {
-		return customAtlasDir;
-	}
-
-	public void setCustomAtlasDir(File customAtlasDir) {
-		this.customAtlasDir = customAtlasDir;
-	}
-
-	public void setQuitMobacAfterAtlasCreation(boolean quitMobacAfterAtlasCreation) {
-		this.quitMobacAfterAtlasCreation = quitMobacAfterAtlasCreation;
-	}
-
-	@Override
-	public boolean isMapPreviewThread() {
-		return false;
-	}
-
-	private static long getFileBasedTileCount(MapInterface map) {
-		if (map instanceof FileBasedMapSource) {
-			return map.calculateTilesToDownload();
-		}
-		if (map instanceof AbstractMultiLayerMapSource) {
-			long result = 0;
-			AbstractMultiLayerMapSource mlMapSource = (AbstractMultiLayerMapSource) map;
-			long tilesPerLayer = map.calculateTilesToDownload() / mlMapSource.getLayerMapSources().length;
-			for (MapSource ms : mlMapSource) {
-				// check all layers if they are file-based
-				if (ms instanceof FileBasedMapSource) {
-					result += tilesPerLayer;
-				}
-			}
-			return result;
-		}
-		return 0;
-	}
+    @Override
+    public boolean isMapPreviewThread() {
+        return false;
+    }
 }

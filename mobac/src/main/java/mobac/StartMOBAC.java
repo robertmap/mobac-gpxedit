@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac;
 
@@ -21,11 +21,11 @@ import javax.swing.UIManager;
 
 /**
  * Main class for starting Mobile Atlas Creator.
- * 
+ * <p>
  * This class performs the Java Runtime version check and if the correct version is installed it creates a new instance
  * of the class specified by {@link #MAIN_CLASS}. The class to be instantiated is specified by it's name intentionally
  * as this allows to compile this class without any further class dependencies.
- * 
+ * <p>
  * Note: Translation of Strings in this file do not make sense because the settings are not loaded yet. Therefore all
  * messages are always shown in the default language.
  */

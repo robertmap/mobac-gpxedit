@@ -12,10 +12,27 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.utilities;
 
+import com.sleepycat.je.ExceptionEvent;
+import com.sleepycat.je.ExceptionListener;
+import mobac.exceptions.AbortedByUserException;
+import mobac.program.ProgramInfo;
+import mobac.program.interfaces.ExceptionExtendedInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -28,31 +45,11 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.StringWriter;
 
-import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import mobac.exceptions.AbortedByUserException;
-import org.apache.log4j.Logger;
-
-import com.sleepycat.je.ExceptionEvent;
-import com.sleepycat.je.ExceptionListener;
-
-import mobac.program.Logging;
-import mobac.program.ProgramInfo;
-import mobac.program.interfaces.ExceptionExtendedInfo;
-
 public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, ExceptionListener {
 
     private static final GUIExceptionHandler INSTANCE = new GUIExceptionHandler();
 
-    private static final Logger log = Logger.getLogger(GUIExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GUIExceptionHandler.class);
 
     private static final double MB_DIV = 1024d * 1024d;
 
@@ -60,6 +57,10 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
     static {
         Thread.setDefaultUncaughtExceptionHandler(INSTANCE);
+    }
+
+    private GUIExceptionHandler() {
+        super();
     }
 
     public static void registerForCurrentThread() {
@@ -72,26 +73,6 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
     public static GUIExceptionHandler getInstance() {
         return INSTANCE;
-    }
-
-    private GUIExceptionHandler() {
-        super();
-    }
-
-    /**
-     * Implementation for {@link com.sleepycat.je.ExceptionListener}
-     */
-    public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
-        Exception e = paramExceptionEvent.getException();
-        log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
-        showExceptionDialog(e);
-    }
-
-    /**
-     * Implementation for {@link Thread.UncaughtExceptionHandler}
-     */
-    public void uncaughtException(Thread t, Throwable e) {
-        processException(t, e);
     }
 
     public static void processException(Throwable e) {
@@ -325,6 +306,36 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
         }
     }
 
+    public static void main(String[] args) {
+        for (; ; ) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                throw new RuntimeException("Test", new Exception("Inner"));
+            } catch (Exception e) {
+                showExceptionDialog("Test 123", e);
+            } catch (Error e) {
+                showExceptionDialog(e);
+            }
+            break;
+        }
+    }
+
+    /**
+     * Implementation for {@link com.sleepycat.je.ExceptionListener}
+     */
+    public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
+        Exception e = paramExceptionEvent.getException();
+        log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
+        showExceptionDialog(e);
+    }
+
+    /**
+     * Implementation for {@link Thread.UncaughtExceptionHandler}
+     */
+    public void uncaughtException(Thread t, Throwable e) {
+        processException(t, e);
+    }
+
     /**
      * Catching all Runtime Exceptions in Swing
      * <p>
@@ -357,21 +368,6 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 }
                 GUIExceptionHandler.processException(Thread.currentThread(), e);
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        for (; ; ) {
-            try {
-                Logging.configureConsoleLogging();
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                throw new RuntimeException("Test", new Exception("Inner"));
-            } catch (Exception e) {
-                showExceptionDialog("Test 123", e);
-            } catch (Error e) {
-                showExceptionDialog(e);
-            }
-            break;
         }
     }
 

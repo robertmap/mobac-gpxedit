@@ -12,22 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.custom;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-import javax.net.ssl.SSLSocketFactory;
 
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -36,7 +23,6 @@ import jakarta.xml.bind.annotation.XmlList;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.AbstractHttpMapSourceBase;
@@ -44,7 +30,6 @@ import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.download.MobacSSLHelper;
 import mobac.program.download.TileDownLoader;
-import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSourceListener;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.ReloadableMapSource;
@@ -55,46 +40,23 @@ import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 
+import javax.imageio.ImageIO;
+import javax.net.ssl.SSLSocketFactory;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Custom tile store provider, configurable via settings.xml.
  */
 @XmlRootElement
 public class CustomMapSource extends AbstractHttpMapSourceBase implements ReloadableMapSource<CustomMapSource> {
-
-    @XmlElement(nillable = false, defaultValue = "Custom")
-    private String name = "Custom";
-
-    @XmlElement(defaultValue = "0")
-    private int minZoom = 0;
-
-    @XmlElement(required = true)
-    private int maxZoom = 0;
-
-    @XmlElement(defaultValue = "PNG")
-    protected TileImageType tileType = TileImageType.PNG;
-
-    @XmlElement(defaultValue = "NONE")
-    private TileUpdate tileUpdate = TileUpdate.None;
-
-    @XmlElement(required = true, nillable = false)
-    protected String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
-
-    @XmlElement(defaultValue = "false")
-    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
-    private boolean invertYCoordinate = false;
-
-    @XmlElement(defaultValue = "#000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    private Color backgroundColor = Color.BLACK;
-
-    @XmlElement(required = false, defaultValue = "false")
-    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
-    private boolean ignoreErrors = false;
-
-    @XmlElement(required = false, defaultValue = "")
-    @XmlList
-    private String[] serverParts = null;
-    private int currentServerPart = 0;
 
     /**
      * List of trusted public key (hex encoded lowercase SHA-256 hash of the encoded public key)
@@ -102,7 +64,31 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
     @XmlElementWrapper(name = "trustedPublicKeys")
     @XmlElement(name = "publicKeyHash")
     public final Set<String> trustedPublicKeys = new HashSet<>();
-
+    @XmlElement(defaultValue = "PNG")
+    protected TileImageType tileType = TileImageType.PNG;
+    @XmlElement(required = true, nillable = false)
+    protected String url = "http://127.0.0.1/{$x}_{$y}_{$z}";
+    @XmlElement(nillable = false, defaultValue = "Custom")
+    private String name = "Custom";
+    @XmlElement(defaultValue = "0")
+    private int minZoom = 0;
+    @XmlElement(required = true)
+    private int maxZoom = 0;
+    @XmlElement(defaultValue = "NONE")
+    private TileUpdate tileUpdate = TileUpdate.None;
+    @XmlElement(defaultValue = "false")
+    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
+    private boolean invertYCoordinate = false;
+    @XmlElement(defaultValue = "#000000")
+    @XmlJavaTypeAdapter(ColorAdapter.class)
+    private Color backgroundColor = Color.BLACK;
+    @XmlElement(required = false, defaultValue = "false")
+    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
+    private boolean ignoreErrors = false;
+    @XmlElement(required = false, defaultValue = "")
+    @XmlList
+    private String[] serverParts = null;
+    private int currentServerPart = 0;
     private SSLSocketFactory sslSocketFactory = SSL_SOCKET_FACTORY;
 
     private MapSourceLoaderInfo loaderInfo = null;

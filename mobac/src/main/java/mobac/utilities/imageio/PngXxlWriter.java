@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.utilities.imageio;
 
@@ -41,7 +41,7 @@ package mobac.utilities.imageio;
  *
  */
 
-import static mobac.utilities.imageio.PngConstants.*;
+import mobac.exceptions.UnsupportedDataTypeException;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -58,7 +58,15 @@ import java.util.zip.CRC32;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import mobac.exceptions.UnsupportedDataTypeException;
+import static mobac.utilities.imageio.PngConstants.COLOR_TRUECOLOR;
+import static mobac.utilities.imageio.PngConstants.COMPRESSION_DEFLATE;
+import static mobac.utilities.imageio.PngConstants.FILTER_SET_1;
+import static mobac.utilities.imageio.PngConstants.FILTER_TYPE_NONE;
+import static mobac.utilities.imageio.PngConstants.IDAT;
+import static mobac.utilities.imageio.PngConstants.IEND;
+import static mobac.utilities.imageio.PngConstants.IHDR;
+import static mobac.utilities.imageio.PngConstants.INTERLACE_NONE;
+import static mobac.utilities.imageio.PngConstants.SIGNATURE;
 
 /**
  * A PNG writer that is able to write extra large PNG images using incremental
@@ -76,151 +84,145 @@ import mobac.exceptions.UnsupportedDataTypeException;
  * alpha masks are not supported.
  * </p>
  * Bases on the PNGWriter written by Matthias Mann - www.matthiasmann.de
- * 
+ *
  * @author r_x
  */
 public class PngXxlWriter {
 
-	private static final int BUFFER_SIZE = 128 * 1024;
+    private static final int BUFFER_SIZE = 128 * 1024;
+    ImageDataChunkWriter imageDataChunkWriter;
+    private int width;
+    private int height;
+    private DataOutputStream dos;
 
-	private int width;
-	private int height;
-	private DataOutputStream dos;
+    /**
+     * Creates an PNG writer instance for an image with the specified width and
+     * height.
+     *
+     * @param width  width of the PNG image to be written
+     * @param height height of the PNG image to be written
+     * @param os     destination to write the PNG image data to
+     * @throws IOException
+     */
+    public PngXxlWriter(int width, int height, OutputStream os) throws IOException {
+        this.width = width;
+        this.height = height;
+        this.dos = new DataOutputStream(os);
 
-	ImageDataChunkWriter imageDataChunkWriter;
+        dos.write(SIGNATURE);
 
-	/**
-	 * Creates an PNG writer instance for an image with the specified width and
-	 * height.
-	 * 
-	 * @param width
-	 *            width of the PNG image to be written
-	 * @param height
-	 *            height of the PNG image to be written
-	 * @param os
-	 *            destination to write the PNG image data to
-	 * @throws IOException
-	 */
-	public PngXxlWriter(int width, int height, OutputStream os) throws IOException {
-		this.width = width;
-		this.height = height;
-		this.dos = new DataOutputStream(os);
+        PngChunk cIHDR = new PngChunk(IHDR);
+        cIHDR.writeInt(this.width);
+        cIHDR.writeInt(this.height);
+        cIHDR.writeByte(8); // 8 bit per component
+        cIHDR.writeByte(COLOR_TRUECOLOR);
+        cIHDR.writeByte(COMPRESSION_DEFLATE);
+        cIHDR.writeByte(FILTER_SET_1);
+        cIHDR.writeByte(INTERLACE_NONE);
+        cIHDR.writeTo(dos);
+        imageDataChunkWriter = new ImageDataChunkWriter(dos);
+    }
 
-		dos.write(SIGNATURE);
+    /**
+     * @param tileLineImage
+     * @throws IOException
+     */
+    public void writeTileLine(BufferedImage tileLineImage) throws IOException {
 
-		PngChunk cIHDR = new PngChunk(IHDR);
-		cIHDR.writeInt(this.width);
-		cIHDR.writeInt(this.height);
-		cIHDR.writeByte(8); // 8 bit per component
-		cIHDR.writeByte(COLOR_TRUECOLOR);
-		cIHDR.writeByte(COMPRESSION_DEFLATE);
-		cIHDR.writeByte(FILTER_SET_1);
-		cIHDR.writeByte(INTERLACE_NONE);
-		cIHDR.writeTo(dos);
-		imageDataChunkWriter = new ImageDataChunkWriter(dos);
-	}
+        int tileLineHeight = tileLineImage.getHeight();
+        int tileLineWidth = tileLineImage.getWidth();
 
-	/**
-	 * 
-	 * @param tileLineImage
-	 * @throws IOException
-	 */
-	public void writeTileLine(BufferedImage tileLineImage) throws IOException {
+        if (width != tileLineWidth)
+            throw new RuntimeException("Invalid width");
 
-		int tileLineHeight = tileLineImage.getHeight();
-		int tileLineWidth = tileLineImage.getWidth();
+        ColorModel cm = tileLineImage.getColorModel();
 
-		if (width != tileLineWidth)
-			throw new RuntimeException("Invalid width");
+        if (!(cm instanceof DirectColorModel))
+            throw new UnsupportedDataTypeException(
+                    "Image uses wrong color model. Only DirectColorModel is supported!");
 
-		ColorModel cm = tileLineImage.getColorModel();
+        // We process the image line by line, from head to bottom
+        Rectangle rect = new Rectangle(0, 0, tileLineWidth, 1);
 
-		if (!(cm instanceof DirectColorModel))
-			throw new UnsupportedDataTypeException(
-					"Image uses wrong color model. Only DirectColorModel is supported!");
+        DataOutputStream imageDataStream = imageDataChunkWriter.getStream();
 
-		// We process the image line by line, from head to bottom
-		Rectangle rect = new Rectangle(0, 0, tileLineWidth, 1);
+        byte[] curLine = new byte[width * 3];
+        for (int line = 0; line < tileLineHeight; line++) {
+            rect.y = line;
+            DataBuffer db = tileLineImage.getData(rect).getDataBuffer();
+            if (db.getNumBanks() > 1)
+                throw new UnsupportedDataTypeException("Image data has more than one data bank");
+            if (db instanceof DataBufferByte)
+                curLine = ((DataBufferByte) db).getData();
+            else if (db instanceof DataBufferInt) {
+                int[] intLine = ((DataBufferInt) db).getData();
+                int c = 0;
+                for (int i = 0; i < intLine.length; i++) {
+                    int pixel = intLine[i];
+                    curLine[c++] = (byte) (pixel >> 16 & 0xFF);
+                    curLine[c++] = (byte) (pixel >> 8 & 0xFF);
+                    curLine[c++] = (byte) (pixel & 0xFF);
+                }
+            } else
+                throw new UnsupportedDataTypeException(db.getClass().getName());
 
-		DataOutputStream imageDataStream = imageDataChunkWriter.getStream();
+            imageDataStream.write(FILTER_TYPE_NONE);
+            imageDataStream.write(curLine);
+        }
+    }
 
-		byte[] curLine = new byte[width * 3];
-		for (int line = 0; line < tileLineHeight; line++) {
-			rect.y = line;
-			DataBuffer db = tileLineImage.getData(rect).getDataBuffer();
-			if (db.getNumBanks() > 1)
-				throw new UnsupportedDataTypeException("Image data has more than one data bank");
-			if (db instanceof DataBufferByte)
-				curLine = ((DataBufferByte) db).getData();
-			else if (db instanceof DataBufferInt) {
-				int[] intLine = ((DataBufferInt) db).getData();
-				int c = 0;
-				for (int i = 0; i < intLine.length; i++) {
-					int pixel = intLine[i];
-					curLine[c++] = (byte) (pixel >> 16 & 0xFF);
-					curLine[c++] = (byte) (pixel >> 8 & 0xFF);
-					curLine[c++] = (byte) (pixel & 0xFF);
-				}
-			} else
-				throw new UnsupportedDataTypeException(db.getClass().getName());
+    public void finish() throws IOException {
+        imageDataChunkWriter.finish();
+        PngChunk cIEND = new PngChunk(IEND);
+        cIEND.writeTo(dos);
+        cIEND.close();
+        dos.flush();
+    }
 
-			imageDataStream.write(FILTER_TYPE_NONE);
-			imageDataStream.write(curLine);
-		}
-	}
+    static class ImageDataChunkWriter extends OutputStream {
 
-	public void finish() throws IOException {
-		imageDataChunkWriter.finish();
-		PngChunk cIEND = new PngChunk(IEND);
-		cIEND.writeTo(dos);
-		cIEND.close();
-		dos.flush();
-	}
+        DeflaterOutputStream dfos;
+        DataOutputStream stream;
+        DataOutputStream out;
+        CRC32 crc = new CRC32();
 
-	static class ImageDataChunkWriter extends OutputStream {
+        public ImageDataChunkWriter(DataOutputStream out) throws IOException {
+            this.out = out;
+            dfos = new DeflaterOutputStream(new BufferedOutputStream(this, BUFFER_SIZE),
+                    new Deflater(Deflater.BEST_COMPRESSION));
+            stream = new DataOutputStream(dfos);
+        }
 
-		DeflaterOutputStream dfos;
-		DataOutputStream stream;
-		DataOutputStream out;
-		CRC32 crc = new CRC32();
+        public DataOutputStream getStream() {
+            return stream;
+        }
 
-		public ImageDataChunkWriter(DataOutputStream out) throws IOException {
-			this.out = out;
-			dfos = new DeflaterOutputStream(new BufferedOutputStream(this, BUFFER_SIZE),
-					new Deflater(Deflater.BEST_COMPRESSION));
-			stream = new DataOutputStream(dfos);
-		}
+        public void finish() throws IOException {
+            stream.flush();
+            stream.close();
+            dfos.finish();
+            dfos = null;
+        }
 
-		public DataOutputStream getStream() {
-			return stream;
-		}
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            crc.reset();
+            out.writeInt(len);
+            out.writeInt(IDAT);
+            out.write(b, off, len);
+            crc.update("IDAT".getBytes());
+            crc.update(b, off, len);
+            out.writeInt((int) crc.getValue());
+        }
 
-		public void finish() throws IOException {
-			stream.flush();
-			stream.close();
-			dfos.finish();
-			dfos = null;
-		}
+        @Override
+        public void write(byte[] b) throws IOException {
+            write(b, 0, b.length);
+        }
 
-		@Override
-		public void write(byte[] b, int off, int len) throws IOException {
-			crc.reset();
-			out.writeInt(len);
-			out.writeInt(IDAT);
-			out.write(b, off, len);
-			crc.update("IDAT".getBytes());
-			crc.update(b, off, len);
-			out.writeInt((int) crc.getValue());
-		}
-
-		@Override
-		public void write(byte[] b) throws IOException {
-			write(b, 0, b.length);
-		}
-
-		@Override
-		public void write(int b) throws IOException {
-			throw new IOException("Simgle byte writing not supported");
-		}
-	}
+        @Override
+        public void write(int b) throws IOException {
+            throw new IOException("Simgle byte writing not supported");
+        }
+    }
 }

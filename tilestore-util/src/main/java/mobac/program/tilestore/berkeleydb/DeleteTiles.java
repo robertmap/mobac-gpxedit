@@ -12,9 +12,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.tilestore.berkeleydb;
+
+import com.sleepycat.persist.PrimaryIndex;
+import mobac.gui.mapview.PreviewMap;
+import mobac.program.tilestore.TileStore;
+import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
+import mobac.program.tilestore.berkeleydb.TileDbEntry.TileDbKey;
+import mobac.ts_util.Main;
+import mobac.ts_util.ParamTests;
 
 import java.io.File;
 import java.security.InvalidParameterException;
@@ -22,15 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.sleepycat.persist.PrimaryIndex;
-
-import mobac.gui.mapview.PreviewMap;
-import mobac.program.tilestore.TileStore;
-import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
-import mobac.program.tilestore.berkeleydb.TileDbEntry.TileDbKey;
-import mobac.ts_util.Main;
-import mobac.ts_util.ParamTests;
 
 public class DeleteTiles implements Runnable {
 

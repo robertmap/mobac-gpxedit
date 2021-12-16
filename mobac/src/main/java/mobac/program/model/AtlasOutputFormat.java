@@ -12,18 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Vector;
-
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.atlascreators.AFTrack;
 import mobac.program.atlascreators.AlpineQuestMap;
@@ -77,13 +71,17 @@ import mobac.program.atlascreators.Ublox;
 import mobac.program.atlascreators.Viewranger;
 import mobac.program.jaxb.AtlasOutputFormatAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Vector;
+
 @XmlRootElement
 @XmlJavaTypeAdapter(AtlasOutputFormatAdapter.class)
 public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 
-    public static List<AtlasOutputFormat> FORMATS;
-
     public static final AtlasOutputFormat TILESTORE = createByClass(TileStoreDownload.class);
+    public static List<AtlasOutputFormat> FORMATS;
 
     static {
         FORMATS = new ArrayList<AtlasOutputFormat>(40);
@@ -139,6 +137,16 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
         FORMATS.add(TILESTORE);
     }
 
+    private Class<? extends AtlasCreator> atlasCreatorClass;
+    private String typeName;
+    private String name;
+
+    private AtlasOutputFormat(Class<? extends AtlasCreator> atlasCreatorClass, String typeName, String name) {
+        this.atlasCreatorClass = atlasCreatorClass;
+        this.typeName = typeName;
+        this.name = name;
+    }
+
     public static Vector<AtlasOutputFormat> getFormatsAsVector() {
         return new Vector<AtlasOutputFormat>(FORMATS);
     }
@@ -150,10 +158,6 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
         }
         throw new NoSuchElementException("Unknown atlas format: \"" + Name + "\"");
     }
-
-    private Class<? extends AtlasCreator> atlasCreatorClass;
-    private String typeName;
-    private String name;
 
     private static AtlasOutputFormat createByClass(Class<? extends AtlasCreator> atlasCreatorClass) {
         AtlasCreatorName acName = atlasCreatorClass.getAnnotation(AtlasCreatorName.class);
@@ -167,10 +171,14 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
         return new AtlasOutputFormat(atlasCreatorClass, typeName, name);
     }
 
-    private AtlasOutputFormat(Class<? extends AtlasCreator> atlasCreatorClass, String typeName, String name) {
-        this.atlasCreatorClass = atlasCreatorClass;
-        this.typeName = typeName;
-        this.name = name;
+    /**
+     * Print all atlas formats
+     */
+    public static void main(String[] args) {
+        for (AtlasOutputFormat s : FORMATS) {
+            System.out.println("|" + s);
+            System.out.println("|-");
+        }
     }
 
     public String toString() {
@@ -197,15 +205,5 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 
     public int compareTo(AtlasOutputFormat o) {
         return getTypeName().compareTo(o.toString());
-    }
-
-    /**
-     * Print all atlas formats
-     */
-    public static void main(String[] args) {
-        for (AtlasOutputFormat s : FORMATS) {
-            System.out.println("|" + s);
-            System.out.println("|-");
-        }
     }
 }

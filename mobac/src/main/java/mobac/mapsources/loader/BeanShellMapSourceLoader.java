@@ -1,22 +1,21 @@
 package mobac.mapsources.loader;
 
-import java.io.File;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import mobac.mapsources.MapSourcesManager;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.MapSourceLoaderInfo.LoaderType;
 import mobac.utilities.Utilities;
 import mobac.utilities.file.DirOrFileExtFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.log4j.Logger;
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.util.List;
 
 public class BeanShellMapSourceLoader {
 
-    private final Logger log = Logger.getLogger(BeanShellMapSourceLoader.class);
+    private final Logger log = LoggerFactory.getLogger(BeanShellMapSourceLoader.class);
     private final MapSourcesManager mapSourcesManager;
     private final File mapSourcesDir;
 

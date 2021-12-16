@@ -12,15 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.atlascreators;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import mobac.exceptions.MapCreationException;
 import mobac.mapsources.mapspace.MercatorPower2MapSpace;
@@ -33,15 +27,19 @@ import mobac.program.model.TileImageFormat;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Derived from {@link MobileTrailExplorer}
  */
 @AtlasCreatorName("GPS Sports Tracker")
 public class GpsSportsTracker extends AtlasCreator {
 
-    private File mapDir = null;
-
     protected String appendFileExt = "";
+    private File mapDir = null;
 
     @Override
     public boolean testMapSource(MapSource mapSource) {

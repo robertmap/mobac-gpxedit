@@ -12,11 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.mapview.controller;
 
 //License: GPL. Copyright 2008 by Jan Peter Stotz
+
+import mobac.gui.mapview.PreviewMap;
+import mobac.utilities.OSUtilities;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -24,9 +27,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-
-import mobac.gui.mapview.PreviewMap;
-import mobac.utilities.OSUtilities;
 
 /**
  * Default map controller which implements map moving by pressing the right mouse button and zooming by double click or
@@ -41,23 +41,18 @@ public class DefaultMapController extends JMapController
             | MouseEvent.BUTTON2_DOWN_MASK;
 
     private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+    public Point lastPoint;
+    private Point lastDragPoint;
+    private boolean isMoving = false;
+    private boolean movementEnabled = true;
+    private int movementMouseButton = MouseEvent.BUTTON3;
+    private int movementMouseButtonMask = MouseEvent.BUTTON3_DOWN_MASK;
+    private boolean wheelZoomEnabled = true;
+    private boolean doubleClickZoomEnabled = true;
 
     public DefaultMapController(PreviewMap map) {
         super(map, true);
     }
-
-    private Point lastDragPoint;
-    public Point lastPoint;
-
-    private boolean isMoving = false;
-
-    private boolean movementEnabled = true;
-
-    private int movementMouseButton = MouseEvent.BUTTON3;
-    private int movementMouseButtonMask = MouseEvent.BUTTON3_DOWN_MASK;
-
-    private boolean wheelZoomEnabled = true;
-    private boolean doubleClickZoomEnabled = true;
 
     public void mouseDragged(MouseEvent e) {
         if (!movementEnabled || !isMoving)

@@ -1,33 +1,20 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.panels;
-
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.ParseException;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import mobac.gui.components.FilledLayeredPane;
 import mobac.gui.components.JCollapsiblePanel;
@@ -41,179 +28,189 @@ import mobac.program.model.MercatorPixelCoordinate;
 import mobac.utilities.GBC;
 import mobac.utilities.I18nUtils;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
+
 /**
  * Encapsulates all interface components and code for the panel that shows the coordinates of the current selection and
  * allows the user to enter own coordinates.
  */
 public class JCoordinatesPanel extends JCollapsiblePanel {
 
-	private static final long serialVersionUID = 1L;
+    public static final String NAME = "Coordinates";//用于持久化
+    private static final long serialVersionUID = 1L;
+    private JCoordinateField latMinTextField;
+    private JCoordinateField latMaxTextField;
+    private JCoordinateField lonMinTextField;
+    private JCoordinateField lonMaxTextField;
+    private JButton applySelectionButton;
 
-	public static final String NAME = "Coordinates";//用于持久化
+    private CoordinateStringFormat csf = CoordinateStringFormat.DEG_ENG;
 
-	private JCoordinateField latMinTextField;
-	private JCoordinateField latMaxTextField;
-	private JCoordinateField lonMinTextField;
-	private JCoordinateField lonMaxTextField;
-	private JButton applySelectionButton;
+    public JCoordinatesPanel() {
+        super(I18nUtils.localizedStringForKey("lp_coords_title"), new GridBagLayout());
+        setName(NAME);
+        // coordinates panel
+        latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
+        latMaxTextField.setActionCommand("latMaxTextField");
+        lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
+        lonMinTextField.setActionCommand("longMinTextField");
+        lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
+        lonMaxTextField.setActionCommand("longMaxTextField");
+        latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
+        latMinTextField.setActionCommand("latMinTextField");
 
-	private CoordinateStringFormat csf = CoordinateStringFormat.DEG_ENG;
+        applySelectionButton = new JButton(I18nUtils.localizedStringForKey("lp_coords_select_btn_title"));
 
-	public JCoordinatesPanel() {
-		super(I18nUtils.localizedStringForKey("lp_coords_title"), new GridBagLayout());
-		setName(NAME);
-		// coordinates panel
-		latMaxTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
-		latMaxTextField.setActionCommand("latMaxTextField");
-		lonMinTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
-		lonMinTextField.setActionCommand("longMinTextField");
-		lonMaxTextField = new JCoordinateField(MapSelection.LON_MIN, MapSelection.LON_MAX);
-		lonMaxTextField.setActionCommand("longMaxTextField");
-		latMinTextField = new JCoordinateField(MapSelection.LAT_MIN, MapSelection.LAT_MAX);
-		latMinTextField.setActionCommand("latMinTextField");
+        JLabel latMaxLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_N"), JLabel.CENTER);
+        JLabel lonMinLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_W"), JLabel.CENTER);
+        JLabel lonMaxLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_E"), JLabel.CENTER);
+        JLabel latMinLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_S"), JLabel.CENTER);
 
-		applySelectionButton = new JButton(I18nUtils.localizedStringForKey("lp_coords_select_btn_title"));
+        JPanel northPanel = new JPanel(new BorderLayout());
+        JLayeredPane layeredPane = new FilledLayeredPane();
 
-		JLabel latMaxLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_N"), JLabel.CENTER);
-		JLabel lonMinLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_W"), JLabel.CENTER);
-		JLabel lonMaxLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_E"), JLabel.CENTER);
-		JLabel latMinLabel = new JLabel(I18nUtils.localizedStringForKey("lp_coords_label_S"), JLabel.CENTER);
+        JPanel northInnerPanel = new JPanel();
+        northInnerPanel.add(latMaxLabel);
+        northInnerPanel.add(latMaxTextField);
 
-		JPanel northPanel = new JPanel(new BorderLayout());
-		JLayeredPane layeredPane = new FilledLayeredPane();
+        JPanel formatButtonPanel = new JPanel(null);
+        formatButtonPanel.setOpaque(false);
+        JDropDownButton formatButton = new JDropDownButton(I18nUtils.localizedStringForKey("lp_coords_fmt_list_title"));
+        formatButton.setMargin(new Insets(0, 5, 0, 0));
+        formatButton.setBounds(2, 2, 55, 20);
+        formatButtonPanel.add(formatButton);
+        for (CoordinateStringFormat csf : CoordinateStringFormat.values())
+            formatButton.addDropDownItem(new JNumberFormatMenuItem(csf));
 
-		JPanel northInnerPanel = new JPanel();
-		northInnerPanel.add(latMaxLabel);
-		northInnerPanel.add(latMaxTextField);
+        layeredPane.add(northInnerPanel, Integer.valueOf(0));
+        layeredPane.setMinimumSize(northInnerPanel.getMinimumSize());
+        layeredPane.setPreferredSize(northInnerPanel.getPreferredSize());
+        layeredPane.add(formatButtonPanel, Integer.valueOf(2));
+        northPanel.add(layeredPane, BorderLayout.CENTER);
 
-		JPanel formatButtonPanel = new JPanel(null);
-		formatButtonPanel.setOpaque(false);
-		JDropDownButton formatButton = new JDropDownButton(I18nUtils.localizedStringForKey("lp_coords_fmt_list_title"));
-		formatButton.setMargin(new Insets(0, 5, 0, 0));
-		formatButton.setBounds(2, 2, 55, 20);
-		formatButtonPanel.add(formatButton);
-		for (CoordinateStringFormat csf : CoordinateStringFormat.values())
-			formatButton.addDropDownItem(new JNumberFormatMenuItem(csf));
+        // northPanel.add(northInnerPanel, BorderLayout.CENTER);
+        contentContainer.add(northPanel, GBC.eol().fillH().insets(0, 5, 0, 0));
 
-		layeredPane.add(northInnerPanel, Integer.valueOf(0));
-		layeredPane.setMinimumSize(northInnerPanel.getMinimumSize());
-		layeredPane.setPreferredSize(northInnerPanel.getPreferredSize());
-		layeredPane.add(formatButtonPanel, Integer.valueOf(2));
-		northPanel.add(layeredPane, BorderLayout.CENTER);
+        JPanel eastWestPanel = new JPanel(new GridBagLayout());
+        eastWestPanel.add(lonMinLabel, GBC.std());
+        eastWestPanel.add(lonMinTextField, GBC.std());
+        eastWestPanel.add(lonMaxLabel, GBC.std().insets(10, 0, 0, 0));
+        eastWestPanel.add(lonMaxTextField, GBC.std());
+        contentContainer.add(eastWestPanel, GBC.eol().fill());
 
-		// northPanel.add(northInnerPanel, BorderLayout.CENTER);
-		contentContainer.add(northPanel, GBC.eol().fillH().insets(0, 5, 0, 0));
+        JPanel southPanel = new JPanel();
+        southPanel.add(latMinLabel);
+        southPanel.add(latMinTextField);
+        contentContainer.add(southPanel, GBC.eol().anchor(GBC.CENTER));
+        contentContainer.add(applySelectionButton, GBC.eol().anchor(GBC.CENTER).insets(0, 5, 0, 0));
+    }
 
-		JPanel eastWestPanel = new JPanel(new GridBagLayout());
-		eastWestPanel.add(lonMinLabel, GBC.std());
-		eastWestPanel.add(lonMinTextField, GBC.std());
-		eastWestPanel.add(lonMaxLabel, GBC.std().insets(10, 0, 0, 0));
-		eastWestPanel.add(lonMaxTextField, GBC.std());
-		contentContainer.add(eastWestPanel, GBC.eol().fill());
+    public CoordinateStringFormat getNumberFormat() {
+        return csf;
+    }
 
-		JPanel southPanel = new JPanel();
-		southPanel.add(latMinLabel);
-		southPanel.add(latMinTextField);
-		contentContainer.add(southPanel, GBC.eol().anchor(GBC.CENTER));
-		contentContainer.add(applySelectionButton, GBC.eol().anchor(GBC.CENTER).insets(0, 5, 0, 0));
-	}
+    public void setNumberFormat(CoordinateStringFormat csf) {
+        this.csf = csf;
+        latMaxTextField.setNumberFormat(csf.getNumberFormatLatitude());
+        latMinTextField.setNumberFormat(csf.getNumberFormatLatitude());
+        lonMaxTextField.setNumberFormat(csf.getNumberFormatLongitude());
+        lonMinTextField.setNumberFormat(csf.getNumberFormatLongitude());
+    }
 
-	public void setNumberFormat(CoordinateStringFormat csf) {
-		this.csf = csf;
-		latMaxTextField.setNumberFormat(csf.getNumberFormatLatitude());
-		latMinTextField.setNumberFormat(csf.getNumberFormatLatitude());
-		lonMaxTextField.setNumberFormat(csf.getNumberFormatLongitude());
-		lonMinTextField.setNumberFormat(csf.getNumberFormatLongitude());
-	}
+    public void setCoordinates(EastNorthCoordinate max, EastNorthCoordinate min) {
+        latMaxTextField.setCoordinate(max.lat);
+        lonMaxTextField.setCoordinate(max.lon);
+        latMinTextField.setCoordinate(min.lat);
+        lonMinTextField.setCoordinate(min.lon);
+    }
 
-	public CoordinateStringFormat getNumberFormat() {
-		return csf;
-	}
+    public void setCoordinates(MapSelection ms) {
+        MercatorPixelCoordinate max = ms.getBottomRightPixelCoordinate();
+        MercatorPixelCoordinate min = ms.getTopLeftPixelCoordinate();
+        setSelection(max, min);
+    }
 
-	public void setCoordinates(EastNorthCoordinate max, EastNorthCoordinate min) {
-		latMaxTextField.setCoordinate(max.lat);
-		lonMaxTextField.setCoordinate(max.lon);
-		latMinTextField.setCoordinate(min.lat);
-		lonMinTextField.setCoordinate(min.lon);
-	}
+    public void setSelection(MercatorPixelCoordinate max, MercatorPixelCoordinate min) {
+        EastNorthCoordinate c1 = min.getEastNorthCoordinate();
+        EastNorthCoordinate c2 = max.getEastNorthCoordinate();
+        latMaxTextField.setCoordinate(c1.lat);
+        lonMaxTextField.setCoordinate(c2.lon);
+        latMinTextField.setCoordinate(c2.lat);
+        lonMinTextField.setCoordinate(c1.lon);
+    }
 
-	public void setCoordinates(MapSelection ms) {
-		MercatorPixelCoordinate max = ms.getBottomRightPixelCoordinate();
-		MercatorPixelCoordinate min = ms.getTopLeftPixelCoordinate();
-		setSelection(max, min);
-	}
+    /**
+     * Checks if the values for min/max langitude and min/max latitude are interchanged (smaller value in the max field
+     * and larger value in the min field) and swaps them if necessary.
+     */
+    public void correctMinMax() {
+        try {
+            double lat1 = latMaxTextField.getCoordinate();
+            double lat2 = latMinTextField.getCoordinate();
+            if (lat1 < lat2) {
+                String tmp = latMaxTextField.getText();
+                latMaxTextField.setText(latMinTextField.getText());
+                latMinTextField.setText(tmp);
+            }
+        } catch (ParseException e) {
+            // one of the lat fields contains an invalid coordinate
+        }
+        try {
+            double lon1 = lonMaxTextField.getCoordinate();
+            double lon2 = lonMinTextField.getCoordinate();
+            if (lon1 < lon2) {
+                String tmp = lonMaxTextField.getText();
+                lonMaxTextField.setText(lonMinTextField.getText());
+                lonMinTextField.setText(tmp);
+            }
+        } catch (ParseException e) {
+            // one of the lon fields contains an invalid coordinate
+        }
+    }
 
-	public void setSelection(MercatorPixelCoordinate max, MercatorPixelCoordinate min) {
-		EastNorthCoordinate c1 = min.getEastNorthCoordinate();
-		EastNorthCoordinate c2 = max.getEastNorthCoordinate();
-		latMaxTextField.setCoordinate(c1.lat);
-		lonMaxTextField.setCoordinate(c2.lon);
-		latMinTextField.setCoordinate(c2.lat);
-		lonMinTextField.setCoordinate(c1.lon);
-	}
+    public MapSelection getMapSelection(MapSource mapSource) {
+        EastNorthCoordinate max = getMaxCoordinate();
+        EastNorthCoordinate min = getMinCoordinate();
+        return new MapSelection(mapSource, max, min);
+    }
 
-	/**
-	 * Checks if the values for min/max langitude and min/max latitude are interchanged (smaller value in the max field
-	 * and larger value in the min field) and swaps them if necessary.
-	 */
-	public void correctMinMax() {
-		try {
-			double lat1 = latMaxTextField.getCoordinate();
-			double lat2 = latMinTextField.getCoordinate();
-			if (lat1 < lat2) {
-				String tmp = latMaxTextField.getText();
-				latMaxTextField.setText(latMinTextField.getText());
-				latMinTextField.setText(tmp);
-			}
-		} catch (ParseException e) {
-			// one of the lat fields contains an invalid coordinate
-		}
-		try {
-			double lon1 = lonMaxTextField.getCoordinate();
-			double lon2 = lonMinTextField.getCoordinate();
-			if (lon1 < lon2) {
-				String tmp = lonMaxTextField.getText();
-				lonMaxTextField.setText(lonMinTextField.getText());
-				lonMinTextField.setText(tmp);
-			}
-		} catch (ParseException e) {
-			// one of the lon fields contains an invalid coordinate
-		}
-	}
+    public EastNorthCoordinate getMaxCoordinate() {
+        return new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(), lonMaxTextField.getCoordinateOrNaN());
+    }
 
-	public MapSelection getMapSelection(MapSource mapSource) {
-		EastNorthCoordinate max = getMaxCoordinate();
-		EastNorthCoordinate min = getMinCoordinate();
-		return new MapSelection(mapSource, max, min);
-	}
+    public EastNorthCoordinate getMinCoordinate() {
+        return new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(), lonMinTextField.getCoordinateOrNaN());
+    }
 
-	public EastNorthCoordinate getMaxCoordinate() {
-		return new EastNorthCoordinate(latMaxTextField.getCoordinateOrNaN(), lonMaxTextField.getCoordinateOrNaN());
-	}
+    public void addButtonActionListener(ActionListener l) {
+        applySelectionButton.addActionListener(l);
+    }
 
-	public EastNorthCoordinate getMinCoordinate() {
-		return new EastNorthCoordinate(latMinTextField.getCoordinateOrNaN(), lonMinTextField.getCoordinateOrNaN());
-	}
+    protected class JNumberFormatMenuItem extends JMenuItem implements ActionListener {
 
-	public void addButtonActionListener(ActionListener l) {
-		applySelectionButton.addActionListener(l);
-	}
+        private static final long serialVersionUID = 1L;
+        private final CoordinateStringFormat csf;
 
-	protected class JNumberFormatMenuItem extends JMenuItem implements ActionListener {
+        public JNumberFormatMenuItem(CoordinateStringFormat csf) {
+            super(csf.toString());
+            this.csf = csf;
+            addActionListener(this);
+        }
 
-		private static final long serialVersionUID = 1L;
-		private final CoordinateStringFormat csf;
+        public void actionPerformed(ActionEvent e) {
+            System.out.println(e);
+            JCoordinatesPanel.this.setNumberFormat(csf);
+        }
 
-		public JNumberFormatMenuItem(CoordinateStringFormat csf) {
-			super(csf.toString());
-			this.csf = csf;
-			addActionListener(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			System.out.println(e);
-			JCoordinatesPanel.this.setNumberFormat(csf);
-		}
-
-	}
+    }
 }

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.model;
 
@@ -28,34 +28,34 @@ import java.util.TreeMap;
  */
 public class AnyAttributeMap extends TreeMap<QName, Object> {
 
-	public AnyAttributeMap() {
-		super(new QNameComparator());
-	}
+    public AnyAttributeMap() {
+        super(new QNameComparator());
+    }
 
-	public static class QNameComparator implements Comparator<QName> {
+    public String getAttr(String key) {
+        return (String) get(new QName(key));
+    }
 
-		public int compare(QName o1, QName o2) {
-			return o1.getLocalPart().compareTo(o2.getLocalPart());
-		}
-	}
+    public void setAttr(String key, String value) {
+        put(new QName(key), value);
+    }
 
-	public String getAttr(String key) {
-		return (String) get(new QName(key));
-	}
+    public int getInt(TileImageParameters.Name key) {
+        return Integer.parseInt(getAttr(key.name()));
+    }
 
-	public void setAttr(String key, String value) {
-		put(new QName(key), value);
-	}
+    public int getInt(String key) {
+        return Integer.parseInt(getAttr(key));
+    }
 
-	public int getInt(TileImageParameters.Name key) {
-		return Integer.parseInt(getAttr(key.name()));
-	}
+    public void setInt(String key, int value) {
+        put(new QName(key), Integer.toString(value));
+    }
 
-	public int getInt(String key) {
-		return Integer.parseInt(getAttr(key));
-	}
+    public static class QNameComparator implements Comparator<QName> {
 
-	public void setInt(String key, int value) {
-		put(new QName(key), Integer.toString(value));
-	}
+        public int compare(QName o1, QName o2) {
+            return o1.getLocalPart().compareTo(o2.getLocalPart());
+        }
+    }
 }

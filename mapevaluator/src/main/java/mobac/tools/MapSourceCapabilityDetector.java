@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.tools;
 
@@ -23,7 +23,8 @@ import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -37,7 +38,7 @@ import java.util.Map;
 
 public class MapSourceCapabilityDetector {
 
-	public static final Logger log = Logger.getLogger(MapSourceCapabilityDetector.class);
+    public static final Logger log = LoggerFactory.getLogger(MapSourceCapabilityDetector.class);
 
 	private final HttpMapSource mapSource;
 	private final EastNorthCoordinate coordinate;

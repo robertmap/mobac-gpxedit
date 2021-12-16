@@ -12,20 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.mapview;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-
-import org.apache.log4j.Logger;
 
 import mobac.gui.MainGUI;
 import mobac.gui.mapview.controller.DefaultMapController;
@@ -45,53 +34,52 @@ import mobac.program.model.MercatorPixelCoordinate;
 import mobac.program.model.Settings;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.MyMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
 public class PreviewMap extends JMapViewer {
-
-    private static final long serialVersionUID = 1L;
 
     public static final Color GRID_COLOR = new Color(200, 20, 20, 130);
     public static final Color SEL_COLOR = new Color(0.9f, 0.7f, 0.7f, 0.6f);
     public static final Color MAP_COLOR = new Color(1.0f, 0.84f, 0.0f, 0.4f);
-
     public static final int MAP_CONTROLLER_RECTANGLE_SELECT = 0;
     public static final int MAP_CONTROLLER_GPX = 1;
-
     protected static final Font LOADING_FONT = new Font("Sans Serif", Font.BOLD, 30);
-
-    private static Logger log = Logger.getLogger(PreviewMap.class);
-
+    private static final long serialVersionUID = 1L;
+    private static Logger log = LoggerFactory.getLogger(PreviewMap.class);
+    public final Ruler ruler = new Ruler(this);
+    private final WgsGrid wgsGrid = new WgsGrid(Settings.getInstance().wgsGrid, this);
+    public boolean isMeasuring = false;
+    protected LinkedList<MapEventListener> mapEventListeners = new LinkedList<>();
+    protected JMapController mapKeyboardController;
+    protected JMapController mapSelectionController;
+    protected DefaultMapController defaultMapController;
     /**
      * Interactive map selection max/min pixel coordinates regarding zoom level <code>MAX_ZOOM</code>
      */
     private Point iSelectionMin;
     private Point iSelectionMax;
-
     /**
      * Map selection max/min pixel coordinates regarding zoom level <code>MAX_ZOOM</code> with respect to the grid zoom.
      */
     private Point gridSelectionStart;
     private Point gridSelectionEnd;
-
     /**
      * Pre-painted transparent tile with grid lines on it. This makes painting the grid a lot faster in difference to
      * painting each line or rectangle if the grid zoom is much higher that the current zoom level.
      */
     private BufferedImage gridTile = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-
     private int gridZoom = -1;
     private int gridSize;
-
-    public boolean isMeasuring = false;
-    public final Ruler ruler = new Ruler(this);
-
-    protected LinkedList<MapEventListener> mapEventListeners = new LinkedList<>();
-
-    protected JMapController mapKeyboardController;
-    protected JMapController mapSelectionController;
-    protected DefaultMapController defaultMapController;
-
-    private final WgsGrid wgsGrid = new WgsGrid(Settings.getInstance().wgsGrid, this);
 
     public PreviewMap() {
         super(MapSourcesManager.getInstance().getDefaultMapSource(), 5);
@@ -162,6 +150,10 @@ public class PreviewMap extends JMapViewer {
         updateGridValues();
     }
 
+    public int getGridZoom() {
+        return gridZoom;
+    }
+
     public void setGridZoom(int gridZoom) {
         if (gridZoom == this.gridZoom)
             return;
@@ -170,10 +162,6 @@ public class PreviewMap extends JMapViewer {
         applyGridOnSelection();
         updateMapSelection();
         repaint();
-    }
-
-    public int getGridZoom() {
-        return gridZoom;
     }
 
     public void setIsMeasuring(Boolean val) {

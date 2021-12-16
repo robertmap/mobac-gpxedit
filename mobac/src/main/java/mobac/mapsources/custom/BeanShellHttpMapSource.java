@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.custom;
 
@@ -67,16 +67,16 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource implements Rel
 
     private SSLSocketFactory sslSocketFactory = AbstractHttpMapSource.SSL_SOCKET_FACTORY;
 
-    public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
-        return new BeanShellHttpMapSource(FileUtils.readFileToString(f, StandardCharsets.UTF_8), f.getName());
-    }
-
     public BeanShellHttpMapSource(String code, String bshMapName) throws EvalError {
         super("", 0, 0, TileImageType.PNG, TileUpdate.None);
         this.bshMapName = bshMapName;
         this.code = code;
         name = "BeanShell map source " + NUM++;
         prepareInterpreter(code);
+    }
+
+    public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
+        return new BeanShellHttpMapSource(FileUtils.readFileToString(f, StandardCharsets.UTF_8), f.getName());
     }
 
     protected void prepareInterpreter(String code) throws EvalError {

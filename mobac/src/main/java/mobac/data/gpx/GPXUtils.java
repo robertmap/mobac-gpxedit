@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.data.gpx;
 
@@ -22,7 +22,6 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.util.JAXBResult;
 import mobac.data.gpx.gpx11.Gpx;
-import mobac.program.Logging;
 import mobac.utilities.Utilities;
 import org.w3c.dom.Document;
 
@@ -32,7 +31,12 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class GPXUtils {
 
@@ -83,7 +87,6 @@ public class GPXUtils {
     }
 
     public static void main(String[] args) {
-        Logging.configureConsoleLogging();
         try {
             loadGpxFile(new File("misc/samples/gpx/gpx11 wpt.gpx"));
             loadGpxFile(new File("misc/samples/gpx/gpx10 wpt.gpx"));

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.model;
 
@@ -22,28 +22,12 @@ import java.util.LinkedList;
 
 public class MapSourceLoaderInfo {
 
-    public enum LoaderType {
-        MAPPACK("Mappack"), // map pack file
-        XML("Custom XML"), // custom map xml
-        BSH("BeanShell") // BeanShell script
-        ;
-
-        public final String displayName;
-
-        private LoaderType(String displayName) {
-            this.displayName = displayName;
-        }
-    }
-
-    ;
-
     protected final LoaderType loaderType;
 
+    ;
     protected final File sourceFile;
-
     protected final long sourceFileLastModified;
     protected final long sourceFileSize;
-
     protected final String revision;
 
     public MapSourceLoaderInfo(LoaderType loaderType, File sourceFile) {
@@ -116,5 +100,18 @@ public class MapSourceLoaderInfo {
             return null;
         }
         return pathList.toArray(new String[pathList.size()]);
+    }
+
+    public enum LoaderType {
+        MAPPACK("Mappack"), // map pack file
+        XML("Custom XML"), // custom map xml
+        BSH("BeanShell") // BeanShell script
+        ;
+
+        public final String displayName;
+
+        private LoaderType(String displayName) {
+            this.displayName = displayName;
+        }
     }
 }

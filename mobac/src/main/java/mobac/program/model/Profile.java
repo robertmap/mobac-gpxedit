@@ -12,11 +12,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.model;
 
-import java.io.*;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEventLocator;
+import mobac.exceptions.AbortedByUserException;
+import mobac.gui.panels.JProfilesPanel;
+import mobac.program.DirectoryManager;
+import mobac.program.interfaces.AtlasInterface;
+import mobac.program.interfaces.AtlasObject;
+import mobac.utilities.I18nUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,46 +46,44 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
-
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.ValidationEvent;
-import jakarta.xml.bind.ValidationEventHandler;
-import jakarta.xml.bind.ValidationEventLocator;
-
-import mobac.exceptions.AbortedByUserException;
-import org.apache.log4j.Logger;
-
-import mobac.gui.panels.JProfilesPanel;
-import mobac.program.DirectoryManager;
-import mobac.program.interfaces.AtlasInterface;
-import mobac.program.interfaces.AtlasObject;
-import mobac.utilities.I18nUtils;
-import mobac.utilities.Utilities;
-
 /**
  * A profile is a saved atlas. The available profiles ({@link Profile} instances) are visible in the
  * <code>profilesCombo</code> in the {@link JProfilesPanel}.
  */
 public class Profile implements Comparable<Profile> {
 
-    private static Logger log = Logger.getLogger(Profile.class);
-
     public static final String PROFILE_NAME_REGEX = "[\\w _-]+";
-
     public static final String PROFILE_FILENAME_PREFIX = "mobac-profile-";
-
     public static final Pattern PROFILE_FILENAME_PATTERN = Pattern
             .compile(PROFILE_FILENAME_PREFIX + "(" + PROFILE_NAME_REGEX + ").xml");
-
     public static final Profile DEFAULT = new Profile();
+    private static Logger log = LoggerFactory.getLogger(Profile.class);
     private static Vector<Profile> profiles = new Vector<>();
 
     private final File file;
     private final String name;
+
+    /**
+     * Load a profile by it's name
+     *
+     * @param name
+     */
+    public Profile(String name) {
+        this(new File(DirectoryManager.atlasProfilesDir, getProfileFileName(name)), name);
+    }
+
+    /**
+     * Default profile
+     */
+    protected Profile() {
+        this(new File(DirectoryManager.atlasProfilesDir, "mobac-profile.xml"), "");
+    }
+
+    protected Profile(File file, String name) {
+        super();
+        this.file = file;
+        this.name = name;
+    }
 
     /**
      * Profiles management method
@@ -100,26 +118,26 @@ public class Profile implements Comparable<Profile> {
         return profiles;
     }
 
-    /**
-     * Load a profile by it's name
-     *
-     * @param name
-     */
-    public Profile(String name) {
-        this(new File(DirectoryManager.atlasProfilesDir, getProfileFileName(name)), name);
+    public static boolean checkAtlas(AtlasInterface atlasInterface) {
+        return checkAtlasObject(atlasInterface);
     }
 
-    /**
-     * Default profile
-     */
-    protected Profile() {
-        this(new File(DirectoryManager.atlasProfilesDir, "mobac-profile.xml"), "");
+    public static String getProfileFileName(String profileName) {
+        return PROFILE_FILENAME_PREFIX + profileName + ".xml";
     }
 
-    protected Profile(File file, String name) {
-        super();
-        this.file = file;
-        this.name = name;
+    private static boolean checkAtlasObject(Object o) {
+        boolean result = false;
+        if (o instanceof AtlasObject) {
+            result |= ((AtlasObject) o).checkData();
+        }
+        if (o instanceof Iterable<?>) {
+            Iterable<?> it = (Iterable<?>) o;
+            for (Object ao : it) {
+                result |= checkAtlasObject(ao);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -217,27 +235,5 @@ public class Profile implements Comparable<Profile> {
             }
             throw new JAXBException(e.getMessage(), e);
         }
-    }
-
-    public static boolean checkAtlas(AtlasInterface atlasInterface) {
-        return checkAtlasObject(atlasInterface);
-    }
-
-    public static String getProfileFileName(String profileName) {
-        return PROFILE_FILENAME_PREFIX + profileName + ".xml";
-    }
-
-    private static boolean checkAtlasObject(Object o) {
-        boolean result = false;
-        if (o instanceof AtlasObject) {
-            result |= ((AtlasObject) o).checkData();
-        }
-        if (o instanceof Iterable<?>) {
-            Iterable<?> it = (Iterable<?>) o;
-            for (Object ao : it) {
-                result |= checkAtlasObject(ao);
-            }
-        }
-        return result;
     }
 }

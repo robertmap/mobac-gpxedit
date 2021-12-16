@@ -12,15 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.custom;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import mobac.exceptions.TileException;
 import mobac.gui.mapview.PreviewMap;
 import mobac.mapsources.MapSourceTools;
 import mobac.mapsources.mapspace.MapSpaceFactory;
-import mobac.program.Logging;
 import mobac.program.interfaces.FileBasedMapSource;
 import mobac.program.interfaces.MapSpace;
 import mobac.program.jaxb.BooleanAdapter;
@@ -29,16 +32,11 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.Utilities;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -56,7 +54,7 @@ import java.util.zip.ZipFile;
 @XmlRootElement(name = "localTileZip")
 public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
-    private static final Logger log = Logger.getLogger(CustomLocalTileZipMapSource.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomLocalTileZipMapSource.class);
 
     private MapSourceLoaderInfo loaderInfo = null;
 
@@ -105,9 +103,9 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
                         JOptionPane.ERROR_MESSAGE);
             } else {
                 try {
-                    Logging.LOG.debug("Opening zip file " + zipFile.getAbsolutePath());
+                    log.debug("Opening zip file " + zipFile.getAbsolutePath());
                     zips.add(new ZipFile(zipFile));
-                    Logging.LOG.debug("Zip file open completed");
+                    log.debug("Zip file open completed");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null,
                             String.format(I18nUtils.localizedStringForKey("msg_custom_map_failed_open_source_zip"),

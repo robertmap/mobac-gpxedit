@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.loader;
 
@@ -20,7 +20,6 @@ import mobac.exceptions.MapSourceCreateException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.exceptions.UpdateFailedException;
 import mobac.mapsources.MapSourcesManager;
-import mobac.program.Logging;
 import mobac.program.ProgramInfo;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
@@ -32,8 +31,8 @@ import mobac.utilities.Utilities;
 import mobac.utilities.file.DirOrFileExtFilter;
 import mobac.utilities.file.FileExtFilter;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 import java.io.File;
@@ -71,7 +70,7 @@ import java.util.zip.ZipFile;
 
 public class MapPackManager {
 
-    private final Logger log = Logger.getLogger(MapPackManager.class);
+    private final Logger log = LoggerFactory.getLogger(MapPackManager.class);
 
     private final int requiredMapPackVersion;
 
@@ -86,6 +85,18 @@ public class MapPackManager {
         Collection<? extends Certificate> certs = cf
                 .generateCertificates(Utilities.loadResourceAsStream("cert/MapPack.cer"));
         mapPackCert = (X509Certificate) certs.iterator().next();
+    }
+
+    public static void main(String[] args) {
+        try {
+            // Logging.configureConsoleLogging(Level.DEBUG);
+            ProgramInfo.initialize();
+            MapPackManager mpm = new MapPackManager(new File("mapsources"));
+            // System.out.println(mpm.generateMappackMD5(new File("mapsources/mp-bing.jar")));
+            mpm.updateMapPacks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -487,18 +498,6 @@ public class MapPackManager {
             }
         }
 
-    }
-
-    public static void main(String[] args) {
-        try {
-            Logging.configureConsoleLogging(Level.DEBUG);
-            ProgramInfo.initialize();
-            MapPackManager mpm = new MapPackManager(new File("mapsources"));
-            // System.out.println(mpm.generateMappackMD5(new File("mapsources/mp-bing.jar")));
-            mpm.updateMapPacks();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }

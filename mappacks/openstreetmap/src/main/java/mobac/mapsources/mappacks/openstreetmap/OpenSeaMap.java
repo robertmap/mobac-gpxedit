@@ -4,7 +4,6 @@ import mobac.exceptions.TileException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.mapsources.AbstractHttpMapSource;
 import mobac.mapsources.AbstractMultiLayerMapSource;
-import mobac.program.Logging;
 import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
@@ -45,9 +44,28 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 		return "http://openstreetmap.org";
 	}
 
+	public static Image makeColorTransparent(Image im, final Color color) {
+		ImageFilter filter = new RGBImageFilter() {
+			// the color we are looking for... Alpha bits are set to opaque
+			public int markerRGB = color.getRGB() | 0xFF000000;
+
+			public final int filterRGB(int x, int y, int rgb) {
+				if ((rgb | 0xFF000000) == markerRGB) {
+					// Mark the alpha bits as zero - transparent
+					return 0x00FFFFFF & rgb;
+				}
+				// nothing to do
+				return rgb;
+			}
+		};
+
+		ImageProducer ip = new FilteredImageSource(im.getSource(), filter);
+		return Toolkit.getDefaultToolkit().createImage(ip);
+	}
+
 	/**
 	 * Not working correctly:
-	 * 
+	 * <p>
 	 * 1. The map is a "sparse map" (only tiles are present that have content - the other are missing) <br>
 	 * 2. The map layer's background is not transparent!
 	 */
@@ -87,7 +105,7 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 				TileStore ts = TileStore.getInstance();
 				ts.putTile(ts.createNewEmptyEntry(x, y, zoom), this);
 			} catch (Exception e) {
-				Logging.LOG.error("Unknown error in OpenSeaMap", e);
+				log.error("Unknown error in OpenSeaMap", e);
 			}
 			return null;
 		}
@@ -97,25 +115,5 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 			return Utilities.COLOR_TRANSPARENT;
 		}
 
-	}
-
-	public static Image makeColorTransparent(Image im, final Color color) {
-		ImageFilter filter = new RGBImageFilter() {
-			// the color we are looking for... Alpha bits are set to opaque
-			public int markerRGB = color.getRGB() | 0xFF000000;
-
-			public final int filterRGB(int x, int y, int rgb) {
-				if ((rgb | 0xFF000000) == markerRGB) {
-					// Mark the alpha bits as zero - transparent
-					return 0x00FFFFFF & rgb;
-				} else {
-					// nothing to do
-					return rgb;
-				}
-			}
-		};
-
-		ImageProducer ip = new FilteredImageSource(im.getSource(), filter);
-		return Toolkit.getDefaultToolkit().createImage(ip);
 	}
 }

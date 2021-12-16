@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program;
 
@@ -45,7 +45,7 @@ public class DirectoryManager {
     public static final File programDir;
     public static final File userHomeDir;
     public static final File tempDir;
-    public static final File userAppDataDir;
+    public static final File mobacUserAppDataDir;
 
     public static final File userSettingsDir;
     public static final File mapSourcesDir;
@@ -61,7 +61,7 @@ public class DirectoryManager {
         programDir = getProgramDir();
         loadDirectoriesIni();
 
-        userAppDataDir = getUserAppDataDir();
+        mobacUserAppDataDir = getMobacUserAppDataDir();
         tempDir = applyDirConfig("mobac.tmpdir", new File(System.getProperty("java.io.tmpdir")));
 
         mapSourcesDir = applyDirConfig("mobac.mapsourcesdir", new File(programDir, "mapsources"));
@@ -141,7 +141,7 @@ public class DirectoryManager {
     }
 
     public static void initialize() {
-        if (currentDir == null || userAppDataDir == null || tempDir == null || programDir == null)
+        if (currentDir == null || mobacUserAppDataDir == null || tempDir == null || programDir == null)
             throw new RuntimeException("DirectoryManager failed");
     }
 
@@ -174,7 +174,7 @@ public class DirectoryManager {
         if (Files.isRegularFile(path)) {
             // Class is executed from inside of a JAR
             String pathStr = path.getParent().toString();
-            String intellijMobacRunPath = Paths.get("mobac","mobac", "build", "libs").toString();
+            String intellijMobacRunPath = Paths.get("mobac", "mobac", "build", "libs").toString();
             if (pathStr.endsWith(intellijMobacRunPath)) {
                 return path.getParent().getParent().getParent().getParent().toFile();
             }
@@ -209,7 +209,7 @@ public class DirectoryManager {
      *
      * @return
      */
-    private static File getUserAppDataDir() {
+    private static File getMobacUserAppDataDir() {
         String appData = System.getenv("APPDATA");
         if (appData != null) {
             File appDataDir = new File(appData);

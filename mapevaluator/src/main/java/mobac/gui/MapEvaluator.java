@@ -17,7 +17,8 @@ import mobac.tools.MapSourceCapabilityDetector;
 import mobac.tools.MapSourceCapabilityGUI;
 import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.Utilities;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -67,7 +68,7 @@ public class MapEvaluator extends JFrame {
 
     public MapEvaluator() throws HeadlessException {
         super(ProgramInfo.getCompleteTitle());
-        log = Logger.getLogger(this.getClass());
+        log = LoggerFactory.getLogger(this.getClass());
         addWindowListener(new MEWindowAdapter());
         setMinimumSize(new Dimension(300, 300));
         setLayout(new BorderLayout());

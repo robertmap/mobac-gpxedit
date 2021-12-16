@@ -12,12 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.atlascreators;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
@@ -29,6 +26,9 @@ import mobac.program.model.TileImageParameters.Name;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.program.tiledatawriter.TileImageJpegDataWriterBuilder;
 import mobac.utilities.stream.ArrayOutputStream;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 @AtlasCreatorName("Garmin Custom Map (KMZ)")
 @SupportedParameters(names = {Name.format_jpg})

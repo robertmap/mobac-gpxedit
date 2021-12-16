@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources;
 
@@ -29,7 +29,8 @@ import mobac.mapsources.loader.MapPackManager;
 import mobac.program.interfaces.MapSource;
 import mobac.program.model.Settings;
 import mobac.utilities.I18nUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JOptionPane;
 import java.io.File;
@@ -42,7 +43,7 @@ import java.util.Vector;
 
 public class DefaultMapSourcesManager extends MapSourcesManager {
 
-    private Logger log = Logger.getLogger(DefaultMapSourcesManager.class);
+    private Logger log = LoggerFactory.getLogger(DefaultMapSourcesManager.class);
 
     /**
      * All map sources visible to the user independent of it is enabled or disabled
@@ -56,6 +57,18 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
     public DefaultMapSourcesManager() {
         // Check for user specific configuration of mapsources directory
+    }
+
+    public static void initialize() {
+        DefaultMapSourcesManager manager = new DefaultMapSourcesManager();
+        INSTANCE = manager;
+        manager.loadMapSources();
+    }
+
+    public static void initializeIntelliJMapPacksOnly() {
+        DefaultMapSourcesManager manager = new DefaultMapSourcesManager();
+        INSTANCE = manager;
+        manager.loadMapPacksIntelliJMode();
     }
 
     protected void loadMapSources() {
@@ -145,18 +158,6 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
         } else {
             allMapSources.put(mapSourceName, mapSource);
         }
-    }
-
-    public static void initialize() {
-        DefaultMapSourcesManager manager = new DefaultMapSourcesManager();
-        INSTANCE = manager;
-        manager.loadMapSources();
-    }
-
-    public static void initializeIntelliJMapPacksOnly() {
-        DefaultMapSourcesManager manager = new DefaultMapSourcesManager();
-        INSTANCE = manager;
-        manager.loadMapPacksIntelliJMode();
     }
 
     @Override

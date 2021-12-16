@@ -12,30 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.program.atlascreators;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.NumberFormat;
-import java.util.zip.ZipOutputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import mobac.exceptions.MapCreationException;
 import mobac.program.annotations.AtlasCreatorName;
@@ -47,6 +26,25 @@ import mobac.program.interfaces.TileImageDataWriter;
 import mobac.program.tiledatawriter.TileImageJpegDataWriter;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ZipStoreOutputStream;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.zip.ZipOutputStream;
 
 @AtlasCreatorName(value = "Google Earth Overlay (KMZ)", type = "GoogleEarthRasterOverlay")
 public class GoogleEarthOverlay extends AbstractPlainImage {
@@ -70,10 +68,11 @@ public class GoogleEarthOverlay extends AbstractPlainImage {
         kmzOutputStream = new ZipStoreOutputStream(kmzFile);
         kmzOutputStream.setMethod(ZipOutputStream.STORED);
         try {
-            if (layer.getMapCount() <= 1)
+            if (layer.getMapCount() <= 1) {
                 initKmlDoc(null);
-            else
+            } else {
                 initKmlDoc(layer.getName());
+            }
         } catch (ParserConfigurationException e) {
             throw new IOException(e);
         }
@@ -107,10 +106,12 @@ public class GoogleEarthOverlay extends AbstractPlainImage {
         cleanedMapName = map.getName();
         cleanedMapName = cleanedMapName.replaceAll("[[^\\p{Alnum}-_]]+", "_");
         cleanedMapName = cleanedMapName.replaceAll("_{2,}", "_");
-        if (cleanedMapName.endsWith("_"))
+        if (cleanedMapName.endsWith("_")) {
             cleanedMapName = cleanedMapName.substring(0, cleanedMapName.length() - 1);
-        if (cleanedMapName.startsWith("_"))
+        }
+        if (cleanedMapName.startsWith("_")) {
             cleanedMapName = cleanedMapName.substring(1, cleanedMapName.length());
+        }
     }
 
     protected int getBufferedImageType() {
@@ -155,8 +156,7 @@ public class GoogleEarthOverlay extends AbstractPlainImage {
 
     private void initKmlDoc(String folderName) throws ParserConfigurationException {
 
-        DocumentBuilder builder;
-        builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         kmlDoc = builder.newDocument();
 
         Element kml = kmlDoc.createElementNS("http://www.opengis.net/kml/2.2", "kml");

@@ -1,21 +1,30 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.gui.components;
 
+import mobac.utilities.GBC;
+import mobac.utilities.Utilities;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -28,312 +37,287 @@ import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-
-import mobac.utilities.GBC;
-import mobac.utilities.Utilities;
-
 /**
  * Bases upon "TitleContainer" from project "swivel" http://code.google.com/p/swivel/ (LGPL license)
- * 
+ * <p>
  * A {@code TitleContainer} is a simple container that provides an easily visible title.
- * 
  */
 public class JCollapsiblePanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+    protected static final int DEFAULT_TITLE_PADDING = 3;
+    protected static final Color DEFAULT_TITLE_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+    protected static final Color DEFAULT_TITLE_COLOR = Color.BLACK;
+    private static final long serialVersionUID = 1L;
+    private static ImageIcon arrowClosed;
+    private static ImageIcon arrowOpen;
 
-	protected static final int DEFAULT_TITLE_PADDING = 3;
-	protected static final Color DEFAULT_TITLE_BACKGROUND_COLOR = Color.LIGHT_GRAY;
-	protected static final Color DEFAULT_TITLE_COLOR = Color.BLACK;
+    static {
+        try {
+            arrowClosed = Utilities.loadResourceImageIcon("arrow_closed.png");
+            arrowOpen = Utilities.loadResourceImageIcon("arrow_open.png");
+        } catch (Exception e) {
+            arrowClosed = new ImageIcon();
+            arrowOpen = new ImageIcon();
+        }
+    }
 
-	private static ImageIcon arrowClosed;
-	private static ImageIcon arrowOpen;
+    // title
+    protected final JLabel titleIcon;
+    protected final JLabel titleLabel;
+    protected final JPanel titlePanel;
+    // collapsing
+    protected final CollapsingMouseListener collapsingMouseListener;
+    // main component
+    protected Container contentContainer;
+    private boolean isCollapsed;
 
-	static {
-		try {
-			arrowClosed = Utilities.loadResourceImageIcon("arrow_closed.png");
-			arrowOpen = Utilities.loadResourceImageIcon("arrow_open.png");
-		} catch (Exception e) {
-			arrowClosed = new ImageIcon();
-			arrowOpen = new ImageIcon();
-		}
-	}
+    public JCollapsiblePanel(String title) {
+        this(new JPanel(), title);
+    }
 
-	// title
-	protected final JLabel titleIcon;
-	protected final JLabel titleLabel;
-	protected final JPanel titlePanel;
+    public JCollapsiblePanel(String title, LayoutManager layout) {
+        this(new JPanel(layout), title);
+        setName(title);
+    }
 
-	// main component
-	protected Container contentContainer;
+    /**
+     * Constructs a {@code TitleContainer} that wraps the specified component and has the specified title.
+     *
+     * @param container the main container
+     * @param title     the title
+     */
+    public JCollapsiblePanel(Container container, String title) {
+        super();
+        setName(title);
+        titleIcon = new JLabel(arrowOpen);
+        titleLabel = new JLabel(title + ":");
+        titlePanel = new JPanel(new GridBagLayout());
+        // mainComponentPanel = new JPanel(new GridBagLayout());
+        collapsingMouseListener = new CollapsingMouseListener();
 
-	// collapsing
-	protected final CollapsingMouseListener collapsingMouseListener;
-	private boolean isCollapsed;
+        titleIcon.setMinimumSize(new Dimension(40, 40));
+        titleIcon.setPreferredSize(titleIcon.getPreferredSize());
 
-	public JCollapsiblePanel(String title) {
-		this(new JPanel(), title);
-	}
+        // set collapse behavior
+        titlePanel.addMouseListener(collapsingMouseListener);
 
-	public JCollapsiblePanel(String title, LayoutManager layout) {
-		this(new JPanel(layout), title);
-		setName(title);
-	}
+        // look and feel
+        setTitleBackgroundColor(DEFAULT_TITLE_BACKGROUND_COLOR);
+        setTitleColor(DEFAULT_TITLE_COLOR);
+        setTitleBarPadding(DEFAULT_TITLE_PADDING);
 
-	/**
-	 * Constructs a {@code TitleContainer} that wraps the specified component and has the specified title.
-	 * 
-	 * @param container
-	 *            the main container
-	 * @param title
-	 *            the title
-	 */
-	public JCollapsiblePanel(Container container, String title) {
-		super();
-		setName(title);
-		titleIcon = new JLabel(arrowOpen);
-		titleLabel = new JLabel(title + ":");
-		titlePanel = new JPanel(new GridBagLayout());
-		// mainComponentPanel = new JPanel(new GridBagLayout());
-		collapsingMouseListener = new CollapsingMouseListener();
+        // layout
+        fillTitlePanel();
 
-		titleIcon.setMinimumSize(new Dimension(40, 40));
-		titleIcon.setPreferredSize(titleIcon.getPreferredSize());
+        titlePanel.add(Box.createHorizontalGlue(), GBC.std().fill());
+        setLayout(new BorderLayout());
+        add(titlePanel, BorderLayout.NORTH);
+        add(container, BorderLayout.CENTER);
+        setContentContainer(container);
+        setBorder(BorderFactory.createEtchedBorder());
 
-		// set collapse behavior
-		titlePanel.addMouseListener(collapsingMouseListener);
+        setTitlePanelPreferredSize();
+    }
 
-		// look and feel
-		setTitleBackgroundColor(DEFAULT_TITLE_BACKGROUND_COLOR);
-		setTitleColor(DEFAULT_TITLE_COLOR);
-		setTitleBarPadding(DEFAULT_TITLE_PADDING);
+    protected void fillTitlePanel() {
+        titlePanel.add(titleIcon, GBC.std());
+        titlePanel.add(titleLabel, GBC.std().insets(5, 0, 1, 0));
+    }
 
-		// layout
-		fillTitlePanel();
+    private void setTitlePanelPreferredSize() {
+        Dimension containerPreferredDimension = contentContainer.getLayout().preferredLayoutSize(contentContainer);
+        Dimension titlePanelPreferredDimension = titlePanel.getPreferredSize();
+        titlePanel.setPreferredSize(new Dimension(containerPreferredDimension.width,
+                titlePanelPreferredDimension.height));
+    }
 
-		titlePanel.add(Box.createHorizontalGlue(), GBC.std().fill());
-		setLayout(new BorderLayout());
-		add(titlePanel, BorderLayout.NORTH);
-		add(container, BorderLayout.CENTER);
-		setContentContainer(container);
-		setBorder(BorderFactory.createEtchedBorder());
+    /**
+     * Gets whether the container is collapsed or not.
+     *
+     * @return whether the container is collapsed or not
+     */
+    public boolean isCollapsed() {
+        return isCollapsed;
+    }
 
-		setTitlePanelPreferredSize();
-	}
+    /**
+     * This method provides a programmatic way to collapse the container.
+     *
+     * @param collapsed whether the container should be collapsed or shown
+     */
+    public void setCollapsed(boolean collapsed) {
+        if (isCollapsed == collapsed) {
+            return;
+        }
 
-	protected void fillTitlePanel() {
-		titlePanel.add(titleIcon, GBC.std());
-		titlePanel.add(titleLabel, GBC.std().insets(5, 0, 1, 0));
-	}
+        if (collapsed) {
+            titleIcon.setIcon(arrowClosed);
 
-	private void setTitlePanelPreferredSize() {
-		Dimension containerPreferredDimension = contentContainer.getLayout().preferredLayoutSize(contentContainer);
-		Dimension titlePanelPreferredDimension = titlePanel.getPreferredSize();
-		titlePanel.setPreferredSize(new Dimension(containerPreferredDimension.width,
-				titlePanelPreferredDimension.height));
-	}
+            // We have to make sure that the panel width does not shrink because
+            // of the hidden content of contentContainer
+            setTitlePanelPreferredSize();
+        } else {
+            titleIcon.setIcon(arrowOpen);
+        }
+        contentContainer.setVisible(!collapsed);
 
-	/**
-	 * This method provides a programmatic way to collapse the container.
-	 * 
-	 * @param collapsed
-	 *            whether the container should be collapsed or shown
-	 */
-	public void setCollapsed(boolean collapsed) {
-		if (isCollapsed == collapsed) {
-			return;
-		}
+        isCollapsed = collapsed;
+        revalidate();
+    }
 
-		if (collapsed) {
-			titleIcon.setIcon(arrowClosed);
+    /**
+     * Gets the this container's title.
+     *
+     * @return the title
+     */
+    public String getTitle() {
+        return titleLabel.getText();
+    }
 
-			// We have to make sure that the panel width does not shrink because
-			// of the hidden content of contentContainer
-			setTitlePanelPreferredSize();
-		} else {
-			titleIcon.setIcon(arrowOpen);
-		}
-		contentContainer.setVisible(!collapsed);
+    /**
+     * Sets the title of this container.
+     *
+     * @param title the title
+     */
+    public void setTitle(String title) {
+        if (title != null) {
+            titleLabel.setText(title);
+        } else {
+            titleLabel.setText("");
+        }
+    }
 
-		isCollapsed = collapsed;
-		revalidate();
-	}
+    /**
+     * Gets the main content container for this container.
+     *
+     * @return the main container
+     */
+    public Container getContentContainer() {
+        return contentContainer;
+    }
 
-	/**
-	 * Gets whether the container is collapsed or not.
-	 * 
-	 * @return whether the container is collapsed or not
-	 */
-	public boolean isCollapsed() {
-		return isCollapsed;
-	}
+    /**
+     * Sets the main content container for this container.
+     *
+     * @param container the main content container
+     */
+    public void setContentContainer(Container container) {
+        // don't need to do anything if the main component hasn't changed
+        if (container == this.contentContainer) {
+            return;
+        }
 
-	/**
-	 * Sets the title of this container.
-	 * 
-	 * @param title
-	 *            the title
-	 */
-	public void setTitle(String title) {
-		if (title != null) {
-			titleLabel.setText(title);
-		} else {
-			titleLabel.setText("");
-		}
-	}
+        // remove the main component
+        if (this.contentContainer != null) {
+            remove(this.contentContainer);
+        }
 
-	/**
-	 * Gets the this container's title.
-	 * 
-	 * @return the title
-	 */
-	public String getTitle() {
-		return titleLabel.getText();
-	}
+        // replace the main component
+        this.contentContainer = container;
+        add(container, BorderLayout.CENTER);
 
-	/**
-	 * Sets the main content container for this container.
-	 * 
-	 * @param container
-	 *            the main content container
-	 */
-	public void setContentContainer(Container container) {
-		// don't need to do anything if the main component hasn't changed
-		if (container == this.contentContainer) {
-			return;
-		}
+        // repaint main component
+        revalidate();
+    }
 
-		// remove the main component
-		if (this.contentContainer != null) {
-			remove(this.contentContainer);
-		}
+    public void addContent(Component comp, Object constraints) {
+        contentContainer.add(comp, constraints);
+    }
 
-		// replace the main component
-		this.contentContainer = container;
-		add(container, BorderLayout.CENTER);
+    /**
+     * Sets the title font.
+     *
+     * @param font the title font
+     */
+    public void setTitleFont(Font font) {
+        super.setFont(font);
+        if (titleLabel != null) {
+            titleLabel.setFont(font);
+        }
+    }
 
-		// repaint main component
-		revalidate();
-	}
+    /**
+     * Sets the background color of the title bar.
+     *
+     * @param color the color
+     */
+    public void setTitleBackgroundColor(Color color) {
+        this.titlePanel.setBackground(color);
+    }
 
-	/**
-	 * Gets the main content container for this container.
-	 * 
-	 * @return the main container
-	 */
-	public Container getContentContainer() {
-		return contentContainer;
-	}
+    /**
+     * Sets the title text color.
+     *
+     * @param color the color
+     */
+    public void setTitleColor(Color color) {
+        this.titleLabel.setForeground(color);
+    }
 
-	public void addContent(Component comp, Object constraints) {
-		contentContainer.add(comp, constraints);
-	}
+    /**
+     * Sets the title bar padding in pixels.
+     *
+     * @param padding the title bar padding in pixels
+     */
+    public void setTitleBarPadding(int padding) {
+        Border border = BorderFactory.createEmptyBorder(padding, padding, padding, padding);
+        this.titlePanel.setBorder(border);
+    }
 
-	/**
-	 * Sets the title font.
-	 * 
-	 * @param font
-	 *            the title font
-	 */
-	public void setTitleFont(Font font) {
-		super.setFont(font);
-		if (titleLabel != null) {
-			titleLabel.setFont(font);
-		}
-	}
+    /**
+     * Gets the visibility of the title bar.
+     *
+     * @return true if the title bar is visible, false otherwise
+     */
+    public boolean isTitleBarVisible() {
+        return this.titlePanel.isVisible();
+    }
 
-	/**
-	 * Sets the background color of the title bar.
-	 * 
-	 * @param color
-	 *            the color
-	 */
-	public void setTitleBackgroundColor(Color color) {
-		this.titlePanel.setBackground(color);
-	}
+    /**
+     * Sets the visibility of the title bar. If the title bar is invisible, the user will not be able to collapse or
+     * decollapse the container.
+     *
+     * @param visible visibility of the title bar
+     */
+    public void setTitleBarVisible(boolean visible) {
+        this.titlePanel.setVisible(visible);
+    }
 
-	/**
-	 * Sets the title text color.
-	 * 
-	 * @param color
-	 *            the color
-	 */
-	public void setTitleColor(Color color) {
-		this.titleLabel.setForeground(color);
-	}
+    // --------------------------------------------------------------------------
 
-	/**
-	 * Sets the title bar padding in pixels.
-	 * 
-	 * @param padding
-	 *            the title bar padding in pixels
-	 */
-	public void setTitleBarPadding(int padding) {
-		Border border = BorderFactory.createEmptyBorder(padding, padding, padding, padding);
-		this.titlePanel.setBorder(border);
-	}
+    /**
+     * A {@code MouseListener} that changes the cursor when moved over the title bar to indicate that it is clickable.
+     * Clicking the title bar collapses the container.
+     */
+    private class CollapsingMouseListener extends MouseAdapter {
+        private final Cursor CLICK_ME_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
-	/**
-	 * Sets the visibility of the title bar. If the title bar is invisible, the user will not be able to collapse or
-	 * decollapse the container.
-	 * 
-	 * @param visible
-	 *            visibility of the title bar
-	 */
-	public void setTitleBarVisible(boolean visible) {
-		this.titlePanel.setVisible(visible);
-	}
+        /**
+         * Collapses or shows the titled component.
+         * <p>
+         * {@inheritDoc}
+         */
+        public void mousePressed(MouseEvent e) {
+            setCollapsed(!JCollapsiblePanel.this.isCollapsed);
+        }
 
-	/**
-	 * Gets the visibility of the title bar.
-	 * 
-	 * @return true if the title bar is visible, false otherwise
-	 */
-	public boolean isTitleBarVisible() {
-		return this.titlePanel.isVisible();
-	}
+        /**
+         * Changes the cursor to indicate clickability.
+         * <p>
+         * {@inheritDoc}
+         */
+        public void mouseEntered(MouseEvent e) {
+            titlePanel.setCursor(CLICK_ME_CURSOR);
+        }
 
-	// --------------------------------------------------------------------------
-
-	/**
-	 * A {@code MouseListener} that changes the cursor when moved over the title bar to indicate that it is clickable.
-	 * Clicking the title bar collapses the container.
-	 */
-	private class CollapsingMouseListener extends MouseAdapter {
-		private final Cursor CLICK_ME_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-
-		/**
-		 * Collapses or shows the titled component.
-		 * 
-		 * {@inheritDoc}
-		 */
-		public void mousePressed(MouseEvent e) {
-			setCollapsed(!JCollapsiblePanel.this.isCollapsed);
-		}
-
-		/**
-		 * Changes the cursor to indicate clickability.
-		 * 
-		 * {@inheritDoc}
-		 */
-		public void mouseEntered(MouseEvent e) {
-			titlePanel.setCursor(CLICK_ME_CURSOR);
-		}
-
-		/**
-		 * Changes the cursor back to the default.
-		 * 
-		 * {@inheritDoc}
-		 */
-		public void mouseExited(MouseEvent e) {
-			titlePanel.setCursor(Cursor.getDefaultCursor());
-		}
-	}
+        /**
+         * Changes the cursor back to the default.
+         * <p>
+         * {@inheritDoc}
+         */
+        public void mouseExited(MouseEvent e) {
+            titlePanel.setCursor(Cursor.getDefaultCursor());
+        }
+    }
 
 }

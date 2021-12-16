@@ -12,13 +12,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.mapsources.loader;
 
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -30,30 +31,30 @@ import java.util.ServiceLoader;
  */
 public class IntelliJMapPackLoader {
 
-	private final Logger log = Logger.getLogger(IntelliJMapPackLoader.class);
+    private final Logger log = LoggerFactory.getLogger(IntelliJMapPackLoader.class);
 
-	private final MapSourcesManager mapSourcesManager;
+    private final MapSourcesManager mapSourcesManager;
 
-	public IntelliJMapPackLoader(MapSourcesManager mapSourcesManager) throws IOException {
-		this.mapSourcesManager = mapSourcesManager;
-	}
+    public IntelliJMapPackLoader(MapSourcesManager mapSourcesManager) throws IOException {
+        this.mapSourcesManager = mapSourcesManager;
+    }
 
-	public boolean loadMapPacks() throws IOException {
-		int mapSourceCounter = 0;
-		Iterator<MapSource> it = ServiceLoader.load(MapSource.class).iterator();
-		while (it.hasNext()) {
-			try {
-				mapSourcesManager.addMapSource(it.next());
-				mapSourceCounter++;
-			} catch (Exception e) {
-				log.error("Failed to load map source", e);
-			}
-		}
-		boolean result = mapSourceCounter > 0;
-		if (result) {
-			log.info("Loaded " + mapSourceCounter + " map sources");
-		}
-		return result;
-	}
+    public boolean loadMapPacks() throws IOException {
+        int mapSourceCounter = 0;
+        Iterator<MapSource> it = ServiceLoader.load(MapSource.class).iterator();
+        while (it.hasNext()) {
+            try {
+                mapSourcesManager.addMapSource(it.next());
+                mapSourceCounter++;
+            } catch (Exception e) {
+                log.error("Failed to load map source", e);
+            }
+        }
+        boolean result = mapSourceCounter > 0;
+        if (result) {
+            log.info("Loaded " + mapSourceCounter + " map sources");
+        }
+        return result;
+    }
 
 }

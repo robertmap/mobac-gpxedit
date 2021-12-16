@@ -12,37 +12,29 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 package mobac.utilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.naming.NameNotFoundException;
+import javax.swing.JOptionPane;
 import java.awt.Desktop;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.naming.NameNotFoundException;
-import javax.swing.JOptionPane;
-
-import org.apache.log4j.Logger;
-
 public class OSUtilities {
 
-    static Logger log = Logger.getLogger(OSUtilities.class);
-
-    public enum OperatingSystem {
-        Windows, Linux, MacOsX, Solaris, Unknown
-    }
-
     public static final boolean IS_PLATFORM_OSX = isPlatformOsx();
+    static Logger log = LoggerFactory.getLogger(OSUtilities.class);
 
     private static boolean isPlatformOsx() {
         String os = System.getProperty("os.name");
@@ -132,6 +124,10 @@ public class OSUtilities {
             log.trace("Failed to read Linux release file", e);
             return null;
         }
+    }
+
+    public enum OperatingSystem {
+        Windows, Linux, MacOsX, Solaris, Unknown
     }
 
 
