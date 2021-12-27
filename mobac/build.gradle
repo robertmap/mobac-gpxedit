@@ -21,7 +21,7 @@ dependencies {
     api 'com.sleepycat:je:4.0.92'
     api 'org.glassfish.jaxb:jaxb-runtime:3.0.1'
     api 'org.slf4j:slf4j-api:1.7.32'
-    implementation 'ch.qos.logback:logback-classic:1.2.9'
+    implementation 'ch.qos.logback:logback-classic:1.2.10'
     implementation 'net.sf.jtidy:jtidy:r938'
     implementation 'com.itextpdf:itextpdf:5.1.3'
     implementation 'javax.media:jai-core:1.1.3'
@@ -86,7 +86,6 @@ launch4j {
     downloadUrl = "https://mobac.sourceforge.io/AdoptOpenJDK/"
     jreMinVersion = '1.11.0'
     jreRuntimeBits = "64"
-    jvmOptions = ['-XX:+UseG1GC']
     dontWrapJar = "true"
     libraryDir = ""
     copyConfigurable = [] //["${project.buildDir}/libs/Mobile_Atlas_Creator.jar"]
