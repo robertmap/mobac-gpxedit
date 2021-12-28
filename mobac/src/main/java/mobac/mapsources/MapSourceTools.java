@@ -58,7 +58,7 @@ public class MapSourceTools {
      * @param zoom
      * @param tilex     horizontal tile number
      * @param tiley     vertical tile number
-     * @return <code>double[] {lon_min , lat_min , lon_max , lat_max}</code>
+     * @return <code>double[] {lonMin , latMin , lonMax , latMax}</code>
      */
     public static double[] calculateLatLon(MapSource mapSource, int zoom, int tilex, int tiley) {
         return calculateLatLon(mapSource.getMapSpace(), zoom, tilex, tiley);
