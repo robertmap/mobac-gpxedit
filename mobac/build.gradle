@@ -20,7 +20,7 @@ dependencies {
     api 'org.xerial:sqlite-jdbc:3.34.0'
     api 'com.sleepycat:je:4.0.92'
     api 'org.glassfish.jaxb:jaxb-runtime:3.0.1'
-    api 'org.slf4j:slf4j-api:1.7.32'
+    api 'org.slf4j:slf4j-api:1.7.35'
     implementation 'ch.qos.logback:logback-classic:1.2.10'
     implementation 'net.sf.jtidy:jtidy:r938'
     implementation 'com.itextpdf:itextpdf:5.1.3'
