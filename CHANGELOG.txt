@@ -25,6 +25,7 @@
  + Custom WMS map source support for v1.3.0 with EPSG:4171 and wgs84 mode
      thanks to Nicolas Paour
  ! Tile calculation fixed for local map sources
+ ~ Logging backend changed from log4j to slf4j+logback
 
 2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
