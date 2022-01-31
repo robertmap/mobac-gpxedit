@@ -11,7 +11,7 @@
 
 =======
 
-2.2.2 (2021-??-??)
+2.2.2 (2022-01-31)
  - Dropped support for Java 8 - Java 11+ is now required
  ~ Allow transparent background on CustomMultiLayerMap (#359)
  ! FreemapSlovakia maps updated
@@ -22,6 +22,9 @@
      multi-layer maps and other occasions
  ! Custom multi-layer XML map source: fixed a minor problem with mapping
      alpha values to layers in case not all layers return an image
+ + Custom WMS map source support for v1.3.0 with EPSG:4171 and wgs84 mode
+     thanks to Nicolas Paour
+ ! Tile calculation fixed for local map sources
 
 2.2.1 (2021-06-02)
  ! Loading an MOBAC XML profile can cause java.lang.NullPointerException
