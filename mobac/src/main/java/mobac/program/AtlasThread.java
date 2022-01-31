@@ -98,12 +98,13 @@ public class AtlasThread extends Thread
     }
 
     private static long getFileBasedTileCount(MapInterface map) {
-        if (map instanceof FileBasedMapSource) {
+        MapSource mapSource = map.getMapSource();
+        if (mapSource instanceof FileBasedMapSource) {
             return map.calculateTilesToDownload();
         }
-        if (map instanceof AbstractMultiLayerMapSource) {
+        if (mapSource instanceof AbstractMultiLayerMapSource) {
             long result = 0;
-            AbstractMultiLayerMapSource mlMapSource = (AbstractMultiLayerMapSource) map;
+            AbstractMultiLayerMapSource mlMapSource = (AbstractMultiLayerMapSource) mapSource;
             long tilesPerLayer = map.calculateTilesToDownload() / mlMapSource.getLayerMapSources().length;
             for (MapSource ms : mlMapSource) {
                 // check all layers if they are file-based
