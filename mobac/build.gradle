@@ -83,7 +83,7 @@ launch4j {
     copyright = "MOBAC developers"
     companyName = ""
     icon = "${projectDir}/launch4j/mobac.ico"
-    downloadUrl = "https://mobac.sourceforge.io/AdoptOpenJDK/"
+    downloadUrl = "https://mobac.sourceforge.io/OpenJDK/"
     jreMinVersion = '1.11.0'
     jreRuntimeBits = "64"
     dontWrapJar = "true"
