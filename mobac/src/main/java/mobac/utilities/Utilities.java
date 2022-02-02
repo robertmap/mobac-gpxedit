@@ -76,8 +76,7 @@ public class Utilities {
     private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static final Logger log = LoggerFactory.getLogger(Utilities.class);
     private static final byte[] PNG = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
-    private static final byte[] JPG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, (byte) 0x00,
-            0x10, 'J', 'F', 'I', 'F'};
+    private static final byte[] JPG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
     private static final byte[] GIF_1 = "GIF87a".getBytes();
     private static final byte[] GIF_2 = "GIF89a".getBytes();
 
@@ -174,14 +173,18 @@ public class Utilities {
     }
 
     public static TileImageType getImageType(byte[] imageData) {
-        if (imageData == null)
+        if (imageData == null) {
             return null;
-        if (startsWith(imageData, PNG))
+        }
+        if (startsWith(imageData, PNG)) {
             return TileImageType.PNG;
-        if (startsWith(imageData, JPG))
+        }
+        if (startsWith(imageData, JPG)) {
             return TileImageType.JPG;
-        if (startsWith(imageData, GIF_1) || startsWith(imageData, GIF_2))
+        }
+        if (startsWith(imageData, GIF_1) || startsWith(imageData, GIF_2)) {
             return TileImageType.GIF;
+        }
         return null;
     }
 

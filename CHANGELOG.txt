@@ -11,6 +11,9 @@
 
 =======
 
+2.2.3 (2022-??-??)
+ ~ Detection of image type JPEG improved (more variants are now allowed)
+
 2.2.2 (2022-01-31)
  - Dropped support for Java 8 - Java 11+ is now required
  ~ Allow transparent background on CustomMultiLayerMap (#359)

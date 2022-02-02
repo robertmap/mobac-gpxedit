@@ -59,10 +59,12 @@ public class TileDownLoader {
 
         MapSpace mapSpace = mapSource.getMapSpace();
         int maxTileIndex = mapSpace.getMaxPixels(zoom) / mapSpace.getTileSize();
-        if (x > maxTileIndex)
+        if (x > maxTileIndex) {
             throw new RuntimeException("Invalid tile index x=" + x + " for zoom " + zoom);
-        if (y > maxTileIndex)
+        }
+        if (y > maxTileIndex) {
             throw new RuntimeException("Invalid tile index y=" + y + " for zoom " + zoom);
+        }
 
         TileStore ts = TileStore.getInstance();
 
