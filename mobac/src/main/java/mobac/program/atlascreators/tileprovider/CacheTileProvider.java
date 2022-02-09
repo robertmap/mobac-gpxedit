@@ -126,6 +126,7 @@ public class CacheTileProvider implements TileProvider {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void finalize() throws Throwable {
         cleanup();
         super.finalize();

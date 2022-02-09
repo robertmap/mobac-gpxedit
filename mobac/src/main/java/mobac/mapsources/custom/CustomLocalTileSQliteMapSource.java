@@ -58,7 +58,6 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
     private static Logger log = LoggerFactory.getLogger(CustomLocalTileSQliteMapSource.class);
     private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
 
-    ;
     private MapSourceLoaderInfo loaderInfo = null;
 
     private AtomicBoolean initialized = new AtomicBoolean(false);

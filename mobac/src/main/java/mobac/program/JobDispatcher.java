@@ -53,6 +53,7 @@ public class JobDispatcher {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void finalize() throws Throwable {
         terminateAllWorkerThreads();
         super.finalize();

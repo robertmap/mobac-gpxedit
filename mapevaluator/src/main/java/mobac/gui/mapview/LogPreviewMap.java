@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 public class LogPreviewMap extends PreviewMap {
 
-	private final LinkedList<LogEntry> logLines = new LinkedList();
+	private final LinkedList<LogEntry> logLines = new LinkedList<>();
 	private Font logFont = new Font("Sans Serif", Font.BOLD, 14);
 	private Font tileInfoFont = new Font("Sans Serif", Font.BOLD, 12);
 

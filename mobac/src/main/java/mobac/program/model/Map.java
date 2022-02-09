@@ -35,7 +35,7 @@ import mobac.program.interfaces.ToolTipProvider;
 import mobac.program.tilefilter.DummyTileFilter;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.tar.TarIndexedArchive;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

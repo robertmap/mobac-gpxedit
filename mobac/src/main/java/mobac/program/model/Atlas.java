@@ -25,7 +25,7 @@ import mobac.program.interfaces.LayerInterface;
 import mobac.program.interfaces.ToolTipProvider;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.Utilities;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.swing.tree.TreeNode;
 import java.io.StringWriter;

@@ -111,7 +111,7 @@ public class Logging {
         patternLayoutEncoder.setPattern("%date %-5level %logger %msg%n");
         patternLayoutEncoder.setContext(loggerContext);
         patternLayoutEncoder.start();
-        FileAppender<ILoggingEvent> fileAppender = new FileAppender();
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
         fileAppender.setFile(logFile.toAbsolutePath().normalize().toString());
         fileAppender.setEncoder(patternLayoutEncoder);
         fileAppender.setContext(loggerContext);

@@ -155,6 +155,7 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void finalize() throws Throwable {
         unregisterTreeListener();
         super.finalize();

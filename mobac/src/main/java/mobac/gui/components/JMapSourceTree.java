@@ -24,7 +24,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.Utilities;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
