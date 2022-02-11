@@ -27,18 +27,18 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Controls the worker threads that are downloading the map tiles in parallel. Additionally the job queue containing the
+ * Controls the worker threads that are downloading the map tiles in parallel. Additionally, the job queue containing the
  * unprocessed tile download jobs can be accessed via this class.
  */
 public class JobDispatcher {
 
-    private static Logger log = LoggerFactory.getLogger(JobDispatcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobDispatcher.class);
 
     protected final AtlasThread atlasThread;
     protected final PauseResumeHandler pauseResumeHandler;
     protected final MapSourceListener mapSourceListener;
     protected final WorkerThread[] workers;
-    protected final BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<Job>();
+    protected final BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<>();
     protected int maxJobsInQueue = 100;
     protected int minJobsInQueue = 50;
 
@@ -48,8 +48,9 @@ public class JobDispatcher {
         this.pauseResumeHandler = pauseResumeHandler;
         this.mapSourceListener = mapSourceListener;
         workers = new WorkerThread[threadCount];
-        for (int i = 0; i < threadCount; i++)
+        for (int i = 0; i < threadCount; i++) {
             workers[i] = new WorkerThread(i);
+        }
     }
 
     @Override
@@ -61,7 +62,7 @@ public class JobDispatcher {
 
     public void terminateAllWorkerThreads() {
         cancelOutstandingJobs();
-        log.trace("Killing all worker threads");
+        LOG.trace("Killing all worker threads");
         for (int i = 0; i < workers.length; i++) {
             try {
                 WorkerThread w = workers[i];
@@ -119,11 +120,12 @@ public class JobDispatcher {
         for (int i = 0; i < workers.length; i++) {
             WorkerThread w = workers[i];
             if (w != null) {
-                if ((!w.idle) && (w.getState() != Thread.State.WAITING))
+                if ((!w.idle) && (w.getState() != Thread.State.WAITING)) {
                     return true;
+                }
             }
         }
-        log.debug("All worker threads are idle");
+        LOG.debug("All worker threads are idle");
         return false;
     }
 
@@ -141,7 +143,7 @@ public class JobDispatcher {
 
         boolean idle = true;
 
-        private Logger log = LoggerFactory.getLogger(WorkerThread.class);
+        private final Logger log = LoggerFactory.getLogger(WorkerThread.class);
 
         public WorkerThread(int threadNum) {
             super(String.format("WorkerThread %02d", threadNum));
@@ -177,12 +179,12 @@ public class JobDispatcher {
                 } catch (StopAllDownloadsException e) {
                     JobDispatcher.this.terminateAllWorkerThreads();
                     JobDispatcher.this.cancelOutstandingJobs();
-                    log.warn("All downloads has been stoppened: " + e.getMessage());
+                    log.warn("All downloads has been stoppened: {}", e.getMessage());
                     return;
                 } catch (FileNotFoundException e) {
-                    log.error("Download failed: " + e.getMessage());
+                    log.error("Download failed: {}", e.getMessage());
                 } catch (Exception e) {
-                    log.error("Unknown error occured while executing the job: ", e);
+                    log.error("Unknown error occurred while executing the job: ", e);
                 } catch (OutOfMemoryError e) {
                     log.error("", e);
                     Thread.sleep(5000);

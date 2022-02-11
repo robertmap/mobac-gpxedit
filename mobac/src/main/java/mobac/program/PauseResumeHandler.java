@@ -16,30 +16,32 @@
  ******************************************************************************/
 package mobac.program;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Central instance that allows to pause/resume multiple threads at once. Used
  * in MOBAC for pausing/resuming map tile download and map creation process.
  */
 public class PauseResumeHandler {
 
-    protected boolean paused = false;
+    protected final AtomicBoolean paused = new AtomicBoolean(false);
 
     public boolean isPaused() {
-        return paused;
+        return paused.get();
     }
 
     /**
      * Enters the pause state.
      */
     public void pause() {
-        paused = true;
+        paused.set(true);
     }
 
     /**
      * End the pause state and resumes all waiting threads.
      */
     public void resume() {
-        paused = false;
+        paused.set(false);
         synchronized (this) {
             this.notifyAll();
         }
@@ -54,10 +56,11 @@ public class PauseResumeHandler {
      *                              waiting for resume
      */
     public void pauseWait() throws InterruptedException {
-        if (paused) {
+        if (paused.get()) {
             synchronized (this) {
-                if (paused)
+                if (paused.get()) {
                     this.wait();
+                }
             }
         }
     }

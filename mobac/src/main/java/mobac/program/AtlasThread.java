@@ -122,9 +122,10 @@ public class AtlasThread extends Thread
             for (LayerInterface layer : atlas) {
                 for (MapInterface map : layer) {
                     MapSource mapSource = map.getMapSource();
-                    if (!atlasCreator.testMapSource(mapSource))
+                    if (!atlasCreator.testMapSource(mapSource)) {
                         throw new AtlasTestException("The selected atlas output format \"" + atlas.getOutputFormat()
                                 + "\" does not support the map source \"" + map.getMapSource() + "\"", map);
+                    }
                 }
             }
         } catch (AtlasTestException e) {

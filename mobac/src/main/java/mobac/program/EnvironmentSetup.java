@@ -51,8 +51,8 @@ public class EnvironmentSetup {
         Runtime r = Runtime.getRuntime();
         long maxHeap = r.maxMemory();
         String heapMBFormatted = String.format(Locale.ENGLISH, "%3.2f MiB", maxHeap / 1048576d);
-        log.info("Total available memory to MOBAC: " + heapMBFormatted);
-        if (maxHeap < 200000000) {
+        log.info("Total available memory to MOBAC: {}", heapMBFormatted);
+        if (maxHeap < 400000000) {
             String msg = String.format(I18nUtils.localizedStringForKey("msg_environment_lack_memory"), heapMBFormatted);
             JOptionPane.showMessageDialog(null, msg,
                     I18nUtils.localizedStringForKey("msg_environment_lack_memory_title"), JOptionPane.WARNING_MESSAGE);
@@ -76,10 +76,12 @@ public class EnvironmentSetup {
     public static void copyMapPacks() {
         File userMapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
         File progMapSourcesDir = new File(DirectoryManager.programDir, "mapsources");
-        if (userMapSourcesDir.equals(progMapSourcesDir))
+        if (userMapSourcesDir.equals(progMapSourcesDir)) {
             return; // no user specific directory configured
-        if (userMapSourcesDir.isDirectory())
+        }
+        if (userMapSourcesDir.isDirectory()) {
             return; // directory already exists - map packs should have been already copied
+        }
         try {
             Utilities.mkDirs(userMapSourcesDir);
             FileUtils.copyDirectory(progMapSourcesDir, userMapSourcesDir, new FileExtFilter(".jar"));
@@ -110,8 +112,10 @@ public class EnvironmentSetup {
                 String[] options = {"Exit", "Show error report"};
                 int a = JOptionPane.showOptionDialog(null, "Could not create file settings.xml - program will exit.",
                         "Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                if (a == 1)
+                if (a == 1) {
+                    // SHow error report
                     GUIExceptionHandler.showExceptionDialog(e);
+                }
                 System.exit(1);
             }
         }
@@ -125,8 +129,9 @@ public class EnvironmentSetup {
                     String.format(I18nUtils.localizedStringForKey("msg_environment_error_create_dir"), dirName,
                             dir.getAbsolutePath()), e);
         }
-        if (!checkIsWriteable)
+        if (!checkIsWriteable) {
             return;
+        }
         try {
             // test if we can write into that directory
             File testFile = File.createTempFile("MOBAC", "", dir);
@@ -141,20 +146,21 @@ public class EnvironmentSetup {
     }
 
     public static void createDefaultAtlases() {
-        if (!FIRST_START)
+        if (!FIRST_START) {
             return;
-        // TODO:MP change sample to Chinese
-        Profile p = new Profile("Google Maps New York");
+        }
         Atlas atlas = Atlas.newInstance();
         try {
             EastNorthCoordinate max = new EastNorthCoordinate(40.97264, -74.142609);
             EastNorthCoordinate min = new EastNorthCoordinate(40.541982, -73.699036);
-            Layer layer = new Layer(atlas, "GM New York");
-            MapSource ms = MapSourcesManager.getInstance().getSourceByName("Mapnik");
-            if (ms == null)
+            Layer layer = new Layer(atlas, "Sample New York");
+            MapSource ms = MapSourcesManager.getInstance().getDefaultMapSource();
+            Profile p = new Profile(ms.getName() + " New York");
+            if (ms == null) {
                 return;
-            layer.addMapsAutocut("GM New York 16", ms, max, min, 16, null, 32000);
-            layer.addMapsAutocut("GM New York 14", ms, max, min, 14, null, 32000);
+            }
+            layer.addMapsAutocut("New York 16", ms, max, min, 16, null, 32000);
+            layer.addMapsAutocut("New York 14", ms, max, min, 14, null, 32000);
             atlas.addLayer(layer);
             p.save(atlas);
         } catch (Exception e) {
