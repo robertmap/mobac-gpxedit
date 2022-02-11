@@ -121,7 +121,11 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
                 multiMapDataStore.addMapDataStore(mf, first, first);
                 first = false;
             } catch (MapFileException e) {
-                LOG.error("Failed to load MapSource file \"" + mapFile + "\": " + e.getMessage());
+                if (LOG.isTraceEnabled()) {
+                    LOG.error("Failed to load MapSource file \"{}\": {}", mapFile, e.getMessage(), e);
+                } else {
+                    LOG.error("Failed to load MapSource file \"{}\": {}", mapFile, e.getMessage());
+                }
                 throw e;
             }
         }
@@ -149,7 +153,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
                 Set<String> result = baseLayer.getCategories();
 
                 for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays()) {
-                    LOG.trace("Overlay " + overlay.getId() + " enabled: " + overlay.isEnabled());
+                    LOG.trace("Overlay {} enabled: {}", overlay.getId(), overlay.isEnabled());
                     if (overlay.isEnabled()) {
                         result.addAll(overlay.getCategories());
                     }
@@ -200,11 +204,11 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
                 return null;
             }
             if (!ImageIO.write(image, "png", buf)) {
-                throw new RuntimeException(String.format("Failed to write PNG image %d/%d/z%d", x, y, zoom));
+                throw new RuntimeException("Failed to write PNG image");
             }
             return buf.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Failed to render tile %d/%d/z%d - {}", x, y, zoom, e.getMessage()), e);
         }
     }
 
@@ -220,14 +224,14 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
         Tile tile = new Tile(x, y, (byte) zoom, 256);
         job = new RendererJob(tile, multiMapDataStore, renderThemeFuture, displayModel, textScale, transparent, false);
 
-        // We only need the TileCache for correct label rendering and it does not actually store the created tile
+        // We only need the TileCache for correct label rendering, and it does not actually store the created tile
         // therefore we can create the cache entry before rendering the tile...
         synchronized (renderer) {
             labelInfoCache.put(job, null);
             tileBitmap = renderer.executeJob(job);
         }
         if (tileBitmap == null) {
-            LOG.error("Failed to render image " + zoom + " " + x + " " + y);
+            LOG.error("Failed to render image {}/{}/z{}", x, y, zoom);
             return null;
         }
         return AwtGraphicFactory.getBitmap(tileBitmap);
@@ -262,7 +266,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
     /**
      * Clone the Mapforge map source but clear the label cache. This prevents rendering problems with defect labels.
      * <p>
-     * This methods is executed while creating an deep clone of an {@link Atlas} (before atlas creation starts).
+     * This method is executed while creating a deep clone of an {@link Atlas} (before atlas creation starts).
      */
     @Override
     public MapsforgeMapSource clone() throws CloneNotSupportedException {
