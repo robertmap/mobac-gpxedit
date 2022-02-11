@@ -199,7 +199,6 @@ public class AtlasThread extends Thread
         }
 
         if (totalNrOfOnlineTiles > 500000) {
-            // NumberFormat f = DecimalFormat.getInstance();
             JOptionPane.showMessageDialog(null,
                     String.format(I18nUtils.localizedStringForKey("msg_too_many_tiles_msg"), 500000,
                             totalNrOfOnlineTiles),
@@ -232,7 +231,7 @@ public class AtlasThread extends Thread
                     } catch (MapDownloadSkippedException e) {
                         // Do nothing and continue with next map
                     } catch (Exception e) {
-                        LOG.error("", e);
+                        LOG.error(e.getMessage(), e);
                         String[] options = {I18nUtils.localizedStringForKey("Continue"),
                                 I18nUtils.localizedStringForKey("Abort"),
                                 I18nUtils.localizedStringForKey("dlg_download_show_error_report")};
@@ -242,10 +241,11 @@ public class AtlasThread extends Thread
                                 I18nUtils.localizedStringForKey("Error"), 0, JOptionPane.ERROR_MESSAGE, null, options,
                                 options[0]);
                         switch (a) {
-                            case 2:
+                            case 2: // show error report
                                 GUIExceptionHandler.processException(e);
-                            case 1:
+                            case 1: // Abort
                                 throw new InterruptedException();
+                            default: // Continue
                         }
                     }
                 }
@@ -318,7 +318,7 @@ public class AtlasThread extends Thread
                     File tileArchiveFile = File.createTempFile(tempSuffix, ".tar", DirectoryManager.tempDir);
                     // If something goes wrong the temp file only persists until the VM exits
                     tileArchiveFile.deleteOnExit();
-                    LOG.debug("Writing downloaded tiles to " + tileArchiveFile.getPath());
+                    LOG.debug("Writing downloaded tiles to {}", tileArchiveFile.getPath());
                     tileArchive = new TarIndexedArchive(tileArchiveFile, tileCount);
                 } else {
                     LOG.debug("Downloading to tile store only");
@@ -369,8 +369,7 @@ public class AtlasThread extends Thread
                     tileIndex = tileArchive.getTarIndex();
                     if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
                         int missing = tileCount - tileIndex.size();
-                        LOG.debug("Expected tile count: " + tileCount + " downloaded tile count: " + tileIndex.size()
-                                + " missing: " + missing);
+                        LOG.debug("Expected tile count: {} downloaded tile count: {} missing: {}", tileCount, tileIndex.size(), missing);
                         int answer = JOptionPane.showConfirmDialog(ap,
                                 String.format(I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile_msg"),
                                         missing),
@@ -390,7 +389,7 @@ public class AtlasThread extends Thread
             atlasCreator.initializeMap(map, mapTileProvider);
             atlasCreator.createMap();
         } catch (Error e) {
-            LOG.error("Error in createMap: " + e.getMessage(), e);
+            LOG.error("Error in createMap: {}", e.getMessage(), e);
             throw e;
         } finally {
             if (tileIndex != null) {
@@ -426,10 +425,12 @@ public class AtlasThread extends Thread
     public void abortAtlasCreation() {
         try {
             DownloadJobProducerThread djp_ = djp;
-            if (djp_ != null)
+            if (djp_ != null) {
                 djp_.cancel();
-            if (downloadJobDispatcher != null)
+            }
+            if (downloadJobDispatcher != null) {
                 downloadJobDispatcher.terminateAllWorkerThreads();
+            }
             pauseResumeHandler.resume();
             this.interrupt();
         } catch (Exception e) {
@@ -457,9 +458,9 @@ public class AtlasThread extends Thread
     public void jobFinishedWithError(boolean retry) {
         synchronized (this) {
             activeDownloads--;
-            if (retry)
+            if (retry) {
                 jobsRetryError++;
-            else {
+            } else {
                 jobsPermanentError++;
                 ap.incMapDownloadProgress();
             }
