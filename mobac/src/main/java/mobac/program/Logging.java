@@ -31,6 +31,7 @@ import mobac.utilities.GUIExceptionHandler;
 import mobac.utilities.OSUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
@@ -44,6 +45,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.logging.LogManager;
 
 public class Logging {
 
@@ -56,6 +58,8 @@ public class Logging {
             configureDefaultFileLogging();
             LOG.info("logback.xml not found - enabling default error log to console");
         }
+        LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install();
     }
 
     public static boolean loadLog4JConfigXml() {
