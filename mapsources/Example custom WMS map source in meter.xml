@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customWmsMapSource>
+  <!-- Map source name as it appears in the map sources list.  Additionally used for the tile store name -->
+  <name>Example custom WMS map source in meters(France)</name>
+
+  <minZoom>0</minZoom>
+  <maxZoom>18</maxZoom>
+
+  <!-- Tile format (PNG, JPG or GIF) -->
+  <tileType>PNG</tileType>
+
+  <!-- WMS version. Currently only 1.1.1 and 1.3.0 is tested -->
+  <version>1.3.0</version>
+
+  <!-- WMS layer parameter -->
+  <layers>BassinDCE_FXX,SsBassinDCEAdmin_FXX</layers>
+
+  <!-- WMS base URL -->
+  <url>https://services.sandre.eaufrance.fr/geo/mdo?</url>
+
+  <!-- EPSG:4326, EPSG:4171 -> unit in degrees (default). EPSG:3857, EPSG:900913 and EPSG:3785 -> unit in meters -->
+  <coordinatesystem>EPSG:3857</coordinatesystem>
+
+  <!-- "degree" (default) or "meter" for EPSG:3857, EPSG:900913 and EPSG:3785 -->
+  <coordinateunit>meter</coordinateunit>
+
+  <!-- 
+    Optional: Additional parameters appended to the WMS url. 
+    It is recommended to wrap any field that has special charcters, such as an ampersand, inside a `<![CDATA[ ]]>` element.
+    Otherwise you have to use their XML encoding, such as `&amp;`
+  -->
+  <aditionalparameters><![CDATA[&STYLES=default]]></aditionalparameters>
+
+  <!-- Transparent background -->
+  <backgroundColor>#000000</backgroundColor>
+
+</customWmsMapSource>
+

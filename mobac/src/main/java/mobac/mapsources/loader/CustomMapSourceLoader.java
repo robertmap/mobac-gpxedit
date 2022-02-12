@@ -3,8 +3,6 @@ package mobac.mapsources.loader;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.ValidationEvent;
-import jakarta.xml.bind.ValidationEventHandler;
 import jakarta.xml.bind.ValidationEventLocator;
 import mobac.exceptions.MapSourceCreateException;
 import mobac.exceptions.MapSourceInitializationException;
@@ -185,44 +183,42 @@ public class CustomMapSourceLoader {
         MapSource customMapSource;
 
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        unmarshaller.setEventHandler(new ValidationEventHandler() {
 
-            @Override
-            public boolean handleEvent(ValidationEvent event) {
-                ValidationEventLocator loc = event.getLocator();
-                String file = "";
-                String dir = null;
-                if (loaderInfoFile != null) {
-                    file = loaderInfoFile.getName();
-                    dir = loaderInfoFile.getParent();
-                }
-                int lastSlash = file.lastIndexOf('/');
-                if (lastSlash > 0) {
-                    file = file.substring(lastSlash + 1);
-                }
-
-                String errorMsg = event.getMessage();
-                if (errorMsg == null) {
-                    Throwable t = event.getLinkedException();
-                    while (t != null && errorMsg == null) {
-                        errorMsg = t.getMessage();
-                        t = t.getCause();
+        unmarshaller.setEventHandler(event -> {
+                    ValidationEventLocator loc = event.getLocator();
+                    String file = "";
+                    String dir = null;
+                    if (loaderInfoFile != null) {
+                        file = loaderInfoFile.getName();
+                        dir = loaderInfoFile.getParent();
                     }
-                }
+                    int lastSlash = file.lastIndexOf('/');
+                    if (lastSlash > 0) {
+                        file = file.substring(lastSlash + 1);
+                    }
 
-                String message = "<html><h3>Failed to load a custom map</h3><p><i>" + errorMsg + "</i></p><br><p>";
-                if (dir != null) {
-                    message += "directory: \"<b>" + StringEscapeUtils.escapeHtml4(dir) + "</b>\"<br>";
-                }
-                message += "file: \"<b>" + StringEscapeUtils.escapeHtml4(file) + "</b>\"<br>" +
-                        "line/column: <i>" + loc.getLineNumber() + "/"
-                        + loc.getColumnNumber() + "</i></p>";
+                    String errorMsg = event.getMessage();
+                    if (errorMsg == null) {
+                        Throwable t = event.getLinkedException();
+                        while (t != null && errorMsg == null) {
+                            errorMsg = t.getMessage();
+                            t = t.getCause();
+                        }
+                    }
 
-                JOptionPane.showMessageDialog(null, message, "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
-                log.error(event.toString());
-                return false;
-            }
-        });
+                    String message = "<html><h3>Failed to load a custom map</h3><p><i>" + errorMsg + "</i></p><br><p>";
+                    if (dir != null) {
+                        message += "directory: \"<b>" + StringEscapeUtils.escapeHtml4(dir) + "</b>\"<br>";
+                    }
+                    message += "file: \"<b>" + StringEscapeUtils.escapeHtml4(file) + "</b>\"<br>" +
+                            "line/column: <i>" + loc.getLineNumber() + "/"
+                            + loc.getColumnNumber() + "</i></p>";
+
+                    JOptionPane.showMessageDialog(null, message, "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+                    log.error(event.toString());
+                    return false;
+                }
+        );
         Object o;
         if (elementFilter != null && !elementFilter.isEmpty()) {
             XMLInputFactory factory = XMLInputFactory.newFactory();

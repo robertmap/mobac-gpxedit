@@ -17,6 +17,7 @@
 package mobac.mapsources.custom;
 
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import mobac.exceptions.MapSourceInitializationException;
 import mobac.mapsources.MapSourceTools;
@@ -34,31 +35,30 @@ import java.util.Locale;
 public class CustomWmsMapSource extends CustomMapSource {
 
     private static final DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS_ENGLISH = DecimalFormatSymbols.getInstance(Locale.ENGLISH);
-
     /**
      * tested with 1.1.1 and 1.3.0, but should work with other versions
      */
     @XmlElement(required = true, name = "version")
     private String version = "1.1.1";
-
     /**
      * no spaces allowed, must be replaced with %20 in the url
      */
     @XmlElement(required = true, name = "layers")
     private String layers = "";
-
     /**
      * the coordinate system epsg:4326 - epsg:4171 - epsg:3857(WGS84) are fully tested
      */
     @XmlElement(required = true, name = "coordinatesystem", defaultValue = "EPSG:4326")
     private String coordinateSystem = "EPSG:4326";
-
     /**
-     * required=false for backward compatibility
+     * coordinateunit is:
+     * <ul>
+     *     <li><b>degree</b> for EPSG:4326, EPSG:4171</li>
+     *     <li><b>meter</b> for EPSG:3857, EPSG:900913, EPSG:3785</li>
+     * </ul>
      */
-    @XmlElement(required = false, name = "wgs84", defaultValue = "false")
-    private boolean wgs84 = false;
-
+    @XmlElement(required = false, name = "coordinateunit", defaultValue = "degree")
+    private CoordinateUnit coordinateUnit = CoordinateUnit.DEGREE;
     /**
      * some wms needs more parameters: &amp;EXCEPTIONS=BLANK&amp;Styles= .....
      */
@@ -67,14 +67,6 @@ public class CustomWmsMapSource extends CustomMapSource {
 
     private static double tile2lon(int x, int z) {
         return x / Math.pow(2.0, z) * 360.0 - 180;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public String getLayers() {
-        return layers;
     }
 
     private static double tile2lat(int y, int z) {
@@ -111,9 +103,17 @@ public class CustomWmsMapSource extends CustomMapSource {
         return df.format(value);
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public String getLayers() {
+        return layers;
+    }
+
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
-        if (wgs84) {
+        if (coordinateUnit == CoordinateUnit.METER) {
             String coordinateSystemParameter;
             if ("1.1.1".equals(version)) {
                 coordinateSystemParameter = "&SRS=" + coordinateSystem;
@@ -153,5 +153,11 @@ public class CustomWmsMapSource extends CustomMapSource {
         layers = reloadedMapSource.layers;
         coordinateSystem = reloadedMapSource.coordinateSystem;
         additionalParameters = reloadedMapSource.additionalParameters;
+    }
+
+    @XmlEnum
+    public static enum CoordinateUnit {
+        DEGREE,
+        METER
     }
 }
