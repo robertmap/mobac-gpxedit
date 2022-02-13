@@ -20,17 +20,17 @@ subprojects {
             attributes "MapPackRevision": "$svntools.info.revisionNumber"
         }
         doLast {
-            def keystore = file("../../keys/keystore.jks")
+            def keystore = file("${rootProject.projectDir}/keys/keystore.jks")
             if (keystore.exists()) {
                 def keystoreProps = new Properties()
-                file("../../keys/keystore.properties").withInputStream { keystoreProps.load(it) }
+                file("${rootProject.projectDir}/keys/keystore.properties").withInputStream { keystoreProps.load(it) }
                 println("Signing map pack ${project.name}")
                 ant.signjar(
                         jar: "build/libs/mp-${project.name}.jar",
                         destDir: "build/libs/",
                         alias: "mappack",
                         storetype: "jks",
-                        keystore: "../../keys/keystore.jks",
+                        keystore: "${rootProject.projectDir}/keys/keystore.jks",
                         storepass: keystoreProps.getProperty("keystore.password"),
                         verbose: false,
                         preservelastmodified: "true"
