@@ -21,7 +21,7 @@ package mobac.mapsources.mappacks.openstreetmap;
 
 public class OsmPublicTransport extends AbstractOsmMapSource {
 
-	private static final String PATTERN = "http://tile.memomaps.de/tilegen/%d/%d/%d.png";
+	private static final String PATTERN = "https://tile.memomaps.de/tilegen/%d/%d/%d.png";
 
 	public OsmPublicTransport() {
 		super("OSMPublicTransport");
