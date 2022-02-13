@@ -132,7 +132,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
         createComponents();
         // Initialize the layout in respect to the layout (font size ...)
         pack();
-        setMinimumSize(new Dimension(getWidth(), getHeight()));
+        setMinimumSize(new Dimension(getWidth(), getHeight() + 20));
 
         guiUpdater.run();
 
@@ -498,13 +498,15 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
         } else if (abortAtlasCreationButton.equals(source)) {
             aborted = true;
             stopUpdateTask();
-            if (downloadControlListener != null)
+            if (downloadControlListener != null) {
                 downloadControlListener.abortAtlasCreation();
-            else
+            } else {
                 closeWindow();
+            }
         } else if (pauseResumeDownloadButton.equals(source)) {
-            if (downloadControlListener != null)
+            if (downloadControlListener != null) {
                 downloadControlListener.pauseResumeAtlasCreation();
+            }
         }
     }
 
@@ -570,8 +572,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof MapInfo))
+            if (!(obj instanceof MapInfo)) {
                 return false;
+            }
             return map.equals(((MapInfo) obj).map);
         }
     }
@@ -616,14 +619,15 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
             try {
                 boolean pauseState = atlasThread.isPaused();
                 String statusText = I18nUtils.localizedStringForKey("dlg_download_status_running");
-                if (aborted)
+                if (aborted) {
                     statusText = I18nUtils.localizedStringForKey("dlg_download_status_aborted");
-                else if (finished)
+                } else if (finished) {
                     statusText = I18nUtils.localizedStringForKey("dlg_download_status_finished");
-                else if (pauseState)
+                } else if (pauseState) {
                     statusText = I18nUtils.localizedStringForKey("dlg_download_status_paused");
-                else
+                } else {
                     statusText = I18nUtils.localizedStringForKey("dlg_download_status_running");
+                }
                 statusLabel.setText(I18nUtils.localizedStringForKey("dlg_download_status_title") + " " + statusText);
 
                 if (data.totalProgressTenthPercent != newTenthPercent || pauseState != data.paused) {
@@ -666,9 +670,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
             seconds = -1;
             int mapDlProgress = data.mapDownloadProgress;
-            if (mapDlProgress != 0 && initialMapDownloadTime > 0)
+            if (mapDlProgress != 0 && initialMapDownloadTime > 0) {
                 seconds = ((System.currentTimeMillis() - initialMapDownloadTime)
                         * (data.mapDownloadNumberOfTiles - mapDlProgress) / (1000L * mapDlProgress));
+            }
             mapDownloadTimeLeft.setText(
                     String.format(I18nUtils.localizedStringForKey("dlg_download_remain_time"), formatTime(seconds)));
 
@@ -734,8 +739,9 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
         public void windowClosing(WindowEvent e) {
             log.debug("Closing event detected for atlas progress window");
             AtlasCreationController listener = AtlasProgress.this.downloadControlListener;
-            if (listener != null)
+            if (listener != null) {
                 listener.abortAtlasCreation();
+            }
         }
 
     }

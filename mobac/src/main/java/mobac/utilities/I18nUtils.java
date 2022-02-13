@@ -19,37 +19,53 @@ package mobac.utilities;
 import mobac.StartMOBAC;
 import mobac.program.model.Settings;
 import mobac.utilities.stream.UnicodeReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
 public class I18nUtils {
 
+    private static final Logger LOG = LoggerFactory.getLogger(I18nUtils.class);
+
+    private static final Locale FALLBACK_LOCALE = Locale.US;
+
     // MP: return application's resource strings
-    private static ResourceBundle STRING_RESOURCE = null;
+    private static MyResourceBundle localizationBundle = null;
+
+    private static MyResourceBundle localizationFallbackBundle = null;
+
 
     public static String localizedStringForKey(String key, Object... args) {
-        if (STRING_RESOURCE == null) {
+        if (localizationBundle == null) {
             I18nUtils.updateLocalizedStringFormSettings();
         }
         String str = null;
         try {
-            str = STRING_RESOURCE.getString(key);
+            str = localizationBundle.getString(key);
             if (args.length > 0) {
                 str = String.format(str, args);
             }
+        } catch (MissingResourceException e) {
+            LOG.error("Missing localization - for {}", key);
+            return key;
         } catch (Exception e) {
-            str = key;
+            LOG.error("Unexpected error while loading key {}", key, e);
+            return key;
         }
         if (str == null) {
             // always return a valid string
-            str = "";
+            return "";
         }
         return str;
     }
@@ -62,8 +78,16 @@ public class I18nUtils {
         } else {
             locale = Locale.getDefault();
         }
-
-        STRING_RESOURCE = ResourceBundle.getBundle("mobac.resources.text.localize", locale, new UTF8Control());
+        localizationBundle = (MyResourceBundle) ResourceBundle.getBundle("mobac.resources.text.localize",
+                locale, new UTF8Control());
+        if (!FALLBACK_LOCALE.equals(locale)) {
+            // Not sure why we have to load and set the fallback resource manually, but this way it works...
+            if (localizationFallbackBundle == null) {
+                localizationFallbackBundle = (MyResourceBundle) ResourceBundle.getBundle(
+                        "mobac.resources.text.localize", FALLBACK_LOCALE, new UTF8Control());
+            }
+            localizationBundle.setParent(localizationFallbackBundle);
+        }
     }
 
     public static InputStream getI18nResourceAsStream(String name, String extension) {
@@ -73,11 +97,13 @@ public class I18nUtils {
         String language = s.localeLanguage;
         InputStream in;
         in = StartMOBAC.class.getResourceAsStream(String.format("%s_%s_%s.%s", name, language, country, extension));
-        if (in != null)
+        if (in != null) {
             return in;
+        }
         in = StartMOBAC.class.getResourceAsStream(String.format("%s_%s.%s", name, language, extension));
-        if (in != null)
+        if (in != null) {
             return in;
+        }
         in = StartMOBAC.class.getResourceAsStream(String.format("%s.%s", name, extension));
         return in;
     }
@@ -87,12 +113,11 @@ public class I18nUtils {
      */
     public static class UTF8Control extends Control {
 
-        public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
-                                        boolean reload) throws IllegalAccessException, InstantiationException, IOException {
+        public MyResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
+                                          boolean reload) throws IOException {
             // The below is a copy of the default implementation.
             String bundleName = toBundleName(baseName, locale);
             String resourceName = toResourceName(bundleName, "properties");
-            ResourceBundle bundle = null;
             InputStream stream = null;
             if (reload) {
                 URL url = loader.getResource(resourceName);
@@ -108,18 +133,33 @@ public class I18nUtils {
             }
             if (stream != null) {
                 try {
-                    bundle = new PropertyResourceBundle(new UnicodeReader(stream, "UTF-8"));
+                    return new MyResourceBundle(new UnicodeReader(stream, StandardCharsets.UTF_8));
                 } finally {
                     stream.close();
                 }
             }
-            return bundle;
+            return null;
         }
 
         @Override
         public Locale getFallbackLocale(String baseName, Locale locale) {
-            return Locale.US;
+            return FALLBACK_LOCALE;
         }
 
+    }
+
+    /**
+     * A {@link PropertyResourceBundle} that allows to set the parent property
+     */
+    private static class MyResourceBundle extends PropertyResourceBundle {
+
+        public MyResourceBundle(Reader reader) throws IOException {
+            super(reader);
+        }
+
+        @Override
+        public void setParent(ResourceBundle parent) {
+            super.setParent(parent);
+        }
     }
 }
