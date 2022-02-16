@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <customWmsMapSource>
-  <!-- Map source name as it appears in the map sources list.  Additionally used for the tile store name --> 
-  <name>USGS ImageryTopo WMS</name>
+    <!-- Map source name as it appears in the map sources list.  Additionally, used for the tile store name -->
+    <name>Example custom WMS map source in degrees(France)</name>
 
-  <minZoom>0</minZoom>
-  <maxZoom>22</maxZoom>
-  
-  <!-- Tile format (PNG, JPG or GIF) -->
-  <tileType>PNG</tileType>
+    <minZoom>0</minZoom>
+    <maxZoom>18</maxZoom>
 
-  <!-- WMS version -->
-  <version>1.1.1</version>
-  
-  <!-- WMS layer parameter -->
-  <layers>0</layers>
+    <!-- Tile format (PNG, JPG or GIF) -->
+    <tileType>PNG</tileType>
 
-  <!-- WMS base URL -->
-  <url>https://basemap.nationalmap.gov:443/arcgis/services/USGSImageryTopo/MapServer/WmsServer?</url>
+    <!-- WMS version. Currently, only 1.1.1 and 1.3.0 is tested -->
+    <version>1.3.0</version>
 
-  <!-- Currently only EPSG:4326 is supported --> 
-  <coordinatesystem>EPSG:4326</coordinatesystem>
+    <!-- WMS layer parameter -->
+    <layers>BassinDCE_FXX,SsBassinDCEAdmin_FXX</layers>
 
-  <!-- 
-    Optional: Additional parameters appended to the WMS url. 
-    It is recommended to wrap any field that has special charcters, such as an ampersand, inside a `<![CDATA[ ]]>` element.
-    Otherwise you have to use their XML encoding, such as `&amp;`
-  --> 
-  <aditionalparameters><![CDATA[&STYLES=default]]></aditionalparameters>
+    <!-- WMS base URL -->
+    <url>https://services.sandre.eaufrance.fr/geo/mdo?</url>
 
-  <!-- Transparent background -->
-  <backgroundColor>#000000</backgroundColor>
+    <!-- EPSG:4326, EPSG:4171 -> unit in degrees (default). EPSG:3857, EPSG:900913 and EPSG:3785 -> unit in meters -->
+    <coordinatesystem>EPSG:4326</coordinatesystem>
+
+    <!-- degree (default) - meter for EPSG:3857, EPSG:900913 and EPSG:3785 -->
+    <coordinateunit>degree</coordinateunit>
+
+    <!--
+      Optional: Additional parameters appended to the WMS url.
+      It is recommended to wrap any field that has special characters, such as an ampersand, inside a `<![CDATA[ ]]>` element.
+      Otherwise you have to use their XML encoding, such as `&amp;`
+    -->
+    <aditionalparameters><![CDATA[&STYLES=default]]></aditionalparameters>
+
+    <!-- Transparent background -->
+    <backgroundColor>#000000</backgroundColor>
 
 </customWmsMapSource>
