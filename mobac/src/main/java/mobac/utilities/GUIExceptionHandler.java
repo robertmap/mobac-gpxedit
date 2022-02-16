@@ -39,11 +39,9 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.StringWriter;
+import java.util.function.Function;
 
 public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, ExceptionListener {
 
@@ -66,7 +64,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
     public static void registerForCurrentThread() {
         Thread t = Thread.currentThread();
         if (t.getUncaughtExceptionHandler() != INSTANCE) {
-            log.trace("Registering MOBAC exception handler for thread \"" + t.getName() + "\" [" + t.getId() + "]");
+            log.trace("Registering MOBAC exception handler for thread \"{}\" [{}]", t.getName(), t.getId());
             t.setUncaughtExceptionHandler(INSTANCE);
         }
     }
@@ -85,19 +83,20 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 I18nUtils.localizedStringForKey("dlg_download_show_error_report")};
         int a = JOptionPane.showOptionDialog(null, dialogMessage, I18nUtils.localizedStringForKey("Error"), 0,
                 JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-        if (a == 1)
+        if (a == 1) {
             GUIExceptionHandler.showExceptionDialog(e);
+        }
         System.exit(1);
     }
 
     public static void processException(Thread thread, Throwable t) {
-        log.error("Uncaught exception: " + t, t);
+        log.error("Uncaught exception: {}", t, t);
         showExceptionDialog(thread, t, null);
     }
 
     public static void processException(Thread thread, Throwable t, AWTEvent newEvent) {
         String eventText = newEvent.toString();
-        log.error("Uncaught exception on processing event " + eventText, t);
+        log.error("Uncaught exception on processing event {}", eventText, t);
         if (eventText.length() > 100) {
             String[] parts = eventText.split(",");
             StringWriter sw = new StringWriter(eventText.length() + 20);
@@ -117,11 +116,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
     }
 
     public static String prop(String key) {
-        String s = System.getProperty(key);
-        if (s != null)
-            return s;
-        else
-            return "";
+        return System.getProperty(key, "");
     }
 
     public static void showExceptionDialog(Throwable t) {
@@ -166,8 +161,9 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 sb.append(" (" + windowManager + ")");
 
             String dist = OSUtilities.getLinuxDistributionName();
-            if (dist != null)
+            if (dist != null) {
                 sb.append("\nDistribution name: " + dist);
+            }
 
             sb.append("\nJava VM: " + prop("java.vm.vendor") + " " + prop("java.vm.name") +
                     " (" + prop("java.runtime.version") + ")");
@@ -177,11 +173,13 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
             sb.append("\nCPU cores: " + Runtime.getRuntime().availableProcessors());
 
-            if (thread != null)
+            if (thread != null) {
                 sb.append("\n\nThread: " + thread.getName());
+            }
 
-            if (additionalInfo != null)
+            if (additionalInfo != null) {
                 sb.append("\n\n" + additionalInfo);
+            }
 
             if (t instanceof ExceptionExtendedInfo) {
                 ExceptionExtendedInfo ei = (ExceptionExtendedInfo) t;
@@ -207,12 +205,23 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 while (t != null) {
 
                     sb.append(t.toString() + "\n");
-                    for (StackTraceElement ste : t.getStackTrace())
+                    for (StackTraceElement ste : t.getStackTrace()) {
                         sb.append("\tat " + ste + "\n");
+                    }
+
+                    Throwable[] sup = t.getSuppressed();
+                    if (sup != null && sup.length > 0) {
+                        for (Throwable st : sup) {
+                            sb.append("    Suppressed: ");
+                            sb.append(st.toString());
+                            sb.append("\n");
+                        }
+                    }
 
                     t = t.getCause();
-                    if (t != null)
+                    if (t != null) {
                         sb.append("Caused by: ");
+                    }
                 }
 
                 sb.append("\n#############################################################");
@@ -237,8 +246,9 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
             text.addHyperlinkListener(new HyperlinkListener() {
 
                 public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
+                    if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
                         return;
+                    }
                     try {
                         Desktop.getDesktop().browse(e.getURL().toURI());
                     } catch (Exception e1) {
@@ -252,11 +262,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 // format for Sourceforge.net bugtracker
                 clipboardData = "~~~" + System.lineSeparator() + clipboardData + System.lineSeparator() + "~~~";
                 StringSelection contents = new StringSelection(clipboardData);
-                ClipboardOwner owner = new ClipboardOwner() {
-                    public void lostOwnership(Clipboard clipboard, Transferable contents) {
-                    }
-                };
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, owner);
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, (clipboard, content) -> Function.identity());
                 guiText += "<p>(The following text has already been copied to your clipboard.)</p>";
             } catch (RuntimeException x) {
                 log.error("", x);
@@ -297,10 +303,11 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
         // Bug handling. See
         // http://stackoverflow.com/questions/3158254/how-to-replace-the-awt-eventqueue-with-own-implementation
         try {
-            if (isLikeJava7)
+            if (isLikeJava7) {
                 EventQueue.invokeAndWait(eventQueueProxy);
-            else
+            } else {
                 eventQueueProxy.run();
+            }
         } catch (Exception e) {
             log.error("", e);
         }
@@ -310,7 +317,9 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
         for (; ; ) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                throw new RuntimeException("Test", new Exception("Inner"));
+                Exception e = new RuntimeException("Test", new Exception("Inner"));
+                e.addSuppressed(new RuntimeException("Supressed"));
+                throw e;
             } catch (Exception e) {
                 showExceptionDialog("Test 123", e);
             } catch (Error e) {
@@ -325,7 +334,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
      */
     public void exceptionThrown(ExceptionEvent paramExceptionEvent) {
         Exception e = paramExceptionEvent.getException();
-        log.error("Exception in tile store: " + paramExceptionEvent.toString(), e);
+        log.error("Exception in tile store: {}", paramExceptionEvent, e);
         showExceptionDialog(e);
     }
 
@@ -360,7 +369,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                     StackTraceElement[] st = e.getStackTrace();
                     if (st.length > 0) {
                         if ("sun.font.FontDesignMetrics".equals(st[0].getClassName())) {
-                            log.error("Ignored JRE bug exception " + e.getMessage() + " caused by : " + st[0]);
+                            log.error("Ignored JRE bug exception {} caused by : {}", e.getMessage(), st[0]);
                             // This is a known JRE bug - we just ignore it
                             return;
                         }
