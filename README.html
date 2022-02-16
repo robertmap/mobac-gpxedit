@@ -1306,8 +1306,16 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
 </h3>
 <p>
     Similar a WMS map source can be defined. Currently only
-    <tt>EPSG:4326</tt>
-    as coordinatesystem is supported.
+    <tt>1.1.1</tt> and <tt>1.3.0</tt>
+    as version are supported.
+</p>
+<p>
+    Tag <tt>coordinateunit</tt> is used to separate <tt>EPSG:4326</tt>, <tt>EPSG:4171</tt> (unit in degree by default)
+    from <tt>EPSG:3857</tt>, <tt>EPSG:900913</tt>
+    and <tt>EPSG:3785</tt> (unit in meter)
+</p>
+<p>
+    <tt>EPSG:4326</tt>, <tt>EPSG:4171</tt> (unit in degree by default)
 </p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
 &lt;customWmsMapSource&gt;
@@ -1317,8 +1325,10 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
     &lt;tileType&gt;JPG&lt;/tileType&gt;
     &lt;version&gt;1.1.1&lt;/version&gt;
     &lt;layers&gt;DRG&lt;/layers&gt;
-    &lt;url&gt;https://basemap.nationalmap.gov:443/arcgis/services/USGSImageryTopo/MapServer/WmsServer?&lt;/url&gt;
+    &lt;url&gt;http://terraserver-usa.com/ogcmap6.ashx?&lt;/url&gt;
     &lt;coordinatesystem&gt;EPSG:4326&lt;/coordinatesystem&gt;
+    &lt;!-- optional, by default "degree" --&gt;
+    &lt;coordinateunit&gt;degree&lt;/coordinateunit&gt;
     &lt;aditionalparameters&gt;&amp;amp;EXCEPTIONS=BLANK&amp;amp;Styles=&lt;/aditionalparameters&gt;
     &lt;backgroundColor&gt;#000000&lt;/backgroundColor&gt;
 &lt;/customWmsMapSource&gt;</pre>
@@ -1326,6 +1336,27 @@ MGMapsCache\macos_12 MGMapsCache\macroad_12 MGMapsCache\macsat_12
     Example file (with comments) for download: <a
         href="https://svn.code.sf.net/p/mobac/code/trunk/MOBAC/mapsources/Example%20custom%20WMS%20map%20source.xml">
     Example custom WMS map source.xml</a>
+</p>
+<p>
+    <tt>EPSG:3857</tt>, <tt>EPSG:900913</tt> and <tt>EPSG:3785</tt> (unit in meter)
+</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;customWmsMapSource&gt;
+    &lt;name&gt;Modele, XML WMS 1.3.0-meters(France)&lt;/name&gt;
+    &lt;minZoom&gt;6&lt;/minZoom&gt;
+    &lt;maxZoom&gt;18&lt;/maxZoom&gt;
+    &lt;tileType&gt;PNG&lt;/tileType&gt;
+    &lt;version&gt;1.3.0&lt;/version&gt;
+    &lt;layers&gt;BassinDCE_FXX,SsBassinDCEAdmin_FXX&lt;/layers&gt;
+    &lt;url&gt;https://services.sandre.eaufrance.fr/geo/mdo?&lt;/url&gt;
+    &lt;coordinatesystem&gt;EPSG:3857&lt;/coordinatesystem&gt;
+    &lt;!-- required --&gt;
+    &lt;coordinateunit&gt;meter&lt;/coordinateunit&gt;
+&lt;/customWmsMapSource&gt;</pre>
+<p>
+    Example file (with comments) for download: <a
+        href="https://svn.code.sf.net/p/mobac/code/trunk/MOBAC/mapsources/Example%20custom%20WMS%20map%20source%20in%20meter.xml">
+    Example custom WMS map source in meter.xml</a>
 </p>
 <h3>
     <a name="CustomMultiLayerMapSource">Custom multi-layer map sources</a>
