@@ -14,6 +14,8 @@
 2.2.3 (2022-??-??)
  ! Fixed fallback to English when a localized string is missing in the selected
      language
+ ! Fixed min/max zoom info for SQLite based atlas (RMaps, BackCountry, OsmAnd
+     SQLite, Maverick, MBTiles, BigPlanet Tracks)
  ~ Detection of image type JPEG improved (more variants are now allowed)
  ~ Mapsforge library updated to version 0.17
 

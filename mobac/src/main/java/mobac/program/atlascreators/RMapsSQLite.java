@@ -46,7 +46,7 @@ import java.util.Locale;
  * <p>
  * Additionally the created BigPlanet SQLite database has one additional table containing special info needed by the
  * Android application <a href="http://robertdeveloper.blogspot.com/search/label/rmaps.release" >RMaps</a>.<br>
- * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and {@link #RMAPS_UPDATE_INFO_MINMAX_SQL} ).<br>
+ * (Database statements: {@link #RMAPS_TABLE_INFO_DDL} and {@link #RMAPS_INSERT_INFO_MINMAX_SQL} ).<br>
  * Changes made by <a href="mailto:robertk506@gmail.com">Robert</a>, author of RMaps.
  * <p>
  */
@@ -59,7 +59,7 @@ public class RMapsSQLite extends AbstractSQLite {
     private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (x,y,z,s,image) VALUES (?,?,?,0,?)";
     private static final String RMAPS_TABLE_INFO_DDL = "CREATE TABLE IF NOT EXISTS info AS SELECT 99 AS minzoom, 0 AS maxzoom";
     private static final String RMAPS_CLEAR_INFO_SQL = "DELETE FROM info;";
-    private static final String RMAPS_UPDATE_INFO_MINMAX_SQL = "INSERT INTO info (minzoom,maxzoom) VALUES (?,?);";
+    private static final String RMAPS_INSERT_INFO_MINMAX_SQL = "INSERT INTO info (minzoom,maxzoom) VALUES (?,?);";
     private static final String RMAPS_INFO_MAX_SQL = "SELECT DISTINCT z FROM tiles ORDER BY z DESC LIMIT 1;";
     private static final String RMAPS_INFO_MIN_SQL = "SELECT DISTINCT z FROM tiles ORDER BY z ASC LIMIT 1;";
 
@@ -79,8 +79,9 @@ public class RMapsSQLite extends AbstractSQLite {
     @Override
     public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
             throws IOException, AtlasTestException, InterruptedException {
-        if (customAtlasDir == null)
+        if (customAtlasDir == null) {
             customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
+        }
         super.startAtlasCreation(atlas, customAtlasDir);
     }
 
@@ -124,21 +125,23 @@ public class RMapsSQLite extends AbstractSQLite {
         int min, max;
         try (Statement stat = conn.createStatement()) {
             try (ResultSet rs = stat.executeQuery(RMAPS_INFO_MAX_SQL)) {
-                if (!rs.next())
+                if (!rs.next()) {
                     throw new SQLException("failed to retrieve max tile zoom info");
+                }
                 max = rs.getInt(1);
             }
             try (ResultSet rs = stat.executeQuery(RMAPS_INFO_MIN_SQL)) {
-                if (!rs.next())
+                if (!rs.next()) {
                     throw new SQLException("failed to retrieve min tile zoom info");
+                }
                 min = rs.getInt(1);
             }
-            try (PreparedStatement ps = conn.prepareStatement(RMAPS_UPDATE_INFO_MINMAX_SQL)) {
+            stat.execute(RMAPS_CLEAR_INFO_SQL);
+            try (PreparedStatement ps = conn.prepareStatement(RMAPS_INSERT_INFO_MINMAX_SQL)) {
                 ps.setInt(1, min);
                 ps.setInt(2, max);
                 ps.execute();
             }
-            stat.execute(RMAPS_CLEAR_INFO_SQL);
         }
 
     }
