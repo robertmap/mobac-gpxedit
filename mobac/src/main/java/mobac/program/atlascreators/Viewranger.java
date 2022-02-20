@@ -45,16 +45,20 @@ public class Viewranger extends OSMTracker {
     protected void testAtlas() throws AtlasTestException {
         for (LayerInterface layer : atlas) {
             for (MapInterface map : layer) {
-                if (map.getParameters() == null)
+                if (map.getParameters() == null) {
                     continue;
-                if (!TileImageType.PNG.equals(map.getParameters().getFormat().getType()))
+                }
+                if (!TileImageType.PNG.equals(map.getParameters().getFormat().getType())) {
                     throw new AtlasTestException("Only PNG output format allowed for Viewranger", map);
-                if (map.getZoom() > 18)
+                }
+                if (map.getZoom() > 18) {
                     throw new AtlasTestException("Unsupported zoom level: " + map.getZoom()
                             + "\nMaximum supported zoom level is 18", map);
-                if (map.getZoom() < 3)
+                }
+                if (map.getZoom() < 3) {
                     throw new AtlasTestException("Unsupported zoom level: " + map.getZoom()
-                            + "\nMinimum suupported toom level is 3", map);
+                            + "\nMinimum supported zoom level is 3", map);
+                }
             }
         }
     }
@@ -64,10 +68,11 @@ public class Viewranger extends OSMTracker {
         super.initializeMap(map, mapTileProvider);
         mapDir = new File(atlasDir, map.getLayer().getName());
         tileType = "";
-        if (parameters == null)
+        if (parameters == null) {
             mapDlTileProvider = new PngTileProvider(mapDlTileProvider);
-        else
+        } else {
             mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+        }
     }
 
 }
