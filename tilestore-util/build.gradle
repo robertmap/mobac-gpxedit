@@ -8,3 +8,44 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "mobac.ts_util.TileStoreUtil"
+        attributes "Version": project.rootProject.version
+        attributes "SVN-Revision": "$svnRevision"
+        attributes "Class-Path": "Mobile_Atlas_Creator.jar"
+
+        // This entry is required by jaxb-runtime to work properly on Java 16+ - otherwise you will encounter
+        // java.lang.NullPointerException: Cannot invoke "java.lang.reflect.Method.invoke(Object, Object[])" because
+        // "com.sun.xml.bind.v2.runtime.reflect.opt.Injector.defineClass" is null
+        attributes "Multi-Release": "true"
+    }
+    getArchiveBaseName().set("ts-util")
+
+    exclude("module-info.class")
+    exclude("META-INF/*")
+    exclude("META-INF/maven/*")
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+}
+
+task distArchive(type: Zip, dependsOn: ['jar']) {
+
+    from("build/libs") {
+        include "ts-util.jar"
+        into "/"
+    }
+    from("../") {
+        include "gpl.txt"
+        into "/"
+    }
+    from(".") {
+        include "Readme.txt"
+        include "start.sh"
+        include "world.map"
+        into "/"
+    }
+
+    archiveFileName = "MOBAC TileStore Util 0.8.zip"
+    destinationDirectory = new File(".")
+}
