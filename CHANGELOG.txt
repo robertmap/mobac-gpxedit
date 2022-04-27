@@ -16,7 +16,7 @@
      language
  ! Fixed min/max zoom info for SQLite based atlas: RMaps, BackCountry, OsmAnd
      SQLite, Maverick, MBTiles, BigPlanet Tracks (#365)
- ~ Detection of image type JPEG improved (more variants are now detected)
+ ~ Detection of JPEG image type improved (more variants are now detected)
  ~ Mapsforge library updated to version 0.17
 
 2.2.2 (2022-01-31)

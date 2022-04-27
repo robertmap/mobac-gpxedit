@@ -1,10 +1,11 @@
 plugins {
     id 'java-library'
-    id 'edu.sc.seis.launch4j' version '2.5.1'
+    id 'edu.sc.seis.launch4j' version '2.5.2'
 }
 
 dependencies {
     def mapsforgeVersion = '0.17.0'
+    // def mapsforgeVersion = 'master-SNAPSHOT'
 
     implementation "org.mapsforge:mapsforge-core:${mapsforgeVersion}"
     implementation "org.mapsforge:mapsforge-map:${mapsforgeVersion}"
@@ -19,19 +20,19 @@ dependencies {
     api 'com.github.kerner1000:javapng:2.1.2'
     api 'org.xerial:sqlite-jdbc:3.34.0'
     api 'com.sleepycat:je:4.0.92'
-    api 'org.glassfish.jaxb:jaxb-runtime:3.0.1'
+    api 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
     api 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'ch.qos.logback:logback-classic:1.2.10'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
     implementation 'org.slf4j:jul-to-slf4j:1.7.36'
     implementation 'net.sf.jtidy:jtidy:r938'
     implementation 'com.itextpdf:itextpdf:5.1.3'
     implementation 'javax.media:jai-core:1.1.3'
     testImplementation 'org.jboss.resteasy:tjws:2.3.10.Final'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'javax.servlet:servlet-api:2.5'
 
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 processResources {
     doLast {
