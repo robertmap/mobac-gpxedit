@@ -22,7 +22,11 @@ import com.sleepycat.persist.model.Persistent;
 import com.sleepycat.persist.model.PrimaryKey;
 import mobac.program.tilestore.TileStoreEntry;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 @Entity(version = 3)
 public class TileDbEntry implements TileStoreEntry {
@@ -100,10 +104,12 @@ public class TileDbEntry implements TileStoreEntry {
 
     @Override
     public String toString() {
-        String tlm = (timeLastModified <= 0) ? "-" : new Date(timeLastModified).toString();
-        String txp = (timeExpires <= 0) ? "-" : new Date(timeExpires).toString();
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        ZoneId zoneId = TimeZone.getDefault().toZoneId();
+        String tlm = (timeLastModified <= 0) ? "-" : df.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(timeLastModified), zoneId));
+        String txp = (timeExpires <= 0) ? "-" : df.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(timeExpires), zoneId));
         return String.format("Tile z%d/%d/%d dl[%s] lm[%s] exp[%s] eTag[%s]", tileKey.zoom, tileKey.x, tileKey.y,
-                new Date(timeDownloaded), tlm, txp, eTag);
+                df.format(LocalDateTime.ofInstant(Instant.ofEpochSecond(timeDownloaded), zoneId)), tlm, txp, eTag);
     }
 
     @Persistent(version = 3)
