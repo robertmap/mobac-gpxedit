@@ -11,13 +11,15 @@
 
 =======
 
-2.2.3 (2022-??-??)
+2.2.3 (2022-05-06)
  ! Fixed fallback to English when a localized string is missing in the selected
      language
  ! Fixed min/max zoom info for SQLite based atlas: RMaps, BackCountry, OsmAnd
      SQLite, Maverick, MBTiles, BigPlanet Tracks (#365)
  ~ Detection of JPEG image type improved (more variants are now detected)
  ~ Mapsforge library updated to version 0.17
+ + customWmsMapSource: <coordinateunit> entry allows to switch between
+    meter/degree (replaces wgs84 parameter)
 
 2.2.2 (2022-01-31)
  - Dropped support for Java 8 - Java 11+ is now required
