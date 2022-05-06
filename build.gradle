@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'mobac.sourceforge.io'
-version '2.2.2'
+version '2.2.3'
 
 println("SVN revision $svntools.info.revisionNumber")
 
@@ -20,13 +20,17 @@ allprojects {
             // required for javax.media:jai-core:1.1.3
             url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
         }
+        // maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     ext {
         svnRevision = "$svntools.info.revisionNumber"
     }
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+        options.incremental = true
         options.fork = true
+        options.compilerArgs << '-Xlint:unchecked'
+        options.deprecation = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
