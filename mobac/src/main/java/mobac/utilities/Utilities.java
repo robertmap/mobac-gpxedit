@@ -205,12 +205,13 @@ public class Utilities {
     }
 
     public static String loadTextResource(String resourcePath) throws IOException {
-        try (DataInputStream in = new DataInputStream(Main.class.getResourceAsStream("resources/" + resourcePath))) {
-            byte[] buf;
-            buf = new byte[in.available()];
-            in.readFully(buf);
-            String text = new String(buf, StandardCharsets.UTF_8);
-            return text;
+        resourcePath = "resources/" + resourcePath;
+        try (InputStream in = Main.class.getResourceAsStream(resourcePath)) {
+            if (in == null) {
+                throw new IOException("Resource does not exist: " + resourcePath);
+            }
+            byte[] buf = in.readAllBytes();
+            return new String(buf, StandardCharsets.UTF_8);
         }
     }
 

@@ -90,7 +90,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
     }
 
     public static void processException(Thread thread, Throwable t) {
-        log.error("Uncaught exception: {}", t, t);
+        log.error("Uncaught exception: {}", t.toString(), t);
         showExceptionDialog(thread, t, null);
     }
 
