@@ -48,7 +48,7 @@ public class I18nUtils {
 
     public static String localizedStringForKey(String key, Object... args) {
         if (localizationBundle == null) {
-            I18nUtils.updateLocalizedStringFormSettings();
+            I18nUtils.updateLocalizedStringFromSettings();
         }
         String str = null;
         try {
@@ -70,7 +70,7 @@ public class I18nUtils {
         return str;
     }
 
-    public static synchronized void updateLocalizedStringFormSettings() {
+    public static synchronized void updateLocalizedStringFromSettings() {
         Settings settings = Settings.getInstance();
         Locale locale = null;
         if (settings != null) {
@@ -86,7 +86,11 @@ public class I18nUtils {
                 localizationFallbackBundle = (MyResourceBundle) ResourceBundle.getBundle(
                         "mobac.resources.text.localize", FALLBACK_LOCALE, new UTF8Control());
             }
-            localizationBundle.setParent(localizationFallbackBundle);
+            // Check if the current bundle is the fallback bundle. Only set parent if this is not the fallback bundle,
+            // otherwise we end up in en endless recursion if a resource string is missing
+            if (localizationBundle != localizationFallbackBundle) {
+                localizationBundle.setParent(localizationFallbackBundle);
+            }
         }
     }
 

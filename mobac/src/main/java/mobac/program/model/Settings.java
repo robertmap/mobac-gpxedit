@@ -214,7 +214,7 @@ public class Settings {
             SETTINGS_LAST_MODIFIED = FILE.lastModified();
 
             // Settings 重新加载之后，必须更新语言资源
-            I18nUtils.updateLocalizedStringFormSettings();
+            I18nUtils.updateLocalizedStringFromSettings();
 
         } finally {
             Settings s = getInstance();

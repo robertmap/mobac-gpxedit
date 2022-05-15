@@ -285,7 +285,7 @@ public class SettingsGUI extends JDialog {
                             I18nUtils.localizedStringForKey("set_display_language_restart_desc"),
                             I18nUtils.localizedStringForKey("set_display_language_msg_title"),
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    I18nUtils.updateLocalizedStringFormSettings();
+                    I18nUtils.updateLocalizedStringFromSettings();
                     if (result == JOptionPane.YES_OPTION) {
                         applySettings();
 
