@@ -318,7 +318,7 @@ public class SettingsGUIPaper extends JPanel {
         jCheckBoxLandscape.setText(I18nUtils.localizedStringForKey("set_paper_size_default_landscape"));
         jCheckBoxLandscape.setToolTipText(I18nUtils.localizedStringForKey("set_paper_size_default_landscape_tips"));
         jCheckBoxWgsGrid
-                .setText(I18nUtils.localizedStringForKey(I18nUtils.localizedStringForKey("set_paper_wgs_grid")));
+                .setText(I18nUtils.localizedStringForKey("set_paper_wgs_grid"));
         jCheckBoxWgsGrid.setToolTipText(I18nUtils.localizedStringForKey("set_paper_wgs_grid_tips"));
         jCheckBoxPageNumbers.setText(I18nUtils.localizedStringForKey("set_paper_paper_nubmer"));
         jCheckBoxPageNumbers.setToolTipText(I18nUtils.localizedStringForKey("set_paper_paper_nubmer_tips"));
