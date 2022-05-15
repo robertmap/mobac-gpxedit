@@ -41,6 +41,8 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, ExceptionListener {
@@ -204,10 +206,9 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 sb.append("\n\n#############################################################\n\n");
                 while (t != null) {
 
-                    sb.append(t.toString() + "\n");
-                    for (StackTraceElement ste : t.getStackTrace()) {
-                        sb.append("\tat " + ste + "\n");
-                    }
+                    sb.append(t.toString());
+                    printStackTrace(t, sb);
+                    sb.append("\n");
 
                     Throwable[] sup = t.getSuppressed();
                     if (sup != null && sup.length > 0) {
@@ -220,7 +221,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 
                     t = t.getCause();
                     if (t != null) {
-                        sb.append("Caused by: ");
+                        sb.append("\nCaused by: ");
                     }
                 }
 
@@ -283,8 +284,41 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 log.warn("User selected to quit MOBAC after an exception");
                 System.exit(1);
             }
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (Throwable t1) {
+            t1.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Print stack trace of <code>t</code> to <code>sb</code> but ignore lines if they occur more than 2 times (useful for {@link StackOverflowError})
+     *
+     * @param t
+     * @param sb
+     */
+    private static void printStackTrace(Throwable t, StringBuilder sb) {
+        List<StackTraceElement> stackTrace = List.of(t.getStackTrace());
+        String lastSte = "";
+        Iterator<StackTraceElement> it = stackTrace.iterator();
+        while (it.hasNext()) {
+            String ste = it.next().toString();
+            if (ste.equals(lastSte)) {
+                int repeat = 0;
+                while (lastSte.equals(ste)) {
+                    repeat++;
+                    if (!it.hasNext()) {
+                        ste = null;
+                        break;
+                    }
+                    ste = it.next().toString();
+                }
+                sb.append(String.format(" [%d identical lines suppressed]", repeat));
+            }
+            if (ste == null) {
+                break;
+            }
+            sb.append("\n\tat " + ste);
+            lastSte = ste;
         }
     }
 
