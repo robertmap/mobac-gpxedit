@@ -11,6 +11,12 @@
 
 =======
 
+2.2.3.2 (2022-05-15)
+ ! Fixed StackOverflowError when opening settings dialog (#372)
+
+2.2.3.1 (2022-05-09)
+ ! Fixed problems with MapEvaluator (missing resources #370)
+
 2.2.3 (2022-05-06)
  ! Fixed fallback to English when a localized string is missing in the selected
      language
