@@ -10,6 +10,8 @@
  - = Features that has been removed
 
 =======
+2.2.3.3
+ ! Fixed PNG 4bit/8bit tile processing
 
 2.2.3.2 (2022-05-15)
  ! Fixed StackOverflowError when opening settings dialog (#372)
