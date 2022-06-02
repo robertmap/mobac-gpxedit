@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'mobac.sourceforge.io'
-version '2.2.3.2'
+version '2.2.3.2-jai-fix'
 
 println("SVN revision $svntools.info.revisionNumber")
 
@@ -17,11 +17,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            // required for javax.media:jai-core:1.1.3
-            url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
-        }
-        maven {
-            // required for com.sun.media:jai-codec:1.1.3
+            // required for javax.media:jai-core:1.1.3 and com.sun.media:jai-codec:1.1.3
             url "https://repository.jboss.org/maven2"
         }
 

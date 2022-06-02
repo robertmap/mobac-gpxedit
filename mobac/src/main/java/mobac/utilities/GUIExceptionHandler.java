@@ -153,9 +153,12 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 return;
             }
 
+            boolean notABug = t instanceof NotABug;
+
             StringBuilder sb = new StringBuilder(2048);
-            if (message != null)
+            if (message != null) {
                 sb.append("Error message: " + message + "\n");
+            }
             sb.append("Version: " + ProgramInfo.getCompleteTitle());
             sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
             String windowManager = System.getProperty("sun.desktop");
@@ -192,7 +195,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
             String guiText;
             String dialogTitle;
             JPanel panel = new JPanel(new BorderLayout());
-            if (t != null) {
+            if (t != null && !notABug) {
                 sb.append("\n\nError hierarchy:");
                 Throwable tmp = t;
                 while (tmp != null) {
@@ -258,15 +261,17 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 }
             });
             panel.add(text, BorderLayout.NORTH);
-            try {
-                String clipboardData = sb.toString();
-                // format for Sourceforge.net bugtracker
-                clipboardData = "~~~" + System.lineSeparator() + clipboardData + System.lineSeparator() + "~~~";
-                StringSelection contents = new StringSelection(clipboardData);
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, (clipboard, content) -> Function.identity());
-                guiText += "<p>(The following text has already been copied to your clipboard.)</p>";
-            } catch (RuntimeException x) {
-                log.error("", x);
+            if (!notABug) {
+                try {
+                    String clipboardData = sb.toString();
+                    // format for Sourceforge.net bugtracker
+                    clipboardData = "~~~" + System.lineSeparator() + clipboardData + System.lineSeparator() + "~~~";
+                    StringSelection contents = new StringSelection(clipboardData);
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, (clipboard, content) -> Function.identity());
+                    guiText += "<p>(The following text has already been copied to your clipboard.)</p>";
+                } catch (RuntimeException x) {
+                    log.error("", x);
+                }
             }
             text.setText("<html>" + guiText + "</html>");
 
@@ -414,4 +419,6 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
         }
     }
 
+    public static interface NotABug {
+    }
 }

@@ -17,6 +17,7 @@
 package mobac.gui.actions;
 
 import mobac.utilities.GUIExceptionHandler;
+import mobac.utilities.GUIExceptionHandler.NotABug;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +29,7 @@ public class DebugShowReport implements ActionListener {
         // throw new RuntimeException("Test");
     }
 
-    private static final class SystemReport extends RuntimeException {
+    private static final class SystemReport extends RuntimeException implements NotABug {
 
     }
 }
