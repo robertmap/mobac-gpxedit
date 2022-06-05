@@ -12,6 +12,8 @@
 =======
 2.2.3.3
  ! Fixed PNG 4bit/8bit tile processing
+ ! Fixed problems with the used Berkeley DB JE on systems with Turkish locale
+     (tile store database library was upgraded to version 5.0.73)
 
 2.2.3.2 (2022-05-15)
  ! Fixed StackOverflowError when opening settings dialog (#372)
@@ -108,7 +110,7 @@
  ! NoSuchMethodException when clicking the "Create Atlas" button (fix for #321)
 
 2.1.1 (2019-04-10)
- ~ Changed the MOBAC web site URL (e.g. used for online update):
+ ~ Changed the MOBAC website URL (e.g. used for online update):
     http://mobac.sourceforge.net -> https://mobac.sourceforge.io
  ! Map source initialization by atlas creation engine added (fix for #313)
  ! Multi-threading issue with TileImageWriter fixed 
