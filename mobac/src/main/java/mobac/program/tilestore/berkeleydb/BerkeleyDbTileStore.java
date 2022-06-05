@@ -65,13 +65,13 @@ public class BerkeleyDbTileStore extends TileStore {
      */
     private static final int MAX_CONCURRENT_ENVIRONMENTS = 5;
 
-    private EnvironmentConfig envConfig;
+    private final EnvironmentConfig envConfig;
 
     private Map<String, TileDatabase> tileDbMap;
 
     private FileLock tileStoreLock = null;
 
-    private Mutations mutations;
+    private final Mutations mutations;
 
     public BerkeleyDbTileStore() throws TileStoreException {
         super();
@@ -145,27 +145,36 @@ public class BerkeleyDbTileStore extends TileStore {
         return new TileDbEntry(x, y, zoom, data, timeLastModified, timeExpires, eTag);
     }
 
+    private static void closeTileDatabase(TileDatabase db) {
+        if (db != null) {
+            db.close();
+        }
+    }
+
     @Override
     public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
         long time = System.currentTimeMillis();
         long timeExpires = time + Settings.getInstance().tileDefaultExpirationTime;
         // We set the tile data to an empty array because we can not store null
-        return new TileDbEntry(x, y, zoom, new byte[]{}, time, timeExpires, "");
+        return new TileDbEntry(x, y, zoom, new byte[0], time, timeExpires, "");
     }
 
     private TileDatabase getTileDatabase(MapSource mapSource) throws DatabaseException {
         TileDatabase db;
-        if (tileDbMap == null)
+        if (tileDbMap == null) {
             // Tile store has been closed already
             return null;
+        }
         String storeName = mapSource.getName();
-        if (storeName == null)
+        if (storeName == null) {
             return null;
+        }
         synchronized (tileDbMap) {
             db = tileDbMap.get(storeName);
         }
-        if (db != null)
+        if (db != null) {
             return db;
+        }
         try {
             synchronized (tileDbMap) {
                 cleanupDatabases();
@@ -183,18 +192,33 @@ public class BerkeleyDbTileStore extends TileStore {
         }
     }
 
+    @Override
+    public TileStoreInfo getStoreInfo(String storeName) throws InterruptedException {
+        int tileCount = getNrOfTiles(storeName);
+        long storeSize = getStoreSize(storeName);
+        return new TileStoreInfo(storeSize, tileCount);
+    }
+
+    @Override
+    public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
+        this.putTileData(tileData, x, y, zoom, mapSource, -1, -1, null);
+    }
+
     private TileDatabase getTileDatabase(String storeName) throws DatabaseException {
         TileDatabase db;
-        if (tileDbMap == null)
+        if (tileDbMap == null) {
             // Tile store has been closed already
             return null;
-        if (storeName == null)
+        }
+        if (storeName == null) {
             return null;
+        }
         synchronized (tileDbMap) {
             db = tileDbMap.get(storeName);
         }
-        if (db != null)
+        if (db != null) {
             return db;
+        }
         try {
             synchronized (tileDbMap) {
                 cleanupDatabases();
@@ -213,32 +237,19 @@ public class BerkeleyDbTileStore extends TileStore {
     }
 
     @Override
-    public TileStoreInfo getStoreInfo(String storeName) throws InterruptedException {
-        int tileCount = getNrOfTiles(storeName);
-        long storeSize = getStoreSize(storeName);
-        return new TileStoreInfo(storeSize, tileCount);
-    }
-
-    @Override
-    public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
-        this.putTileData(tileData, x, y, zoom, mapSource, -1, -1, null);
-    }
-
-    @Override
     public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
                             long timeExpires, String eTag) throws IOException {
         TileDbEntry tile = new TileDbEntry(x, y, zoom, tileData, timeLastModified, timeExpires, eTag);
         TileDatabase db = null;
         try {
-            if (log.isTraceEnabled())
-                log.trace("Saved " + mapSource.getName() + " " + tile);
             db = getTileDatabase(mapSource);
-            if (db != null)
+            if (db != null) {
+                log.trace("Saved {} {}", mapSource.getName(), tile);
                 db.put(tile);
+            }
         } catch (Exception e) {
-            if (db != null)
-                db.close();
-            log.error("Faild to write tile to tile store \"" + mapSource.getName() + "\"", e);
+            BerkeleyDbTileStore.closeTileDatabase(db);
+            log.error("Failed to write tile to tile store \"{}\"", mapSource.getName(), e);
         }
     }
 
@@ -246,37 +257,14 @@ public class BerkeleyDbTileStore extends TileStore {
     public void putTile(TileStoreEntry tile, MapSource mapSource) {
         TileDatabase db = null;
         try {
-            if (log.isTraceEnabled())
-                log.trace("Saved " + mapSource.getName() + " " + tile);
             db = getTileDatabase(mapSource);
-            db.put((TileDbEntry) tile);
-        } catch (Exception e) {
-            if (db != null)
-                db.close();
-            log.error("Faild to write tile to tile store \"" + mapSource.getName() + "\"", e);
-        }
-    }
-
-    @Override
-    public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
-        TileDatabase db = null;
-        try {
-            db = getTileDatabase(mapSource);
-            if (db == null)
-                return null;
-            TileStoreEntry tile = db.get(new TileDbKey(x, y, zoom));
-            if (log.isTraceEnabled()) {
-                if (tile == null)
-                    log.trace("Tile store cache miss: (x,y,z)" + x + "/" + y + "/" + zoom + " " + mapSource.getName());
-                else
-                    log.trace("Loaded " + mapSource.getName() + " " + tile);
+            if (db != null) {
+                log.trace("Saved {} {}", mapSource.getName(), tile);
+                db.put((TileDbEntry) tile);
             }
-            return tile;
         } catch (Exception e) {
-            if (db != null)
-                db.close();
-            log.error("failed to retrieve tile from tile store \"" + mapSource.getName() + "\"", e);
-            return null;
+            BerkeleyDbTileStore.closeTileDatabase(db);
+            log.error("Failed to write tile to tile store \"{}\"", mapSource.getName(), e);
         }
     }
 
@@ -296,19 +284,44 @@ public class BerkeleyDbTileStore extends TileStore {
         }
     }
 
+    @Override
+    public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
+        TileDatabase db = null;
+        try {
+            db = getTileDatabase(mapSource);
+            if (db == null) {
+                return null;
+            }
+            TileStoreEntry tile = db.get(new TileDbKey(x, y, zoom));
+            if (log.isTraceEnabled()) {
+                if (tile == null) {
+                    log.trace("Tile store cache miss: (x,y,z) {}/{}/{} {}", x, y, zoom, mapSource.getName());
+                } else {
+                    log.trace("Loaded {} {}", mapSource.getName(), tile);
+                }
+            }
+            return tile;
+        } catch (Exception e) {
+            BerkeleyDbTileStore.closeTileDatabase(db);
+            log.error("failed to retrieve tile from tile store \"{}\"", mapSource.getName(), e);
+            return null;
+        }
+    }
+
     public void clearStore(String storeName) {
         File databaseDir = getStoreDir(storeName);
 
         TileDatabase db;
         synchronized (tileDbMap) {
             db = tileDbMap.get(storeName);
-            if (db != null)
+            if (db != null) {
                 db.close(false);
+            }
             if (databaseDir.exists()) {
                 DeleteFileFilter dff = new DeleteFileFilter();
                 databaseDir.listFiles(dff);
                 databaseDir.delete();
-                log.debug("Tilestore " + storeName + " cleared: " + dff);
+                log.debug("Tilestore {} cleared: {}", storeName, dff);
             }
             tileDbMap.remove(storeName);
         }
@@ -324,12 +337,12 @@ public class BerkeleyDbTileStore extends TileStore {
     public int getNrOfTiles(String mapSourceName) throws InterruptedException {
         try {
             File storeDir = getStoreDir(mapSourceName);
-            if (!storeDir.isDirectory())
+            if (!storeDir.isDirectory()) {
                 return 0;
-            TileDatabase db = getTileDatabase(mapSourceName);
-            int tileCount = (int) db.entryCount();
-            db.close();
-            return tileCount;
+            }
+            try (TileDatabase db = getTileDatabase(mapSourceName)) {
+                return (int) db.entryCount();
+            }
         } catch (DatabaseException e) {
             log.error("", e);
             return -1;
@@ -338,46 +351,26 @@ public class BerkeleyDbTileStore extends TileStore {
 
     public long getStoreSize(String storeName) throws InterruptedException {
         File tileStore = getStoreDir(storeName);
-        if (tileStore.exists()) {
-            DirInfoFileFilter diff = new DirInfoFileFilter();
-            try {
-                tileStore.listFiles(diff);
-            } catch (RuntimeException e) {
-                throw new InterruptedException();
-            }
-            return diff.getDirSize();
-        } else {
+        if (!tileStore.exists()) {
             return 0;
         }
+        DirInfoFileFilter diff = new DirInfoFileFilter();
+        try {
+            tileStore.listFiles(diff);
+        } catch (RuntimeException e) {
+            throw new InterruptedException();
+        }
+        return diff.getDirSize();
     }
 
     public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
             throws InterruptedException {
-        TileDatabase db;
         try {
-            db = getTileDatabase(mapSource);
+            TileDatabase db = getTileDatabase(mapSource);
             return db.getCacheCoverage(zoom, tileNumMin, tileNumMax);
         } catch (DatabaseException e) {
             log.error("", e);
             return null;
-        }
-    }
-
-    protected void cleanupDatabases() {
-        if (tileDbMap.size() < MAX_CONCURRENT_ENVIRONMENTS)
-            return;
-        synchronized (tileDbMap) {
-            List<TileDatabase> list = new ArrayList<TileDatabase>(tileDbMap.values());
-            Collections.sort(list, new Comparator<TileDatabase>() {
-
-                public int compare(TileDatabase o1, TileDatabase o2) {
-                    if (o1.lastAccess == o2.lastAccess)
-                        return 0;
-                    return (o1.lastAccess < o2.lastAccess) ? -1 : 1;
-                }
-            });
-            for (int i = 0; i < list.size() - 2; i++)
-                list.get(i).close();
         }
     }
 
@@ -421,19 +414,25 @@ public class BerkeleyDbTileStore extends TileStore {
         return new File(tileStoreDir, "db-" + mapSourceName);
     }
 
-    public String[] getAllStoreNames() {
-        File[] dirs = tileStoreDir.listFiles(new DirectoryFileFilter());
-        ArrayList<String> storeNames = new ArrayList<String>(dirs.length);
-        for (File d : dirs) {
-            String name = d.getName();
-            if (name.startsWith("db-")) {
-                name = name.substring(3);
-                storeNames.add(name);
+    protected void cleanupDatabases() {
+        if (tileDbMap.size() < MAX_CONCURRENT_ENVIRONMENTS) {
+            return;
+        }
+        synchronized (tileDbMap) {
+            List<TileDatabase> list = new ArrayList<>(tileDbMap.values());
+            Collections.sort(list, new Comparator<TileDatabase>() {
+
+                public int compare(TileDatabase o1, TileDatabase o2) {
+                    if (o1.lastAccess == o2.lastAccess) {
+                        return 0;
+                    }
+                    return (o1.lastAccess < o2.lastAccess) ? -1 : 1;
+                }
+            });
+            for (int i = 0; i < list.size() - 2; i++) {
+                list.get(i).close();
             }
         }
-        String[] result = new String[storeNames.size()];
-        storeNames.toArray(result);
-        return result;
     }
 
     private class ShutdownThread extends DelayedInterruptThread {
@@ -466,6 +465,19 @@ public class BerkeleyDbTileStore extends TileStore {
         }
     }
 
+    public String[] getAllStoreNames() {
+        File[] dirs = tileStoreDir.listFiles(new DirectoryFileFilter());
+        ArrayList<String> storeNames = new ArrayList<>(dirs.length);
+        for (File d : dirs) {
+            String name = d.getName();
+            if (name.startsWith("db-")) {
+                name = name.substring(3);
+                storeNames.add(name);
+            }
+        }
+        return storeNames.toArray(String[]::new);
+    }
+
     protected class TileDatabase implements AutoCloseable {
 
         final String mapSourceName;
@@ -482,7 +494,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
         public TileDatabase(String mapSourceName, File databaseDirectory)
                 throws IOException, EnvironmentLockedException, DatabaseException {
-            log.debug("Opening tile store db: \"" + databaseDirectory + "\"");
+            log.debug("Opening tile store db: \"{}\"", databaseDirectory);
             File storeDir = databaseDirectory;
             DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
             try {
@@ -502,8 +514,9 @@ public class BerkeleyDbTileStore extends TileStore {
 
                 tileIndex = store.getPrimaryIndex(TileDbKey.class, TileDbEntry.class);
             } finally {
-                if (t.interruptedWhilePaused())
+                if (t.interruptedWhilePaused()) {
                     close();
+                }
                 t.resumeInterrupt();
             }
         }
@@ -522,8 +535,9 @@ public class BerkeleyDbTileStore extends TileStore {
                 t.pauseInterrupt();
                 tileIndex.put(tile);
             } finally {
-                if (t.interruptedWhilePaused())
+                if (t.interruptedWhilePaused()) {
                     close();
+                }
                 t.resumeInterrupt();
             }
         }
@@ -542,7 +556,7 @@ public class BerkeleyDbTileStore extends TileStore {
 
         public BufferedImage getCacheCoverage(int zoom, Point tileNumMin, Point tileNumMax)
                 throws DatabaseException, InterruptedException {
-            log.debug("Loading cache coverage for region " + tileNumMin + " " + tileNumMax + " of zoom level " + zoom);
+            log.debug("Loading cache coverage for region {} {} of zoom level {}", tileNumMin, tileNumMax, zoom);
             DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
             int width = tileNumMax.x - tileNumMin.x + 1;
             int height = tileNumMax.y - tileNumMin.y + 1;
@@ -567,8 +581,7 @@ public class BerkeleyDbTileStore extends TileStore {
             for (int x = tileNumMin.x; x <= tileNumMax.x; x++) {
                 TileDbKey fromKey = new TileDbKey(x, tileNumMin.y, zoom);
                 TileDbKey toKey = new TileDbKey(x, tileNumMax.y, zoom);
-                EntityCursor<TileDbKey> cursor = tileIndex.keys(fromKey, true, toKey, true);
-                try {
+                try (EntityCursor<TileDbKey> cursor = tileIndex.keys(fromKey, true, toKey, true)) {
                     TileDbKey key = cursor.next();
                     while (key != null) {
                         int pixelx = key.x - tileNumMin.x;
@@ -580,8 +593,6 @@ public class BerkeleyDbTileStore extends TileStore {
                             throw new InterruptedException();
                         }
                     }
-                } finally {
-                    cursor.close();
                 }
             }
             return image;
@@ -601,8 +612,9 @@ public class BerkeleyDbTileStore extends TileStore {
         }
 
         public void close(boolean removeFromMap) {
-            if (dbClosed)
+            if (dbClosed) {
                 return;
+            }
             if (removeFromMap) {
                 synchronized (tileDbMap) {
                     TileDatabase db2 = tileDbMap.get(mapSourceName);
@@ -615,8 +627,9 @@ public class BerkeleyDbTileStore extends TileStore {
                 t.pauseInterrupt();
                 try {
                     log.debug("Closing tile store db \"" + mapSourceName + "\"");
-                    if (store != null)
+                    if (store != null) {
                         store.close();
+                    }
                 } catch (Exception e) {
                     log.error("", e);
                 }
@@ -628,8 +641,9 @@ public class BerkeleyDbTileStore extends TileStore {
                     dbClosed = true;
                 }
             } finally {
-                if (t.interruptedWhilePaused())
+                if (t.interruptedWhilePaused()) {
                     close();
+                }
                 t.resumeInterrupt();
             }
         }

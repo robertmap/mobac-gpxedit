@@ -35,23 +35,25 @@ public abstract class TileStore {
 
     protected static TileStore INSTANCE = null;
 
-    protected Logger log;
+    protected final Logger log;
 
-    protected File tileStoreDir;
+    protected final File tileStoreDir;
 
     protected TileStore() {
         log = LoggerFactory.getLogger(this.getClass());
         String tileStorePath = Settings.getInstance().directories.tileStoreDirectory;
-        if (tileStorePath != null)
+        if (tileStorePath != null) {
             tileStoreDir = new File(tileStorePath);
-        else
+        } else {
             tileStoreDir = DirectoryManager.tileStoreDir;
-        log.debug("Tile store path: " + tileStoreDir);
+        }
+        log.debug("Tile store path: {}", tileStoreDir);
     }
 
     public static synchronized void initialize() {
-        if (INSTANCE != null)
+        if (INSTANCE != null) {
             return;
+        }
         try {
             INSTANCE = new BerkeleyDbTileStore();
         } catch (TileStoreException e) {
