@@ -37,7 +37,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 
 /**
- * https://github.com/mapbox/mbtiles-spec/tree/master/1.1
+ * https://github.com/mapbox/mbtiles-spec/tree/master/1.3
  */
 @AtlasCreatorName(value = "MBTiles SQLite")
 public class MBTiles extends RMapsSQLite {
@@ -55,6 +55,10 @@ public class MBTiles extends RMapsSQLite {
     private double boundsLatMax;
     private double boundsLonMin;
     private double boundsLonMax;
+
+    private int minZoom;
+
+    private int maxZoom;
 
     private TileImageType atlasTileImageType;
 
@@ -120,6 +124,8 @@ public class MBTiles extends RMapsSQLite {
         boundsLatMax = Double.NEGATIVE_INFINITY;
         boundsLonMin = Double.POSITIVE_INFINITY;
         boundsLonMax = Double.NEGATIVE_INFINITY;
+        minZoom = Integer.MAX_VALUE;
+        maxZoom = 0;
     }
 
     @Override
@@ -134,6 +140,9 @@ public class MBTiles extends RMapsSQLite {
         boundsLatMax = Math.max(boundsLatMax, Math.max(lat1, lat2));
         boundsLonMin = Math.min(boundsLonMin, Math.min(lon1, lon2));
         boundsLonMax = Math.max(boundsLonMax, Math.max(lon1, lon2));
+
+        minZoom = Math.min(minZoom, map.getZoom());
+        maxZoom = Math.max(maxZoom, map.getZoom());
     }
 
     @Override
@@ -142,6 +151,14 @@ public class MBTiles extends RMapsSQLite {
             st.setString(1, "bounds");
             st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLonMin, boundsLatMin,
                     boundsLonMax, boundsLatMax));
+            st.execute();
+
+            st.setString(1, "maxzoom");
+            st.setString(2, Integer.toString(maxZoom));
+            st.execute();
+
+            st.setString(1, "minzoom");
+            st.setString(2, Integer.toString(minZoom));
             st.execute();
 
             st.setString(1, "name");
@@ -153,7 +170,7 @@ public class MBTiles extends RMapsSQLite {
             st.execute();
 
             st.setString(1, "version");
-            st.setString(2, "1.1");
+            st.setString(2, "1.3");
             st.execute();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

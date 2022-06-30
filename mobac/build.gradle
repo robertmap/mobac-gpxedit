@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    def mapsforgeVersion = '0.17.0'
+    def mapsforgeVersion = '0.18.0'
     // def mapsforgeVersion = 'master-SNAPSHOT'
 
     implementation "org.mapsforge:mapsforge-core:${mapsforgeVersion}"
