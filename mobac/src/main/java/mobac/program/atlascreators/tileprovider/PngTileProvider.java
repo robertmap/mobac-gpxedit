@@ -18,7 +18,7 @@ package mobac.program.atlascreators.tileprovider;
 
 import mobac.program.model.TileImageType;
 import mobac.program.tiledatawriter.TileImagePngDataWriter;
-import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +40,7 @@ public class PngTileProvider extends FilterTileProvider {
     public byte[] getTileData(int x, int y) throws IOException {
         if (!tileProvider.preferTileImageUsage()) {
             byte[] data = super.getTileData(x, y);
-            if (Utilities.getImageType(data) == TileImageType.PNG)
+            if (ImageFormatDetector.getImageType(data) == TileImageType.PNG)
                 return data;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);

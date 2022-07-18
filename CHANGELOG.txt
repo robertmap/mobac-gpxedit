@@ -16,6 +16,7 @@
  ! Fixed problems with the used Berkeley DB JE on systems with Turkish locale
      (tile store database library was upgraded to version 5.0.73)
  ~ MBTiles database format upgraded to 1.3 (minzoom/maxzoom added, FR #307)
+ + Added image format WEBP as tile type including detection on download
 
 2.2.3.2 (2022-05-15)
  ! Fixed StackOverflowError when opening settings dialog (#372)

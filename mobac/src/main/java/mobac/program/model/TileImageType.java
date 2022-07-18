@@ -20,11 +20,11 @@ package mobac.program.model;
  * Supported file extensions of all {@link TileImageFormat} enums.
  */
 public enum TileImageType {
-    PNG("png"), JPG("jpeg"), GIF("gif");
+    PNG("png"), JPG("jpeg"), GIF("gif"), WEBP("webp");
 
     private final String mime;
 
-    private TileImageType(String mime) {
+    TileImageType(String mime) {
         this.mime = mime;
     }
 
@@ -33,8 +33,9 @@ public enum TileImageType {
             return TileImageType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
             for (TileImageType t : TileImageType.values()) {
-                if (t.getFileExt().equalsIgnoreCase(type))
+                if (t.getFileExt().equalsIgnoreCase(type)) {
                     return t;
+                }
             }
             throw e;
         }

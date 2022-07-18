@@ -16,44 +16,42 @@
  ******************************************************************************/
 package mobac.utilities.imageio;
 
+import mobac.program.model.TileImageType;
+import mobac.utilities.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 
 public class ImageFormatDetector {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImageFormatDetector.class);
 
-    private static final int MAGIC_JPEG = 0xFFD8FF00; // 3 of 4 bytes
-    private static final int MAGIC_PNG = 0x89504E47;
+    private static final byte[] PNG = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
+    private static final byte[] JPG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
+    private static final byte[] GIF_1 = "GIF87a".getBytes();
+    private static final byte[] GIF_2 = "GIF89a".getBytes();
 
-    public static FormatEnum detectFormat(byte[] data) {
-        if (data == null || data.length < 4) {
-            return FormatEnum.UNKNOWN;
+    private static final byte[] WEBP_RIFF = "RIFF".getBytes();
+    private static final byte[] WEBP_INNER = "WEBP".getBytes();
+
+    public static TileImageType getImageType(byte[] imageData) {
+        if (imageData == null) {
+            return null;
         }
-        try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(data))) {
-            int magic = in.readInt();
-
-            if (magic == MAGIC_PNG) {
-                return FormatEnum.PNG;
-            }
-
-            if ((magic & 0xFFFFFF) == MAGIC_JPEG) {
-                return FormatEnum.JPEG;
-            }
-
-
-        } catch (IOException e) {
-            LOG.error("Failed to detect image format: " + e.getMessage(), e);
-            return FormatEnum.UNKNOWN;
+        if (Utilities.startsWith(imageData, PNG)) {
+            return TileImageType.PNG;
         }
-        return FormatEnum.UNKNOWN;
-    }
+        if (Utilities.startsWith(imageData, JPG)) {
+            return TileImageType.JPG;
+        }
 
-    public enum FormatEnum {
-        JPEG, PNG, UNKNOWN
+        if (Utilities.startsWith(imageData, GIF_1) || Utilities.startsWith(imageData, GIF_2)) {
+            return TileImageType.GIF;
+        }
+
+        if (Utilities.startsWith(imageData, WEBP_RIFF) && Utilities.startsWith(imageData, 8, WEBP_INNER)) {
+            return TileImageType.WEBP;
+        }
+
+        return null;
     }
 }

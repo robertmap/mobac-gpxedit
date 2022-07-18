@@ -22,6 +22,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.TileImageType;
 import mobac.utilities.file.DirOrFileExtFilter;
 import mobac.utilities.file.DirectoryFileFilter;
+import mobac.utilities.imageio.ImageFormatDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,24 +76,17 @@ public class Utilities {
     private static final DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static final DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static final Logger log = LoggerFactory.getLogger(Utilities.class);
-    private static final byte[] PNG = new byte[]{(byte) 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A};
-    private static final byte[] JPG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
-    private static final byte[] GIF_1 = "GIF87a".getBytes();
-    private static final byte[] GIF_2 = "GIF89a".getBytes();
 
     public static boolean testJaiColorQuantizerAvailable() {
         try {
             Class<?> c = Class.forName("javax.media.jai.operator.ColorQuantizerDescriptor");
-            if (c != null) {
-                return true;
-            }
+            return true;
         } catch (NoClassDefFoundError e) {
             return false;
         } catch (Throwable t) {
             log.error("Error in testJaiColorQuantizerAvailable():", t);
             return false;
         }
-        return true;
     }
 
     public static BufferedImage createEmptyTileImage(MapSource mapSource) {
@@ -100,10 +94,11 @@ public class Utilities {
         Color color = mapSource.getBackgroundColor();
 
         int imageType;
-        if (color.getAlpha() == 255)
+        if (color.getAlpha() == 255) {
             imageType = BufferedImage.TYPE_INT_RGB;
-        else
+        } else {
             imageType = BufferedImage.TYPE_INT_ARGB;
+        }
         BufferedImage emptyImage = new BufferedImage(tileSize, tileSize, imageType);
         Graphics2D g = emptyImage.createGraphics();
         try {
@@ -123,11 +118,11 @@ public class Utilities {
             throw new RuntimeException(message);
         } catch (OutOfMemoryError e) {
             int bytesPerPixel = getBytesPerPixel(imageType);
-            if (bytesPerPixel < 0)
+            if (bytesPerPixel < 0) {
                 throw e;
+            }
             long requiredMemory = ((long) width) * ((long) height) * bytesPerPixel;
-            String message = String.format(
-                    "Available free memory not sufficient for creating image of size %dx%d pixels", width, height);
+            String message = String.format("Available free memory not sufficient for creating image of size %dx%d pixels", width, height);
             throw new MOBACOutOfMemoryException(requiredMemory, message);
         }
     }
@@ -172,28 +167,34 @@ public class Utilities {
         }
     }
 
+    /**
+     * Kept for compatibility reasons (e.g. used by tilestore-util)
+     *
+     * @param imageData
+     * @return
+     */
     public static TileImageType getImageType(byte[] imageData) {
-        if (imageData == null) {
-            return null;
-        }
-        if (startsWith(imageData, PNG)) {
-            return TileImageType.PNG;
-        }
-        if (startsWith(imageData, JPG)) {
-            return TileImageType.JPG;
-        }
-        if (startsWith(imageData, GIF_1) || startsWith(imageData, GIF_2)) {
-            return TileImageType.GIF;
-        }
-        return null;
+        return ImageFormatDetector.getImageType(imageData);
     }
 
-    public static boolean startsWith(byte[] data, byte[] startTest) {
-        if (data.length < startTest.length) {
+    public static boolean startsWith(byte[] data, byte[] sequenceToTest) {
+        return startsWith(data, 0, sequenceToTest);
+    }
+
+    /**
+     * @param data           where we search
+     * @param offset         offset in <code>data</code> where to start searching for the <code>sequenceToTest</code>
+     * @param sequenceToTest what we search
+     * @return
+     */
+    public static boolean startsWith(byte[] data, int offset, byte[] sequenceToTest) {
+        int end = offset + sequenceToTest.length;
+        if (data.length < end) {
             return false;
         }
-        for (int i = 0; i < startTest.length; i++) {
-            if (data[i] != startTest[i]) {
+
+        for (int i = 0; i < sequenceToTest.length; i++) {
+            if (data[i + offset] != sequenceToTest[i]) {
                 return false;
             }
         }
@@ -256,8 +257,9 @@ public class Utilities {
      * @throws InterruptedException
      */
     public static void checkForInterruption() throws InterruptedException {
-        if (Thread.currentThread().isInterrupted())
+        if (Thread.currentThread().isInterrupted()) {
             throw new InterruptedException();
+        }
     }
 
     /**
@@ -267,13 +269,15 @@ public class Utilities {
      * @throws RuntimeException
      */
     public static void checkForInterruptionRt() throws RuntimeException {
-        if (Thread.currentThread().isInterrupted())
+        if (Thread.currentThread().isInterrupted()) {
             throw new RuntimeException(new InterruptedException());
+        }
     }
 
     public static void closeQuietly(Closeable c) {
-        if (c == null)
+        if (c == null) {
             return;
+        }
         try {
             c.close();
         } catch (IOException e) {
@@ -283,8 +287,9 @@ public class Utilities {
     public static double parseLocaleDouble(String text) throws ParseException {
         ParsePosition pos = new ParsePosition(0);
         Number n = Utilities.FORMAT_6_DEC.parse(text, pos);
-        if (n == null)
+        if (n == null) {
             throw new ParseException("Unknown error", 0);
+        }
         if (pos.getIndex() != text.length())
             throw new ParseException("Text ends with unparsable characters", pos.getIndex());
         return n.doubleValue();
@@ -421,8 +426,9 @@ public class Utilities {
      */
     public static byte[] getInputBytes(InputStream in) throws IOException {
         int initialBufferSize = in.available();
-        if (initialBufferSize <= 0)
+        if (initialBufferSize <= 0) {
             initialBufferSize = 32768;
+        }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream(initialBufferSize);
         byte[] b = new byte[4096];
         int ret = 0;
@@ -464,8 +470,9 @@ public class Utilities {
         File[] subDirs = dir.listFiles(new DirectoryFileFilter());
         for (File f : subDirs) {
             dirList.add(f);
-            if (maxDepth > 0)
+            if (maxDepth > 0) {
                 addSubDirectories(dirList, f, maxDepth - 1);
+            }
         }
     }
 
@@ -482,22 +489,23 @@ public class Utilities {
         double tTmpMinutes = (tAbsCoord - tDegree) * 60;
         int tMinutes = (int) tTmpMinutes;
         double tSeconds = (tTmpMinutes - tMinutes) * 60;
-        return c + tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'"
-                + cDmsSecondFormatter.format(tSeconds) + "\"";
+        return c + tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'" + cDmsSecondFormatter.format(tSeconds) + "\"";
     }
 
     public static void setHttpProxyHost(String host) {
-        if (host != null && host.length() > 0)
+        if (host != null && host.length() > 0) {
             System.setProperty("http.proxyHost", host);
-        else
+        } else {
             System.getProperties().remove("http.proxyHost");
+        }
     }
 
     public static void setHttpProxyPort(String port) {
-        if (port != null && port.length() > 0)
+        if (port != null && port.length() > 0) {
             System.setProperty("http.proxyPort", port);
-        else
+        } else {
             System.getProperties().remove("http.proxyPort");
+        }
     }
 
     /**
@@ -525,13 +533,15 @@ public class Utilities {
      * @throws IOException Thrown if <code>fileToDelete</code> can not be deleted.
      */
     public static void deleteFile(File fileToDelete) throws IOException {
-        if (!fileToDelete.delete())
+        if (!fileToDelete.delete()) {
             throw new IOException("Deleting of \"" + fileToDelete + "\" failed.");
+        }
     }
 
     public static void renameFile(File oldFile, File newFile) throws IOException {
-        if (!oldFile.renameTo(newFile))
+        if (!oldFile.renameTo(newFile)) {
             throw new IOException("Failed to rename file: " + oldFile + " to " + newFile);
+        }
     }
 
     public static int getJavaMaxHeapMB() {
@@ -568,8 +578,9 @@ public class Utilities {
         int bit = 0x40000000;
         for (int i = 31; i > 0; i--) {
             int test = bit & value;
-            if (test != 0)
+            if (test != 0) {
                 return i;
+            }
             bit >>= 1;
         }
         return 0;
@@ -586,8 +597,9 @@ public class Utilities {
             revision = revision.substring(index + 1).trim();
         }
         Matcher m = Pattern.compile("(\\d+)[^\\d]*").matcher(revision);
-        if (!m.matches())
+        if (!m.matches()) {
             return -1;
+        }
         return Integer.parseInt(m.group(1));
     }
 
@@ -604,7 +616,7 @@ public class Utilities {
     public static List<File> traverseFolder(File dirOrFile, DirOrFileExtFilter dirOFileExtFilter) {
         ArrayList<File> result = new ArrayList<File>();
         if (dirOrFile.isDirectory()) {
-            File allFiles[] = dirOrFile.listFiles(dirOFileExtFilter);
+            File[] allFiles = dirOrFile.listFiles(dirOFileExtFilter);
             for (File innerFile : allFiles) {
                 result.addAll(traverseFolder(innerFile, dirOFileExtFilter));
             }
@@ -629,18 +641,20 @@ public class Utilities {
     public static File findFile(String fileName, File... searchDirs) {
         File f = new File(fileName);
         if (f.isAbsolute()) {
-            if (f.isFile())
+            if (f.isFile()) {
                 return f;
-            else
+            } else {
                 return null;
+            }
         }
         for (File dir : searchDirs) {
-            if (dir == null)
+            if (dir == null) {
                 continue; // ignore null entries
+            }
             log.debug("Searching for file \"" + fileName + "\" in directory \"" + dir + "\"");
-            f = new File(dir, fileName);
-            if (f.isFile())
+            if (new File(dir, fileName).isFile()) {
                 return f;
+            }
         }
         return null;
     }

@@ -17,7 +17,7 @@
 package mobac.exceptions;
 
 import mobac.utilities.HtmlStrip;
-import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ public class DownloadFailedException extends IOException {
         super("HTTP error: " + connection.getResponseCode(), cause);
         this.connection = connection;
         this.responseData = responseData;
-        if (Utilities.getImageType(responseData) == null) {
+        if (ImageFormatDetector.getImageType(responseData) == null) {
             this.typeImage = false;
         } else {
             this.typeImage = true;

@@ -29,7 +29,7 @@ import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.utilities.I18nUtils;
-import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 import mobac.utilities.jdbc.SQLiteLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,12 +55,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @XmlRootElement(name = "localTileSQLite")
 public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
-    private static Logger log = LoggerFactory.getLogger(CustomLocalTileSQliteMapSource.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomLocalTileSQliteMapSource.class);
     private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
 
     private MapSourceLoaderInfo loaderInfo = null;
 
-    private AtomicBoolean initialized = new AtomicBoolean(false);
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @XmlElement(required = false)
     private TileImageType tileImageType = null;
@@ -195,7 +195,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
             if (statement.execute(sqlTileImageTypeStatement)) {
                 try (ResultSet rs = statement.getResultSet()) {
                     if (rs.next()) {
-                        tileImageType = Utilities.getImageType(rs.getBytes(1));
+                        tileImageType = ImageFormatDetector.getImageType(rs.getBytes(1));
                     }
                 }
             }

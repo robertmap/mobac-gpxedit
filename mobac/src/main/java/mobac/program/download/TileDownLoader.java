@@ -26,6 +26,7 @@ import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
 import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 import mobac.utilities.stream.ThrottledInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ import java.net.HttpURLConnection;
 
 public class TileDownLoader {
 
-    private static Logger log = LoggerFactory.getLogger(TileDownLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(TileDownLoader.class);
 
     static {
         Object defaultReadTimeout = System.getProperty("sun.net.client.defaultReadTimeout");
@@ -92,7 +93,7 @@ public class TileDownLoader {
                 }
             }
         }
-        byte[] data = null;
+        byte[] data;
         if (tile == null) {
             data = downloadTileAndUpdateStore(x, y, zoom, mapSource);
             notifyTileDownloaded(data.length);
@@ -176,7 +177,7 @@ public class TileDownLoader {
         long timeExpires = conn.getExpiration();
 
         Utilities.checkForInterruption();
-        TileImageType imageType = Utilities.getImageType(data);
+        TileImageType imageType = ImageFormatDetector.getImageType(data);
         if (imageType == null)
             throw new UnrecoverableDownloadException("The returned image is of unknown format");
         if (useTileStore) {
@@ -273,7 +274,7 @@ public class TileDownLoader {
         long timeExpires = conn.getExpiration();
 
         Utilities.checkForInterruption();
-        TileImageType imageType = Utilities.getImageType(data);
+        TileImageType imageType = ImageFormatDetector.getImageType(data);
         if (imageType == null) {
             throw new UnrecoverableDownloadException("The returned image is of unknown format");
         }

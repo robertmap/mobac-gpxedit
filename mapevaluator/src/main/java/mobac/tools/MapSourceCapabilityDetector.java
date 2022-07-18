@@ -23,6 +23,7 @@ import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +67,7 @@ public class MapSourceCapabilityDetector {
 	}
 
 	public MapSourceCapabilityDetector(HttpMapSource mapSource, EastNorthCoordinate coordinate,
-	                                   int zoom) {
+									   int zoom) {
 		this.mapSource = mapSource;
 		if (mapSource == null)
 			throw new NullPointerException("MapSource not set");
@@ -73,87 +75,16 @@ public class MapSourceCapabilityDetector {
 		this.zoom = zoom;
 	}
 
-	public void testMapSource() {
-		try {
-			log.debug("Testing " + mapSource.toString());
+	public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
+		byte[] hex = new byte[2 * raw.length];
+		int index = 0;
 
-			MapSpace mapSpace = mapSource.getMapSpace();
-			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
-			int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
-
-			c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
-			url = c.getURL();
-			log.trace("Sample url: " + c.getURL());
-			log.trace("Connecting...");
-			c.setReadTimeout(10000);
-			Settings settings = Settings.getInstance();
-			c.addRequestProperty("User-agent", settings.getUserAgent());
-			c.setRequestProperty("Accept", settings.getHttpAccept());
-			c.connect();
-			log.debug("Connection established - response HTTP " + c.getResponseCode());
-			if (c.getResponseCode() != 200)
-				return;
-
-			// printHeaders();
-
-			byte[] content = Utilities.getInputBytes(c.getInputStream());
-			TileImageType detectedContentType = Utilities.getImageType(content);
-
-			contentType = c.getContentType();
-			contentType = contentType.substring(6);
-			if ("png".equals(contentType))
-				contentType = "png";
-			else if ("jpeg".equals(contentType) || "jpg".equals(contentType))
-				contentType = "jpg";
-			else
-				contentType = "unknown: " + c.getContentType();
-			if (contentType.equals(detectedContentType.getFileExt()))
-				contentType += " (verified)";
-			else
-				contentType += " (unverified)";
-			log.debug("Image format          : " + contentType);
-
-			String eTag = c.getHeaderField("ETag");
-			Utilities.checkForInterruption();
-			eTagPresent = (eTag != null);
-			if (eTagPresent) {
-				// log.debug("eTag                  : " + eTag);
-				testIfNoneMatch(content);
-			}
-			// else log.debug("eTag                  : -");
-
-			// long date = c.getDate();
-			// if (date == 0)
-			// log.debug("Date time             : -");
-			// else
-			// log.debug("Date time             : " + new Date(date));
-
-			long exp = c.getExpiration();
-			expirationTimePresent = (c.getHeaderField("expires") != null) && (exp != 0);
-			if (exp == 0) {
-				// log.debug("Expiration time       : -");
-			} else {
-				// long diff = (exp - System.currentTimeMillis()) / 1000;
-				// log.debug("Expiration time       : " + new Date(exp)
-				// + " => "
-				// + Utilities.formatDurationSeconds(diff));
-			}
-			long modified = c.getLastModified();
-			lastModifiedTimePresent = (c.getHeaderField("last-modified") != null)
-					&& (modified != 0);
-			// if (modified == 0)
-			// log.debug("Last modified time    : not set");
-			// else
-			// log.debug("Last modified time    : " + new
-			// Date(modified));
-
-			Utilities.checkForInterruption();
-			testIfModified();
-			success = true;
-		} catch (Exception e) {
-			this.error = e;
-			log.error("", e);
+		for (byte b : raw) {
+			int v = b & 0xFF;
+			hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+			hex[index++] = HEX_CHAR_TABLE[v & 0xF];
 		}
+		return new String(hex, StandardCharsets.US_ASCII);
 	}
 
 	private void testIfNoneMatch(byte[] content) throws Exception {
@@ -276,15 +207,86 @@ public class MapSourceCapabilityDetector {
 			(byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a',
 			(byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f'};
 
-	public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
-		byte[] hex = new byte[2 * raw.length];
-		int index = 0;
+	public void testMapSource() {
+		try {
+			log.debug("Testing " + mapSource.toString());
 
-		for (byte b : raw) {
-			int v = b & 0xFF;
-			hex[index++] = HEX_CHAR_TABLE[v >>> 4];
-			hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+			MapSpace mapSpace = mapSource.getMapSpace();
+			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
+			int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
+
+			c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
+			url = c.getURL();
+			log.trace("Sample url: " + c.getURL());
+			log.trace("Connecting...");
+			c.setReadTimeout(10000);
+			Settings settings = Settings.getInstance();
+			c.addRequestProperty("User-agent", settings.getUserAgent());
+			c.setRequestProperty("Accept", settings.getHttpAccept());
+			c.connect();
+			log.debug("Connection established - response HTTP " + c.getResponseCode());
+			if (c.getResponseCode() != 200)
+				return;
+
+			// printHeaders();
+
+			byte[] content = Utilities.getInputBytes(c.getInputStream());
+			TileImageType detectedContentType = ImageFormatDetector.getImageType(content);
+
+			contentType = c.getContentType();
+			contentType = contentType.substring(6);
+			if ("png".equals(contentType))
+				contentType = "png";
+			else if ("jpeg".equals(contentType) || "jpg".equals(contentType))
+				contentType = "jpg";
+			else
+				contentType = "unknown: " + c.getContentType();
+			if (contentType.equals(detectedContentType.getFileExt()))
+				contentType += " (verified)";
+			else
+				contentType += " (unverified)";
+			log.debug("Image format          : " + contentType);
+
+			String eTag = c.getHeaderField("ETag");
+			Utilities.checkForInterruption();
+			eTagPresent = (eTag != null);
+			if (eTagPresent) {
+				// log.debug("eTag                  : " + eTag);
+				testIfNoneMatch(content);
+			}
+			// else log.debug("eTag                  : -");
+
+			// long date = c.getDate();
+			// if (date == 0)
+			// log.debug("Date time             : -");
+			// else
+			// log.debug("Date time             : " + new Date(date));
+
+			long exp = c.getExpiration();
+			expirationTimePresent = (c.getHeaderField("expires") != null) && (exp != 0);
+			if (exp == 0) {
+				// log.debug("Expiration time       : -");
+			} else {
+				// long diff = (exp - System.currentTimeMillis()) / 1000;
+				// log.debug("Expiration time       : " + new Date(exp)
+				// + " => "
+				// + Utilities.formatDurationSeconds(diff));
+			}
+			long modified = c.getLastModified();
+			lastModifiedTimePresent = (c.getHeaderField("last-modified") != null)
+					&& (modified != 0);
+			// if (modified == 0)
+			// log.debug("Last modified time    : not set");
+			// else
+			// log.debug("Last modified time    : " + new
+			// Date(modified));
+
+			Utilities.checkForInterruption();
+			testIfModified();
+			success = true;
+		} catch (Exception e) {
+			this.error = e;
+			log.error("", e);
 		}
-		return new String(hex, "ASCII");
 	}
 }

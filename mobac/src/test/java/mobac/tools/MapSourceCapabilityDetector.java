@@ -28,6 +28,7 @@ import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.program.model.TileImageType;
 import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -124,9 +126,10 @@ public class MapSourceCapabilityDetector {
 
     public static List<MapSourceCapabilityDetector> testMapSource(HttpMapSource mapSource,
                                                                   EastNorthCoordinate coordinate) {
-        if (!(mapSource instanceof HttpMapSource))
+        if (!(mapSource instanceof HttpMapSource)) {
             throw new RuntimeException("Not an HTTP map source: " + mapSource.getName());
-        ArrayList<MapSourceCapabilityDetector> result = new ArrayList<MapSourceCapabilityDetector>();
+        }
+        ArrayList<MapSourceCapabilityDetector> result = new ArrayList<>();
         for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
             MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource, coordinate,
                     zoom);
@@ -153,7 +156,7 @@ public class MapSourceCapabilityDetector {
             hex[index++] = HEX_CHAR_TABLE[v >>> 4];
             hex[index++] = HEX_CHAR_TABLE[v & 0xF];
         }
-        return new String(hex, "ASCII");
+        return new String(hex, StandardCharsets.US_ASCII);
     }
 
     public void testMapSource() {
@@ -179,7 +182,7 @@ public class MapSourceCapabilityDetector {
             // printHeaders();
 
             byte[] content = Utilities.getInputBytes(c.getInputStream());
-            TileImageType detectedContentType = Utilities.getImageType(content);
+            TileImageType detectedContentType = ImageFormatDetector.getImageType(content);
 
             contentType = c.getContentType();
             contentType = contentType.substring(6);

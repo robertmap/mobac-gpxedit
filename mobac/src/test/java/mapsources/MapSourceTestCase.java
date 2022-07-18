@@ -25,6 +25,7 @@ import mobac.program.model.EastNorthCoordinate;
 import mobac.program.model.Settings;
 import mobac.tools.Cities;
 import mobac.utilities.Utilities;
+import mobac.utilities.imageio.ImageFormatDetector;
 
 import java.net.HttpURLConnection;
 
@@ -78,7 +79,7 @@ public class MapSourceTestCase extends TestCase {
             byte[] imageData = Utilities.getInputBytes(c.getInputStream());
             if (imageData.length == 0)
                 throw new MapSourceTestFailedException(mapSource, "Image data empty", c);
-            if (Utilities.getImageType(imageData) == null) {
+            if (ImageFormatDetector.getImageType(imageData) == null) {
                 throw new MapSourceTestFailedException(mapSource, "Image data of unknown format", c);
             }
             switch (mapSource.getTileUpdate()) {
