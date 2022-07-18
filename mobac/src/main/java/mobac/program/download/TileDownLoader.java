@@ -178,8 +178,9 @@ public class TileDownLoader {
 
         Utilities.checkForInterruption();
         TileImageType imageType = ImageFormatDetector.getImageType(data);
-        if (imageType == null)
+        if (imageType == null) {
             throw new UnrecoverableDownloadException("The returned image is of unknown format");
+        }
         if (useTileStore) {
             TileStore.getInstance().putTileData(data, x, y, zoom, mapSource, timeLastModified, timeExpires, eTag);
         }

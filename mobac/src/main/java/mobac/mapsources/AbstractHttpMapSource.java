@@ -132,8 +132,9 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
     public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
             throws IOException, TileException, InterruptedException {
         byte[] data = getTileData(zoom, x, y, loadMethod);
-        if (data == null)
+        if (data == null) {
             return null;
+        }
         return ImageIO.read(new ByteArrayInputStream(data));
     }
 
