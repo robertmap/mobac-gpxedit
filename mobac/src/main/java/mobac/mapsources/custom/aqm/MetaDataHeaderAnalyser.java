@@ -21,8 +21,6 @@ package mobac.mapsources.custom.aqm;
  * Developer : ph-t@users.sourceforge.net
  */
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,19 +34,17 @@ public class MetaDataHeaderAnalyser {
     public static final String AQM_LEVEL_DELIMITER = "@LEVEL";
     public static final String AQM_END_DELIMITER = "#END";
 
-    protected static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
-
-    private List<String> tokens;
+    private final List<String> tokens;
 
     private int headerSize;
     private int nbFiles;
     private int byteArrayStartIndex;
     private int byteArrayEndIndex;
-    private List<MetaDataLevel> levelList;
+    private final List<MetaDataLevel> levelList;
 
     public MetaDataHeaderAnalyser(List<String> tokens) {
         this.tokens = tokens;
-        this.levelList = new ArrayList<MetaDataLevel>();
+        this.levelList = new ArrayList<>();
         buildLevelList();
     }
 

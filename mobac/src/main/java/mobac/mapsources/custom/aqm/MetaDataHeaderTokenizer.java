@@ -21,17 +21,14 @@ package mobac.mapsources.custom.aqm;
  * Developer : ph-t@users.sourceforge.net
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-;
 
 public class MetaDataHeaderTokenizer {
 
     private static final String FLAT_PACK_SEPARATOR = "\0";
 
-    private List<String> tokens;
+    private final List<String> tokens;
 
     public MetaDataHeaderTokenizer(String metaDataHeader) {
         tokens = tokenizeHeader(metaDataHeader);
@@ -44,10 +41,6 @@ public class MetaDataHeaderTokenizer {
     private List<String> tokenizeHeader(String metaDataHeader) {
         Pattern pattern = Pattern.compile(FLAT_PACK_SEPARATOR, Pattern.LITERAL);
         String[] parts = pattern.split(metaDataHeader, -1);
-
-        List<String> ret = new ArrayList<>();
-        for (String part : parts)
-            ret.add(part);
-        return ret;
+        return List.of(parts);
     }
 }

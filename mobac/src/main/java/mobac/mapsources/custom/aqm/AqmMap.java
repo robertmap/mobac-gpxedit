@@ -46,11 +46,11 @@ public class AqmMap {
     public int minZoom = -1;
     public int maxZoom = -1;
     public String imgFormat;
-    private File fileAQMmap;
-    private MetaDataHeader header;
-    private long headerSize;
-    private MetaDataHeaderAnalyser headerAnalyser;
-    private MetaDataHeaderTokenizer headerTokenizer;
+    private final File fileAQMmap;
+    private final MetaDataHeader header;
+    private final long headerSize;
+    private final MetaDataHeaderAnalyser headerAnalyser;
+    private final MetaDataHeaderTokenizer headerTokenizer;
     private List<AqmLevel> levels = new ArrayList<>();
     private Map<String, AqmTile> tilesMap = new HashMap<>();
 
@@ -83,12 +83,11 @@ public class AqmMap {
 
             size = new String(bos.toByteArray(), ISO_8859_1);
             int len = Integer.parseInt(size);
-            bSplit = new byte[len];
-            fis.read(bSplit);
+            bSplit = fis.readNBytes(len);
         } catch (IOException e) {
-            log.debug("Can not create FileInputStream for file : " + fileAQMmap.getAbsolutePath());
+            log.debug("Can not create FileInputStream for file : {}", fileAQMmap.getAbsolutePath());
         } catch (NumberFormatException e) {
-            log.debug("Can not parseInt for string : " + size);
+            log.debug("Can not parseInt for string : {}", size);
         }
         return bSplit;
     }
