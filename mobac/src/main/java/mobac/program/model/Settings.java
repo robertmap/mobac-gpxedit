@@ -20,8 +20,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.ValidationEvent;
-import jakarta.xml.bind.ValidationEventHandler;
 import jakarta.xml.bind.annotation.XmlAccessOrder;
 import jakarta.xml.bind.annotation.XmlAccessorOrder;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -30,7 +28,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import mobac.gui.actions.GpxLoad;
 import mobac.gui.panels.JCoordinatesPanel;
-import mobac.mapsources.MapSourcesManager;
 import mobac.program.DirectoryManager;
 import mobac.program.ProgramInfo;
 import mobac.utilities.I18nUtils;
@@ -93,9 +90,9 @@ public class Settings {
     @XmlElementWrapper(name = "selectedZoomLevels")
     @XmlElement(name = "zoomLevel")
     public List<Integer> selectedZoomLevels = null;
+    private static final String ACCEPT = "text/html,image/png,image/jpeg,image/gif,image/webp,*/*; q=0.1";
     @XmlElement(nillable = false)
-    public String mapviewMapSource = null;
-    public String elementName = null;
+    public String mapviewMapSource;
     public int downloadThreadCount = 2;
     public int downloadRetryCount = 1;
     public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEG_LOCAL;
@@ -146,12 +143,12 @@ public class Settings {
     public Vector<String> mapSourcesEnabled = new Vector<>();
     public transient UnitSystem unitSystem = UnitSystem.Metric;
     public boolean ignoreDlErrors = false;
-    public String localeLanguage = null;
-    public String localeCountry = null;
+    public String elementName;
+    public String localeLanguage;
     @XmlElement(defaultValue = "")
     private String version;
-    private String userAgent = null;
-    private String httpAccept = null;
+    public String localeCountry;
+    private String userAgent;
     private boolean customTileProcessing = false;
     private Dimension tileSize = new Dimension(256, 256);
     private TileImageFormat tileImageFormat = TileImageFormat.PNG;
@@ -196,31 +193,7 @@ public class Settings {
         return instance;
     }
 
-    public static void load() throws JAXBException {
-        try {
-            JAXBContext context = JAXBContext.newInstance(Settings.class);
-            Unmarshaller um = context.createUnmarshaller();
-            um.setEventHandler(new ValidationEventHandler() {
-
-                public boolean handleEvent(ValidationEvent event) {
-
-                    log.warn("Problem on loading settings.xml: " + event.getMessage());
-                    return true;
-                }
-            });
-            instance = (Settings) um.unmarshal(FILE);
-            instance.wgsGrid.checkValues();
-            instance.paperAtlas.checkValues();
-            SETTINGS_LAST_MODIFIED = FILE.lastModified();
-
-            // Settings 重新加载之后，必须更新语言资源
-            I18nUtils.updateLocalizedStringFromSettings();
-
-        } finally {
-            Settings s = getInstance();
-            s.applyProxySettings();
-        }
-    }
+    private String httpAccept;
 
     public static boolean checkSettingsFileModified() {
         if (SETTINGS_LAST_MODIFIED == 0)
@@ -280,11 +253,34 @@ public class Settings {
         this.userAgent = userAgent;
     }
 
+    public static void load() throws JAXBException {
+        try {
+            JAXBContext context = JAXBContext.newInstance(Settings.class);
+            Unmarshaller um = context.createUnmarshaller();
+            um.setEventHandler((event) -> {
+                        log.warn("Problem on loading settings.xml: " + event.getMessage());
+                        return true;
+                    }
+            );
+            instance = (Settings) um.unmarshal(FILE);
+            instance.wgsGrid.checkValues();
+            instance.paperAtlas.checkValues();
+            SETTINGS_LAST_MODIFIED = FILE.lastModified();
+
+            // Settings 重新加载之后，必须更新语言资源
+            I18nUtils.updateLocalizedStringFromSettings();
+
+        } finally {
+            Settings s = getInstance();
+            s.applyProxySettings();
+        }
+    }
+
     public String getHttpAccept() {
-        if (httpAccept != null)
+        if (httpAccept != null) {
             return httpAccept;
-        else
-            return "text/html, image/png, image/jpeg, image/gif, */*; q=0.1";
+        }
+        return ACCEPT;
     }
 
     public void setHttpAccept(String httpAccept) {
@@ -490,12 +486,6 @@ public class Settings {
     }
 
     public static class MapSourcesUpdate {
-        /**
-         * Last ETag value retrieved while online map source update.
-         *
-         * @see MapSourcesManager#mapsourcesOnlineUpdate()
-         * @see <a href="https://en.wikipedia.org/wiki/HTTP_ETag">https://en.wikipedia.org/wiki/HTTP_ETag</a>
-         */
         public String etag;
 
         public Date lastUpdate;
