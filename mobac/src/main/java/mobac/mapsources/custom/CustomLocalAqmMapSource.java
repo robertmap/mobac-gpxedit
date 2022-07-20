@@ -117,8 +117,9 @@ public class CustomLocalAqmMapSource implements InitializableMapSource, MapSourc
     public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
             throws IOException, TileException, InterruptedException {
         byte[] bTile = getTileData(zoom, x, y, loadMethod);
-        if (bTile == null)
+        if (bTile == null) {
             return null;
+        }
         return ImageIO.read(new ByteArrayInputStream(bTile));
     }
 
@@ -156,12 +157,11 @@ public class CustomLocalAqmMapSource implements InitializableMapSource, MapSourc
                     I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
                     JOptionPane.ERROR_MESSAGE);
             return;
-        } else {
-            this.map = new AqmMap(sourceFile);
-            this.minZoom = map.minZoom;
-            this.maxZoom = map.maxZoom;
-            this.tileImageType = TileImageType.getTileImageType(map.imgFormat);
         }
+        this.map = new AqmMap(sourceFile);
+        this.minZoom = map.minZoom;
+        this.maxZoom = map.maxZoom;
+        this.tileImageType = TileImageType.getTileImageType(map.imgFormat);
     }
 
 }

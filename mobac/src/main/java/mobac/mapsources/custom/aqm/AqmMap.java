@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AqmMap {
-    protected static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
+    private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
     private static final Logger log = LoggerFactory.getLogger(AqmMap.class);
     private static final String FLAT_PACK_SEPARATOR = "\0";
     private static final byte FLAT_PACK_BSEPARATOR = FLAT_PACK_SEPARATOR.getBytes()[0];
@@ -47,12 +47,11 @@ public class AqmMap {
     public int maxZoom = -1;
     public String imgFormat;
     private File fileAQMmap;
-    // private RandomAccessFile randomAccessFile;
     private MetaDataHeader header;
     private long headerSize;
     private MetaDataHeaderAnalyser headerAnalyser;
     private MetaDataHeaderTokenizer headerTokenizer;
-    private List<AqmLevel> levels = new ArrayList<AqmLevel>();
+    private List<AqmLevel> levels = new ArrayList<>();
     private Map<String, AqmTile> tilesMap = new HashMap<>();
 
     public AqmMap(File fileAQMmap) {
@@ -77,8 +76,9 @@ public class AqmMap {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             do {
                 b = fis.read();
-                if (b != FLAT_PACK_BSEPARATOR)
+                if (b != FLAT_PACK_BSEPARATOR) {
                     bos.write(b);
+                }
             } while (b != FLAT_PACK_BSEPARATOR);
 
             size = new String(bos.toByteArray(), ISO_8859_1);
@@ -138,7 +138,7 @@ public class AqmMap {
         byte[] bTile = null;
         AqmTile t = getTile(zoom, x, y);
         if (t != null) {
-            log.debug("getByteTile : zoom : " + zoom + " x : " + x + " y : " + y + " :: Found");
+            log.debug("getByteTile : zoom : {} x : {} y : {} :: Found", zoom, x, y);
             if (t.bTile != null) {
                 bTile = t.bTile;
             } else {
@@ -146,7 +146,7 @@ public class AqmMap {
                 bTile = getFileChunk(tilesMap.get(generateKey(zoom, y, x)).tileByteIndex);
             }
         } else {
-            log.debug("getByteTile : zoom : " + zoom + " x : " + x + " y : " + y + " :: Not Found");
+            log.debug("getByteTile : zoom : {} x : {} y : {} :: Not Found", zoom, x, y);
         }
         return bTile;
     }
