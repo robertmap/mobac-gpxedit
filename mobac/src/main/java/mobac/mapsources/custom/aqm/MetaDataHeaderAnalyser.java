@@ -21,11 +21,15 @@ package mobac.mapsources.custom.aqm;
  * Developer : ph-t@users.sourceforge.net
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MetaDataHeaderAnalyser {
-    public static final String FLAT_PACK_HEADER = "FLATPACK1";
+
+    private static final Logger log = LoggerFactory.getLogger(MetaDataHeaderAnalyser.class);
 
     public static final String AQM_VERSION = "2";
 
@@ -36,7 +40,6 @@ public class MetaDataHeaderAnalyser {
 
     private final List<String> tokens;
 
-    private int headerSize;
     private int nbFiles;
     private int byteArrayStartIndex;
     private int byteArrayEndIndex;
@@ -46,10 +49,6 @@ public class MetaDataHeaderAnalyser {
         this.tokens = tokens;
         this.levelList = new ArrayList<>();
         buildLevelList();
-    }
-
-    public int getHeaderSize() {
-        return headerSize;
     }
 
     public int getNbFiles() {
@@ -74,11 +73,7 @@ public class MetaDataHeaderAnalyser {
         int currentLevelIndex = 0;
         while (tokens.size() > j) {
             currentToken = tokens.get(j);
-
             if (j == 0) {
-                headerSize = Integer.parseInt(currentToken.substring(FLAT_PACK_HEADER.length(), currentToken.length()));
-                j++;
-            } else if (j == 1) {
                 nbFiles = Integer.parseInt(currentToken);
                 j++;
             } else if (currentToken.equals(AQM_HEADER)) {
@@ -89,6 +84,7 @@ public class MetaDataHeaderAnalyser {
                 levelList.add(new MetaDataLevel(Integer.parseInt(currentToken)));
                 j++;
             } else if (currentToken.equals(AQM_LEVEL_DELIMITER)) {
+                log.debug("{} start at {}", AQM_LEVEL_DELIMITER, j);
                 MetaDataLevel currentLevel = levelList.get(currentLevelIndex);
                 currentToken = tokens.get(++j);
                 currentLevel.byteIndex = Integer.parseInt(currentToken);
@@ -96,9 +92,13 @@ public class MetaDataHeaderAnalyser {
                 while (tokens.size() > j
                         && (!currentToken.equals(AQM_LEVEL_DELIMITER) && !currentToken.equals(AQM_END_DELIMITER))) {
                     String nextToken = tokens.get(j + 1);
+                    log.debug("Tile {} {}", currentToken, nextToken);
                     MetaDataTile currentTile = new MetaDataTile(nextToken, currentToken);
                     currentLevel.tileList.add(currentTile);
-                    j = j + 2;
+                    j += 2;
+                    if (j >= tokens.size()) {
+                        return;
+                    }
                     currentToken = tokens.get(j);
                 }
                 currentLevelIndex++;

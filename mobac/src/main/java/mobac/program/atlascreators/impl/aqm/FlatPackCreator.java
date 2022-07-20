@@ -32,11 +32,11 @@ import java.nio.charset.StandardCharsets;
 
 public class FlatPackCreator {
     public static final String FLAT_PACK_HEADER = "FLATPACK1";
-    public static final int FILE_COPY_BUFFER_LEN = 4096 * 10;
+    public static final int FILE_COPY_BUFFER_LEN = 32768;
 
     private String packPath = null;
 
-    private FileOutputStream dataStream = null;
+    private OutputStream dataStream = null;
 
     private ByteArrayOutputStream structBuffer = null;
 
@@ -53,10 +53,11 @@ public class FlatPackCreator {
     public FlatPackCreator(final String packPath) throws FileNotFoundException {
         this.packPath = packPath;
 
-        if (packPath == null)
+        if (packPath == null) {
             throw new NullPointerException("Pack file path is null.");
+        }
 
-        dataStream = new FileOutputStream(packPath + ".tmp");
+        dataStream = new BufferedOutputStream(new FileOutputStream(packPath + ".tmp"), 16384);
         structBuffer = new ByteArrayOutputStream();
         structBufferWriter = new OutputStreamWriter(structBuffer, StandardCharsets.ISO_8859_1);
 
@@ -80,28 +81,31 @@ public class FlatPackCreator {
     }
 
     public final void add(final byte[] buff, final String fileEntryName) throws IOException {
-        if (dataStream == null)
+        if (dataStream == null) {
             throw new IOException("Write stream is null.");
+        }
 
         // write file size
         String fileSize = Integer.toString(buff.length) + "\0";
         dataStream.write(fileSize.getBytes(StandardCharsets.ISO_8859_1));
 
         // write file into pack data
-        if (buff.length > 0)
+        if (buff.length > 0) {
             dataStream.write(buff);
+        }
 
         // write file into pack structure
         structBufferWriter.append(fileEntryName + "\0" + currentDataWritedSize + "\0");
 
-        // update writed size
+        // update written size
         currentDataWritedSize += buff.length + fileSize.length();
         currentNbFiles++;
     }
 
     public final void close() throws IOException {
-        if (dataStream == null)
+        if (dataStream == null) {
             throw new NullPointerException("Write stream is null.");
+        }
 
         // close data file
         dataStream.flush();
@@ -136,16 +140,18 @@ public class FlatPackCreator {
                 byte[] buffer = new byte[FILE_COPY_BUFFER_LEN];
 
                 int read;
-                while ((read = in.read(buffer)) > 0)
+                while ((read = in.read(buffer)) > 0) {
                     packStream.write(buffer, 0, read);
+                }
 
             }
             packStream.flush();
         }
 
         // delete temp file
-        if (tmpFile.isFile())
+        if (tmpFile.isFile()) {
             Utilities.deleteFile(tmpFile);
+        }
 
         // reset state
         packPath = null;

@@ -16,94 +16,89 @@
  ******************************************************************************/
 package mobac.mapsources.custom.aqm;
 
+import org.apache.commons.io.input.CountingInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class MetaDataHeader {
-    public static final String FLAT_PACK_HEADER = "FLATPACK1";
+    public static final byte[] FLAT_PACK_HEADER = "FLATPACK1".getBytes();
     private static final Logger log = LoggerFactory.getLogger(MetaDataHeader.class);
     private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
     private static final String FLAT_PACK_SEPARATOR = "\0";
     private static final byte FLAT_PACK_BSEPARATOR = 0;
-    private static final String AQM_END_DELIMITER = "#END";
 
-    private String metaDataHeader;
+    private final byte[] headerBytes;
+    private final int headerSize;
 
-    public MetaDataHeader(File fileAQMmap) {
-        byte[] tHeader = getFileHeadder(fileAQMmap);
-        metaDataHeader = new String(tHeader, ISO_8859_1);
-    }
-
-    public String getMetaDataHeader() {
-        return metaDataHeader;
-    }
-
-    private byte[] getFileHeadder(File fileAQMmap) {
-        byte[] bHeader = null;
-        String size = "";
-        try {
-            try (ByteArrayOutputStream bosHeaderSize = new ByteArrayOutputStream()) {
-                // read header
-                try (FileInputStream fis = new FileInputStream(fileAQMmap)) {
-                    fis.skip(FLAT_PACK_HEADER.length());
-                    int b = 1;
-                    do {
-                        b = fis.read();
-                        if (b != FLAT_PACK_BSEPARATOR)
-                            bosHeaderSize.write(b);
-                    } while (b != FLAT_PACK_BSEPARATOR);
-                }
-                size = new String(bosHeaderSize.toByteArray(), ISO_8859_1);
+    public MetaDataHeader(File fileAQMmap) throws IOException {
+        try (CountingInputStream in = new CountingInputStream(new BufferedInputStream(new FileInputStream(fileAQMmap)))) {
+            byte[] header = in.readNBytes(FLAT_PACK_HEADER.length);
+            if (!Arrays.equals(header, FLAT_PACK_HEADER)) {
+                throw new IOException("File does not start with " + new String(FLAT_PACK_HEADER));
             }
-            int len = Integer.parseInt(size);
-
-            int headerSize = len + FLAT_PACK_SEPARATOR.getBytes().length + AQM_END_DELIMITER.getBytes().length;
-            bHeader = new byte[headerSize];
-            try (DataInputStream in = new DataInputStream(new FileInputStream(fileAQMmap))) {
-                in.readFully(bHeader);
-            }
-
-            // read content size
-
-            byte[] bContentSize;
-            try (ByteArrayOutputStream bosContentSize = new ByteArrayOutputStream()) {
-                try (FileInputStream fis = new FileInputStream(fileAQMmap)) {
-                    int b = 1;
-                    fis.skip(headerSize + 1);
-                    do {
-                        b = fis.read();
-                        if (b != FLAT_PACK_BSEPARATOR)
-                            bosContentSize.write(b);
-                    } while (b != FLAT_PACK_BSEPARATOR);
-                }
-
-                bContentSize = bosContentSize.toByteArray();
-                size = new String(bContentSize, ISO_8859_1);
-            }
-            len = Integer.parseInt(size);
-
-            // append header and content size
-            ByteArrayOutputStream bosHeader = new ByteArrayOutputStream();
-            bosHeader.write(bHeader);
-            bosHeader.write(FLAT_PACK_BSEPARATOR);
-            bosHeader.write(bContentSize);
-            bosHeader.write(FLAT_PACK_BSEPARATOR);
-            bHeader = bosHeader.toByteArray();
-
-        } catch (IOException e) {
-            log.debug("Can not create FileInputStream for file : " + fileAQMmap.getAbsolutePath());
-        } catch (NumberFormatException e) {
-            log.debug("Can not parseInt for string : " + size);
+            int len = readZeroTerminatedIntegerString(in);
+            headerBytes = in.readNBytes(len);
+            headerSize = in.getCount();
         }
-        return bHeader;
     }
 
+    public static int readZeroTerminatedIntegerString(InputStream in) throws IOException {
+        String s = readZeroTerminatedString(in);
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            String msg = "Can not parseInt for string: \"" + s + "\"";
+            if (in instanceof CountingInputStream) {
+                CountingInputStream cin = (CountingInputStream) in;
+                msg += " string end at " + cin.getByteCount();
+            }
+            throw new IOException(msg);
+        }
+    }
+
+    public static String readZeroTerminatedString(InputStream in) throws IOException {
+        return new String(readZeroTerminatedStringBytes(in), ISO_8859_1);
+    }
+
+    public static byte[] readZeroTerminatedStringBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        while (true) {
+            int b = in.read();
+            if (b == -1) {
+                throw new EOFException();
+            }
+            if (b == FLAT_PACK_BSEPARATOR) {
+                return bout.toByteArray();
+            }
+            bout.write(b);
+        }
+    }
+
+    public List<String> getTokenizedHeader() {
+        String metaDataHeader = new String(headerBytes, ISO_8859_1);
+        Pattern pattern = Pattern.compile(FLAT_PACK_SEPARATOR, Pattern.LITERAL);
+        String[] parts = pattern.split(metaDataHeader, -1);
+        return List.of(parts);
+    }
+
+    public byte[] getHeaderBytes() {
+        return headerBytes;
+    }
+
+    public int getHeaderSize() {
+        return headerSize;
+    }
 }

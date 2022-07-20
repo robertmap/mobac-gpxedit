@@ -19,10 +19,11 @@ package mobac.mapsources.custom.aqm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -50,16 +51,14 @@ public class AqmMap {
     private final MetaDataHeader header;
     private final long headerSize;
     private final MetaDataHeaderAnalyser headerAnalyser;
-    private final MetaDataHeaderTokenizer headerTokenizer;
     private List<AqmLevel> levels = new ArrayList<>();
     private Map<String, AqmTile> tilesMap = new HashMap<>();
 
-    public AqmMap(File fileAQMmap) {
+    public AqmMap(File fileAQMmap) throws IOException {
         this.fileAQMmap = fileAQMmap;
         this.header = new MetaDataHeader(fileAQMmap);
-        this.headerSize = header.getMetaDataHeader().length();
-        this.headerTokenizer = new MetaDataHeaderTokenizer(this.header.getMetaDataHeader());
-        this.headerAnalyser = new MetaDataHeaderAnalyser(this.headerTokenizer.getTokens());
+        this.headerSize = header.getHeaderSize();
+        this.headerAnalyser = new MetaDataHeaderAnalyser(header.getTokenizedHeader());
         buildMap();
     }
 
@@ -67,35 +66,21 @@ public class AqmMap {
         return String.format("%d_%d_%d", zoom, y, x);
     }
 
-    private byte[] getFileChunk(long start) {
-        byte[] bSplit = null;
-        String size = "";
-        try (FileInputStream fis = new FileInputStream(fileAQMmap)) {
-            fis.skip(start);
-            int b = 1;
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            do {
-                b = fis.read();
-                if (b != FLAT_PACK_BSEPARATOR) {
-                    bos.write(b);
-                }
-            } while (b != FLAT_PACK_BSEPARATOR);
-
-            size = new String(bos.toByteArray(), ISO_8859_1);
-            int len = Integer.parseInt(size);
-            bSplit = fis.readNBytes(len);
-        } catch (IOException e) {
-            log.debug("Can not create FileInputStream for file : {}", fileAQMmap.getAbsolutePath());
-        } catch (NumberFormatException e) {
-            log.debug("Can not parseInt for string : {}", size);
-        }
-        return bSplit;
+    private String getFileChunkString(long start) throws IOException {
+        return new String(getFileChunk(start), ISO_8859_1);
     }
 
-    private void buildMap() {
-        byte[] bMapMetaData = getFileChunk(headerSize);
-        String sMapMetaData = new String(bMapMetaData, ISO_8859_1);
-        AqmPropertyParser mapProperties = new AqmPropertyParser(sMapMetaData);
+    private byte[] getFileChunk(long start) throws IOException {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(fileAQMmap))) {
+            in.skip(start);
+            int chunkSize = MetaDataHeader.readZeroTerminatedIntegerString(in);
+            return in.readNBytes(chunkSize);
+        }
+    }
+
+    private void buildMap() throws IOException {
+        String mapMetaData = getFileChunkString(headerSize);
+        AqmPropertyParser mapProperties = new AqmPropertyParser(mapMetaData);
         this.id = mapProperties.getStringProperty("id");
         this.name = mapProperties.getStringProperty("name");
         this.version = mapProperties.getIntProperty("version");
@@ -106,11 +91,9 @@ public class AqmMap {
         List<MetaDataLevel> levelList = headerAnalyser.getLevelList();
         for (MetaDataLevel l : levelList) {
 
-            byte[] bLevelMetaData = getFileChunk(headerSize + l.metaDataByteIndex);
-            String sLevelMetaData = new String(bLevelMetaData, ISO_8859_1);
-            AqmPropertyParser levelProperties = new AqmPropertyParser(sLevelMetaData);
+            String levelMetaData = getFileChunkString(headerSize + l.metaDataByteIndex);
+            AqmPropertyParser levelProperties = new AqmPropertyParser(levelMetaData);
             AqmLevel level = new AqmLevel(levelProperties);
-
             this.minZoom = ((this.minZoom == -1) ? level.z : Math.min(level.z, this.minZoom));
             this.maxZoom = ((this.maxZoom == -1) ? level.z : Math.max(level.z, this.maxZoom));
             this.imgFormat = level.imgformat;
@@ -133,19 +116,19 @@ public class AqmMap {
         return tilesMap.get(generateKey(zoom, y, x));
     }
 
-    public byte[] getByteTile(int zoom, int x, int y) {
-        byte[] bTile = null;
+    public byte[] getByteTile(int zoom, int x, int y) throws IOException {
         AqmTile t = getTile(zoom, x, y);
-        if (t != null) {
-            log.debug("getByteTile : zoom : {} x : {} y : {} :: Found", zoom, x, y);
-            if (t.bTile != null) {
-                bTile = t.bTile;
-            } else {
-                // TODO: ERROR: tilesMap.get will always return null ! -> NullPointerException
-                bTile = getFileChunk(tilesMap.get(generateKey(zoom, y, x)).tileByteIndex);
-            }
-        } else {
+        if (t == null) {
             log.debug("getByteTile : zoom : {} x : {} y : {} :: Not Found", zoom, x, y);
+            return null;
+        }
+        byte[] bTile;
+        log.debug("getByteTile : zoom : {} x : {} y : {} :: Found", zoom, x, y);
+        if (t.bTile != null) {
+            bTile = t.bTile;
+        } else {
+            AqmTile tile = tilesMap.get(generateKey(zoom, y, x));
+            bTile = getFileChunk(tile.tileByteIndex);
         }
         return bTile;
     }

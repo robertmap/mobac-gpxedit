@@ -46,6 +46,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,7 +69,8 @@ public class AlpineQuestMap extends AtlasCreator {
     public static final String AQM_LEVEL_DELIMITER = "@LEVEL";
     public static final String AQM_END_DELIMITER = "#END";
 
-    private static final String[] SCALES = new String[]{"1:512 000 000", // 00
+    private static final String[] SCALES = new String[]{ //
+            "1:512 000 000", // 00
             "1:256 000 000", // 01
             "1:128 000 000", // 02
             "1:64 000 000", // 03
@@ -154,12 +156,14 @@ public class AlpineQuestMap extends AtlasCreator {
 
     @Override
     public void abortAtlasCreation() throws IOException {
-        if (packCreator != null)
+        if (packCreator != null) {
             packCreator.close();
+        }
         packCreator = null;
 
-        if (filePack != null)
+        if (filePack != null) {
             Utilities.deleteFile(filePack);
+        }
         filePack = null;
 
         super.abortAtlasCreation();
@@ -206,13 +210,15 @@ public class AlpineQuestMap extends AtlasCreator {
 
         // name of this specific map (displayed to user)
         String strName = map.getLayer().getName();
-        if (strName == null || strName.length() == 0)
+        if (strName == null || strName.length() == 0) {
             strName = I18nUtils.localizedStringForKey("Unnamed");
+        }
 
         // scale of the map (displayed to user)
         String strScale = "";
-        if (map.getZoom() >= 0 && map.getZoom() < SCALES.length)
+        if (map.getZoom() >= 0 && map.getZoom() < SCALES.length) {
             strScale = SCALES[map.getZoom()];
+        }
 
         // source of the map data (displayed to user)
         final String strDataSource = map.getMapSource().toString();
@@ -224,10 +230,14 @@ public class AlpineQuestMap extends AtlasCreator {
         final String strProjection = "mercator";
 
         String strGeoid = "";
-        if (ProjectionCategory.SPHERE.equals(map.getMapSource().getMapSpace().getProjectionCategory()))
+        ProjectionCategory projectionCategory = map.getMapSource().getMapSpace().getProjectionCategory();
+        if (ProjectionCategory.SPHERE.equals(projectionCategory)) {
             strGeoid = "sphere";
-        else if (ProjectionCategory.ELLIPSOID.equals(map.getMapSource().getMapSpace().getProjectionCategory()))
+        } else if (ProjectionCategory.ELLIPSOID.equals(projectionCategory)) {
             strGeoid = "wgs84";
+        } else {
+            throw new RuntimeException("Unsupported projection category: " + projectionCategory);
+        }
 
         // number of tiles (internal use)
         final long nbTotalTiles = (256 * Math.round(Math.pow(2, map.getZoom()))) / tileSize;
@@ -244,8 +254,9 @@ public class AlpineQuestMap extends AtlasCreator {
             tilesSize = map.getTileSize();
         }
 
-        if (strImageFormat != null)
+        if (strImageFormat != null) {
             strImageFormat = strImageFormat.toUpperCase();
+        }
 
         // write metadata
         StringWriter w = new StringWriter();
@@ -274,15 +285,17 @@ public class AlpineQuestMap extends AtlasCreator {
         w.close();
 
         // add the metadata file into map
-        packCreator.add(w.getBuffer().toString().getBytes(), AQM_LEVEL);
+        packCreator.add(w.toString().getBytes(StandardCharsets.ISO_8859_1), AQM_LEVEL);
     }
 
     @Override
     public boolean testMapSource(final MapSource mapSource) {
         MapSpace mapSpace = mapSource.getMapSpace();
+        ProjectionCategory projectionCategory = mapSpace.getProjectionCategory();
+
         return (mapSpace instanceof MercatorPower2MapSpace)
-                && (ProjectionCategory.SPHERE.equals(mapSource.getMapSpace().getProjectionCategory())
-                || ProjectionCategory.ELLIPSOID.equals(mapSource.getMapSpace().getProjectionCategory()));
+                && (ProjectionCategory.SPHERE.equals(projectionCategory)
+                || ProjectionCategory.ELLIPSOID.equals(projectionCategory));
     }
 
     @Override
@@ -335,10 +348,10 @@ public class AlpineQuestMap extends AtlasCreator {
         final long nbTotalTiles = (256 * Math.round(Math.pow(2, map.getZoom()))) / tileSize;
 
         // tile resizing
-        BufferedImage tileImage = null;
-        Graphics2D graphics = null;
-        ArrayOutputStream buffer = null;
-        TileImageDataWriter writer = null;
+        BufferedImage tileImage;
+        Graphics2D graphics;
+        ArrayOutputStream buffer;
+        TileImageDataWriter writer;
 
         if ((parameters != null) || (xResizeRatio != 1.0) || (yResizeRatio != 1.0)) {
             // resize image
@@ -356,6 +369,11 @@ public class AlpineQuestMap extends AtlasCreator {
             buffer = new ArrayOutputStream(3 * parameters.getWidth() * parameters.getHeight());
 
             ImageIO.setUseCache(false);
+        } else {
+            tileImage = null;
+            graphics = null;
+            buffer = null;
+            writer = null;
         }
 
         try {
@@ -382,8 +400,9 @@ public class AlpineQuestMap extends AtlasCreator {
 
                                 sourceTileData = buffer.toByteArray();
 
-                                if (sourceTileData == null)
+                                if (sourceTileData == null) {
                                     throw new MapCreationException("Image resizing failed.", map);
+                                }
                             }
 
                             packCreator.add(sourceTileData, "" + x + "_" + (nbTotalTiles - y)); // y tiles count began

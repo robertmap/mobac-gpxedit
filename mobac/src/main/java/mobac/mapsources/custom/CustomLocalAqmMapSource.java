@@ -158,7 +158,11 @@ public class CustomLocalAqmMapSource implements InitializableMapSource, MapSourc
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
-        this.map = new AqmMap(sourceFile);
+        try {
+            this.map = new AqmMap(sourceFile);
+        } catch (IOException e) {
+            throw new MapSourceInitializationException(e);
+        }
         this.minZoom = map.minZoom;
         this.maxZoom = map.maxZoom;
         this.tileImageType = TileImageType.getTileImageType(map.imgFormat);
