@@ -97,7 +97,6 @@ public class WorkinprogressDialog extends JDialog implements WindowListener {
                     }
                 } catch (InterruptedException e) {
                     System.out.println("Aborted");
-                    return;
                 } finally {
                     dlg.setVisible(false);
                 }

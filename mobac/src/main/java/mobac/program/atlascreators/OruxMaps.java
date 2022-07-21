@@ -157,7 +157,6 @@ public class OruxMaps extends AtlasCreator {
             createTiles();
         } catch (InterruptedException e) {
             // User has aborted process
-            return;
         } catch (Exception e) {
             throw new MapCreationException(map, e);
         }

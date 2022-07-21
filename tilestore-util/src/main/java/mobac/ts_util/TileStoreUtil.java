@@ -26,7 +26,6 @@ public class TileStoreUtil {
 	private static void testForMobacJar() {
 		try {
 			Class.forName("mobac.StartMOBAC");
-			return;
 		} catch (ClassNotFoundException e) {
 			System.out.println("Unable to find \"Mobile_Atlas_Creator.jar\".\n"
 					+ "Please make sure that \"ts-util.jar\" is located in the same directory.");

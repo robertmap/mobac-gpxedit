@@ -75,10 +75,12 @@ public class MapSourcesTestSuite extends TestSuite {
     }
 
     private void addMapSourcesTestCase(MapSource mapSource) {
-        if (!(mapSource instanceof HttpMapSource))
+        if (!(mapSource instanceof HttpMapSource)) {
             return;
-        if (testedMapSources.contains(mapSource.getName()))
+        }
+        if (testedMapSources.contains(mapSource.getName())) {
             return;
+        }
         EastNorthCoordinate coordinate = Cities.getTestCoordinate(mapSource, C_DEFAULT);
         addTest(new MapSourceTestCase((HttpMapSource) mapSource, coordinate));
         testedMapSources.add(mapSource.getName());

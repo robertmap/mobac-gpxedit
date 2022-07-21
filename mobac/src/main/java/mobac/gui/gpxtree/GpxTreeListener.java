@@ -35,7 +35,6 @@ import java.awt.event.MouseListener;
  * @author lhoeppner
  */
 public class GpxTreeListener implements MouseListener {
-    private JPopupMenu popup;
 
     public void actionPerformed(ActionEvent e) {
     }
@@ -82,7 +81,7 @@ public class GpxTreeListener implements MouseListener {
         } catch (ClassCastException exc) {
         }
 
-        popup = new JPopupMenu();
+        JPopupMenu popup = new JPopupMenu();
         JMenuItem delete = new JMenuItem(I18nUtils.localizedStringForKey("rp_gpx_pop_menu_delete_element"));
         delete.setName(GpxElementListener.MENU_NAME_DELETE);
         GpxElementListener listener = new GpxElementListener(gpxEntry);

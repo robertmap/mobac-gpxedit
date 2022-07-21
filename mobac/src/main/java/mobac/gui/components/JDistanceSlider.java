@@ -27,24 +27,23 @@ public class JDistanceSlider extends JSlider {
 
     private static final long serialVersionUID = 1L;
 
-    private final Hashtable<Integer, JLabel> labelTable;
-
     public JDistanceSlider(MapSpace mapSpace, int zoom, int y, UnitSystem unit, int pixelMin, int pixelMax) {
         super(pixelMin, pixelMax);
-        labelTable = new Hashtable<Integer, JLabel>();
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
 
         int diff4 = (pixelMax - pixelMin) / 4;
-        int[] labelvalues = new int[]{pixelMin, pixelMin + diff4, pixelMin + 2 * diff4, pixelMin + 3 * diff4,
+        int[] labelValues = new int[]{pixelMin, pixelMin + diff4, pixelMin + 2 * diff4, pixelMin + 3 * diff4,
                 pixelMax};
 
-        for (int i : labelvalues) {
+        for (int i : labelValues) {
             double distance = mapSpace.horizontalDistance(zoom, y, i) * unit.earthRadius * unit.unitFactor;
             String label;
             if (distance > unit.unitFactor) {
                 distance /= unit.unitFactor;
                 label = String.format("%2.0f %s", distance, unit.unitLarge);
-            } else
+            } else {
                 label = String.format("%2.0f %s", distance, unit.unitSmall);
+            }
             labelTable.put(i, new JLabel(label));
         }
         setPaintTicks(true);

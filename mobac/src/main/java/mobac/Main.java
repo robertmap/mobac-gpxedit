@@ -105,10 +105,11 @@ public class Main {
             if (PrintPublicKeyHash.CMD_ARG.equalsIgnoreCase(args[0])) {
                 cmdAction = new PrintPublicKeyHash(args[1]);
             } else if (CreateAtlas.CMD_ARG.equalsIgnoreCase(args[0])) {
-                if (args.length > 2)
+                if (args.length > 2) {
                     cmdAction = new CreateAtlas(args[1], args[2]);
-                else
+                } else {
                     cmdAction = new CreateAtlas(args[1]);
+                }
                 return;
             }
         }

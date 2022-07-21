@@ -64,8 +64,9 @@ public class GpxMapController extends JMapController implements MouseListener {
             double lon = mapSpace.cXToLon(p.x, map.getZoom());
             double lat = mapSpace.cYToLat(p.y, map.getZoom());
             String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("dlg_gpx_inpu_point_name"));
-            if (name == null)
+            if (name == null) {
                 return;
+            }
             Gpx gpx11 = gpx;
             WptType wpt = new WptType();
             wpt.setName(name);

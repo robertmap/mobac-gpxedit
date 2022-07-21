@@ -45,7 +45,7 @@ public class ThrottleSupport {
     protected long bandwidth = 0;
     protected long allocated = 0;
     protected long tick = 0;
-    protected Object lock = new Object();
+    protected final Object lock = new Object();
 
     // --- Constructor(s) ---
 
@@ -70,8 +70,9 @@ public class ThrottleSupport {
      * @return -1, if interrupted;
      */
     public int allocate(int bytes) {
-        if (bytes == 0)
+        if (bytes == 0) {
             return 0;
+        }
         synchronized (lock) {
             while (true) {
                 if (bandwidth == 0) {
@@ -80,7 +81,7 @@ public class ThrottleSupport {
                 }
                 long currentTick = System.currentTimeMillis() >> 9;
                 if (currentTick > tick) {
-                    logger.debug("* new tick: " + bandwidth + " to allocate *");
+                    logger.debug("* new tick: {} to allocate *", bandwidth);
                     tick = currentTick;
                     allocated = 0;
                     lock.notifyAll();
@@ -88,14 +89,14 @@ public class ThrottleSupport {
                 if (bytes < bandwidth - allocated) {
                     // we still have some bandwidth left
                     allocated += bytes;
-                    logger.debug("returning " + bytes + " allocated now " + allocated);
+                    logger.debug("returning {} allocated now {}", bytes, allocated);
                     return bytes;
                 }
                 if (bandwidth - allocated > 0) {
                     // don't have enough, but return all we have left
                     bytes = (int) (bandwidth - allocated);
                     allocated = bandwidth;
-                    logger.debug("returning " + bytes + " allocated now " + allocated);
+                    logger.debug("returning {} allocated now {}", bytes, allocated);
                     return bytes;
                 }
 
@@ -106,7 +107,7 @@ public class ThrottleSupport {
                 long t = TICK_LENGTH - (System.currentTimeMillis() % TICK_LENGTH);
                 if (t > 0) {
                     try {
-                        logger.debug("waiting for " + t);
+                        logger.debug("waiting for {}", t);
                         lock.wait(t);
                     } catch (InterruptedException e) {
                         return -1;

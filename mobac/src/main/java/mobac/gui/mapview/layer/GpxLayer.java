@@ -105,11 +105,13 @@ public class GpxLayer implements MapLayer {
     private boolean paintPoint(final WptType point, Color color, final Graphics2D g, boolean paintPointName,
                                MapSpace mapSpace, int zoom, int minX, int minY, int maxX, int maxY) {
         int x = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
-        if (x < minX || x > maxX)
+        if (x < minX || x > maxX) {
             return false; // Point outside of visible region
+        }
         int y = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
-        if (y < minY || y > maxY)
+        if (y < minY || y > maxY) {
             return false; // Point outside of visible region
+        }
         x -= minX;
         y -= minY;
         g.setColor(color);
@@ -117,8 +119,9 @@ public class GpxLayer implements MapLayer {
         g.setColor(Color.BLACK);
         g.setStroke(outlineStroke);
         g.drawOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
-        if (paintPointName && point.getName() != null)
+        if (paintPointName && point.getName() != null) {
             g.drawString(point.getName(), x + POINT_RADIUS + 5, y - POINT_RADIUS);
+        }
 
         return true;
     }

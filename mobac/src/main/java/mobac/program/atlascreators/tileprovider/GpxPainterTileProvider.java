@@ -94,8 +94,9 @@ public class GpxPainterTileProvider extends ConvertedRawTileProvider {
         Graphics2D g = (Graphics2D) image.getGraphics();
         try {
             for (Point p : points) {
-                if (p.x < xMin || p.x > xMax || p.y < yMin || p.y > yMax)
+                if (p.x < xMin || p.x > xMax || p.y < yMin || p.y > yMax) {
                     continue; // Point is outside of tile
+                }
                 int px = p.x - xMin;
                 int py = p.y - yMin;
                 g.drawOval(px, py, 5, 5);

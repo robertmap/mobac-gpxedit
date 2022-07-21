@@ -350,7 +350,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
     }
 
     public static void main(String[] args) {
-        for (; ; ) {
+        while (true) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 Exception e = new RuntimeException("Test", new Exception("Inner"));

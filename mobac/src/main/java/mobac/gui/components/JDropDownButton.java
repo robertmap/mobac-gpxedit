@@ -33,13 +33,12 @@ public class JDropDownButton extends JButton {
 
     private static final long serialVersionUID = 1L;
 
-    private final BasicArrowButton arrowButton;
     private final JPopupMenu buttonPopupMenu;
 
     public JDropDownButton(String text) {
         super(text);
         buttonPopupMenu = new JPopupMenu();
-        arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
+        BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
         arrowButton.setBorder(BorderFactory.createEmptyBorder());
         arrowButton.setFocusable(false);
         setHorizontalAlignment(SwingConstants.LEFT);

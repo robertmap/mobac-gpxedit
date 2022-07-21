@@ -75,7 +75,7 @@ public class TileLoader {
         }
 
         public void run() {
-            MemoryTileCache cache = listener.getTileImageCache();
+            final MemoryTileCache cache = listener.getTileImageCache();
             synchronized (cache) {
                 tile = cache.getTile(mapSource, tilex, tiley, zoom);
                 if (tile == null || tile.tileState != TileState.TS_NEW) {
@@ -87,12 +87,7 @@ public class TileLoader {
                 return;
             }
             if (fileTilePainted) {
-                Runnable job = new Runnable() {
-
-                    public void run() {
-                        loadOrUpdateTile();
-                    }
-                };
+                Runnable job = () -> loadOrUpdateTile();
                 JobDispatcher.getInstance().addJob(job);
             } else {
                 loadOrUpdateTile();
@@ -112,7 +107,7 @@ public class TileLoader {
                 }
                 return;
             } catch (SSLHandshakeException e) {
-                log.warn("SSL/TLS error prevented download of " + tile + ": " + e.getMessage());
+                log.warn("SSL/TLS error prevented download of {}: {}", tile, e.getMessage());
                 tile.setErrorImage();
                 tile.setErrorMessage("TLS error: " + e.getMessage());
             } catch (DownloadFailedException e) {
@@ -124,11 +119,11 @@ public class TileLoader {
                     tile.setErrorMessage(e.generateReponseErrorText());
                 }
             } catch (IOException e) {
-                log.warn("Downloading of " + tile + " failed: " + e.getMessage());
+                log.warn("Downloading of {} failed: {}", tile, e.getMessage());
                 tile.setErrorImage();
                 tile.setErrorMessage(e.getClass().getSimpleName() + "\n" + e.getMessage());
             } catch (Exception e) {
-                log.debug("Downloading of " + tile + " failed", e);
+                log.debug("Downloading of {} failed", tile, e);
                 tile.setErrorImage();
                 tile.setErrorMessage(e.getClass().getSimpleName() + "\n" + e.getMessage());
             }
@@ -138,8 +133,9 @@ public class TileLoader {
         protected boolean loadTileFromStore() {
             try {
                 BufferedImage image = mapSource.getTileImage(zoom, tilex, tiley, LoadMethod.CACHE);
-                if (image == null)
+                if (image == null) {
                     return false;
+                }
                 tile.setImage(image);
                 listener.tileLoadingFinished(tile, true);
                 if (TileDownLoader.isTileExpired(tileStoreEntry)) {
@@ -148,7 +144,7 @@ public class TileLoader {
                 fileTilePainted = true;
                 return true;
             } catch (Exception e) {
-                log.error("Failed to load tile (z=" + zoom + ",x=" + tilex + ",y=" + tiley + ") from tile store", e);
+                log.error("Failed to load tile (z={},x={},y={}) from tile store", zoom, tilex, tiley, e);
             }
             return false;
         }

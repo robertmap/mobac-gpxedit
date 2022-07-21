@@ -153,7 +153,6 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
             conn.close();
         } catch (InterruptedException e) {
             // User has aborted process
-            return;
         } catch (MapCreationException e) {
             throw e;
         } catch (Exception e) {

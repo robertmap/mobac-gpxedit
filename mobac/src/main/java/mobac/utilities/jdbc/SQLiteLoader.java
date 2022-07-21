@@ -63,8 +63,7 @@ public class SQLiteLoader {
             // Load the sqlite library
             Class.forName(driverClassName);
             SQLITE_LOADED = true;
-            log.debug("SQLite library loaded. Driver class name: " + driverClassName);
-            return;
+            log.debug("SQLite library loaded. Driver class name: {}", driverClassName);
         } catch (Throwable t) {
             SQLException e = new SQLException(
                     "Loading of SQLite library failed (" + driverClassName + "): " + t.getMessage(), t);
