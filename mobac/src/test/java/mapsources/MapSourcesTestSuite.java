@@ -46,7 +46,7 @@ public class MapSourcesTestSuite extends TestSuite {
 
     public static final EastNorthCoordinate C_DEFAULT = Cities.BERLIN;
     protected final Logger log;
-    private HashSet<String> testedMapSources;
+    private final HashSet<String> testedMapSources;
 
     public MapSourcesTestSuite() throws JAXBException {
         super();

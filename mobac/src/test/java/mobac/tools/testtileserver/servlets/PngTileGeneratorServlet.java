@@ -33,7 +33,7 @@ import java.io.OutputStream;
  */
 public class PngTileGeneratorServlet extends AbstractTileGeneratorServlet {
 
-    private int pngCompressionLevel;
+    private final int pngCompressionLevel;
 
     public PngTileGeneratorServlet(int pngCompressionLevel) {
         super();

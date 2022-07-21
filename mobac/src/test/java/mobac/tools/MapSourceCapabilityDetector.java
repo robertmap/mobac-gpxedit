@@ -131,7 +131,7 @@ public class MapSourceCapabilityDetector {
         }
         ArrayList<MapSourceCapabilityDetector> result = new ArrayList<>();
         for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
-            MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource, coordinate,
+            MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector(mapSource, coordinate,
                     zoom);
             mstd.testMapSource();
             result.add(mstd);
