@@ -16,24 +16,18 @@
  ******************************************************************************/
 package mobac.mapsources.custom.aqm;
 
-/**
- * Alpine Quest Map : http://alpinequest.net/
- * Developer : ph-t@users.sourceforge.net
- */
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Alpine Quest Map : https://alpinequest.net/
+ * Developer : ph-t@users.sourceforge.net
+ */
 public class MetaDataLevel {
-    public long metaDataByteIndex;
+    public final long metaDataByteIndex;
+    private final List<MetaDataTile> tileList;
     public int byteIndex;
-    public List<MetaDataTile> tileList;
-
-    MetaDataLevel() {
-        this.metaDataByteIndex = -1;
-        this.byteIndex = -1;
-        this.tileList = new ArrayList<>();
-    }
 
     MetaDataLevel(int metaDataByteIndex) {
         this.metaDataByteIndex = metaDataByteIndex;
@@ -44,4 +38,8 @@ public class MetaDataLevel {
     public List<MetaDataTile> getTileList() {
         return tileList;
     }
-};
+
+    public void addTile(MetaDataTile tile) {
+        tileList.add(tile);
+    }
+}

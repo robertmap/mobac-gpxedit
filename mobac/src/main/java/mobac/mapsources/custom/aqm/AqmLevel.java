@@ -17,40 +17,39 @@
 
 package mobac.mapsources.custom.aqm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Alpine Quest Map : http://alpinequest.net/
  * Developer : ph-t@users.sourceforge.net
  */
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class AqmLevel {
-    public List<AqmTile> tiles;
-    public int z; // zoom
+    public final List<AqmTile> tiles;
+    public final int z; // zoom
 
-    public int id;
-    public String name;
-    public String scale;
-    public String datasource;
-    public String copyright;
-    public String projection;
-    public String geoid;
-    public int xtsize;
-    public int ytsize;
-    public double xtratio;
-    public double ytratio;
-    public double xtoffset;
-    public double ytoffset;
-    public int xtmin;
-    public int xtmax;
-    public int ytmin;
-    public int ytmax;
-    public String background;
-    public String imgformat;
+    public final int id;
+    public final String name;
+    public final String scale;
+    public final String datasource;
+    public final String copyright;
+    public final String projection;
+    public final String geoid;
+    public final int xtsize;
+    public final int ytsize;
+    public final double xtratio;
+    public final double ytratio;
+    public final double xtoffset;
+    public final double ytoffset;
+    public final int xtmin;
+    public final int xtmax;
+    public final int ytmin;
+    public final int ytmax;
+    public final String background;
+    public final String imgformat;
 
     AqmLevel(AqmPropertyParser properties) {
-        this.tiles = new ArrayList<AqmTile>();
+        this.tiles = new ArrayList<>();
 
         this.id = properties.getIntProperty("id");
         this.z = id;
@@ -82,4 +81,4 @@ public class AqmLevel {
         return ((ytmin + ytmax) / 2) + 1;
     }
 
-};
+}

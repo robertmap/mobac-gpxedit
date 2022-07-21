@@ -51,8 +51,8 @@ public class AqmMap {
     private final MetaDataHeader header;
     private final long headerSize;
     private final MetaDataHeaderAnalyser headerAnalyser;
-    private List<AqmLevel> levels = new ArrayList<>();
-    private Map<String, AqmTile> tilesMap = new HashMap<>();
+    private final List<AqmLevel> levels = new ArrayList<>();
+    private final Map<String, AqmTile> tilesMap = new HashMap<>();
 
     public AqmMap(File fileAQMmap) throws IOException {
         this.fileAQMmap = fileAQMmap;
@@ -145,7 +145,6 @@ public class AqmMap {
     public int getMinZoomYtCenter() {
         AqmLevel level = levels.get(0);
         int mapSize = level.ytsize << level.z;
-        int invertedMinZoomYtCenter = mapSize - level.getYtCenter() * level.ytsize;
-        return invertedMinZoomYtCenter;
+        return mapSize - level.getYtCenter() * level.ytsize;
     }
-};
+}

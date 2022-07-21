@@ -17,16 +17,16 @@
 package mobac.mapsources.custom.aqm;
 
 /**
- * Alpine Quest Map : http://alpinequest.net/ Developer : ph-t@users.sourceforge.net
+ * Alpine Quest Map : https://alpinequest.net/
+ * Developer : ph-t@users.sourceforge.net
  */
-
 public class AqmTile {
-    public String name;
-    public byte[] bTile;
-    public long tileByteIndex;
+    public final String name;
+    public final long tileByteIndex;
+    public final int x;
+    public final int y;
 
-    public int x;
-    public int y;
+    public byte[] bTile;
 
     AqmTile(String name, long tileByteIndex) {
         this.name = name;
@@ -44,4 +44,4 @@ public class AqmTile {
         this.bTile = bTile;
     }
 
-};
+}
