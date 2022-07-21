@@ -34,6 +34,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 
 @AtlasCreatorName("CacheBox (PACK)")
 @SupportedParameters(names = {Name.format})
@@ -220,7 +221,7 @@ public class CacheBox extends AtlasCreator {
 
     private void writeString(String text, int length) throws IOException {
         byte[] buf = new byte[length];
-        byte[] asciiBytes = text.getBytes("ASCII");
+        byte[] asciiBytes = text.getBytes(StandardCharsets.US_ASCII);
         System.arraycopy(asciiBytes, 0, buf, 0, Math.min(length, asciiBytes.length));
         for (int i = asciiBytes.length; i < length; i++)
             buf[i] = ' ';

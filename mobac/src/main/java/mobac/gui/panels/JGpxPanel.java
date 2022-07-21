@@ -56,12 +56,12 @@ public class JGpxPanel extends JCollapsiblePanel {
 
     private static final long serialVersionUID = 1L;
 
-    private JTree tree;
+    private final JTree tree;
     private DefaultMutableTreeNode rootNode;
-    private DefaultTreeModel model;
+    private final DefaultTreeModel model;
     private ArrayList<String> openedFiles;
 
-    private PreviewMap previewMap;
+    private final PreviewMap previewMap;
 
     public JGpxPanel(PreviewMap previewMap) {
         super("Gpx", new GridBagLayout());

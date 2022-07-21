@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
 
 public class AtlasCreate implements ActionListener {
 
-    private JAtlasTree jAtlasTree;
+    private final JAtlasTree jAtlasTree;
 
     public AtlasCreate(JAtlasTree jAtlasTree) {
         this.jAtlasTree = jAtlasTree;

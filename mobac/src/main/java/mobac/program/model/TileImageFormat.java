@@ -73,7 +73,7 @@ public enum TileImageFormat {
 
     private final String translationKey;
 
-    private TileImageFormat(TileImageDataWriterBuilder dataWriterBuilder, String translationKey) {
+    TileImageFormat(TileImageDataWriterBuilder dataWriterBuilder, String translationKey) {
         // this.description = description;
         this.dataWriterBuilder = dataWriterBuilder;
         this.translationKey = translationKey;

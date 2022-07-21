@@ -18,10 +18,10 @@ package mobac.program.interfaces;
 
 public interface MapSourceTextAttribution {
 
-    public String getAttributionText();
+    String getAttributionText();
 
     /**
      * @return The URL to open when the user clicks the attribution image.
      */
-    public String getAttributionLinkURL();
+    String getAttributionLinkURL();
 }

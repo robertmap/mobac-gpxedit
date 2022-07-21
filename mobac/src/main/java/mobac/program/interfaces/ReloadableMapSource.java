@@ -23,5 +23,5 @@ import mobac.exceptions.MapSourceInitializationException;
  */
 public interface ReloadableMapSource<MapSourceType extends MapSource> {
 
-    public void applyChangesFrom(MapSourceType reloadedMapSource) throws MapSourceInitializationException;
+    void applyChangesFrom(MapSourceType reloadedMapSource) throws MapSourceInitializationException;
 }

@@ -48,7 +48,7 @@ public class PaperSize {
         return new Rectangle((float) width, (float) height);
     }
 
-    public static enum Format {
+    public enum Format {
         A0(PageSize.A0), A1(PageSize.A1), A2(PageSize.A2), A3(PageSize.A3), A4(PageSize.A4), A5(PageSize.A5), A6(
                 PageSize.A6), A7(PageSize.A7), A8(PageSize.A8), A9(PageSize.A9), A10(PageSize.A10), ARCH_A(
                 PageSize.ARCH_A), ARCH_B(PageSize.ARCH_B), ARCH_C(PageSize.ARCH_C), ARCH_D(PageSize.ARCH_D), ARCH_E(
@@ -82,7 +82,7 @@ public class PaperSize {
 
         public final float width, height;
 
-        private Format(final Rectangle rectangle) {
+        Format(final Rectangle rectangle) {
             width = rectangle.getWidth();
             height = rectangle.getHeight();
         }

@@ -39,7 +39,7 @@ public class TileImageJpegDataWriterBuilder implements TileImageDataWriterBuilde
     }
 
     public TileImageJpegDataWriterBuilder(float jpegCompressionLevel) {
-        this.jpegCompressionLevel = (float) jpegCompressionLevel;
+        this.jpegCompressionLevel = jpegCompressionLevel;
     }
 
     public TileImageJpegDataWriterBuilder(TileImageJpegDataWriterBuilder jpegWriter) {

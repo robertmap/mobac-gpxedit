@@ -38,7 +38,7 @@ import java.util.Set;
 
 public class AtlasTreeModel implements TreeModel {
 
-    private static Logger log = LoggerFactory.getLogger(AtlasTreeModel.class);
+    private static final Logger log = LoggerFactory.getLogger(AtlasTreeModel.class);
 
     protected AtlasInterface atlasInterface;
 
@@ -185,15 +185,15 @@ public class AtlasTreeModel implements TreeModel {
         for (MapInterface map : source) {
             target.addMap(map);
         }
-        notifyNodeDelete((TreeNode) source);
-        notifyStructureChanged((TreeNode) target);
+        notifyNodeDelete(source);
+        notifyStructureChanged(target);
     }
 
     public void moveMap(MapInterface map, LayerInterface targetLayer) {
-        notifyNodeDelete((TreeNode) map);
+        notifyNodeDelete(map);
         map.delete();
         targetLayer.addMap(map);
-        notifyNodeInsert((TreeNode) map);
+        notifyNodeInsert(map);
     }
 
     public AtlasInterface getAtlas() {

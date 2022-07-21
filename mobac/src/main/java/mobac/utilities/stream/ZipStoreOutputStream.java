@@ -27,7 +27,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipStoreOutputStream extends ZipOutputStream {
 
-    private CRC32 crc = new CRC32();
+    private final CRC32 crc = new CRC32();
 
     public ZipStoreOutputStream(OutputStream out) {
         super(out);

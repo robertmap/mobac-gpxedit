@@ -24,8 +24,8 @@ import java.awt.event.ActionListener;
 
 public class SplitPaneHideLeftComponent implements ActionListener {
 
-    private JSplitPane splitPane;
-    private Component leftComponent;
+    private final JSplitPane splitPane;
+    private final Component leftComponent;
     private int dividerSize = 0;
 
     public SplitPaneHideLeftComponent(JSplitPane splitPane) {

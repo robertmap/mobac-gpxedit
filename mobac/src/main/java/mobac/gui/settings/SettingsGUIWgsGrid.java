@@ -59,7 +59,9 @@ public class SettingsGUIWgsGrid extends JPanel {
 
     private final JSpinner jSpinnerWidth = new JSpinner(modelWidth);
 
-    private JLabel jLabelColor = new JLabel(), jLabelFont = new JLabel(), jLabelWidth = new JLabel();
+    private final JLabel jLabelColor = new JLabel();
+    private final JLabel jLabelFont = new JLabel();
+    private final JLabel jLabelWidth = new JLabel();
 
     private String title;
 

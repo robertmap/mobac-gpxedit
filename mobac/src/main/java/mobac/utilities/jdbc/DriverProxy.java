@@ -34,7 +34,7 @@ import java.util.Properties;
  */
 public class DriverProxy implements Driver {
 
-    private static Logger log = LoggerFactory.getLogger(DriverProxy.class);
+    private static final Logger log = LoggerFactory.getLogger(DriverProxy.class);
 
     private final Driver driver;
 

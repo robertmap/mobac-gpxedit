@@ -56,11 +56,11 @@ public class JMapSourceTree extends JTree {
     static final Class<String> folderClass = String.class;
     // private final Logger log = LoggerFactory.getLogger(JMapSourceTree.class);
     private static final long serialVersionUID = 1L;
-    private static Color mapSourceInTreeHighlightColor = new Color(230, 245, 255);
+    private static final Color mapSourceInTreeHighlightColor = new Color(230, 245, 255);
     private Vector<MapSource> mapSources;
     private MapSource selectedMapSource, previouslySelectedMapSource;
-    private ComparableTreeNode rootNode = new ComparableTreeNode("Maps sources root");
-    private DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
+    private final ComparableTreeNode rootNode = new ComparableTreeNode("Maps sources root");
+    private final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
     public JMapSourceTree(Vector<MapSource> enabledOrderedMapSources) {
         super();
@@ -444,7 +444,12 @@ public class JMapSourceTree extends JTree {
     static class CustomIconRenderer extends DefaultTreeCellRenderer {
         private static final long serialVersionUID = 1L;
 
-        private ImageIcon multiLayerIcon, fileBasedIcon, httpIcon, debugIcon, folderOpenedIcon, folderClosedIcon;
+        private final ImageIcon multiLayerIcon;
+        private final ImageIcon fileBasedIcon;
+        private final ImageIcon httpIcon;
+        private final ImageIcon debugIcon;
+        private final ImageIcon folderOpenedIcon;
+        private final ImageIcon folderClosedIcon;
 
         public CustomIconRenderer() {
             multiLayerIcon = new ImageIcon(Utilities.getResourceImageUrl("icon_multilayer_ms.png"));

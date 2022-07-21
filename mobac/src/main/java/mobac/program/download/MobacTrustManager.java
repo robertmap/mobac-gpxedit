@@ -51,7 +51,7 @@ import java.util.Set;
  */
 public class MobacTrustManager implements X509TrustManager {
 
-    private static Logger log = LoggerFactory.getLogger(MobacTrustManager.class);
+    private static final Logger log = LoggerFactory.getLogger(MobacTrustManager.class);
 
     private final X509TrustManager defaultTrustManager;
 
@@ -143,9 +143,7 @@ public class MobacTrustManager implements X509TrustManager {
 
     private boolean isCertificateTrusted(String pubKeySha256Hash) {
         if (additionalTrustedPublicKeys != null) {
-            if (additionalTrustedPublicKeys.contains(pubKeySha256Hash)) {
-                return true;
-            }
+            return additionalTrustedPublicKeys.contains(pubKeySha256Hash);
         }
         return false;
     }
@@ -164,7 +162,7 @@ public class MobacTrustManager implements X509TrustManager {
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            X509Certificate cert = (X509Certificate) chain[0];
+            X509Certificate cert = chain[0];
             serverPublicKeyHash = getPublicKeySha256Hash(cert);
             throw new CertificateException();
         }

@@ -203,7 +203,7 @@ public class MapPackManager {
                 MapSource ms = iterator.next();
                 ms.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev));
                 mapSourcesManager.addMapSource(ms);
-                log.trace("Loaded map source: " + ms.toString() + " (name: " + ms.getName() + ")");
+                log.trace("Loaded map source: " + ms + " (name: " + ms.getName() + ")");
             } catch (Error e) {
                 urlCl = null;
                 throw new MapSourceCreateException(
@@ -332,7 +332,7 @@ public class MapPackManager {
         return updateCount;
     }
 
-    public int getMapPackRevision(File mapPackFile) throws ZipException, IOException {
+    public int getMapPackRevision(File mapPackFile) throws IOException {
         try (ZipFile zip = new ZipFile(mapPackFile)) {
             ZipEntry entry = zip.getEntry("META-INF/MANIFEST.MF");
             if (entry == null) {

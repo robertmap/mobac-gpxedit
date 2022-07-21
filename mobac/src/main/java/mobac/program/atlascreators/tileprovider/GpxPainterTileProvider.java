@@ -46,8 +46,8 @@ public class GpxPainterTileProvider extends ConvertedRawTileProvider {
     private final MapSpace mapSpace;
     private final int zoom;
 
-    private List<Point> points = new ArrayList<Point>();
-    private List<Line> lines = new ArrayList<Line>();
+    private final List<Point> points = new ArrayList<>();
+    private final List<Line> lines = new ArrayList<>();
 
     public GpxPainterTileProvider(MapSourceProvider tileProvider, TileImageFormat tileImageFormat, Gpx gpx) {
         super(tileProvider, tileImageFormat);

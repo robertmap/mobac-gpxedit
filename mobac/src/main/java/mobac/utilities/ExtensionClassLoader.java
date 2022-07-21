@@ -35,7 +35,7 @@ import java.security.PrivilegedAction;
 public class ExtensionClassLoader extends URLClassLoader {
 
     private static final Logger log = LoggerFactory.getLogger(ExtensionClassLoader.class);
-    private File jarDir;
+    private final File jarDir;
 
     private ExtensionClassLoader(URL[] urls, File jarDir) throws MalformedURLException {
         super(urls);

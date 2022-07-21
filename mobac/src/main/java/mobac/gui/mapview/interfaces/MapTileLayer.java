@@ -22,7 +22,7 @@ import java.awt.Graphics;
 
 public interface MapTileLayer {
 
-    public void startPainting(MapSource mapSource);
+    void startPainting(MapSource mapSource);
 
     /**
      * Paints the tile identified by <code>tilex</code>/<code>tiley</code>/
@@ -36,5 +36,5 @@ public interface MapTileLayer {
      * @param tilex
      * @param tiley
      */
-    public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom);
+    void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom);
 }

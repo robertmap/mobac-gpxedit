@@ -80,7 +80,7 @@ public final class TileImageParameters implements Cloneable {
         return new TileImageParameters(attr);
     }
 
-    public static enum Name {
+    public enum Name {
         width, height, format, format_png, format_jpg
     }
 

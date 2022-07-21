@@ -20,16 +20,16 @@ import javax.swing.tree.TreeNode;
 
 public interface LayerInterface extends AtlasObject, Iterable<MapInterface>, CapabilityDeletable, TreeNode {
 
-    public void addMap(MapInterface map);
+    void addMap(MapInterface map);
 
-    public int getMapCount();
+    int getMapCount();
 
-    public MapInterface getMap(int index);
+    MapInterface getMap(int index);
 
-    public AtlasInterface getAtlas();
+    AtlasInterface getAtlas();
 
-    public long calculateTilesToDownload();
+    long calculateTilesToDownload();
 
-    public LayerInterface deepClone(AtlasInterface atlas);
+    LayerInterface deepClone(AtlasInterface atlas);
 
 }

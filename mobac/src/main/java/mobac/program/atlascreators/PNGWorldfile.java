@@ -59,7 +59,7 @@ public class PNGWorldfile extends Glopus {
      * </pre>
      */
     private void writeWorldFile() throws MapCreationException {
-        try (Writer mapWriter = new OutputStreamWriter(new FileOutputStream(new File(layerDir, mapName + ".pgw")), TEXT_FILE_CHARSET);) {
+        try (Writer mapWriter = new OutputStreamWriter(new FileOutputStream(new File(layerDir, mapName + ".pgw")), TEXT_FILE_CHARSET)) {
             // MapSpace mapSpace = mapSource.getMapSpace();
 
             double worldSize = 2 * Math.PI * 6378137;

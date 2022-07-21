@@ -37,8 +37,8 @@ public class CacheTileProvider implements TileProvider {
      */
     private static int PRELOADER_THREAD_NUM = 1;
     protected final TileProvider tileProvider;
-    private Logger log = LoggerFactory.getLogger(CacheTileProvider.class);
-    private Hashtable<CacheKey, SRCachedTile> cache;
+    private final Logger log = LoggerFactory.getLogger(CacheTileProvider.class);
+    private final Hashtable<CacheKey, SRCachedTile> cache;
     private PreLoadThread preLoader = new PreLoadThread();
 
     public CacheTileProvider(TileProvider tileProvider) {
@@ -170,9 +170,7 @@ public class CacheTileProvider implements TileProvider {
             CacheKey other = (CacheKey) obj;
             if (x != other.x)
                 return false;
-            if (y != other.y)
-                return false;
-            return true;
+            return y == other.y;
         }
 
         @Override

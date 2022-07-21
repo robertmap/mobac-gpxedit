@@ -17,5 +17,5 @@
 package mobac.program.interfaces;
 
 public interface CloneableMapSource extends Cloneable {
-    public MapSource clone() throws CloneNotSupportedException;
+    MapSource clone() throws CloneNotSupportedException;
 }

@@ -40,7 +40,7 @@ public class JCoordinateField extends JTextField {
     private static final String INVALID_TEXT = I18nUtils.localizedStringForKey("lp_coords_invalid_text");
     private final double min;
     private final double max;
-    private JCoordinateListener coordinateListener;
+    private final JCoordinateListener coordinateListener;
     private boolean inputIsValid = true;
     private NumberFormat numberFormat;
 
@@ -116,7 +116,7 @@ public class JCoordinateField extends JTextField {
 
     protected class JCoordinateListener implements DocumentListener {
 
-        private Color defaultColor;
+        private final Color defaultColor;
 
         private boolean enabled;
 

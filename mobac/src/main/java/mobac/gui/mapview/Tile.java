@@ -60,7 +60,6 @@ public class Tile {
 
     protected MapSource mapSource;
 
-    ;
     protected int xtile;
     protected int ytile;
     protected int zoom;

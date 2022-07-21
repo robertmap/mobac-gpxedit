@@ -43,7 +43,7 @@ import java.net.URL;
  */
 public class MySocketImplFactory implements SocketImplFactory {
 
-    private static Logger log = LoggerFactory.getLogger(MySocketImplFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(MySocketImplFactory.class);
     private final Constructor<?> constructor;
     private final Method accept;
     private final Method bind;

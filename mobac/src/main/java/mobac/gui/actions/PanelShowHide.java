@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
 
 public class PanelShowHide implements ActionListener {
 
-    private JPanel panel;
+    private final JPanel panel;
 
     public PanelShowHide(JPanel panel) {
         super();

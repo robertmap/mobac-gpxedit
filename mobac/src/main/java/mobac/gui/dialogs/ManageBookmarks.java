@@ -40,13 +40,13 @@ import java.util.ArrayList;
 
 public class ManageBookmarks extends JDialog implements ListSelectionListener, ActionListener {
 
-    private JButton deleteButton;
+    private final JButton deleteButton;
 
-    private JButton applyButton;
+    private final JButton applyButton;
 
-    private JList<Bookmark> bookmarks;
+    private final JList<Bookmark> bookmarks;
 
-    private DefaultListModel<Bookmark> bookmarksModel;
+    private final DefaultListModel<Bookmark> bookmarksModel;
 
     public ManageBookmarks(Window owner) throws HeadlessException {
         super(owner, I18nUtils.localizedStringForKey("dlg_mgn_bookmark_title"));
@@ -95,7 +95,7 @@ public class ManageBookmarks extends JDialog implements ListSelectionListener, A
     protected void apply() {
         ArrayList<Bookmark> bookmarksList = new ArrayList<Bookmark>(bookmarksModel.getSize());
         for (int i = 0; i < bookmarksModel.getSize(); i++)
-            bookmarksList.add((Bookmark) bookmarksModel.get(i));
+            bookmarksList.add(bookmarksModel.get(i));
         Settings.getInstance().placeBookmarks = bookmarksList;
         setVisible(false);
         dispose();

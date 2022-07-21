@@ -220,9 +220,7 @@ public class MercatorPower2MapSpace implements MapSpace {
         if (getClass() != obj.getClass())
             return false;
         MercatorPower2MapSpace other = (MercatorPower2MapSpace) obj;
-        if (tileSize != other.tileSize)
-            return false;
-        return true;
+        return tileSize == other.tileSize;
     }
 
 }

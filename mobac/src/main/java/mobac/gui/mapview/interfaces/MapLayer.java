@@ -34,6 +34,6 @@ public interface MapLayer {
      * @param maxX bottom right x coordinate of the visible map region
      * @param maxY bottom right y coordinate of the visible map region
      */
-    public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY);
+    void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY);
 
 }

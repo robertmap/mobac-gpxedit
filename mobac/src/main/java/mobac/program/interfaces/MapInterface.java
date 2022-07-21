@@ -24,30 +24,30 @@ import java.awt.Point;
 
 public interface MapInterface extends AtlasObject, CapabilityDeletable, TreeNode {
 
-    public Point getMinTileCoordinate();
+    Point getMinTileCoordinate();
 
-    public Point getMaxTileCoordinate();
+    Point getMaxTileCoordinate();
 
-    public int getZoom();
+    int getZoom();
 
-    public MapSource getMapSource();
+    MapSource getMapSource();
 
-    public Dimension getTileSize();
+    Dimension getTileSize();
 
-    public LayerInterface getLayer();
+    LayerInterface getLayer();
 
-    public void setLayer(LayerInterface layer);
+    void setLayer(LayerInterface layer);
 
-    public TileImageParameters getParameters();
+    TileImageParameters getParameters();
 
-    public void setParameters(TileImageParameters p);
+    void setParameters(TileImageParameters p);
 
-    public long calculateTilesToDownload();
+    long calculateTilesToDownload();
 
-    public String getInfoText();
+    String getInfoText();
 
-    public TileFilter getTileFilter();
+    TileFilter getTileFilter();
 
-    public MapInterface deepClone(LayerInterface newLayer);
+    MapInterface deepClone(LayerInterface newLayer);
 
 }

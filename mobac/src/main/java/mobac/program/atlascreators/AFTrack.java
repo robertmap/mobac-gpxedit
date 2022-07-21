@@ -39,7 +39,7 @@ import java.util.Collections;
 @AtlasCreatorName("AFTrack (OSZ)")
 public class AFTrack extends OSMTracker {
 
-    private ArrayList<Integer> zoomLevel = new ArrayList<Integer>();
+    private final ArrayList<Integer> zoomLevel = new ArrayList<>();
 
     private int maxZoom;
     private Point min;

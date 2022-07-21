@@ -150,16 +150,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainGUI extends JFrame implements MapEventListener {
+
     public static final int LEFT_PANEL_MIN_SIZE = 254;
     public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<Image>(3);
     private static final long serialVersionUID = 1L;
     private static final int LEFT_PANEL_MARGIN = 2;
     // MP: get custom font
+    private static final Color labelBackgroundColor = new Color(0, 0, 0, 127);
+    private static final Color checkboxBackgroundColor = new Color(0, 0, 0, 40);
+    private static final Color labelForegroundColor = Color.WHITE;
+    private static final Logger log = LoggerFactory.getLogger(MainGUI.class);
     static Font sCustomFont = null;
-    private static Logger log = LoggerFactory.getLogger(MainGUI.class);
-    private static Color labelBackgroundColor = new Color(0, 0, 0, 127);
-    private static Color checkboxBackgroundColor = new Color(0, 0, 0, 40);
-    private static Color labelForegroundColor = Color.WHITE;
     private static MainGUI mainGUI = null;
 
     static {
@@ -170,7 +171,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
     public final PreviewMap previewMap = new PreviewMap();
     public final JAtlasTree jAtlasTree = new JAtlasTree(previewMap);
-    private AtlasCreate atlasCreateAction = new AtlasCreate(jAtlasTree);
+    private final AtlasCreate atlasCreateAction = new AtlasCreate(jAtlasTree);
     public JCheckBox rulerCheckBox;
     public JButton rulerButtonClear;
     public JTileImageParametersPanel tileImageParametersPanel;
@@ -194,11 +195,11 @@ public class MainGUI extends JFrame implements MapEventListener {
     private JCoordinatesPanel coordinatesPanel;
     private JProfilesPanel profilesPanel;
     private JTileStoreCoveragePanel tileStoreCoveragePanel;
-    private JSplitPane splitPane;
-    private JPanel mapControlPanel = new JPanel(new BorderLayout());
-    private JPanel leftPanel = new JPanel(new GridBagLayout());
+    private final JSplitPane splitPane;
+    private final JPanel mapControlPanel = new JPanel(new BorderLayout());
+    private final JPanel leftPanel = new JPanel(new GridBagLayout());
     private JPanel leftPanelContent = null;
-    private JPanel rightPanel = new JPanel(new GridBagLayout());
+    private final JPanel rightPanel = new JPanel(new GridBagLayout());
     private JCollapsiblePanel zoomLevelsPanel;
     private JCollapsiblePanel atlasContentPanel;
     private JMenuItem smRectangle;
@@ -982,7 +983,7 @@ public class MainGUI extends JFrame implements MapEventListener {
         MapSource tileSource = previewMap.getMapSource();
         int zoomLevels = tileSource.getMaxZoom() - tileSource.getMinZoom() + 1;
         zoomLevels = Math.max(zoomLevels, 0);
-        JCheckBox oldZoomLevelCheckBoxes[] = cbZoom;
+        JCheckBox[] oldZoomLevelCheckBoxes = cbZoom;
         int oldMinZoom = 0;
         if (cbZoom.length > 0)
             oldMinZoom = cbZoom[0].getZoomLevel();
@@ -1121,8 +1122,8 @@ public class MainGUI extends JFrame implements MapEventListener {
                     // hint.append("<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] + "*" + info[2] +
                     // ")");
                 }
-                String hintText = "<html>" + hint.toString() + "</html>";
-                amountOfTilesLabel.setText(String.format(baseText, Long.toString(totalNrOfTiles)));
+                String hintText = "<html>" + hint + "</html>";
+                amountOfTilesLabel.setText(String.format(baseText, totalNrOfTiles));
                 amountOfTilesLabel.setToolTipText(hintText);
             } catch (Exception e) {
                 amountOfTilesLabel.setText(String.format(baseText, "?"));

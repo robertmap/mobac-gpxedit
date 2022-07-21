@@ -33,8 +33,8 @@ public class JDropDownButton extends JButton {
 
     private static final long serialVersionUID = 1L;
 
-    private BasicArrowButton arrowButton;
-    private JPopupMenu buttonPopupMenu;
+    private final BasicArrowButton arrowButton;
+    private final JPopupMenu buttonPopupMenu;
 
     public JDropDownButton(String text) {
         super(text);

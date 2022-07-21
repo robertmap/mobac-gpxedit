@@ -72,10 +72,7 @@ public class Logging {
         if (loadLogbackConfigXmlFromDir(DirectoryManager.currentDir)) {
             return true;
         }
-        if (loadLogbackConfigXmlFromDir(DirectoryManager.programDir)) {
-            return true;
-        }
-        return false;
+        return loadLogbackConfigXmlFromDir(DirectoryManager.programDir);
     }
 
     public static void configureDefaultFileLogging() {

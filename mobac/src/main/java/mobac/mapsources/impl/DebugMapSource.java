@@ -42,9 +42,9 @@ public class DebugMapSource implements MapSource {
     };
     private static final IndexColorModel COLORMODEL = new IndexColorModel(8, 2, COLORS, 1, false);
     private static final Font FONT_LARGE = new Font("Sans Serif", Font.BOLD, 30);
-    private int pngCompressionLevel = Deflater.NO_COMPRESSION;
-    private Color COLOR_BG = new Color(COLORS[1] & 0xFF, COLORS[2] & 0xFF, COLORS[3] & 0xFF);
-    private Color COLOR_VG = new Color(COLORS[4] & 0xFF, COLORS[5] & 0xFF, COLORS[6] & 0xFF);
+    private final int pngCompressionLevel = Deflater.NO_COMPRESSION;
+    private final Color COLOR_BG = new Color(COLORS[1] & 0xFF, COLORS[2] & 0xFF, COLORS[3] & 0xFF);
+    private final Color COLOR_VG = new Color(COLORS[4] & 0xFF, COLORS[5] & 0xFF, COLORS[6] & 0xFF);
 
     public DebugMapSource() {
     }

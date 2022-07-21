@@ -32,9 +32,9 @@ public class JIntField extends JTextField {
     public int min = 0;
     public int max = 0;
     protected Color errorColor = new Color(255, 100, 100);
-    private String errorText;
+    private final String errorText;
 
-    private InputListener listener;
+    private final InputListener listener;
     private boolean inputIsValid = true;
 
     public JIntField(int min, int max, int columns, String errorText) {
@@ -85,7 +85,7 @@ public class JIntField extends JTextField {
 
     protected class InputListener implements DocumentListener {
 
-        private Color defaultColor;
+        private final Color defaultColor;
 
         private InputListener() {
             defaultColor = JIntField.this.getBackground();
@@ -107,7 +107,7 @@ public class JIntField extends JTextField {
         private void setDisplayedValidMode(boolean valid) {
             Color newC = valid ? defaultColor : errorColor;
             JIntField.this.setBackground(newC);
-            String toolTip = valid ? "" : String.format(errorText, new Object[]{min, max});
+            String toolTip = valid ? "" : String.format(errorText, min, max);
             JIntField.this.setToolTipText(toolTip);
             if (toolTip.length() > 0)
                 Utilities.showTooltipNow(JIntField.this);

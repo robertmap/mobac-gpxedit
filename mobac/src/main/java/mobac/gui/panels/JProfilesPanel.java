@@ -37,11 +37,11 @@ public class JProfilesPanel extends JCollapsiblePanel {
 
     private static final long serialVersionUID = 1L;
 
-    private JProfilesComboBox profilesCombo;
-    private JButton reloadButton;
-    private JButton deleteButton;
-    private JButton loadButton;
-    private JButton saveAsButton;
+    private final JProfilesComboBox profilesCombo;
+    private final JButton reloadButton;
+    private final JButton deleteButton;
+    private final JButton loadButton;
+    private final JButton saveAsButton;
 
     public JProfilesPanel(JAtlasTree atlasTree) {
         super(I18nUtils.localizedStringForKey("lp_atlas_profile_title"), new GridBagLayout());

@@ -45,7 +45,7 @@ public class LicensesDialog extends JFrame implements ChangeListener, ActionList
 
     private final JTextArea textArea;
     private final JTabbedPane tab;
-    private LicenseInfo[] licenses = new LicenseInfo[]{ //
+    private final LicenseInfo[] licenses = new LicenseInfo[]{ //
             new LicenseInfo("<h2>Mobile Atlas Creator</h2>", "gpl.txt"),
             new LicenseInfo("<h3>Library slf4j</h3>", "mit.txt"),
             new LicenseInfo("<h3>Library Logback</h3>", "lgpl-2.1.txt"),

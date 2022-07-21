@@ -33,7 +33,7 @@ import java.awt.Stroke;
 
 public class WgsGrid {
 
-    private static final WgsDensity DENSITIES[] = WgsDensity.values();
+    private static final WgsDensity[] DENSITIES = WgsDensity.values();
     private static final Stroke BASIC_STROKE = new BasicStroke(1f);
     private static final int LABEL_OFFSET = 2;
     public final SettingsWgsGrid s;
@@ -236,7 +236,7 @@ public class WgsGrid {
         return stringBuilder.toString();
     }
 
-    public static enum WgsDensity {
+    public enum WgsDensity {
 
         DEGREES_90(0), DEGREES_45(1), DEGREES_30(2), DEGREES_15(3), DEGREES_10(4), DEGREES_5(5), DEGREES_2(6), DEGREE_1(
                 7), MINUTES_30(8), MINUTES_20(9), MINUTES_10(10), MINUTES_5(11), MINUTES_2(12), MINUTE_1(13), SECONDS_30(
@@ -246,7 +246,7 @@ public class WgsGrid {
         public final boolean compressDegree, compressMinute, displayMinute, displaySecond;
         //private final String string;
 
-        private WgsDensity(final int minZoom) {
+        WgsDensity(final int minZoom) {
             this.minZoom = minZoom;
             String[] split = name().split("_");
             int value = Integer.parseInt(split[1]);
@@ -275,7 +275,7 @@ public class WgsGrid {
         }
     }
 
-    public static enum Placement {
+    public enum Placement {
         BOTTOM_RIGHT, BOTTOM_LEFT, TOP_RIGHT, TOP_LEFT
     }
 }

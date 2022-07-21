@@ -112,7 +112,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 }
                 sw.write(s);
             }
-            eventText = "Event: " + sw.toString();
+            eventText = "Event: " + sw;
         }
         showExceptionDialog(thread, t, eventText);
     }
@@ -209,7 +209,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
                 sb.append("\n\n#############################################################\n\n");
                 while (t != null) {
 
-                    sb.append(t.toString());
+                    sb.append(t);
                     printStackTrace(t, sb);
                     sb.append("\n");
 
@@ -328,10 +328,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
     }
 
     private static boolean ignoreException(Throwable t) {
-        if (t instanceof AbortedByUserException) {
-            return true;
-        }
-        return false;
+        return t instanceof AbortedByUserException;
     }
 
     public static void installToolkitEventQueueProxy() {
@@ -419,6 +416,6 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
         }
     }
 
-    public static interface NotABug {
+    public interface NotABug {
     }
 }

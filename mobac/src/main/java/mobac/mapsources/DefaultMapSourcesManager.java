@@ -43,17 +43,17 @@ import java.util.Vector;
 
 public class DefaultMapSourcesManager extends MapSourcesManager {
 
-    private Logger log = LoggerFactory.getLogger(DefaultMapSourcesManager.class);
+    private final Logger log = LoggerFactory.getLogger(DefaultMapSourcesManager.class);
 
     /**
      * All map sources visible to the user independent of it is enabled or disabled
      */
-    private LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<>(50);
+    private final LinkedHashMap<String, MapSource> allMapSources = new LinkedHashMap<>(50);
 
     /**
      * All means all visible map sources to the user plus all layers of multi-layer map sources
      */
-    private HashMap<String, MapSource> allAvailableMapSources = new HashMap<>(50);
+    private final HashMap<String, MapSource> allAvailableMapSources = new HashMap<>(50);
 
     public DefaultMapSourcesManager() {
         // Check for user specific configuration of mapsources directory
@@ -119,10 +119,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
         IntelliJMapPackLoader empl;
         try {
             empl = new IntelliJMapPackLoader(this);
-            if (!empl.loadMapPacks()) {
-                return false;
-            }
-            return true;
+            return empl.loadMapPacks();
         } catch (IOException e) {
             log.error("Failed to load map packs directly from classpath");
         }

@@ -39,7 +39,7 @@ import java.io.OutputStream;
 public class ChecksumOutputStream extends OutputStream {
     int checksum;
     boolean evenByte;
-    private OutputStream nextStream;
+    private final OutputStream nextStream;
 
     /**
      * Constructor

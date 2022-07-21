@@ -26,7 +26,7 @@ import java.io.StringWriter;
 public class MapCreationException extends Exception implements ExceptionExtendedInfo {
 
     private static final long serialVersionUID = 1L;
-    private MapInterface map;
+    private final MapInterface map;
 
     public MapCreationException(String message, MapInterface map, Throwable cause) {
         super(message, cause);

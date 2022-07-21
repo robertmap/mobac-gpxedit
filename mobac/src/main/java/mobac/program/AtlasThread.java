@@ -63,10 +63,10 @@ public class AtlasThread extends Thread
     private boolean quitMobacAfterAtlasCreation = false;
     private DownloadJobProducerThread djp = null;
     private JobDispatcher downloadJobDispatcher;
-    private AtlasProgress ap; // The GUI showing the progress
-    private AtlasInterface atlas;
+    private final AtlasProgress ap; // The GUI showing the progress
+    private final AtlasInterface atlas;
     private AtlasCreator atlasCreator = null;
-    private PauseResumeHandler pauseResumeHandler;
+    private final PauseResumeHandler pauseResumeHandler;
     private int activeDownloads = 0;
     private int jobsCompleted = 0;
     private int jobsRetryError = 0;

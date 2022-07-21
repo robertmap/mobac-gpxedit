@@ -47,7 +47,7 @@ public class GpxElementListener implements MouseListener {
     private final GpxEntry gpxEntry;
 
     private GpxMapController mapController = null;
-    private GpxEditor editor = GpxEditor.getInstance();
+    private final GpxEditor editor = GpxEditor.getInstance();
 
     public GpxElementListener(GpxEntry gpxEntry) {
         this.gpxEntry = gpxEntry;

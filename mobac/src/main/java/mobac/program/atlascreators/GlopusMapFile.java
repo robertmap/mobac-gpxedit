@@ -173,7 +173,7 @@ public class GlopusMapFile extends TrekBuddy {
                 );
                 try (LittleEndianOutputStream out = new LittleEndianOutputStream(
                         new BufferedOutputStream(fout, 16384))) {
-                    out.writeInt((int) 0xff000002);
+                    out.writeInt(0xff000002);
                     out.writeInt(count);
                     int mapNumber = 0;
                     for (GlopusTile gt : tiles) {

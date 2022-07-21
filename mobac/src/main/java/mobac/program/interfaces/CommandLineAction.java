@@ -18,14 +18,14 @@ package mobac.program.interfaces;
 
 public interface CommandLineAction {
 
-    public boolean showSplashScreen();
+    boolean showSplashScreen();
 
-    public boolean showMainGUI();
+    boolean showMainGUI();
 
-    public void afterBasicInitialization();
+    void afterBasicInitialization();
 
-    public void runBeforeMainGUI();
+    void runBeforeMainGUI();
 
-    public void runMainGUI();
+    void runMainGUI();
 
 }

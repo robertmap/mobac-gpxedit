@@ -123,7 +123,7 @@ public class AddGpxTrackAreaPolygonMap implements ActionListener {
                 layer = new Layer(atlasInterface, layerName);
                 success = true;
             } catch (InvalidNameException e) {
-                layerName = name + "_" + Integer.toString(c++);
+                layerName = name + "_" + c++;
             }
         } while (!success);
 
@@ -152,7 +152,7 @@ public class AddGpxTrackAreaPolygonMap implements ActionListener {
         }
 
         for (int zoom : zoomLevels) {
-            String mapName = String.format(mapNameFmt, new Object[]{layerName, zoom});
+            String mapName = String.format(mapNameFmt, layerName, zoom);
             MapInterface map = MapPolygon.createFromMapPolygon(layer, mapName, zoom, maxZoomMap);
             layer.addMap(map);
         }

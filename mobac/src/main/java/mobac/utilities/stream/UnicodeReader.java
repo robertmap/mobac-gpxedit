@@ -46,7 +46,7 @@ public class UnicodeReader extends Reader {
         // Read ahead four bytes and check for BOM marks. Extra bytes are unread
         // back to the stream; only BOM bytes are skipped.
         Charset encoding;
-        byte bom[] = new byte[BOM_SIZE];
+        byte[] bom = new byte[BOM_SIZE];
         int n, unread;
 
         PushbackInputStream pushbackStream = new PushbackInputStream(in, BOM_SIZE);

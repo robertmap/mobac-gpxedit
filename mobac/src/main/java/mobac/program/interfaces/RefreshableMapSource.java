@@ -23,5 +23,5 @@ public interface RefreshableMapSource {
     /**
      * Called whenever {@link PreviewMap#refreshMap()} is executed
      */
-    public void refresh();
+    void refresh();
 }

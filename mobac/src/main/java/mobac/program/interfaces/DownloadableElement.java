@@ -38,7 +38,7 @@ public interface DownloadableElement {
      * download one map tile from the providing web server (or from the
      * tile cache).
      */
-    public Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
-                                            DownloadJobListener listener);
+    Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
+                                     DownloadJobListener listener);
 
 }

@@ -24,7 +24,7 @@ import mobac.gui.mapview.PreviewMap;
  */
 public interface MapSourceInitialDisplayPosition {
 
-    public int getInitialDisplayPositionX();
+    int getInitialDisplayPositionX();
 
-    public int getInitialDisplayPositionY();
+    int getInitialDisplayPositionY();
 }

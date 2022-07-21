@@ -110,7 +110,7 @@ public class GoogleEarthOverlay extends AbstractPlainImage {
             cleanedMapName = cleanedMapName.substring(0, cleanedMapName.length() - 1);
         }
         if (cleanedMapName.startsWith("_")) {
-            cleanedMapName = cleanedMapName.substring(1, cleanedMapName.length());
+            cleanedMapName = cleanedMapName.substring(1);
         }
     }
 

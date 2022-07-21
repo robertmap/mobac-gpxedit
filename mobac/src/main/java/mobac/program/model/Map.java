@@ -48,7 +48,7 @@ import java.util.Enumeration;
 public class Map
         implements Cloneable, MapInterface, ToolTipProvider, CapabilityDeletable, TreeNode, DownloadableElement {
 
-    private static Logger log = LoggerFactory.getLogger(Map.class);
+    private static final Logger log = LoggerFactory.getLogger(Map.class);
     protected String name;
     protected Layer layer;
     protected TileImageParameters parameters = null;
@@ -225,7 +225,7 @@ public class Map
     }
 
     public TreeNode getParent() {
-        return (TreeNode) layer;
+        return layer;
     }
 
     public boolean isLeaf() {

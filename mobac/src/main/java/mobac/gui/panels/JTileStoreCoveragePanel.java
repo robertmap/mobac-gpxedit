@@ -40,11 +40,11 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
     // MP-add
     private static final long serialVersionUID = 1L;
 
-    private JButton showCoverage;
-    private JButton hideCoverage;
-    private JComboBox<MapSource> layerSelector;
-    private JComboBox<Integer> zoomCombo;
-    private PreviewMap mapViewer;
+    private final JButton showCoverage;
+    private final JButton hideCoverage;
+    private final JComboBox<MapSource> layerSelector;
+    private final JComboBox<Integer> zoomCombo;
+    private final PreviewMap mapViewer;
 
     public JTileStoreCoveragePanel(PreviewMap mapViewer) {
         super(I18nUtils.localizedStringForKey("lp_tile_store_title"));

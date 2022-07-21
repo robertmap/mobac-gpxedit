@@ -38,19 +38,19 @@ import java.io.File;
  */
 public class GpxLayer implements MapLayer {
 
-    private static int POINT_RADIUS = 4;
-    private static int POINT_DIAMETER = 2 * POINT_RADIUS;
+    private static final int POINT_RADIUS = 4;
+    private static final int POINT_DIAMETER = 2 * POINT_RADIUS;
     /**
      * the associated gpx object
      */
     private final Gpx gpx;
-    private Color wptPointColor = new Color(0, 0, 200);
-    private Color trkPointColor = Color.RED;
-    private Color rtePointColor = new Color(0, 200, 0);
-    private Stroke outlineStroke = new BasicStroke(1);
+    private final Color wptPointColor = new Color(0, 0, 200);
+    private final Color trkPointColor = Color.RED;
+    private final Color rtePointColor = new Color(0, 200, 0);
+    private final Stroke outlineStroke = new BasicStroke(1);
 
     // private Logger log = LoggerFactory.getLogger(GpxLayer.class);
-    private Stroke lineStroke = new BasicStroke(2.0f);
+    private final Stroke lineStroke = new BasicStroke(2.0f);
     /**
      * the associated gpx file handle
      */
@@ -60,10 +60,10 @@ public class GpxLayer implements MapLayer {
      */
     private JGpxPanel panel;
 
-    private boolean showWaypoints = true;
-    private boolean showWaypointName = true;
-    private boolean showTracks = true;
-    private boolean showRoutes = true;
+    private final boolean showWaypoints = true;
+    private final boolean showWaypointName = true;
+    private final boolean showTracks = true;
+    private final boolean showRoutes = true;
 
     private int lastTrackPointX = Integer.MIN_VALUE;
     private int lastTrackPointY = Integer.MIN_VALUE;

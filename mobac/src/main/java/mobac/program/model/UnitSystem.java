@@ -35,8 +35,8 @@ public enum UnitSystem {
     public final double inchFactor;
     public final double maxAngularDistSmall;
 
-    private UnitSystem(double earthRadius, int unitFactor, double inchFactor, String unitLarge, String unitSmall,
-                       String unitTiny) {
+    UnitSystem(double earthRadius, int unitFactor, double inchFactor, String unitLarge, String unitSmall,
+               String unitTiny) {
         this.earthRadius = earthRadius;
         this.unitFactor = unitFactor;
         this.inchFactor = inchFactor;

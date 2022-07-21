@@ -39,7 +39,7 @@ import java.math.BigDecimal;
  */
 public class GpxMapController extends JMapController implements MouseListener {
 
-    private JGpxPanel panel;
+    private final JGpxPanel panel;
     private GpxEntry entry;
 
     public GpxMapController(PreviewMap map, JGpxPanel panel, boolean enabled) {
@@ -54,7 +54,7 @@ public class GpxMapController extends JMapController implements MouseListener {
             entry = panel.getSelectedEntry();
             Gpx gpx = entry.getLayer().getGpx();
             Point p = e.getPoint();
-            Point tl = ((PreviewMap) map).getTopLeftCoordinate();
+            Point tl = map.getTopLeftCoordinate();
             p.x += tl.x;
             p.y += tl.y;
             MapSpace mapSpace = map.getMapSource().getMapSpace();
@@ -66,7 +66,7 @@ public class GpxMapController extends JMapController implements MouseListener {
             String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("dlg_gpx_inpu_point_name"));
             if (name == null)
                 return;
-            Gpx gpx11 = (Gpx) gpx;
+            Gpx gpx11 = gpx;
             WptType wpt = new WptType();
             wpt.setName(name);
             wpt.setLat(new BigDecimal(lat));
@@ -107,6 +107,6 @@ public class GpxMapController extends JMapController implements MouseListener {
     @Override
     public void disable() {
         super.disable();
-        ((PreviewMap) map).getMapSelectionController().enable();
+        map.getMapSelectionController().enable();
     }
 }

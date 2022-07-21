@@ -47,7 +47,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
     private String name = I18nUtils.localizedStringForKey("Unnamed");
 
     @XmlElements({@XmlElement(name = "Layer", type = Layer.class)})
-    private List<LayerInterface> layers = new LinkedList<LayerInterface>();
+    private List<LayerInterface> layers = new LinkedList<>();
 
     private AtlasOutputFormat outputFormat = AtlasOutputFormat.FORMATS.get(0);
 
@@ -120,9 +120,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
         HashSet<String> names = new HashSet<String>(layers.size());
         for (LayerInterface layer : layers)
             names.add(layer.getName());
-        if (names.size() < layers.size())
-            return true; // at least one duplicate name found
-        return false;
+        return names.size() < layers.size(); // at least one duplicate name found
     }
 
     public double getMinLat() {
@@ -174,7 +172,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
     }
 
     public Enumeration<? extends TreeNode> children() {
-        return (Enumeration<? extends TreeNode>) Collections.enumeration(layers);
+        return Collections.enumeration(layers);
     }
 
     public boolean getAllowsChildren() {
@@ -182,7 +180,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
     }
 
     public TreeNode getChildAt(int childIndex) {
-        return (TreeNode) layers.get(childIndex);
+        return layers.get(childIndex);
     }
 
     public int getChildCount() {

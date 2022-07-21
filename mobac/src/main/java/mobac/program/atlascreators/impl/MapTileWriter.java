@@ -29,9 +29,9 @@ public interface MapTileWriter {
      * @param tileData
      * @throws IOException
      */
-    public void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
+    void writeTile(int tilex, int tiley, String tileType, byte[] tileData)
             throws IOException;
 
-    public void finalizeMap() throws IOException;
+    void finalizeMap() throws IOException;
 
 }

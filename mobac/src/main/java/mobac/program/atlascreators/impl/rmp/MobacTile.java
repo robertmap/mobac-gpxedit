@@ -36,7 +36,7 @@ public class MobacTile {
     private final int tiley;
     private BufferedImage image;
 
-    private BoundingRect boundingRect;
+    private final BoundingRect boundingRect;
 
     public MobacTile(TileProvider tileProvider, MapSpace mapSpace, int tilex, int tiley, int zoom) {
         this.tileProvider = tileProvider;

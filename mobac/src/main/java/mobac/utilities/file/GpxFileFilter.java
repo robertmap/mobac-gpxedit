@@ -21,7 +21,7 @@ import java.io.File;
 
 public class GpxFileFilter extends FileFilter {
 
-    private boolean onlyGpx11;
+    private final boolean onlyGpx11;
 
     public GpxFileFilter(boolean onlyGpx11) {
         this.onlyGpx11 = onlyGpx11;

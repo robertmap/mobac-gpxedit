@@ -35,10 +35,10 @@ public interface TileImageDataWriter extends AutoCloseable {
      *              {@link ByteArrayOutputStream}
      * @throws IOException
      */
-    public void processImage(BufferedImage image, OutputStream out) throws IOException;
+    void processImage(BufferedImage image, OutputStream out) throws IOException;
 
-    public void close();
+    void close();
 
-    public TileImageType getType();
+    TileImageType getType();
 
 }

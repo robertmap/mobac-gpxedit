@@ -19,7 +19,6 @@ package mobac.program.tilestore.berkeleydb;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.EnvironmentLockedException;
 import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
@@ -488,12 +487,12 @@ public class BerkeleyDbTileStore extends TileStore {
 
         long lastAccess;
 
-        public TileDatabase(String mapSourceName) throws IOException, EnvironmentLockedException, DatabaseException {
+        public TileDatabase(String mapSourceName) throws IOException, DatabaseException {
             this(mapSourceName, getStoreDir(mapSourceName));
         }
 
         public TileDatabase(String mapSourceName, File databaseDirectory)
-                throws IOException, EnvironmentLockedException, DatabaseException {
+                throws IOException, DatabaseException {
             log.debug("Opening tile store db: \"{}\"", databaseDirectory);
             File storeDir = databaseDirectory;
             DelayedInterruptThread t = (DelayedInterruptThread) Thread.currentThread();
@@ -569,7 +568,7 @@ public class BerkeleyDbTileStore extends TileStore {
             try {
                 image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
             } catch (Throwable e) {
-                log.error("Failed to create coverage image: " + e.toString());
+                log.error("Failed to create coverage image: " + e);
                 image = null;
                 System.gc();
                 return null;

@@ -107,7 +107,7 @@ public class DirectoryManager {
         final StringBuffer sb = new StringBuffer(cmd.length());
         int lastMatchEnd = 0;
         while (m.find()) {
-            sb.append(cmd.substring(lastMatchEnd, m.start()));
+            sb.append(cmd, lastMatchEnd, m.start());
             final String envVar = m.group(1);
             String envVal = System.getenv(envVar);
             if (envVal == null) {
@@ -130,7 +130,7 @@ public class DirectoryManager {
                     envVal = defPath.getAbsolutePath();
             }
             if (envVal == null)
-                sb.append(cmd.substring(m.start(), m.end()));
+                sb.append(cmd, m.start(), m.end());
             else
                 sb.append(envVal);
             lastMatchEnd = m.end();

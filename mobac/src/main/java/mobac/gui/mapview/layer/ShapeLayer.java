@@ -29,11 +29,10 @@ import java.awt.geom.AffineTransform;
  */
 public class ShapeLayer implements MapLayer {
 
-    private Color color = new Color(0f, 1f, 0f, 0.5f);
+    private final Color color = new Color(0f, 1f, 0f, 0.5f);
 
     private int calculationZoom;
-    private Shape shape;
-    ;
+    private final Shape shape;
 
     public ShapeLayer(Shape shape, int zoom) {
         this.shape = shape;

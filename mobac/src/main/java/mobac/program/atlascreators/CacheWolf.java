@@ -115,12 +115,12 @@ public class CacheWolf extends Ozi {
             affine[2] = (bottomRightLat - topLeftLat) / height;
 
             for (double d : affine)
-                mapWriter.write(Double.toString(d) + "\n");
+                mapWriter.write(d + "\n");
 
-            mapWriter.write(Double.toString(topLeftLat) + "\n");
-            mapWriter.write(Double.toString(topLeftLon) + "\n");
-            mapWriter.write(Double.toString(bottomRightLat) + "\n");
-            mapWriter.write(Double.toString(bottomRightLon) + "\n");
+            mapWriter.write(topLeftLat + "\n");
+            mapWriter.write(topLeftLon + "\n");
+            mapWriter.write(bottomRightLat + "\n");
+            mapWriter.write(bottomRightLon + "\n");
 
             mapWriter.flush();
         }

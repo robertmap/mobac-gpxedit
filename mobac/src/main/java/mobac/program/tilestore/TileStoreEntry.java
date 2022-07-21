@@ -18,18 +18,18 @@ package mobac.program.tilestore;
 
 public interface TileStoreEntry {
 
-    public int getX();
+    int getX();
 
-    public int getY();
+    int getY();
 
-    public int getZoom();
+    int getZoom();
 
     /**
      * This function does never return a <code>null</code> value!
      *
      * @return tile data
      */
-    public byte[] getData();
+    byte[] getData();
 
     /**
      * The time and date in milliseconds (since midnight, January 1, 1970 UTC) when this map tile has been downloaded
@@ -37,25 +37,25 @@ public interface TileStoreEntry {
      *
      * @return Time in milliseconds
      */
-    public long getTimeDownloaded();
+    long getTimeDownloaded();
 
-    public void update(long timeExpires);
+    void update(long timeExpires);
 
     /**
      * @return Last modification time in UTC or <code>0</code> if not supported by the server
      */
-    public long getTimeLastModified();
+    long getTimeLastModified();
 
     /**
      * @return Expiration time in UTC or <code>0</code> if not supported by the server
      */
-    public long getTimeExpires();
+    long getTimeExpires();
 
     /**
      * The eTag contained in the HTTP answer on the last download/check request.
      *
      * @return eTag or <code>null</code> if not supported by the server
      */
-    public String geteTag();
+    String geteTag();
 
 }

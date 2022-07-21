@@ -35,7 +35,7 @@ public class DownloadJobProducerThread extends Thread {
 
     final JobDispatcher downloadJobDispatcher;
     final Enumeration<Job> jobEnumerator;
-    private Logger log = LoggerFactory.getLogger(DownloadJobProducerThread.class);
+    private final Logger log = LoggerFactory.getLogger(DownloadJobProducerThread.class);
 
     public DownloadJobProducerThread(AtlasThread atlasThread, JobDispatcher downloadJobDispatcher,
                                      TarIndexedArchive tileArchive, DownloadableElement de) {

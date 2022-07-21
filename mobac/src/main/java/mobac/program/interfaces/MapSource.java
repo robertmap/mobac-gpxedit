@@ -42,9 +42,7 @@ public interface MapSource {
      *
      * @return maximum zoom value that has to be smaller or equal to {@link JMapViewer#MAX_ZOOM}
      */
-    public int getMaxZoom();
-
-    ;
+    int getMaxZoom();
 
     /**
      * Specifies the minimum zoom value. This value is usually 0. Only for maps that cover a certain region up to a
@@ -52,14 +50,14 @@ public interface MapSource {
      *
      * @return minimum zoom value - usually 0
      */
-    public int getMinZoom();
+    int getMinZoom();
 
     /**
      * A tile layer name has to be unique and has to consist only of characters valid for filenames.
      *
      * @return Name of the tile layer
      */
-    public String getName();
+    String getName();
 
     /**
      * @param zoom
@@ -71,7 +69,7 @@ public interface MapSource {
      * @throws InterruptedException
      * @throws UnrecoverableDownloadException
      */
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+    byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
             InterruptedException;
 
     /**
@@ -84,7 +82,7 @@ public interface MapSource {
      * @throws UnrecoverableDownloadException
      * @throws InterruptedException
      */
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
+    BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
             InterruptedException;
 
     /**
@@ -93,18 +91,18 @@ public interface MapSource {
      *
      * @return file extension of the tile image type
      */
-    public TileImageType getTileImageType();
+    TileImageType getTileImageType();
 
-    public MapSpace getMapSpace();
+    MapSpace getMapSpace();
 
-    public Color getBackgroundColor();
+    Color getBackgroundColor();
 
     @XmlTransient
-    public MapSourceLoaderInfo getLoaderInfo();
+    MapSourceLoaderInfo getLoaderInfo();
 
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo);
+    void setLoaderInfo(MapSourceLoaderInfo loaderInfo);
 
-    public enum LoadMethod {
+    enum LoadMethod {
         DEFAULT, CACHE, SOURCE
     }
 

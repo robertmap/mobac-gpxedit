@@ -238,7 +238,7 @@ public class MapSelection {
     public String toString() {
         EastNorthCoordinate max = getMax();
         EastNorthCoordinate min = getMin();
-        return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", new Object[]{max.lat, max.lon, min.lat, min.lon});
+        return String.format("lat/lon: max(%6f/%6f) min(%6f/%6f)", max.lat, max.lon, min.lat, min.lon);
     }
 
 }

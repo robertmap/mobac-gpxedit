@@ -137,9 +137,9 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
         FORMATS.add(TILESTORE);
     }
 
-    private Class<? extends AtlasCreator> atlasCreatorClass;
-    private String typeName;
-    private String name;
+    private final Class<? extends AtlasCreator> atlasCreatorClass;
+    private final String typeName;
+    private final String name;
 
     private AtlasOutputFormat(Class<? extends AtlasCreator> atlasCreatorClass, String typeName, String name) {
         this.atlasCreatorClass = atlasCreatorClass;

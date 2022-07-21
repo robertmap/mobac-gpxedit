@@ -39,17 +39,17 @@ public enum CoordinateStringFormat {
      * JNumberFormatMenuItem("Deg Min Sec,2 (local)",
      */
     //private final String displayName;
-    private NumberFormat numberFormatLatitude;
-    private NumberFormat numberFormatLongitude;
+    private final NumberFormat numberFormatLatitude;
+    private final NumberFormat numberFormatLongitude;
 
-    private CoordinateStringFormat(NumberFormat numberFormat) {
+    CoordinateStringFormat(NumberFormat numberFormat) {
         //this.displayName = displayName;
         this.numberFormatLatitude = numberFormat;
         this.numberFormatLongitude = numberFormat;
     }
 
-    private CoordinateStringFormat(NumberFormat numberFormatLatitude,
-                                   NumberFormat numberFormatLongitude) {
+    CoordinateStringFormat(NumberFormat numberFormatLatitude,
+                           NumberFormat numberFormatLongitude) {
         //this.displayName = displayName;
         this.numberFormatLatitude = numberFormatLatitude;
         this.numberFormatLongitude = numberFormatLongitude;

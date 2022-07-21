@@ -20,7 +20,7 @@ import mobac.utilities.I18nUtils;
 
 public class GridZoom {
 
-    private int zoom;
+    private final int zoom;
 
     public GridZoom(int zoom) {
         this.zoom = zoom;

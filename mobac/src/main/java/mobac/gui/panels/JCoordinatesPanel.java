@@ -48,11 +48,11 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 
     public static final String NAME = "Coordinates";//用于持久化
     private static final long serialVersionUID = 1L;
-    private JCoordinateField latMinTextField;
-    private JCoordinateField latMaxTextField;
-    private JCoordinateField lonMinTextField;
-    private JCoordinateField lonMaxTextField;
-    private JButton applySelectionButton;
+    private final JCoordinateField latMinTextField;
+    private final JCoordinateField latMaxTextField;
+    private final JCoordinateField lonMinTextField;
+    private final JCoordinateField lonMaxTextField;
+    private final JButton applySelectionButton;
 
     private CoordinateStringFormat csf = CoordinateStringFormat.DEG_ENG;
 

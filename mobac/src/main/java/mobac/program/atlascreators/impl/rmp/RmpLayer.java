@@ -42,7 +42,7 @@ import java.util.List;
 public class RmpLayer {
     private static final Logger log = LoggerFactory.getLogger(RmpLayer.class);
     private final AtlasCreator atlasCreator;
-    private List<Tiledata> tiles;
+    private final List<Tiledata> tiles;
     private TLMEntry tlmFile = null;
 
     /**

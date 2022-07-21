@@ -30,7 +30,7 @@ public class NodeTransferWrapper implements Transferable {
     public static final DataFlavor ATLAS_OBJECT_FLAVOR = new DataFlavor(AtlasObject.class, "AtlasObject");
     public static final DataFlavor[] FLAVORS = new DataFlavor[]{ATLAS_OBJECT_FLAVOR};
 
-    private TreeNode node;
+    private final TreeNode node;
 
     public NodeTransferWrapper(TreeNode node) {
         this.node = node;

@@ -25,7 +25,7 @@ public interface HttpMapSource extends MapSource {
      * @return The supported tile update mechanism
      * @see TileUpdate
      */
-    public TileUpdate getTileUpdate();
+    TileUpdate getTileUpdate();
 
     /**
      * Constructs the tile url connection. If necessary the url connection can be prepared with cookies or other http
@@ -36,9 +36,9 @@ public interface HttpMapSource extends MapSource {
      * @param tiley tile number on y-axis for the specified <code>zoom</code> level
      * @return the initialized urlConnection for downloading the specified tile image
      */
-    public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException;
+    HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException;
 
-    public void prepareConnection(HttpURLConnection connection) throws ProtocolException;
+    void prepareConnection(HttpURLConnection connection) throws ProtocolException;
 
     /**
      * Specifies the different mechanisms for detecting updated tiles respectively only download newer tiles than those
@@ -56,7 +56,7 @@ public interface HttpMapSource extends MapSource {
      * <li>{@link #None} The server does not support any of the listed mechanisms.</li>
      * </ul>
      */
-    public enum TileUpdate {
+    enum TileUpdate {
         IfNoneMatch, ETag, IfModifiedSince, LastModified, None
     }
 }

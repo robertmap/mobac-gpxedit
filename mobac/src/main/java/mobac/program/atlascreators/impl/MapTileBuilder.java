@@ -63,7 +63,7 @@ public class MapTileBuilder {
      * A simple local cache holding the last 10 loaded original tiles. If the custom tile size is smaller than 256x256
      * the efficiency of this cache is very high (~ 75% hit rate).
      */
-    private CachedTile[] cache = new CachedTile[10];
+    private final CachedTile[] cache = new CachedTile[10];
     private int cachePos = 0;
 
     /**

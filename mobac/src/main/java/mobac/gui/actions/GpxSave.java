@@ -35,8 +35,8 @@ import java.io.File;
 
 public class GpxSave implements ActionListener {
 
-    private JGpxPanel panel;
-    private boolean saveAs;
+    private final JGpxPanel panel;
+    private final boolean saveAs;
 
     public GpxSave(JGpxPanel panel) {
         this(panel, false);

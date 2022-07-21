@@ -311,7 +311,7 @@ public class Utilities {
      */
     public static String formatBytes(long bytes) {
         if (bytes < 1000) {
-            return Long.toString(bytes) + " " + I18nUtils.localizedStringForKey("Bytes");
+            return bytes + " " + I18nUtils.localizedStringForKey("Bytes");
         }
         if (bytes < 1000000) {
             return FORMAT_2_DEC.format(bytes / 1024d) + " " + I18nUtils.localizedStringForKey("KiByte");
@@ -489,7 +489,7 @@ public class Utilities {
         double tTmpMinutes = (tAbsCoord - tDegree) * 60;
         int tMinutes = (int) tTmpMinutes;
         double tSeconds = (tTmpMinutes - tMinutes) * 60;
-        return c + tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'" + cDmsSecondFormatter.format(tSeconds) + "\"";
+        return c + tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "'" + cDmsSecondFormatter.format(tSeconds) + "\"";
     }
 
     public static void setHttpProxyHost(String host) {

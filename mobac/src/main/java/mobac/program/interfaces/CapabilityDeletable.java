@@ -26,5 +26,5 @@ import mobac.program.model.AtlasTreeModel;
  */
 public interface CapabilityDeletable {
 
-    public void delete();
+    void delete();
 }

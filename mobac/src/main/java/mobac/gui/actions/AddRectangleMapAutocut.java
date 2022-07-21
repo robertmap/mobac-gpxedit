@@ -71,7 +71,7 @@ public class AddRectangleMapAutocut implements ActionListener {
                 layer = new Layer(atlasInterface, layerName);
                 success = true;
             } catch (InvalidNameException e) {
-                layerName = name + "_" + Integer.toString(c++);
+                layerName = name + "_" + c++;
             }
         } while (!success);
         for (int zoom : zoomLevels) {
@@ -79,7 +79,7 @@ public class AddRectangleMapAutocut implements ActionListener {
             Point br = ms.getBottomRightPixelCoordinate(zoom);
             TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
             try {
-                String mapName = String.format(mapNameFmt, new Object[]{layerName, zoom});
+                String mapName = String.format(mapNameFmt, layerName, zoom);
                 layer.addMapsAutocut(mapName, mapSource, tl, br, zoom, customTileParameters, settings.maxMapSize, settings.mapOverlapTiles);
             } catch (InvalidNameException e) {
                 Logging.LOG.error("", e);

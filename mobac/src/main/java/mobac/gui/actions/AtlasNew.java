@@ -73,7 +73,7 @@ public class AtlasNew implements ActionListener {
         if (result != JOptionPane.OK_OPTION)
             return;
 
-        AtlasOutputFormat format = (AtlasOutputFormat) atlasFormatList.getSelectedValue();
+        AtlasOutputFormat format = atlasFormatList.getSelectedValue();
         mg.jAtlasTree.newAtlas(atlasName.getText(), format);
         mg.getParametersPanel().atlasFormatChanged(format);
     }

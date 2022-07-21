@@ -25,29 +25,29 @@ public interface MapEventListener {
     /**
      * the selection changed
      */
-    public void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
+    void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
 
     /**
      * the zoom changed
      */
-    public void zoomChanged(int newZoomLevel);
+    void zoomChanged(int newZoomLevel);
 
     /**
      * the grid zoom changed
      */
-    public void gridZoomChanged(int newGridZoomLevel);
+    void gridZoomChanged(int newGridZoomLevel);
 
     /**
      * select the next map source from the map list
      */
-    public void selectNextMapSource();
+    void selectNextMapSource();
 
     /**
      * select the previous map source from the map list
      */
-    public void selectPreviousMapSource();
+    void selectPreviousMapSource();
 
-    public void mapSourceChanged(MapSource newMapSource);
+    void mapSourceChanged(MapSource newMapSource);
 
-    public void mapSelectionControllerChanged(JMapController newMapController);
+    void mapSelectionControllerChanged(JMapController newMapController);
 }

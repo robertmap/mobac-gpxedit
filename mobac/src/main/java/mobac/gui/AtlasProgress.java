@@ -66,10 +66,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 
     private static final long serialVersionUID = -1L;
     private static final Timer TIMER = new Timer(true);
-    private static Logger log = LoggerFactory.getLogger(AtlasProgress.class);
-    private static String TEXT_MAP_DOWNLOAD = I18nUtils.localizedStringForKey("dlg_download_zoom_level_progress");
-    private static String TEXT_PERCENT = I18nUtils.localizedStringForKey("dlg_download_done_percent");
-    private static String TEXT_TENTHPERCENT = I18nUtils.localizedStringForKey("dlg_download_done_tenthpercent");
+    private static final Logger log = LoggerFactory.getLogger(AtlasProgress.class);
+    private static final String TEXT_MAP_DOWNLOAD = I18nUtils.localizedStringForKey("dlg_download_zoom_level_progress");
+    private static final String TEXT_PERCENT = I18nUtils.localizedStringForKey("dlg_download_done_percent");
+    private static final String TEXT_TENTHPERCENT = I18nUtils.localizedStringForKey("dlg_download_done_tenthpercent");
     private final Data data = new Data();
     private JProgressBar atlasProgressBar;
     private JProgressBar mapDownloadProgressBar;
@@ -113,7 +113,7 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
     private AtlasCreationController downloadControlListener = null;
     private UpdateTask updateTask = null;
     private GUIUpdater guiUpdater = null;
-    private AtlasThread atlasThread;
+    private final AtlasThread atlasThread;
     private ArrayList<MapInfo> mapInfos = null;
 
     public AtlasProgress(AtlasThread atlasThread) {
@@ -410,18 +410,18 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
             int minutes = (int) (longSeconds / 60);
             int seconds = (int) (longSeconds % 60);
             if (minutes > 0)
-                timeString += Integer.toString(minutes) + " "
+                timeString += minutes + " "
                         + (minutes == 1 ? I18nUtils.localizedStringForKey("minute")
                         : I18nUtils.localizedStringForKey("minutes"))
                         + " ";
-            timeString += Integer.toString(seconds) + " " + (seconds == 1 ? I18nUtils.localizedStringForKey("second")
+            timeString += seconds + " " + (seconds == 1 ? I18nUtils.localizedStringForKey("second")
                     : I18nUtils.localizedStringForKey("seconds"));
         }
         return timeString;
     }
 
     public void setZoomLevel(int theZoomLevel) {
-        mapDownloadTitle.setText(TEXT_MAP_DOWNLOAD + Integer.toString(theZoomLevel));
+        mapDownloadTitle.setText(TEXT_MAP_DOWNLOAD + theZoomLevel);
     }
 
     public void atlasCreationFinished() {
@@ -518,13 +518,13 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
         SwingUtilities.invokeLater(guiUpdater);
     }
 
-    public static interface AtlasCreationController {
+    public interface AtlasCreationController {
 
-        public void abortAtlasCreation();
+        void abortAtlasCreation();
 
-        public void pauseResumeAtlasCreation();
+        void pauseResumeAtlasCreation();
 
-        public boolean isPaused();
+        boolean isPaused();
 
     }
 

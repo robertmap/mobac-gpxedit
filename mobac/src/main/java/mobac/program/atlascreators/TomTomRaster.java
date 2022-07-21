@@ -227,7 +227,7 @@ public class TomTomRaster extends AtlasCreator {
         sw.write(latitudeMin + "\r\n");
         sw.write("0\r\n");
         sw.write("65535\r\n");
-        sw.write(Integer.toString(width) + "\r\n");
+        sw.write(width + "\r\n");
         sw.write(Integer.toString(height));
 
         int i = imageFileName.lastIndexOf('.');

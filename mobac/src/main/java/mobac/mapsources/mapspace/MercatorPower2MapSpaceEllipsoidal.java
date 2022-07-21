@@ -158,9 +158,7 @@ public class MercatorPower2MapSpaceEllipsoidal extends MercatorPower2MapSpace {
         MercatorPower2MapSpaceEllipsoidal other = (MercatorPower2MapSpaceEllipsoidal) obj;
         if (Double.doubleToLongBits(excentricity) != Double.doubleToLongBits(other.excentricity))
             return false;
-        if (Double.doubleToLongBits(excentricitySquared) != Double.doubleToLongBits(other.excentricitySquared))
-            return false;
-        return true;
+        return Double.doubleToLongBits(excentricitySquared) == Double.doubleToLongBits(other.excentricitySquared);
     }
 
 }

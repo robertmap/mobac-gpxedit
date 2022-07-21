@@ -86,7 +86,7 @@ public class ScaleBar {
         g.fillRect(posX, posY - 10, w2, 20);
         g.setColor(Color.BLACK);
         g.drawRect(posX, posY - 10, w2, 20);
-        String value = Integer.toString((int) dist2) + " " + unit;
+        String value = ((int) dist2) + " " + unit;
         g.setFont(FONT);
         g.drawString(value, posX + 10, posY + 4);
     }

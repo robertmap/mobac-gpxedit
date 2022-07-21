@@ -91,9 +91,9 @@ public class PngXxlWriter {
 
     private static final int BUFFER_SIZE = 128 * 1024;
     ImageDataChunkWriter imageDataChunkWriter;
-    private int width;
-    private int height;
-    private DataOutputStream dos;
+    private final int width;
+    private final int height;
+    private final DataOutputStream dos;
 
     /**
      * Creates an PNG writer instance for an image with the specified width and

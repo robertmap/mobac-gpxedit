@@ -18,7 +18,7 @@ package mobac.program.interfaces;
 
 public interface MapSourceListener {
 
-    public void tileDownloaded(int size);
+    void tileDownloaded(int size);
 
-    public void tileLoadedFromCache(int size);
+    void tileLoadedFromCache(int size);
 }

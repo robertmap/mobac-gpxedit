@@ -29,7 +29,7 @@ public interface TileLoaderListener {
      *
      * @param tile
      */
-    public void tileLoadingFinished(Tile tile, boolean success);
+    void tileLoadingFinished(Tile tile, boolean success);
 
-    public MemoryTileCache getTileImageCache();
+    MemoryTileCache getTileImageCache();
 }

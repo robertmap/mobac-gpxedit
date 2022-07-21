@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class GEMFFileCreator {
      * of the folder will be the name of the source in the archive.
      */
     public GEMFFileCreator(final String pLocation, final List<File> pSourceFolders, Logger log)
-            throws FileNotFoundException, IOException {
+            throws IOException {
 
         /**
          * <pre>
@@ -393,5 +392,4 @@ public class GEMFFileCreator {
         }
     }
 
-    ;
 }

@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class JMenuItem2 extends JMenuItem implements ActionListener {
 
-    private Class<? extends ActionListener> actionClass;
+    private final Class<? extends ActionListener> actionClass;
 
     public JMenuItem2(String text, int mnemonic, Class<? extends ActionListener> actionClass) {
         super(text, mnemonic);

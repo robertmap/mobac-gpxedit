@@ -121,7 +121,7 @@ public class MapPolygon extends Map {
         PathIterator pi = area.getPathIterator(null);
         ArrayList<Integer> xPoints = new ArrayList<Integer>(100);
         ArrayList<Integer> yPoints = new ArrayList<Integer>(100);
-        double coords[] = new double[6];
+        double[] coords = new double[6];
         while (!pi.isDone()) {
             int type = pi.currentSegment(coords);
             switch (type) {
@@ -151,8 +151,8 @@ public class MapPolygon extends Map {
         Polygon oldPolygon = map.getPolygon();
         int oldZoom = map.getZoom();
         MapSpace mapSpace = map.getMapSource().getMapSpace();
-        int xPoints[] = new int[oldPolygon.npoints];
-        int yPoints[] = new int[oldPolygon.npoints];
+        int[] xPoints = new int[oldPolygon.npoints];
+        int[] yPoints = new int[oldPolygon.npoints];
         Point p = new Point();
         for (int i = 0; i < xPoints.length; i++) {
             p.x = oldPolygon.xpoints[i];

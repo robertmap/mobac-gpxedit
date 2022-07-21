@@ -63,7 +63,7 @@ public class ProgramInfo {
             }
             if (!versionSet) {
                 String rev = System.getProperty("mobac.revision.fallback");
-                SVN_REVISION = Integer.toString(Utilities.parseSVNRevision(rev)) + " exported";
+                SVN_REVISION = Utilities.parseSVNRevision(rev) + " exported";
             }
         } catch (Exception e) {
             Logging.LOG.error("Error reading mobac-rev.properties", e);

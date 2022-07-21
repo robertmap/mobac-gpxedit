@@ -52,9 +52,9 @@ public class RmpWriter {
     private final ArrayList<EntryInfo> entries = new ArrayList<EntryInfo>();
     private final File rmpFile;
     private final RandomAccessFile rmpOutputFile;
-    private int projectedEntryCount;
+    private final int projectedEntryCount;
 
-    private ChecksumOutputStream entryOut;
+    private final ChecksumOutputStream entryOut;
 
     /**
      * @param imageName
@@ -239,11 +239,8 @@ public class RmpWriter {
             } else if (!extendsion.equals(other.extendsion))
                 return false;
             if (name == null) {
-                if (other.name != null)
-                    return false;
-            } else if (!name.equals(other.name))
-                return false;
-            return true;
+                return other.name == null;
+            } else return name.equals(other.name);
         }
 
     }

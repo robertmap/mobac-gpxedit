@@ -24,7 +24,6 @@ public class MapSourceLoaderInfo {
 
     protected final LoaderType loaderType;
 
-    ;
     protected final File sourceFile;
     protected final long sourceFileLastModified;
     protected final long sourceFileSize;
@@ -110,7 +109,7 @@ public class MapSourceLoaderInfo {
 
         public final String displayName;
 
-        private LoaderType(String displayName) {
+        LoaderType(String displayName) {
             this.displayName = displayName;
         }
     }

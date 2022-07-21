@@ -129,8 +129,8 @@ public class JobDispatcher {
         return false;
     }
 
-    public static interface Job {
-        public void run(JobDispatcher dispatcher) throws Exception;
+    public interface Job {
+        void run(JobDispatcher dispatcher) throws Exception;
     }
 
     /**

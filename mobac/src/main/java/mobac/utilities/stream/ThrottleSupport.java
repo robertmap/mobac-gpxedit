@@ -37,7 +37,7 @@ public class ThrottleSupport {
 
     // --- Data field(s) ---
 
-    private static Logger logger = LoggerFactory.getLogger(ThrottleSupport.class);
+    private static final Logger logger = LoggerFactory.getLogger(ThrottleSupport.class);
 
     /**
      * bytes per tick

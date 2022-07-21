@@ -53,7 +53,7 @@ public class SettingsGUITileStore extends JPanel {
     public final JCheckBox tileStoreEnabled;
     private final JPanel tileStoreInfoPanel;
     protected DelayedInterruptThread tileStoreAsyncThread = null;
-    private List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<TileSourceInfoComponents>();
+    private final List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<>();
     private JLabel totalTileCountLabel;
     private JLabel totalTileSizeLabel;
 
@@ -122,7 +122,7 @@ public class SettingsGUITileStore extends JPanel {
                 totalTileCount += count;
                 totalTileSize += size;
             }
-            final String totalTileCountText = "<html><b>" + Long.toString(totalTileCount) + "</b></html>";
+            final String totalTileCountText = "<html><b>" + totalTileCount + "</b></html>";
             final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>";
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {

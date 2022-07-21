@@ -99,10 +99,8 @@ public class SettingsGUI extends JDialog {
     private static final long MBIT1 = 1000000 / 8;
     private final Settings settings = Settings.getInstance();
 
-    ;
     private final SettingsGUIPaper paperAtlas;
 
-    ;
     private final SettingsGUIWgsGrid display;
     private JComboBox<UnitSystem> unitSystem;
 
@@ -838,7 +836,7 @@ public class SettingsGUI extends JDialog {
         public final long limit;
         public final String description;
 
-        private Bandwidth(String description, long limit) {
+        Bandwidth(String description, long limit) {
             this.description = description;
             this.limit = limit;
         }
@@ -860,7 +858,7 @@ public class SettingsGUI extends JDialog {
         private final Locale locale;
         private final String displayName;
 
-        private SupportLocale(Locale locale, String displayName) {
+        SupportLocale(Locale locale, String displayName) {
             this.locale = locale;
             this.displayName = displayName;
         }

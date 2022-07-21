@@ -34,16 +34,16 @@ public interface RmpFileEntry {
      *
      * @throws InterruptedException
      */
-    public void writeFileContent(OutputStream os) throws IOException, InterruptedException;
+    void writeFileContent(OutputStream os) throws IOException, InterruptedException;
 
     /**
      * Returns the name of the file without extension
      */
-    public String getFileName();
+    String getFileName();
 
     /**
      * Returns the extension of the file
      */
-    public String getFileExtension();
+    String getFileExtension();
 
 }

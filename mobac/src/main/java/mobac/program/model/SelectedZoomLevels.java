@@ -24,7 +24,7 @@ import java.util.TreeSet;
 
 public class SelectedZoomLevels {
 
-    private TreeSet<Integer> zoomLevels = new TreeSet<>();
+    private final TreeSet<Integer> zoomLevels = new TreeSet<>();
 
     public SelectedZoomLevels(JZoomCheckBox[] zoomCheckboxes) {
         for (JZoomCheckBox cb : zoomCheckboxes) {
@@ -45,7 +45,7 @@ public class SelectedZoomLevels {
     }
 
     public int[] getZoomLevels() {
-        int result[] = new int[zoomLevels.size()];
+        int[] result = new int[zoomLevels.size()];
         int i = 0;
         for (Integer z : zoomLevels) {
             result[i++] = z.intValue();

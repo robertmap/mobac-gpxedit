@@ -45,13 +45,13 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
     }
 
     public MapSource removeElement(int index) {
-        fireIntervalRemoved((Object) this, index, index);
+        fireIntervalRemoved(this, index, index);
         return mapSources.remove(index);
     }
 
     public void addElement(MapSource element) {
         mapSources.add(element);
-        fireIntervalAdded((Object) this, mapSources.size(), mapSources.size());
+        fireIntervalAdded(this, mapSources.size(), mapSources.size());
     }
 
     public boolean moveUp(int index) {

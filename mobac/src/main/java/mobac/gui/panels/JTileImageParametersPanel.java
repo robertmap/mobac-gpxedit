@@ -50,13 +50,13 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
     private static final long serialVersionUID = 1L;
     private static boolean JPEG_TESTED = false;
 
-    private JCheckBox enableCustomTileProcessingCheckButton;
-    private JLabel tileSizeWidthLabel;
-    private JLabel tileSizeHeightLabel;
-    private JLabel tileImageFormatLabel;
-    private JTileSizeCombo tileSizeWidth;
-    private JTileSizeCombo tileSizeHeight;
-    private JComboBox<TileImageFormat> tileImageFormat;
+    private final JCheckBox enableCustomTileProcessingCheckButton;
+    private final JLabel tileSizeWidthLabel;
+    private final JLabel tileSizeHeightLabel;
+    private final JLabel tileImageFormatLabel;
+    private final JTileSizeCombo tileSizeWidth;
+    private final JTileSizeCombo tileSizeHeight;
+    private final JComboBox<TileImageFormat> tileImageFormat;
 
     private boolean widthEnabled = true;
     private boolean heightEnabled = true;

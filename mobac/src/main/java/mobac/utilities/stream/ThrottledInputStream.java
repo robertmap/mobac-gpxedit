@@ -30,7 +30,7 @@ public class ThrottledInputStream extends FilterInputStream {
 
     // --- Data Field(s) ---
 
-    private static ThrottleSupport ts = new ThrottleSupport();
+    private static final ThrottleSupport ts = new ThrottleSupport();
     private int unused = 0;
 
     // --- Constructor(s) ---

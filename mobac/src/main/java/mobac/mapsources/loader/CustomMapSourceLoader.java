@@ -85,6 +85,7 @@ public class CustomMapSourceLoader {
                     CustomLocalTileFilesMapSource.class, //
                     CustomLocalTileZipMapSource.class, //
                     CustomLocalTileSQliteMapSource.class, //
+
                     CustomLocalAqmMapSource.class};
             context = JAXBContext.newInstance(customMapClasses);
         } catch (JAXBException e) {
@@ -147,7 +148,7 @@ public class CustomMapSourceLoader {
             for (int i = 0; i < children.getLength(); i++) {
                 Node n = children.item(i);
                 if (n instanceof Comment) {
-                    String comment = ((Comment) n).getNodeValue().trim();
+                    String comment = n.getNodeValue().trim();
                     if (comment.startsWith(MOBAC_IGNORE_TAG)) {
                         comment = comment.substring(MOBAC_IGNORE_TAG.length()).trim();
                         Collections.addAll(elementFilter, comment.split("[,;\\s]+"));

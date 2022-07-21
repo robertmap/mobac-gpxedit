@@ -33,5 +33,5 @@ public interface TileFilter {
      * <li><code>false</code>:tile did not pass the filter and should be excluded</li>
      * </ul>
      */
-    public boolean testTile(int x, int y, int zoom, MapSource mapSource);
+    boolean testTile(int x, int y, int zoom, MapSource mapSource);
 }

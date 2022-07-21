@@ -57,8 +57,8 @@ public class Profile implements Comparable<Profile> {
     public static final Pattern PROFILE_FILENAME_PATTERN = Pattern
             .compile(PROFILE_FILENAME_PREFIX + "(" + PROFILE_NAME_REGEX + ").xml");
     public static final Profile DEFAULT = new Profile();
-    private static Logger log = LoggerFactory.getLogger(Profile.class);
-    private static Vector<Profile> profiles = new Vector<>();
+    private static final Logger log = LoggerFactory.getLogger(Profile.class);
+    private static final Vector<Profile> profiles = new Vector<>();
 
     private final File file;
     private final String name;

@@ -66,7 +66,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      */
     protected static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(JMapViewer.class);
+    private static final Logger log = LoggerFactory.getLogger(JMapViewer.class);
     public List<MapLayer> mapLayers;
     protected TileLoader tileLoader;
     protected MemoryTileCache tileCache;
@@ -361,7 +361,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         int bottomRightY = topLeftY + getHeight();
         try {
             for (MapLayer l : mapLayers) {
-                l.paint(this, (Graphics2D) g, zoom, topLeftX, topLeftY, bottomRightX, bottomRightY);
+                l.paint(this, g, zoom, topLeftX, topLeftY, bottomRightX, bottomRightY);
             }
         } catch (ConcurrentModificationException e) {
             // This may happen when multiple GPX files are loaded at once and in the mean time the map view is

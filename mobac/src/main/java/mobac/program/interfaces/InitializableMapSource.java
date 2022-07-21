@@ -20,6 +20,6 @@ import mobac.exceptions.MapSourceInitializationException;
 
 public interface InitializableMapSource extends MapSource {
 
-    public void initialize() throws MapSourceInitializationException;
+    void initialize() throws MapSourceInitializationException;
 
 }

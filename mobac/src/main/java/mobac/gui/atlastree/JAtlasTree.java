@@ -80,8 +80,8 @@ public class JAtlasTree extends JTree implements Autoscroll {
     protected KeyStroke deleteNodeKS;
     protected DragDropController ddc;
     protected boolean displaySelectedMapArea = false;
-    private AtlasTreeModel treeModel;
-    private PreviewMap mapView;
+    private final AtlasTreeModel treeModel;
+    private final PreviewMap mapView;
 
     public JAtlasTree(PreviewMap mapView) {
         super(new AtlasTreeModel());

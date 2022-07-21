@@ -55,7 +55,7 @@ public class PreviewMap extends JMapViewer {
     public static final int MAP_CONTROLLER_GPX = 1;
     protected static final Font LOADING_FONT = new Font("Sans Serif", Font.BOLD, 30);
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(PreviewMap.class);
+    private static final Logger log = LoggerFactory.getLogger(PreviewMap.class);
     public final Ruler ruler = new Ruler(this);
     private final WgsGrid wgsGrid = new WgsGrid(Settings.getInstance().wgsGrid, this);
     public boolean isMeasuring = false;
@@ -115,8 +115,9 @@ public class PreviewMap extends JMapViewer {
     public void settingsLoad() {
         Settings settings = Settings.getInstance();
         MapSource mapSource = MapSourcesManager.getInstance().getSourceByName(settings.mapviewMapSource);
-        if (mapSource != null)
+        if (mapSource != null) {
             setMapSource(mapSource);
+        }
         EastNorthCoordinate c = settings.mapviewCenterCoordinate;
         gridZoom = settings.mapviewGridZoom;
         setDisplayPositionByLatLon(c, settings.mapviewZoom);

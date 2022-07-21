@@ -30,16 +30,14 @@ import java.awt.Point;
  */
 public interface MapSpace {
 
-    public ProjectionCategory getProjectionCategory();
+    ProjectionCategory getProjectionCategory();
 
-    ;
-
-    public int getMaxPixels(int zoom);
+    int getMaxPixels(int zoom);
 
     /**
      * @return size (height and width) of each tile in pixel
      */
-    public int getTileSize();
+    int getTileSize();
 
     /**
      * Converts the horizontal pixel coordinate from map space to longitude.
@@ -48,7 +46,7 @@ public interface MapSpace {
      * @param zoom
      * @return
      */
-    public int cLonToX(double lon, int zoom);
+    int cLonToX(double lon, int zoom);
 
     /**
      * Converts the vertical pixel coordinate from map space to latitude.
@@ -57,7 +55,7 @@ public interface MapSpace {
      * @param zoom
      * @return
      */
-    public int cLatToY(double lat, int zoom);
+    int cLatToY(double lat, int zoom);
 
     /**
      * Converts longitude to the horizontal pixel coordinate from map space.
@@ -66,7 +64,7 @@ public interface MapSpace {
      * @param zoom
      * @return
      */
-    public double cXToLon(int x, int zoom);
+    double cXToLon(int x, int zoom);
 
     /**
      * Converts latitude to the vertical pixel coordinate from map space.
@@ -75,7 +73,7 @@ public interface MapSpace {
      * @param zoom
      * @return
      */
-    public double cYToLat(int y, int zoom);
+    double cYToLat(int y, int zoom);
 
     /**
      * "Walks" westerly a certain distance on a latitude and returns the "mileage" in map space pixels. The distance is
@@ -88,7 +86,7 @@ public interface MapSpace {
      * @param angularDist angular distance: distance / earth radius (e.g. 6367.5km or 3956.6miles)
      * @return "mileage" in number of pixels
      */
-    public int moveOnLatitude(int startX, int y, int zoom, double angularDist);
+    int moveOnLatitude(int startX, int y, int zoom, double angularDist);
 
     /**
      * Calculates the distance between two points that are laying on the same latitude / y-coordinate.
@@ -98,17 +96,17 @@ public interface MapSpace {
      * @param xDist distance in pixels on the x-axis
      * @return angular distance angular distance: distance / earth radius (e.g. 6367.5km or 3956.6miles)
      */
-    public double horizontalDistance(int zoom, int y, int xDist);
+    double horizontalDistance(int zoom, int y, int xDist);
 
-    public double distance(double lat1, double lon1, double lat2, double lon2);
+    double distance(double lat1, double lon1, double lat2, double lon2);
 
-    public Point changeZoom(Point pixelCoordinate, int oldZoom, int newZoom);
+    Point changeZoom(Point pixelCoordinate, int oldZoom, int newZoom);
 
-    public int xChangeZoom(int x, int oldZoom, int newZoom);
+    int xChangeZoom(int x, int oldZoom, int newZoom);
 
-    public int yChangeZoom(int y, int oldZoom, int newZoom);
+    int yChangeZoom(int y, int oldZoom, int newZoom);
 
-    public enum ProjectionCategory {
+    enum ProjectionCategory {
         SPHERE, ELLIPSOID, GEOID
     }
 

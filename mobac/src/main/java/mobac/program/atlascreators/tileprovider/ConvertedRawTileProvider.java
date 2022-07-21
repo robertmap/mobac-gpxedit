@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 public class ConvertedRawTileProvider extends FilterTileProvider {
 
-    private TileImageDataWriter writer;
+    private final TileImageDataWriter writer;
 
     public ConvertedRawTileProvider(TileProvider tileProvider, TileImageFormat tileImageFormat) {
         super(tileProvider);

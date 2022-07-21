@@ -18,12 +18,12 @@ package mobac.program.interfaces;
 
 public interface DownloadJobListener {
 
-    public int getMaxDownloadRetries();
+    int getMaxDownloadRetries();
 
-    public void jobStarted();
+    void jobStarted();
 
-    public void jobFinishedSuccessfully(int bytesDownloaded);
+    void jobFinishedSuccessfully(int bytesDownloaded);
 
-    public void jobFinishedWithError(boolean retry);
+    void jobFinishedWithError(boolean retry);
 
 }

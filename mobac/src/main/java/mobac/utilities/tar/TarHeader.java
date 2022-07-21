@@ -85,12 +85,12 @@ public class TarHeader {
             throw new RuntimeException(
                     "File \"" + filePath + "\" is outside of archive base path \"" + basePath + "\"!");
         }
-        String tarFileName = filePath.substring(basePath.length(), filePath.length());
+        String tarFileName = filePath.substring(basePath.length());
 
         tarFileName = tarFileName.replace('\\', '/');
 
         if (tarFileName.startsWith("/")) {
-            tarFileName = tarFileName.substring(1, tarFileName.length());
+            tarFileName = tarFileName.substring(1);
         }
 
         if (theFile.isDirectory()) {

@@ -234,7 +234,7 @@ public class GCLive extends AtlasCreator {
 
     protected class GCLiveWriter implements MapTileWriter {
 
-        private File mapDir;
+        private final File mapDir;
 
         private int dataDirCounter = 0;
         private int dataFileCounter = 0;
@@ -258,7 +258,7 @@ public class GCLive extends AtlasCreator {
             currentDataFile = null;
             File dataDir = new File(mapDir, Integer.toString(dataDirCounter));
             Utilities.mkDir(dataDir);
-            File dataFile = new File(dataDir, "data" + Integer.toString(dataFileCounter));
+            File dataFile = new File(dataDir, "data" + dataFileCounter);
             currentDataFile = new RandomAccessFile(dataFile, "rw");
             imageCounter = 0;
         }

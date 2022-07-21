@@ -33,8 +33,8 @@ public class UserAgent {
 
     public static final String OPERA11_WIN7 = "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.7.62 Version/11.01";
 
-    private String name;
-    private String userAgent;
+    private final String name;
+    private final String userAgent;
 
     protected UserAgent(String name, String userAgent) {
         super();

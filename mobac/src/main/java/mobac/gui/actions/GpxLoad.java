@@ -43,7 +43,7 @@ import java.io.File;
 public class GpxLoad implements ActionListener {
 
     JGpxPanel panel;
-    private Logger log = LoggerFactory.getLogger(GpxLoad.class);
+    private final Logger log = LoggerFactory.getLogger(GpxLoad.class);
 
     public GpxLoad(JGpxPanel panel) {
         super();
@@ -165,7 +165,6 @@ public class GpxLoad implements ActionListener {
                 }
             }
 
-            ;
         };
 
         job.start();

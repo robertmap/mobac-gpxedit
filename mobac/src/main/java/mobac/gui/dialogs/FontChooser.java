@@ -39,9 +39,9 @@ import java.awt.event.ActionListener;
 public class FontChooser {
 
     public static final Font DEFAULT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-    private static final String FONT_NAMES[] = GraphicsEnvironment.getLocalGraphicsEnvironment()
+    private static final String[] FONT_NAMES = GraphicsEnvironment.getLocalGraphicsEnvironment()
             .getAvailableFontFamilyNames();
-    private static final String STYLES[] = new String[]{"Plain", "Bold", "Italic", "Bold + Italic"};
+    private static final String[] STYLES = new String[]{"Plain", "Bold", "Italic", "Bold + Italic"};
     private final JDialog jDialog = new JDialog();
     private final JLabel jLabelPreview = new JLabel("DUMMY");
     private final JButton jButtonOK = new JButton(I18nUtils.localizedStringForKey("OK")), jButtonCancel = new JButton(
@@ -139,7 +139,7 @@ public class FontChooser {
     private final JList<String> jListStyle = createJList(STYLES);
 
     public Font getFont() {
-        String name = (String) jListName.getSelectedValue();
+        String name = jListName.getSelectedValue();
         if (name == null) {
             name = DEFAULT.getName();
         }
@@ -147,7 +147,7 @@ public class FontChooser {
         if (style == -1) {
             style = DEFAULT.getStyle();
         }
-        Integer size = (Integer) jListSize.getSelectedValue();
+        Integer size = jListSize.getSelectedValue();
         if (size == null) {
             size = DEFAULT.getSize();
         }

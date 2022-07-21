@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 public class RegexFileFilter implements FileFilter {
 
-    private Pattern p;
+    private final Pattern p;
 
     public RegexFileFilter(String regex) {
         p = Pattern.compile(regex);

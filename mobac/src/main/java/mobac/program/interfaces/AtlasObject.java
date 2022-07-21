@@ -24,42 +24,42 @@ import mobac.exceptions.InvalidNameException;
  */
 public interface AtlasObject {
 
-    public String getName();
+    String getName();
 
-    public void setName(String newName) throws InvalidNameException;
+    void setName(String newName) throws InvalidNameException;
 
     /**
      * Called after loading the complete atlas from a profile.
      *
      * @return any problems found? <code>true</code>=yes
      */
-    public boolean checkData();
+    boolean checkData();
 
     /**
      * minimum latitude (corresponds to row/y value)
      *
      * @return
      */
-    public double getMinLat();
+    double getMinLat();
 
     /**
      * maximum latitude (corresponds to row/y value)
      *
      * @return
      */
-    public double getMaxLat();
+    double getMaxLat();
 
     /**
      * minimum longitude (corresponds to column/x value)
      *
      * @return
      */
-    public double getMinLon();
+    double getMinLon();
 
     /**
      * maximum longitude (corresponds to column/x value)
      *
      * @return
      */
-    public double getMaxLon();
+    double getMaxLon();
 }

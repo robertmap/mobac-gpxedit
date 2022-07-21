@@ -54,7 +54,7 @@ import java.util.LinkedList;
 @XmlRootElement
 public class Layer implements LayerInterface, TreeNode, ToolTipProvider, CapabilityDeletable {
 
-    private static Logger log = LoggerFactory.getLogger(Layer.class);
+    private static final Logger log = LoggerFactory.getLogger(Layer.class);
 
     @XmlTransient
     private AtlasInterface atlasInterface;
@@ -130,7 +130,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
                 int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
                 Point min = new Point(mapX, mapY);
                 Point max = new Point(maxX - 1, maxY - 1);
-                String mapName = String.format(mapNameFormat, new Object[]{mapNameBase, mapCounter++});
+                String mapName = String.format(mapNameFormat, mapNameBase, mapCounter++);
                 Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
                 maps.add(s);
             }
@@ -240,7 +240,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
     }
 
     public Enumeration<? extends TreeNode> children() {
-        return (Enumeration<? extends TreeNode>) Collections.enumeration(maps);
+        return Collections.enumeration(maps);
     }
 
     public boolean getAllowsChildren() {
@@ -248,7 +248,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
     }
 
     public TreeNode getChildAt(int childIndex) {
-        return (TreeNode) maps.get(childIndex);
+        return maps.get(childIndex);
     }
 
     public int getChildCount() {
@@ -280,9 +280,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
         HashSet<String> names = new HashSet<String>(maps.size());
         for (MapInterface map : maps)
             names.add(map.getName());
-        if (names.size() < maps.size())
-            return true; // at least one duplicate name found
-        return false;
+        return names.size() < maps.size(); // at least one duplicate name found
     }
 
     public void deleteMap(Map map) {

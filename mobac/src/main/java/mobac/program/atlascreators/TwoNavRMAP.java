@@ -319,7 +319,7 @@ public class TwoNavRMAP extends AtlasCreator {
         private int height = 0;
         private int xTiles = 0;
         private int yTiles = 0;
-        private long jpegOffsets[][] = null;
+        private long[][] jpegOffsets = null;
         private int zoom = 0;
         private boolean dl = false;
 
@@ -431,7 +431,7 @@ public class TwoNavRMAP extends AtlasCreator {
         private double latitudeMin = 0;
         private double latitudeMax = 0;
         private long mapDataOffset = 0;
-        private ZoomLevel zoomLevels[] = null;
+        private ZoomLevel[] zoomLevels = null;
 
         private RmapFile(File file) throws FileNotFoundException {
             super(file, "rw");

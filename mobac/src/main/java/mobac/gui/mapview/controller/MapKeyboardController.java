@@ -62,7 +62,7 @@ public class MapKeyboardController extends JMapController {
     /**
      * How often to do the moving (milliseconds)
      */
-    private static long timerInterval = 20;
+    private static final long timerInterval = 20;
     private final InputMap inputMap;
     /**
      * Does the moving
@@ -299,7 +299,7 @@ public class MapKeyboardController extends JMapController {
         private static final long serialVersionUID = -1492075614917423363L;
 
         public void actionPerformed(ActionEvent e) {
-            ((PreviewMap) map).selectPreviousMap();
+            map.selectPreviousMap();
         }
     }
 
@@ -307,7 +307,7 @@ public class MapKeyboardController extends JMapController {
         private static final long serialVersionUID = -1491235614917423363L;
 
         public void actionPerformed(ActionEvent e) {
-            ((PreviewMap) map).selectNextMap();
+            map.selectNextMap();
         }
     }
 
@@ -316,7 +316,7 @@ public class MapKeyboardController extends JMapController {
         private static final long serialVersionUID = -7235666079485033823L;
 
         public void actionPerformed(ActionEvent e) {
-            ((PreviewMap) map).refreshMap();
+            map.refreshMap();
         }
     }
 

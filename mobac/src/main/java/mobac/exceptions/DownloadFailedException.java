@@ -47,11 +47,7 @@ public class DownloadFailedException extends IOException {
         super("HTTP error: " + connection.getResponseCode(), cause);
         this.connection = connection;
         this.responseData = responseData;
-        if (ImageFormatDetector.getImageType(responseData) == null) {
-            this.typeImage = false;
-        } else {
-            this.typeImage = true;
-        }
+        this.typeImage = ImageFormatDetector.getImageType(responseData) != null;
     }
 
     public int getHttpResponseCode() {

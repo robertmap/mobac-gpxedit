@@ -66,7 +66,7 @@ public class AtlasConvert implements ActionListener {
         if (result != JOptionPane.OK_OPTION)
             return;
 
-        AtlasOutputFormat format = (AtlasOutputFormat) atlasFormatList.getSelectedValue();
+        AtlasOutputFormat format = atlasFormatList.getSelectedValue();
         mg.jAtlasTree.convertAtlas(format);
         mg.getParametersPanel().atlasFormatChanged(format);
     }

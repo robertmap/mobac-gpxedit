@@ -23,25 +23,25 @@ public interface AtlasInterface extends AtlasObject, Iterable<LayerInterface> {
     /**
      * @return Number of layers in this atlas
      */
-    public int getLayerCount();
+    int getLayerCount();
 
     /**
      * @param index 0 - ({@link #getLayerCount()}-1)
      * @return
      */
-    public LayerInterface getLayer(int index);
+    LayerInterface getLayer(int index);
 
-    public void addLayer(LayerInterface l);
+    void addLayer(LayerInterface l);
 
-    public void deleteLayer(LayerInterface l);
+    void deleteLayer(LayerInterface l);
 
-    public AtlasOutputFormat getOutputFormat();
+    AtlasOutputFormat getOutputFormat();
 
-    public void setOutputFormat(AtlasOutputFormat atlasOutputFormat);
+    void setOutputFormat(AtlasOutputFormat atlasOutputFormat);
 
-    public long calculateTilesToDownload();
+    long calculateTilesToDownload();
 
-    public int getVersion();
+    int getVersion();
 
-    public AtlasInterface deepClone();
+    AtlasInterface deepClone();
 }

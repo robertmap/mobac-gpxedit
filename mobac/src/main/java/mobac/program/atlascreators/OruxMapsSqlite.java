@@ -188,7 +188,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
     private class OruxMapTileWriterDB implements MapTileWriter {
 
         private int tileCounter = 0;
-        private Runtime r = Runtime.getRuntime();
+        private final Runtime r = Runtime.getRuntime();
 
         public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
 

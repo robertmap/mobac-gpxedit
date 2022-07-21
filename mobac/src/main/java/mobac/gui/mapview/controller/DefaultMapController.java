@@ -174,7 +174,7 @@ public class DefaultMapController extends JMapController
 
     public void mouseMoved(MouseEvent e) {
         Point p = e.getPoint();
-        Point tl = ((PreviewMap) map).getTopLeftCoordinate();
+        Point tl = map.getTopLeftCoordinate();
         p.x += tl.x;
         p.y += tl.y;
         lastPoint = p;

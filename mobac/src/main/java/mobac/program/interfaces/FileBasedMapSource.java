@@ -22,6 +22,6 @@ package mobac.program.interfaces;
  */
 public interface FileBasedMapSource extends InitializableMapSource {
 
-    public void reinitialize();
+    void reinitialize();
 
 }

@@ -40,7 +40,7 @@ public class MultiImage {
     private final MapSource mapSource;
     private final int zoom;
     private final TileProvider tileProvider;
-    private SoftHashMap<TileKey, MobacTile> cache;
+    private final SoftHashMap<TileKey, MobacTile> cache;
 
     public MultiImage(MapSource mapSource, TileProvider tileProvider, MapInterface map) {
         this.mapSource = mapSource;
@@ -117,9 +117,7 @@ public class MultiImage {
             TileKey other = (TileKey) obj;
             if (x != other.x)
                 return false;
-            if (y != other.y)
-                return false;
-            return true;
+            return y == other.y;
         }
 
     }

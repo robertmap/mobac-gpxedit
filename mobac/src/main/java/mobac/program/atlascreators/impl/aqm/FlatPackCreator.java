@@ -86,7 +86,7 @@ public class FlatPackCreator {
         }
 
         // write file size
-        String fileSize = Integer.toString(buff.length) + "\0";
+        String fileSize = buff.length + "\0";
         dataStream.write(fileSize.getBytes(StandardCharsets.ISO_8859_1));
 
         // write file into pack data
@@ -115,7 +115,7 @@ public class FlatPackCreator {
         File tmpFile = new File(packPath + ".tmp");
         // open pack file
         try (OutputStream packStream = new BufferedOutputStream(new FileOutputStream(packPath))) {
-            String nbFiles = Long.toString(currentNbFiles) + "\0";
+            String nbFiles = currentNbFiles + "\0";
 
             // write header
             packStream.write(FLAT_PACK_HEADER.getBytes(StandardCharsets.ISO_8859_1));

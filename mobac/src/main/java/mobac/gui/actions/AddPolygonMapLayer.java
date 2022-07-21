@@ -68,14 +68,14 @@ public class AddPolygonMapLayer implements ActionListener {
                 layer = new Layer(atlasInterface, layerName);
                 success = true;
             } catch (InvalidNameException e) {
-                layerName = name + "_" + Integer.toString(c++);
+                layerName = name + "_" + c++;
             }
         } while (!success);
         List<Point> polygonPoints = msc.getPolygonPoints();
 
         for (int zoom : zoomLevels) {
-            int xpoints[] = new int[polygonPoints.size()];
-            int ypoints[] = new int[polygonPoints.size()];
+            int[] xpoints = new int[polygonPoints.size()];
+            int[] ypoints = new int[polygonPoints.size()];
 
             for (int i = 0; i < xpoints.length; i++) {
                 Point p = mapSpace.changeZoom(polygonPoints.get(i), JMapViewer.MAX_ZOOM, zoom);
@@ -88,7 +88,7 @@ public class AddPolygonMapLayer implements ActionListener {
             // int maxMapSize = Settings.getInstance().maxMapSize;
             // System.out.println(bounds.height + " " + bounds.width);
 
-            String mapName = String.format(mapNameFmt, new Object[]{layerName, zoom});
+            String mapName = String.format(mapNameFmt, layerName, zoom);
             MapPolygon map = new MapPolygon(layer, mapName, mapSource, zoom, polygon, customTileParameters);
             layer.addMap(map);
         }
