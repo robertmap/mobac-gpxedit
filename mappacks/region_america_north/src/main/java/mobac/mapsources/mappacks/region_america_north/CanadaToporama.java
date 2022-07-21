@@ -28,7 +28,7 @@ import mobac.program.model.TileImageType;
  */
 public class CanadaToporama extends AbstractHttpMapSource {
 
-	private static String BASE_URL = "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en?"
+	private static final String BASE_URL = "http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en?"
 			+ "service=wms&request=GetMap&version=1.1.1&format=image/png&"
 			+ "srs=epsg:4326&layers=WMS-Toporama&width=256&height=256&bbox=";
 

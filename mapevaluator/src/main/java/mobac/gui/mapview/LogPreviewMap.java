@@ -15,8 +15,8 @@ import java.util.TimerTask;
 public class LogPreviewMap extends PreviewMap {
 
 	private final LinkedList<LogEntry> logLines = new LinkedList<>();
-	private Font logFont = new Font("Sans Serif", Font.BOLD, 14);
-	private Font tileInfoFont = new Font("Sans Serif", Font.BOLD, 12);
+	private final Font logFont = new Font("Sans Serif", Font.BOLD, 14);
+	private final Font tileInfoFont = new Font("Sans Serif", Font.BOLD, 12);
 
 	// private Timer timer = new Timer();
 
@@ -155,7 +155,7 @@ public class LogPreviewMap extends PreviewMap {
 			}
 		}
 		if (beginIndex != s.length()) {
-			String sub = s.substring(beginIndex, s.length());
+			String sub = s.substring(beginIndex);
 			g.setColor(Color.WHITE);
 			int textWidth = fm.stringWidth(sub);
 			g.fillRect(curX - 2, curY - ascent, textWidth + 2, lineHeight);

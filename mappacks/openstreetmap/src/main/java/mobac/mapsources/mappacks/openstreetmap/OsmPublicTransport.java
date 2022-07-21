@@ -32,7 +32,7 @@ public class OsmPublicTransport extends AbstractOsmMapSource {
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
-		String url = String.format(PATTERN, new Object[] { zoom, tilex, tiley });
+		String url = String.format(PATTERN, zoom, tilex, tiley);
 		return url;
 	}
 

@@ -208,7 +208,7 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
             else {
                 int tileSize = this.getMapSpace().getTileSize();
                 BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_4BYTE_ABGR);
-                Graphics g = (Graphics) image.getGraphics();
+                Graphics g = image.getGraphics();
                 try {
                     g.setColor(backgroundColor);
                     g.fillRect(0, 0, tileSize, tileSize);

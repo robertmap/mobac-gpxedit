@@ -296,7 +296,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
         conn = null;
     }
 
-    private static enum SQLiteAtlasType {
+    private enum SQLiteAtlasType {
         RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer, OSMAND
     }
 }

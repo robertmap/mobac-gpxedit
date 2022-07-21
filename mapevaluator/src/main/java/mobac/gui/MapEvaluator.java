@@ -55,7 +55,7 @@ public class MapEvaluator extends JFrame {
 
     protected Logger log;
     private final LogPreviewMap previewMap;
-    private JSplitPane splitPane;
+    private final JSplitPane splitPane;
     private final LineNumberedPaper mapSourceEditor;
 
     private final CustomMapSourceLoader xmlLoader;

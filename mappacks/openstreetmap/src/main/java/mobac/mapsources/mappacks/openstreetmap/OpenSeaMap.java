@@ -47,7 +47,7 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 	public static Image makeColorTransparent(Image im, final Color color) {
 		ImageFilter filter = new RGBImageFilter() {
 			// the color we are looking for... Alpha bits are set to opaque
-			public int markerRGB = color.getRGB() | 0xFF000000;
+			public final int markerRGB = color.getRGB() | 0xFF000000;
 
 			public final int filterRGB(int x, int y, int rgb) {
 				if ((rgb | 0xFF000000) == markerRGB) {

@@ -29,6 +29,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class ClassReader extends ByteArrayInputStream {
 	private int[] cpoolIndex;
 	private Object[] cpool;
 
-	private Map<String, Method> attrMethods;
+	private final Map<String, Method> attrMethods;
 
 	/**
 	 * Loads the bytecode for a given class, by using the class's defining
@@ -301,20 +302,10 @@ public class ClassReader extends ByteArrayInputStream {
 		}
 	}
 
-	protected final String resolveUtf8(int i) throws IOException {
-		int oldPos = pos;
-		try {
-			String s = (String) cpool[i];
-			if (s == null) {
-				pos = cpoolIndex[i];
-				int len = readShort();
-				skipFully(len);
-				cpool[i] = s = new String(buf, pos - len, len, "utf-8");
-			}
-			return s;
-		} finally {
-			pos = oldPos;
-		}
+	protected ClassReader(byte[] buf, Map<String, Method> attrMethods) {
+		super(buf);
+
+		this.attrMethods = attrMethods;
 	}
 
 	protected final void readCpool() throws IOException {
@@ -398,6 +389,38 @@ public class ClassReader extends ByteArrayInputStream {
 		}
 	}
 
+	protected final String resolveUtf8(int i) throws IOException {
+		int oldPos = pos;
+		try {
+			String s = (String) cpool[i];
+			if (s == null) {
+				pos = cpoolIndex[i];
+				int len = readShort();
+				skipFully(len);
+				cpool[i] = s = new String(buf, pos - len, len, StandardCharsets.UTF_8);
+			}
+			return s;
+		} finally {
+			pos = oldPos;
+		}
+	}
+
+	/**
+	 * Reads a code attribute.
+	 *
+	 * @throws IOException
+	 */
+	public void readCode() throws IOException {
+		readShort(); // max stack
+		readShort(); // max locals
+		skipFully(readInt()); // code
+		skipFully(8 * readShort()); // exception table
+
+		// read the code attributes (recursive). This is where
+		// we will find the LocalVariableTable attribute.
+		readAttributes();
+	}
+
 	/**
 	 * Reads an attributes array. The elements of a class file that can contain
 	 * attributes are: fields, methods, the class itself, and some other types
@@ -412,11 +435,11 @@ public class ClassReader extends ByteArrayInputStream {
 
 			String attrName = resolveUtf8(nameIndex);
 
-			Method m = (Method) attrMethods.get(attrName);
+			Method m = attrMethods.get(attrName);
 
 			if (m != null) {
 				try {
-					m.invoke(this, new Object[]{});
+					m.invoke(this);
 				} catch (IllegalAccessException e) {
 					pos = curPos;
 					skipFully(attrLen);
@@ -439,27 +462,5 @@ public class ClassReader extends ByteArrayInputStream {
 				skipFully(attrLen);
 			}
 		}
-	}
-
-	/**
-	 * Reads a code attribute.
-	 *
-	 * @throws IOException
-	 */
-	public void readCode() throws IOException {
-		readShort(); // max stack
-		readShort(); // max locals
-		skipFully(readInt()); // code
-		skipFully(8 * readShort()); // exception table
-
-		// read the code attributes (recursive). This is where
-		// we will find the LocalVariableTable attribute.
-		readAttributes();
-	}
-
-	protected ClassReader(byte buf[], Map<String, Method> attrMethods) {
-		super(buf);
-
-		this.attrMethods = attrMethods;
 	}
 }

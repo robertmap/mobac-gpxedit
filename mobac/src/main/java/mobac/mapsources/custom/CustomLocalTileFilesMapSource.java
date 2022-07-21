@@ -56,9 +56,9 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 
     private MapSourceLoaderInfo loaderInfo = null;
 
-    private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+    private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
 
-    private AtomicBoolean initialized = new AtomicBoolean(false);
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     private String fileSyntax = null;
 
@@ -301,7 +301,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 
     private static class NumericDirFileFilter implements FileFilter {
 
-        private Pattern p = Pattern.compile("^\\d+$");
+        private final Pattern p = Pattern.compile("^\\d+$");
 
         public boolean accept(File f) {
             if (!f.isDirectory()) {

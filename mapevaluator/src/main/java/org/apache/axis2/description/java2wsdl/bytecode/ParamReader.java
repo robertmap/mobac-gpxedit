@@ -44,7 +44,7 @@ import java.util.Map;
  */
 public class ParamReader extends ClassReader {
 	private String methodName;
-	private Map<String, MethodInfo> methods = new HashMap<String, MethodInfo>();
+	private final Map<String, MethodInfo> methods = new HashMap<>();
 	private Class<?>[] paramTypes;
 
 	/**
@@ -155,7 +155,7 @@ public class ParamReader extends ClassReader {
 
 	protected String[] getParameterNames(Member member, Class<?>[] paramTypes) {
 		// look up the names for this method
-		MethodInfo info = (MethodInfo) methods.get(getSignature(member, paramTypes));
+		MethodInfo info = methods.get(getSignature(member, paramTypes));
 
 		// we know all the local variable names, but we only need to return
 		// the names of the parameters.
@@ -198,7 +198,7 @@ public class ParamReader extends ClassReader {
 	private MethodInfo getMethodInfo() {
 		MethodInfo info = null;
 		if (methods != null && methodName != null) {
-			info = (MethodInfo) methods.get(methodName);
+			info = methods.get(methodName);
 		}
 		return info;
 	}

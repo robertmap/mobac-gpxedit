@@ -39,9 +39,9 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 
 	private final List<MapSourceCapabilityDetector> result;
 
-	private JTable table;
+	private final JTable table;
 
-	private JButton button;
+	private final JButton button;
 
 	private Thread workerThread = null;
 

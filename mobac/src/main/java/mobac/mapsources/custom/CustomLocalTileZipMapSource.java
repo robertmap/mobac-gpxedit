@@ -58,9 +58,9 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
     private MapSourceLoaderInfo loaderInfo = null;
 
-    private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+    private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
 
-    private AtomicBoolean initialized = new AtomicBoolean(false);
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     private String fileSyntax = null;
 
@@ -83,7 +83,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
     @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
     private boolean invertYCoordinate = false;
 
-    private LinkedList<ZipFile> zips = new LinkedList<ZipFile>();
+    private final LinkedList<ZipFile> zips = new LinkedList<>();
 
     @XmlElement(defaultValue = "#000000")
     @XmlJavaTypeAdapter(ColorAdapter.class)
@@ -98,7 +98,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
             if (!zipFile.isFile()) {
                 JOptionPane.showMessageDialog(null,
                         String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_zip_title"),
-                                name, zipFile.toString()),
+                                name, zipFile),
                         I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_zip_title"),
                         JOptionPane.ERROR_MESSAGE);
             } else {
@@ -109,7 +109,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null,
                             String.format(I18nUtils.localizedStringForKey("msg_custom_map_failed_open_source_zip"),
-                                    name, zipFile.toString()),
+                                    name, zipFile),
                             I18nUtils.localizedStringForKey("msg_custom_map_failed_open_source_zip_title"),
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -149,14 +149,14 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
         int max = PreviewMap.MIN_ZOOM;
         for (ZipFile zip : zips) {
             for (int z = PreviewMap.MAX_ZOOM; z > PreviewMap.MIN_ZOOM; z--) {
-                ZipEntry entry = zip.getEntry(Integer.toString(z) + "/");
+                ZipEntry entry = zip.getEntry(z + "/");
                 if (entry != null) {
                     max = Math.max(max, z);
                     break;
                 }
             }
             for (int z = PreviewMap.MIN_ZOOM; z < PreviewMap.MAX_ZOOM; z++) {
-                ZipEntry entry = zip.getEntry(Integer.toString(z) + "/");
+                ZipEntry entry = zip.getEntry(z + "/");
                 if (entry != null) {
                     min = Math.min(min, z);
                     break;

@@ -1,9 +1,6 @@
 package mobac.program.tilestore.berkeleydb;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.security.InvalidParameterException;
-
+import com.sleepycat.persist.EntityCursor;
 import mobac.mapsources.MapSourceTools;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
@@ -12,7 +9,9 @@ import mobac.ts_util.Main;
 import mobac.ts_util.ParamTests;
 import mobac.utilities.Utilities;
 
-import com.sleepycat.persist.EntityCursor;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.security.InvalidParameterException;
 
 public class Extract implements Runnable {
     private final File sourceDir;

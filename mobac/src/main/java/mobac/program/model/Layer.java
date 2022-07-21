@@ -63,7 +63,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 
     @XmlElements({@XmlElement(name = "PolygonMap", type = MapPolygon.class),
             @XmlElement(name = "Map", type = Map.class)})
-    private LinkedList<MapInterface> maps = new LinkedList<MapInterface>();
+    private LinkedList<MapInterface> maps = new LinkedList<>();
 
     protected Layer() {
     }

@@ -1,8 +1,8 @@
 package mobac.ts_util;
 
-import java.io.File;
-
 import mobac.utilities.file.FileExtFilter;
+
+import java.io.File;
 
 public class ParamTests {
 

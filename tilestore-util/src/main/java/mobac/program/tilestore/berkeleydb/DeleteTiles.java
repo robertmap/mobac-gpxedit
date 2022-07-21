@@ -93,9 +93,9 @@ public class DeleteTiles implements Runnable {
     }
 
     public interface DeleteTileFilter {
-        public boolean canDeleteTile(TileDbEntry entry);
+        boolean canDeleteTile(TileDbEntry entry);
 
-        public String getInfoMessage();
+        String getInfoMessage();
     }
 
     public static class ETagDeleteTileFilter implements DeleteTileFilter {

@@ -21,7 +21,7 @@ import java.net.HttpURLConnection;
 public class Osm4uMaps extends AbstractOsmMapSource {
 
 	public static final String NAME = "4uMaps";
-	private static String SERVER = "https://tileserver.4umaps.com";
+	private static final String SERVER = "https://tileserver.4umaps.com";
 
 	public Osm4uMaps() {
 		super(NAME);

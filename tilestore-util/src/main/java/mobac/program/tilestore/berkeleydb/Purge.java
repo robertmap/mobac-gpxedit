@@ -1,12 +1,12 @@
 package mobac.program.tilestore.berkeleydb;
 
-import java.io.File;
-import java.security.InvalidParameterException;
-
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.berkeleydb.BerkeleyDbTileStore.TileDatabase;
 import mobac.ts_util.Main;
 import mobac.ts_util.ParamTests;
+
+import java.io.File;
+import java.security.InvalidParameterException;
 
 public class Purge implements Runnable {
 

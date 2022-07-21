@@ -156,7 +156,7 @@ public class CustomWmsMapSource extends CustomMapSource {
     }
 
     @XmlEnum
-    public static enum CoordinateUnit {
+    public enum CoordinateUnit {
         DEGREE,
         METER
     }

@@ -6,7 +6,7 @@ import java.util.Vector;
 
 public class MapEvaluatorMapSourcesManager extends MapSourcesManager {
 
-	private Vector<MapSource> mapSources = new Vector<>();
+	private final Vector<MapSource> mapSources = new Vector<>();
 
 	public static void initialitze() {
 		MapSourcesManager.INSTANCE = new MapEvaluatorMapSourcesManager();
