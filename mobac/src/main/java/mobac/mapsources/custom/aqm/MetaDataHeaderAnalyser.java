@@ -40,8 +40,8 @@ public class MetaDataHeaderAnalyser {
     private final List<String> tokens;
 
     private int nbFiles;
-    private int byteArrayStartIndex;
-    private int byteArrayEndIndex;
+    private long byteArrayStartIndex;
+    private long byteArrayEndIndex;
     private final List<MetaDataLevel> levelList;
 
     public MetaDataHeaderAnalyser(List<String> tokens) {
@@ -54,11 +54,11 @@ public class MetaDataHeaderAnalyser {
         return nbFiles;
     }
 
-    public int getByteArrayStartIndex() {
+    public long getByteArrayStartIndex() {
         return byteArrayStartIndex;
     }
 
-    public int getByteArrayEndIndex() {
+    public long getByteArrayEndIndex() {
         return byteArrayEndIndex;
     }
 
@@ -76,17 +76,17 @@ public class MetaDataHeaderAnalyser {
                 nbFiles = Integer.parseInt(currentToken);
                 j++;
             } else if (currentToken.equals(AQM_HEADER)) {
-                byteArrayStartIndex = Integer.parseInt(tokens.get(++j));
+                byteArrayStartIndex = Long.parseLong(tokens.get(++j));
                 j++;
             } else if (currentToken.equals(AQM_LEVEL)) {
                 currentToken = tokens.get(++j);
-                levelList.add(new MetaDataLevel(Integer.parseInt(currentToken)));
+                levelList.add(new MetaDataLevel(Long.parseLong(currentToken)));
                 j++;
             } else if (currentToken.equals(AQM_LEVEL_DELIMITER)) {
                 log.trace("{} start at {}", AQM_LEVEL_DELIMITER, j);
                 MetaDataLevel currentLevel = levelList.get(currentLevelIndex);
                 currentToken = tokens.get(++j);
-                currentLevel.byteIndex = Integer.parseInt(currentToken);
+                currentLevel.byteIndex = Long.parseLong(currentToken);
                 currentToken = tokens.get(++j);
                 while (tokens.size() > j
                         && (!currentToken.equals(AQM_LEVEL_DELIMITER) && !currentToken.equals(AQM_END_DELIMITER))) {
@@ -102,7 +102,7 @@ public class MetaDataHeaderAnalyser {
                 }
                 currentLevelIndex++;
             } else if (currentToken.equals(AQM_END_DELIMITER)) {
-                byteArrayEndIndex = Integer.parseInt(tokens.get(++j));
+                byteArrayEndIndex = Long.parseLong(tokens.get(++j));
                 j++;
             } else {
                 j++;

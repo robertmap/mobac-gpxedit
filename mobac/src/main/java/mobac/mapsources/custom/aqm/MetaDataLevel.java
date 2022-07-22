@@ -27,9 +27,9 @@ import java.util.List;
 public class MetaDataLevel {
     public final long metaDataByteIndex;
     private final List<MetaDataTile> tileList;
-    public int byteIndex;
+    public long byteIndex;
 
-    MetaDataLevel(int metaDataByteIndex) {
+    MetaDataLevel(long metaDataByteIndex) {
         this.metaDataByteIndex = metaDataByteIndex;
         this.byteIndex = -1;
         this.tileList = new ArrayList<>();

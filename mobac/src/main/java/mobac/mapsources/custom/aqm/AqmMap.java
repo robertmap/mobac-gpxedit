@@ -72,7 +72,9 @@ public class AqmMap {
 
     private byte[] getFileChunk(long start) throws IOException {
         try (InputStream in = new BufferedInputStream(new FileInputStream(fileAQMmap))) {
-            in.skip(start);
+            if (in.skip(start) != start) {
+                throw new IOException("Skipping failed");
+            }
             int chunkSize = MetaDataHeader.readZeroTerminatedIntegerString(in);
             return in.readNBytes(chunkSize);
         }
