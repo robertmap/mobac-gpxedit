@@ -24,6 +24,7 @@ import java.io.IOException;
 
 /**
  * http://openseamap.org/
+ *
  * @see OpenSeaMapLayer
  */
 public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSourceTextAttribution {
@@ -31,9 +32,9 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 	public static final String LAYER_OPENSEA = "http://tiles.openseamap.org/seamark/";
 
 	public OpenSeaMap() {
-		super("OpenSeaMap", TileImageType.PNG);
-		mapSources = new MapSource[] { new Mapnik(), new OpenSeaMapLayer() };
-		initializeValues();
+        super("OpenSeaMap", TileImageType.PNG);
+        mapSources = new MapSource[]{new Mapnik(), new OpenSeaMapLayer()};
+        initializeValues();
 	}
 
 	public String getAttributionText() {
@@ -63,12 +64,13 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 		return Toolkit.getDefaultToolkit().createImage(ip);
 	}
 
-	/**
-	 * Not working correctly:
-	 * <p>
-	 * 1. The map is a "sparse map" (only tiles are present that have content - the other are missing) <br>
-	 * 2. The map layer's background is not transparent!
-	 */
+    /**
+     * Not working correctly:
+     * <p>
+     * 1. The map is a "sparse map" (only tiles are present that have content - the
+     * other are missing) <br>
+     * 2. The map layer's background is not transparent!
+     */
 	public static class OpenSeaMapLayer extends AbstractHttpMapSource {
 
 		public OpenSeaMapLayer() {
@@ -77,32 +79,32 @@ public class OpenSeaMap extends AbstractMultiLayerMapSource implements MapSource
 
 		public String getTileUrl(int zoom, int tilex, int tiley) {
 			return LAYER_OPENSEA + zoom + "/" + tilex + "/" + tiley + ".png";
-		}
+        }
 
-		@Override
-		public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-				InterruptedException, TileException {
-			byte[] data = super.getTileData(zoom, x, y, loadMethod);
-			if (data != null && data.length == 0) {
-				log.info("loaded non-existing tile");
-				return null;
-			}
-			return data;
-		}
+        @Override
+        public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+                throws IOException, InterruptedException, TileException {
+            byte[] data = super.getTileData(zoom, x, y, loadMethod);
+            if (data != null && data.length == 0) {
+                log.info("loaded non-existing tile");
+                return null;
+            }
+            return data;
+        }
 
-		@Override
-		public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-				UnrecoverableDownloadException, InterruptedException {
-			try {
-				byte[] data = getTileData(zoom, x, y, loadMethod);
-				if (data == null) {
-					return null;
-				}
-				com.sixlegs.png.PngImage png = new com.sixlegs.png.PngImage();
-				BufferedImage image = png.read(new ByteArrayInputStream(data), true);
-				return image;
-			} catch (FileNotFoundException e) {
-				TileStore ts = TileStore.getInstance();
+        @Override
+        public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+                throws IOException, UnrecoverableDownloadException, InterruptedException {
+            try {
+                byte[] data = getTileData(zoom, x, y, loadMethod);
+                if (data == null) {
+                    return null;
+                }
+                com.sixlegs.png.PngImage png = new com.sixlegs.png.PngImage();
+                BufferedImage image = png.read(new ByteArrayInputStream(data), true);
+                return image;
+            } catch (FileNotFoundException e) {
+                TileStore ts = TileStore.getInstance();
 				ts.putTile(ts.createNewEmptyEntry(x, y, zoom), this);
 			} catch (Exception e) {
 				log.error("Unknown error in OpenSeaMap", e);

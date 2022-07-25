@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -31,18 +31,18 @@ public class WanderreitkarteAbo extends AbstractOsmMapSource {
 		maxZoom = 16;
 	}
 
-	@Override
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
-			InterruptedException {
-		if (loadMethod == LoadMethod.CACHE)
-			return super.getTileData(zoom, x, y, loadMethod);
+    @Override
+    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+            throws IOException, TileException, InterruptedException {
+        if (loadMethod == LoadMethod.CACHE)
+            return super.getTileData(zoom, x, y, loadMethod);
 
-		// No multi threaded download possible/allowed
-		// if we don't synchronize here we get a high percentage of errors
-		synchronized (this) {
-			return super.getTileData(zoom, x, y, loadMethod);
-		}
-	}
+        // No multi threaded download possible/allowed
+        // if we don't synchronize here we get a high percentage of errors
+        synchronized (this) {
+            return super.getTileData(zoom, x, y, loadMethod);
+        }
+    }
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {

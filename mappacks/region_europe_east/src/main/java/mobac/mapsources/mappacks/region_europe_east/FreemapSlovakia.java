@@ -27,29 +27,29 @@ import mobac.program.model.TileImageType;
  */
 public class FreemapSlovakia extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
-    private static final String[] SERVERS = {"a", "b", "c", "d"};
-    private static int SERVER_NUM = 0;
+	private static final String[] SERVERS = {"a", "b", "c", "d"};
+	private static int SERVER_NUM = 0;
 
-    public FreemapSlovakia() {
-        super("FreemapSlovakia", 5, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
-    }
+	public FreemapSlovakia() {
+		super("FreemapSlovakia", 5, 16, TileImageType.PNG, TileUpdate.IfModifiedSince);
+	}
 
-    public String getTileUrl(int zoom, int tilex, int tiley) {
-        String server = SERVERS[SERVER_NUM];
-        SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
-        return String.format("https://%s.freemap.sk/A/%d/%d/%d.png", server, zoom, tilex, tiley);
-    }
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		String server = SERVERS[SERVER_NUM];
+		SERVER_NUM = (SERVER_NUM + 1) % SERVERS.length;
+		return String.format("https://%s.freemap.sk/A/%d/%d/%d.png", server, zoom, tilex, tiley);
+	}
 
-    @Override
-    public String toString() {
-        return "Freemap Slovakia Car Atlas";
-    }
+	@Override
+	public String toString() {
+		return "Freemap Slovakia Car Atlas";
+	}
 
-    public String getAttributionText() {
-        return "© OpenStreetMap contributors, CC-BY-SA";
-    }
+	public String getAttributionText() {
+		return "© OpenStreetMap contributors, CC-BY-SA";
+	}
 
-    public String getAttributionLinkURL() {
-        return "http://openstreetmap.org";
-    }
+	public String getAttributionLinkURL() {
+		return "http://openstreetmap.org";
+	}
 }

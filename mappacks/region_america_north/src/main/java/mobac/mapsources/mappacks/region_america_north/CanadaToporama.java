@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -20,11 +20,11 @@ import mobac.mapsources.AbstractHttpMapSource;
 import mobac.program.model.TileImageType;
 
 /**
- * 
+ *
  * https://mobac.sourceforge.io/forum/viewtopic.php?f=1&t=1&e=1&view=unread#p1972
  * http://sourceforge.net/p/mobac/feature-requests/197/
  * http://geogratis.cgdi.gc.ca/geogratis/en/service/toporama.html
- * 
+ *
  */
 public class CanadaToporama extends AbstractHttpMapSource {
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -27,8 +27,8 @@ public class Mapnik extends AbstractOsmMapSource {
 
 	/**
 	 * Maximum of 2 download threads
-	 * 
-	 * @see http://wiki.openstreetmap.org/wiki/Tile_usage_policy
+     *
+     * @see http://wiki.openstreetmap.org/wiki/Tile_usage_policy
 	 */
 	private static final Semaphore SEM = new Semaphore(2);
 
@@ -37,16 +37,16 @@ public class Mapnik extends AbstractOsmMapSource {
 		maxZoom = 16;
 	}
 
-	@Override
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
-			InterruptedException {
-		SEM.acquire();
-		try {
-			return super.getTileData(zoom, x, y, loadMethod);
-		} finally {
-			SEM.release();
-		}
-	}
+    @Override
+    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+            throws IOException, TileException, InterruptedException {
+        SEM.acquire();
+        try {
+            return super.getTileData(zoom, x, y, loadMethod);
+        } finally {
+            SEM.release();
+        }
+    }
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {

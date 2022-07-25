@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -25,19 +25,19 @@ import java.net.HttpURLConnection;
 /**
  * <pre>
  * New Zealand Topographic Maps produced by Land Information New Zealand (Government Department).
- * http://www.linz.govt.nz/topography/topo-maps/index.aspx 
+ * http://www.linz.govt.nz/topography/topo-maps/index.aspx
  *
  * Licence: Creative Commons Attribution 3.0 New Zealand
- * (http://creativecommons.org/licenses/by/3.0/nz/deed.en) 
+ * (http://creativecommons.org/licenses/by/3.0/nz/deed.en)
  *
  * Tiles created by and sourced from nztopomaps.com
  * </pre>
- * 
+ * <p>
  * http://www.nztopomaps.com/
  */
 public class NzTopoMaps extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
-	private final String[] SERVERS = new String[] { "nz1" };
+	private final String[] SERVERS = new String[]{"nz1"};
 	private int SERVER_NUM = 0;
 
 	public NzTopoMaps() {

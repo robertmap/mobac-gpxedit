@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) MOBAC developers
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -21,9 +21,9 @@ import mobac.program.interfaces.MapSourceTextAttribution;
 import mobac.program.model.TileImageType;
 
 /**
- * 
+ *
  * https://sourceforge.net/p/mobac/feature-requests/290/
- * 
+ *
  */
 public class IgnBase extends AbstractHttpMapSource implements MapSourceTextAttribution {
 
