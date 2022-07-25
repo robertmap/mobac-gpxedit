@@ -28,8 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * AtlasCreator implementation to create a GEMF archive file. For details about the format, please see the link in
- * {@link GEMFFileCreator}.
+ * AtlasCreator implementation to create a GEMF archive file. For details about
+ * the format, please see the link in {@link GEMFFileCreator}.
  *
  * @author M. Reiter
  *
@@ -37,18 +37,18 @@ import java.util.List;
 @AtlasCreatorName("Osmdroid GEMF")
 public class OsmdroidGEMF extends OSMTracker {
 
-    private static final String GEMF_FILE_EXTENSION = ".gemf";
+	private static final String GEMF_FILE_EXTENSION = ".gemf";
 
-    @Override
-    public void finishAtlasCreation() throws IOException, InterruptedException {
-        List<File> tileFolders = new LinkedList<File>();
-        tileFolders.add(mapDir);
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		List<File> tileFolders = new LinkedList<File>();
+		tileFolders.add(mapDir);
 
-        String gemfLocation = new File(atlasDir, atlas.getName() + GEMF_FILE_EXTENSION).toString();
+		String gemfLocation = new File(atlasDir, atlas.getName() + GEMF_FILE_EXTENSION).toString();
 
-        new GEMFFileCreator(gemfLocation, tileFolders, log);
+		new GEMFFileCreator(gemfLocation, tileFolders, log);
 
-        super.finishAtlasCreation();
-    }
+		super.finishAtlasCreation();
+	}
 
 }

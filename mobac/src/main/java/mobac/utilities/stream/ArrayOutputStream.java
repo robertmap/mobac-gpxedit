@@ -25,60 +25,64 @@ import java.io.OutputStream;
  */
 public class ArrayOutputStream extends OutputStream {
 
-    protected byte[] buf;
+	protected byte[] buf;
 
-    protected int pos = 0;
+	protected int pos = 0;
 
-    /**
-     * @param size Size of the buffer available for writing.
-     */
-    public ArrayOutputStream(int size) {
-        buf = new byte[size];
-    }
+	/**
+	 * @param size
+	 *            Size of the buffer available for writing.
+	 */
+	public ArrayOutputStream(int size) {
+		buf = new byte[size];
+	}
 
-    /**
-     * @param array Byte array used for writing to
-     */
-    public ArrayOutputStream(byte[] array) {
-        buf = array;
-    }
+	/**
+	 * @param array
+	 *            Byte array used for writing to
+	 */
+	public ArrayOutputStream(byte[] array) {
+		buf = array;
+	}
 
-    /**
-     * @param array Byte array used for writing to
-     * @param off   offset in <code>array</code>
-     */
-    public ArrayOutputStream(byte[] array, int off) {
-        buf = array;
-        pos = off;
-    }
+	/**
+	 * @param array
+	 *            Byte array used for writing to
+	 * @param off
+	 *            offset in <code>array</code>
+	 */
+	public ArrayOutputStream(byte[] array, int off) {
+		buf = array;
+		pos = off;
+	}
 
-    public byte[] toByteArray() {
-        byte[] data = new byte[pos];
-        System.arraycopy(buf, 0, data, 0, pos);
-        return data;
-    }
+	public byte[] toByteArray() {
+		byte[] data = new byte[pos];
+		System.arraycopy(buf, 0, data, 0, pos);
+		return data;
+	}
 
-    public void reset() {
-        pos = 0;
-    }
+	public void reset() {
+		pos = 0;
+	}
 
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        int newPos = pos + len;
-        if (newPos > buf.length)
-            throw new IOException("End of buffer reached");
-        System.arraycopy(b, off, buf, pos, len);
-        pos = newPos;
-    }
+	@Override
+	public void write(byte[] b, int off, int len) throws IOException {
+		int newPos = pos + len;
+		if (newPos > buf.length)
+			throw new IOException("End of buffer reached");
+		System.arraycopy(b, off, buf, pos, len);
+		pos = newPos;
+	}
 
-    @Override
-    public void write(byte[] b) throws IOException {
-        write(b, 0, b.length);
-    }
+	@Override
+	public void write(byte[] b) throws IOException {
+		write(b, 0, b.length);
+	}
 
-    @Override
-    public void write(int b) throws IOException {
-        write(new byte[]{(byte) b}, 0, 1);
-    }
+	@Override
+	public void write(int b) throws IOException {
+		write(new byte[]{(byte) b}, 0, 1);
+	}
 
 }

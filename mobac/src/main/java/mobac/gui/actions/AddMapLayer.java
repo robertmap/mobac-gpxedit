@@ -26,15 +26,15 @@ import java.awt.event.ActionListener;
 
 public class AddMapLayer implements ActionListener {
 
-    public static final AddMapLayer INSTANCE = new AddMapLayer();
+	public static final AddMapLayer INSTANCE = new AddMapLayer();
 
-    public void actionPerformed(ActionEvent event) {
-        JMapController msc = MainGUI.getMainGUI().previewMap.getMapSelectionController();
-        if (msc instanceof RectangleSelectionMapController)
-            new AddRectangleMapAutocut().actionPerformed(event);
-        else if (msc instanceof AbstractPolygonSelectionMapController)
-            new AddPolygonMapLayer().actionPerformed(event);
-        else
-            throw new RuntimeException("Unknown mapSelectionController type");
-    }
+	public void actionPerformed(ActionEvent event) {
+		JMapController msc = MainGUI.getMainGUI().previewMap.getMapSelectionController();
+		if (msc instanceof RectangleSelectionMapController)
+			new AddRectangleMapAutocut().actionPerformed(event);
+		else if (msc instanceof AbstractPolygonSelectionMapController)
+			new AddPolygonMapLayer().actionPerformed(event);
+		else
+			throw new RuntimeException("Unknown mapSelectionController type");
+	}
 }

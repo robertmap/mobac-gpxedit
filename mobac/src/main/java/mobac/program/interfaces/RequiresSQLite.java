@@ -17,14 +17,15 @@
 package mobac.program.interfaces;
 
 /**
- * Marker-Interface which has to implemented by all atlas creator classes which require the SQLite libraries.
+ * Marker-Interface which has to implemented by all atlas creator classes which
+ * require the SQLite libraries.
  */
 public interface RequiresSQLite {
 
-    int MAX_BATCH_SIZE = 1000;
+	int MAX_BATCH_SIZE = 1000;
 
-    /**
-     * Accumulate tiles in batch process until 20MB of heap are remaining
-     */
-    long HEAP_MIN = 20 * 1024 * 1024;
+	/**
+	 * Accumulate tiles in batch process until 20MB of heap are remaining
+	 */
+	long HEAP_MIN = 20 * 1024 * 1024;
 }

@@ -33,103 +33,105 @@ import java.io.IOException;
 
 public abstract class TileStore {
 
-    protected static TileStore INSTANCE = null;
+	protected static TileStore INSTANCE = null;
 
-    protected final Logger log;
+	protected final Logger log;
 
-    protected final File tileStoreDir;
+	protected final File tileStoreDir;
 
-    protected TileStore() {
-        log = LoggerFactory.getLogger(this.getClass());
-        String tileStorePath = Settings.getInstance().directories.tileStoreDirectory;
-        if (tileStorePath != null) {
-            tileStoreDir = new File(tileStorePath);
-        } else {
-            tileStoreDir = DirectoryManager.tileStoreDir;
-        }
-        log.debug("Tile store path: {}", tileStoreDir);
-    }
+	protected TileStore() {
+		log = LoggerFactory.getLogger(this.getClass());
+		String tileStorePath = Settings.getInstance().directories.tileStoreDirectory;
+		if (tileStorePath != null) {
+			tileStoreDir = new File(tileStorePath);
+		} else {
+			tileStoreDir = DirectoryManager.tileStoreDir;
+		}
+		log.debug("Tile store path: {}", tileStoreDir);
+	}
 
-    public static synchronized void initialize() {
-        if (INSTANCE != null) {
-            return;
-        }
-        try {
-            INSTANCE = new BerkeleyDbTileStore();
-        } catch (TileStoreException e) {
-            String errMsg = I18nUtils.localizedStringForKey("msg_tile_store_access_conflict");
-            JOptionPane.showMessageDialog(null, errMsg,
-                    I18nUtils.localizedStringForKey("msg_tile_store_access_conflict_title"), JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-    }
+	public static synchronized void initialize() {
+		if (INSTANCE != null) {
+			return;
+		}
+		try {
+			INSTANCE = new BerkeleyDbTileStore();
+		} catch (TileStoreException e) {
+			String errMsg = I18nUtils.localizedStringForKey("msg_tile_store_access_conflict");
+			JOptionPane.showMessageDialog(null, errMsg,
+					I18nUtils.localizedStringForKey("msg_tile_store_access_conflict_title"), JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
+	}
 
-    public static TileStore getInstance() {
-        return INSTANCE;
-    }
+	public static TileStore getInstance() {
+		return INSTANCE;
+	}
 
-    public abstract void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException;
+	public abstract void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException;
 
-    public abstract void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource,
-                                     long timeLastModified, long timeExpires, String eTag) throws IOException;
+	public abstract void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource,
+			long timeLastModified, long timeExpires, String eTag) throws IOException;
 
-    /**
-     * @param x
-     * @param y
-     * @param zoom
-     * @param mapSource
-     * @return
-     */
-    public abstract TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource);
+	/**
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @param mapSource
+	 * @return
+	 */
+	public abstract TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource);
 
-    public abstract boolean contains(int x, int y, int zoom, MapSource mapSource);
+	public abstract boolean contains(int x, int y, int zoom, MapSource mapSource);
 
-    public abstract void prepareTileStore(MapSource mapSource);
+	public abstract void prepareTileStore(MapSource mapSource);
 
-    public abstract void clearStore(String storeName);
+	public abstract void clearStore(String storeName);
 
-    public abstract String[] getAllStoreNames();
+	public abstract String[] getAllStoreNames();
 
-    /**
-     * Returns <code>true</code> if the tile store directory of the specified {@link MapSource} exists.
-     *
-     * @param mapSource
-     * @return
-     */
-    public abstract boolean storeExists(MapSource mapSource);
+	/**
+	 * Returns <code>true</code> if the tile store directory of the specified
+	 * {@link MapSource} exists.
+	 *
+	 * @param mapSource
+	 * @return
+	 */
+	public abstract boolean storeExists(MapSource mapSource);
 
-    /**
-     * @param mapSourceName
-     * @return
-     * @throws InterruptedException
-     */
-    public abstract TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException;
+	/**
+	 * @param mapSourceName
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public abstract TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException;
 
-    /**
-     * @param mapSource
-     * @param zoom
-     * @param tileNumMin
-     * @param tileNumMax
-     * @return
-     * @throws InterruptedException
-     */
-    public abstract BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
-            throws InterruptedException;
+	/**
+	 * @param mapSource
+	 * @param zoom
+	 * @param tileNumMin
+	 * @param tileNumMax
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public abstract BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
+			throws InterruptedException;
 
-    public abstract void closeAll();
+	public abstract void closeAll();
 
-    public abstract void putTile(TileStoreEntry tile, MapSource mapSource);
+	public abstract void putTile(TileStoreEntry tile, MapSource mapSource);
 
-    public abstract TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified,
-                                                  long timeExpires, String eTag);
+	public abstract TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified,
+			long timeExpires, String eTag);
 
-    /**
-     * Creates a new {@link TileStoreEntry} that represents a missing tile in a sparse map source
-     *
-     * @param x
-     * @param y
-     * @param zoom
-     * @return
-     */
-    public abstract TileStoreEntry createNewEmptyEntry(int x, int y, int zoom);
+	/**
+	 * Creates a new {@link TileStoreEntry} that represents a missing tile in a
+	 * sparse map source
+	 *
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @return
+	 */
+	public abstract TileStoreEntry createNewEmptyEntry(int x, int y, int zoom);
 }

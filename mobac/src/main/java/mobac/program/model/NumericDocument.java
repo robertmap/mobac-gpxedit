@@ -22,22 +22,22 @@ import javax.swing.text.PlainDocument;
 import java.awt.Toolkit;
 
 public class NumericDocument extends PlainDocument {
-    public static final String NUMERIC = "0123456789";
-    private static final long serialVersionUID = 1L;
+	public static final String NUMERIC = "0123456789";
+	private static final long serialVersionUID = 1L;
 
-    public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+	public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 
-        if (str == null)
-            return;
+		if (str == null)
+			return;
 
-        for (char c : str.toCharArray()) {
-            if (NUMERIC.indexOf(c) == -1) {
-                Toolkit.getDefaultToolkit().beep();
-                return;
-            }
-        }
+		for (char c : str.toCharArray()) {
+			if (NUMERIC.indexOf(c) == -1) {
+				Toolkit.getDefaultToolkit().beep();
+				return;
+			}
+		}
 
-        super.insertString(offset, str, attr);
+		super.insertString(offset, str, attr);
 
-    }
+	}
 }

@@ -21,13 +21,14 @@ import mobac.program.annotations.AtlasCreatorName;
 /**
  * Creates maps using the BCNav SQLite atlas format.
  *
- * @see <a href="https://www.backcountrynavigator.com/">https://www.backcountrynavigator.com/</a>
+ * @see <a href=
+ *      "https://www.backcountrynavigator.com/">https://www.backcountrynavigator.com/</a>
  */
 @AtlasCreatorName("BackCountry Navigator (SQLite)")
 public class BackCountryNavigator extends RMapsSQLite {
 
-    public BackCountryNavigator() {
-        super();
-    }
+	public BackCountryNavigator() {
+		super();
+	}
 
 }

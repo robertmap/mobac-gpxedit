@@ -42,131 +42,132 @@ import java.io.File;
 
 public class GpxLoad implements ActionListener {
 
-    JGpxPanel panel;
-    private final Logger log = LoggerFactory.getLogger(GpxLoad.class);
+	private final Logger log = LoggerFactory.getLogger(GpxLoad.class);
+	JGpxPanel panel;
 
-    public GpxLoad(JGpxPanel panel) {
-        super();
-        this.panel = panel;
-    }
+	public GpxLoad(JGpxPanel panel) {
+		super();
+		this.panel = panel;
+	}
 
-    public void actionPerformed(ActionEvent event) {
-        JFileChooser fc = new JFileChooser();
-        String gpxFileChooserDir = Settings.getInstance().gpxFileChooserDir;
-        try {
-            File dir = new File(gpxFileChooserDir);
-            fc.setCurrentDirectory(dir); // restore the saved directory
-        } catch (Exception e) {
-            log.error("Failed to change the current directory to " + gpxFileChooserDir, e);
-        }
-        fc.setMultiSelectionEnabled(true);
-        fc.addChoosableFileFilter(new GpxFileFilter(false));
-        final MainGUI mainGUI = MainGUI.getMainGUI();
-        int returnVal = fc.showOpenDialog(mainGUI);
-        if (returnVal != JFileChooser.APPROVE_OPTION)
-            return;
-        Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
+	public void actionPerformed(ActionEvent event) {
+		JFileChooser fc = new JFileChooser();
+		String gpxFileChooserDir = Settings.getInstance().gpxFileChooserDir;
+		try {
+			File dir = new File(gpxFileChooserDir);
+			fc.setCurrentDirectory(dir); // restore the saved directory
+		} catch (Exception e) {
+			log.error("Failed to change the current directory to " + gpxFileChooserDir, e);
+		}
+		fc.setMultiSelectionEnabled(true);
+		fc.addChoosableFileFilter(new GpxFileFilter(false));
+		final MainGUI mainGUI = MainGUI.getMainGUI();
+		int returnVal = fc.showOpenDialog(mainGUI);
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return;
+		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
-        File[] f = fc.getSelectedFiles();
+		File[] f = fc.getSelectedFiles();
 
-        // check already opened gpx files
-        boolean duplicates = false;
-        for (File selectedFile : f) {
-            duplicates = panel.isFileOpen(selectedFile.getAbsolutePath());
-            if (duplicates)
-                break;
-        }
-        if (duplicates) {
-            int answer = JOptionPane
-                    .showConfirmDialog(mainGUI, I18nUtils.localizedStringForKey("rp_gpx_msg_confirm_reopen_file"),
-                            I18nUtils.localizedStringForKey("Warning"), JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-            if (answer != JOptionPane.YES_OPTION)
-                return;
-        }
+		// check already opened gpx files
+		boolean duplicates = false;
+		for (File selectedFile : f) {
+			duplicates = panel.isFileOpen(selectedFile.getAbsolutePath());
+			if (duplicates)
+				break;
+		}
+		if (duplicates) {
+			int answer = JOptionPane.showConfirmDialog(mainGUI,
+					I18nUtils.localizedStringForKey("rp_gpx_msg_confirm_reopen_file"),
+					I18nUtils.localizedStringForKey("Warning"), JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+		}
 
-        // process
-        if (f.length > 1) {
-            doMultiLoad(f, mainGUI);
-        } else if (f.length == 1) {
-            doLoad(f[0], mainGUI);
-        }
-        mainGUI.previewMap.refreshMap();
-    }
+		// process
+		if (f.length > 1) {
+			doMultiLoad(f, mainGUI);
+		} else if (f.length == 1) {
+			doLoad(f[0], mainGUI);
+		}
+		mainGUI.previewMap.refreshMap();
+	}
 
-    /**
-     * @param f
-     */
-    private void doLoad(File f, Component parent) {
-        try {
-            Gpx gpx = GPXUtils.loadGpxFile(f);
-            GpxLayer gpxLayer = new GpxLayer(gpx);
-            gpxLayer.setFile(f);
-            panel.addGpxLayer(gpxLayer);
-        } catch (JAXBException e) {
-            JOptionPane.showMessageDialog(parent, "<html>Unable to load the GPX file <br><i>" + f.getAbsolutePath()
-                            + "</i><br><br><b>Please make sure the file is a valid GPX v1.1 file.</b><br>"
-                            + "<br>Internal error message:<br>" + e.getMessage() + "</html>", "GPX loading failed",
-                    JOptionPane.ERROR_MESSAGE);
-            throw new RuntimeException(e);
-        }
-    }
+	/**
+	 * @param f
+	 */
+	private void doLoad(File f, Component parent) {
+		try {
+			Gpx gpx = GPXUtils.loadGpxFile(f);
+			GpxLayer gpxLayer = new GpxLayer(gpx);
+			gpxLayer.setFile(f);
+			panel.addGpxLayer(gpxLayer);
+		} catch (JAXBException e) {
+			JOptionPane.showMessageDialog(parent,
+					"<html>Unable to load the GPX file <br><i>" + f.getAbsolutePath()
+							+ "</i><br><br><b>Please make sure the file is a valid GPX v1.1 file.</b><br>"
+							+ "<br>Internal error message:<br>" + e.getMessage() + "</html>",
+					"GPX loading failed", JOptionPane.ERROR_MESSAGE);
+			throw new RuntimeException(e);
+		}
+	}
 
-    private void doMultiLoad(final File[] files, final MainGUI mainGUI) {
-        final JDialog progressDialog = new JDialog(mainGUI);
-        // prepare progress dialog
-        progressDialog.setSize(400, 50);
-        progressDialog.setResizable(false);
-        progressDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        progressDialog.setLocation(
-                Math.max(0, (int) (mainGUI.getLocation().getX() + mainGUI.getSize().getWidth() / 2 - 200)),
-                Math.max(0, (int) (mainGUI.getLocation().getY() + mainGUI.getSize().getHeight() / 2 - 25)));
-        final JProgressBar progressBar = new JProgressBar(0, files.length);
-        progressDialog.add(progressBar);
+	private void doMultiLoad(final File[] files, final MainGUI mainGUI) {
+		final JDialog progressDialog = new JDialog(mainGUI);
+		// prepare progress dialog
+		progressDialog.setSize(400, 50);
+		progressDialog.setResizable(false);
+		progressDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		progressDialog.setLocation(
+				Math.max(0, (int) (mainGUI.getLocation().getX() + mainGUI.getSize().getWidth() / 2 - 200)),
+				Math.max(0, (int) (mainGUI.getLocation().getY() + mainGUI.getSize().getHeight() / 2 - 25)));
+		final JProgressBar progressBar = new JProgressBar(0, files.length);
+		progressDialog.add(progressBar);
 
-        mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        mainGUI.setEnabled(false);
-        progressDialog.setVisible(true);
+		mainGUI.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		mainGUI.setEnabled(false);
+		progressDialog.setVisible(true);
 
-        Thread job = new Thread() {
+		Thread job = new Thread() {
 
-            private int counter = 0;
+			private int counter = 0;
 
-            public void run() {
-                try {
-                    // iterate over files to load
-                    for (final File file : files) {
-                        counter++;
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                progressBar.setValue(counter);
-                                progressDialog.setTitle("Processing " + counter + " of " + files.length + " <"
-                                        + file.getName() + ">");
-                            }
-                        });
-                        doLoad(file, progressDialog);
-                    }
-                } catch (RuntimeException e) {
-                    log.error(e.getMessage(), e);
-                } finally {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            // close progress dialog
-                            mainGUI.previewMap.repaint();
-                            mainGUI.setCursor(Cursor.getDefaultCursor());
-                            if (progressDialog != null) {
-                                progressDialog.setVisible(false);
-                                progressDialog.dispose();
-                            }
-                            mainGUI.setEnabled(true);
-                            mainGUI.toFront();
-                        }
-                    });
-                }
-            }
+			public void run() {
+				try {
+					// iterate over files to load
+					for (final File file : files) {
+						counter++;
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								progressBar.setValue(counter);
+								progressDialog.setTitle(
+										"Processing " + counter + " of " + files.length + " <" + file.getName() + ">");
+							}
+						});
+						doLoad(file, progressDialog);
+					}
+				} catch (RuntimeException e) {
+					log.error(e.getMessage(), e);
+				} finally {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							// close progress dialog
+							mainGUI.previewMap.repaint();
+							mainGUI.setCursor(Cursor.getDefaultCursor());
+							if (progressDialog != null) {
+								progressDialog.setVisible(false);
+								progressDialog.dispose();
+							}
+							mainGUI.setEnabled(true);
+							mainGUI.toFront();
+						}
+					});
+				}
+			}
 
-        };
+		};
 
-        job.start();
-    }
+		job.start();
+	}
 }

@@ -23,8 +23,8 @@ import java.awt.event.ActionListener;
 
 public class HelpLicenses implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        new LicensesDialog().setVisible(true);
-    }
+	public void actionPerformed(ActionEvent e) {
+		new LicensesDialog().setVisible(true);
+	}
 
 }

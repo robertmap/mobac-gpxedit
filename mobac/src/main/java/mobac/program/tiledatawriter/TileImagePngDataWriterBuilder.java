@@ -30,31 +30,31 @@ import java.io.OutputStream;
 
 public class TileImagePngDataWriterBuilder implements TileImageDataWriterBuilder {
 
-    protected Logger log;
+	protected Logger log;
 
-    protected ImageWriter pngImageWriter = null;
+	protected ImageWriter pngImageWriter = null;
 
-    public TileImagePngDataWriterBuilder() {
-        log = LoggerFactory.getLogger(this.getClass());
-    }
+	public TileImagePngDataWriterBuilder() {
+		log = LoggerFactory.getLogger(this.getClass());
+	}
 
-    public TileImagePngDataWriter build() {
-        return new TileImagePngDataWriter();
-    }
+	public TileImagePngDataWriter build() {
+		return new TileImagePngDataWriter();
+	}
 
-    public void processImage(BufferedImage image, OutputStream out) throws IOException {
-        pngImageWriter.setOutput(ImageIO.createImageOutputStream(out));
-        IIOImage ioImage = new IIOImage(image, null, null);
-        pngImageWriter.write(ioImage);
-    }
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
+		pngImageWriter.setOutput(ImageIO.createImageOutputStream(out));
+		IIOImage ioImage = new IIOImage(image, null, null);
+		pngImageWriter.write(ioImage);
+	}
 
-    public void dispose() {
-        pngImageWriter.dispose();
-        pngImageWriter = null;
-    }
+	public void dispose() {
+		pngImageWriter.dispose();
+		pngImageWriter = null;
+	}
 
-    public TileImageType getType() {
-        return TileImageType.PNG;
-    }
+	public TileImageType getType() {
+		return TileImageType.PNG;
+	}
 
 }

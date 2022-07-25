@@ -23,9 +23,9 @@ import mobac.program.interfaces.MapSource;
 @AtlasCreatorName(value = "OsmAnd SQLite", type = "OSMAND_SQLite")
 public class OSMAND_SQLite extends RMapsSQLite {
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
 
 }

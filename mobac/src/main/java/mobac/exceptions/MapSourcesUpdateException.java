@@ -19,18 +19,17 @@ package mobac.exceptions;
 /**
  * Encapsulates several other exceptions that may occur while performing an
  * mapsources online update.
- *
  */
 public class MapSourcesUpdateException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public MapSourcesUpdateException(String message) {
-        super(message);
-    }
+	public MapSourcesUpdateException(String message) {
+		super(message);
+	}
 
-    public MapSourcesUpdateException(Throwable cause) {
-        super(cause);
-    }
+	public MapSourcesUpdateException(Throwable cause) {
+		super(cause);
+	}
 
 }

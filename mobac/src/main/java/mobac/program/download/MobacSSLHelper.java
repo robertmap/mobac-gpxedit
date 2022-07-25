@@ -26,15 +26,15 @@ import java.util.Set;
 
 public class MobacSSLHelper {
 
-    public static SSLSocketFactory createSSLSocketFactory(Set<String> additionalTrustedPublicKeys) {
-        MobacTrustManager trustManager = new MobacTrustManager(additionalTrustedPublicKeys);
-        SSLContext sslcontext;
-        try {
-            sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(new KeyManager[0], new TrustManager[]{trustManager}, null);
-            return sslcontext.getSocketFactory();
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static SSLSocketFactory createSSLSocketFactory(Set<String> additionalTrustedPublicKeys) {
+		MobacTrustManager trustManager = new MobacTrustManager(additionalTrustedPublicKeys);
+		SSLContext sslcontext;
+		try {
+			sslcontext = SSLContext.getInstance("TLS");
+			sslcontext.init(new KeyManager[0], new TrustManager[]{trustManager}, null);
+			return sslcontext.getSocketFactory();
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

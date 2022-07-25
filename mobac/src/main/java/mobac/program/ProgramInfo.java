@@ -25,88 +25,88 @@ import java.util.Properties;
 
 public class ProgramInfo {
 
-    public static String PROG_NAME = "Mobile Atlas Creator";
-    public static String PROG_NAME_SHORT = "MOBAC";
+	public static String PROG_NAME = "Mobile Atlas Creator";
+	public static String PROG_NAME_SHORT = "MOBAC";
 
-    private static String VERSION = "unknown";
-    private static String SVN_REVISION = "unknown";
-    private static String userAgent = "";
+	private static String VERSION = "unknown";
+	private static String SVN_REVISION = "unknown";
+	private static String userAgent = "";
 
-    /**
-     * Show or hide the detailed revision info in the main windows title
-     */
-    private static boolean titleHideRevision = false;
+	/**
+	 * Show or hide the detailed revision info in the main windows title
+	 */
+	private static boolean titleHideRevision = false;
 
-    public static void initialize() {
+	public static void initialize() {
 
-        try (InputStream in = Main.class.getResourceAsStream("mobac.properties")) {
-            Properties props = new Properties();
-            props.load(in);
-            titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
-            System.getProperties().putAll(props);
-        } catch (Exception e) {
-            String msg = "Error reading mobac.properties";
-            GUIExceptionHandler.processFatalExceptionSimpleDialog(msg, e);
-        }
-        try (InputStream in = Main.class.getResourceAsStream("mobac-rev.properties")) {
-            boolean versionSet = false;
-            if (in != null) {
-                Properties props = new Properties();
-                props.load(in);
-                String rev = props.getProperty("mobac.revision");
-                int svnRev = Utilities.parseSVNRevision(rev);
-                if (svnRev > 0) {
-                    SVN_REVISION = Integer.toString(svnRev);
-                    versionSet = true;
-                }
-                VERSION = props.getProperty("mobac.version", VERSION);
-            }
-            if (!versionSet) {
-                String rev = System.getProperty("mobac.revision.fallback");
-                SVN_REVISION = Utilities.parseSVNRevision(rev) + " exported";
-            }
-        } catch (Exception e) {
-            Logging.LOG.error("Error reading mobac-rev.properties", e);
-        }
-        userAgent = PROG_NAME_SHORT + "/" + (getVersion().replaceAll(" ", "_"));
-    }
+		try (InputStream in = Main.class.getResourceAsStream("mobac.properties")) {
+			Properties props = new Properties();
+			props.load(in);
+			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
+			System.getProperties().putAll(props);
+		} catch (Exception e) {
+			String msg = "Error reading mobac.properties";
+			GUIExceptionHandler.processFatalExceptionSimpleDialog(msg, e);
+		}
+		try (InputStream in = Main.class.getResourceAsStream("mobac-rev.properties")) {
+			boolean versionSet = false;
+			if (in != null) {
+				Properties props = new Properties();
+				props.load(in);
+				String rev = props.getProperty("mobac.revision");
+				int svnRev = Utilities.parseSVNRevision(rev);
+				if (svnRev > 0) {
+					SVN_REVISION = Integer.toString(svnRev);
+					versionSet = true;
+				}
+				VERSION = props.getProperty("mobac.version", VERSION);
+			}
+			if (!versionSet) {
+				String rev = System.getProperty("mobac.revision.fallback");
+				SVN_REVISION = Utilities.parseSVNRevision(rev) + " exported";
+			}
+		} catch (Exception e) {
+			Logging.LOG.error("Error reading mobac-rev.properties", e);
+		}
+		userAgent = PROG_NAME_SHORT + "/" + (getVersion().replaceAll(" ", "_"));
+	}
 
-    public static String getVersion() {
-        if (VERSION != null) {
-            return VERSION;
-        }
-        return "UNKNOWN";
-    }
+	public static String getVersion() {
+		if (VERSION != null) {
+			return VERSION;
+		}
+		return "UNKNOWN";
+	}
 
-    public static String getRevisionStr() {
-        return SVN_REVISION;
-    }
+	public static String getRevisionStr() {
+		return SVN_REVISION;
+	}
 
-    public static String getVersionTitle() {
-        String title = PROG_NAME;
-        if (PROG_NAME_SHORT != null) {
-            title += " (" + PROG_NAME_SHORT + ") ";
-        } else {
-            title += " ";
-        }
-        if (VERSION != null) {
-            title += getVersion();
-        } else {
-            title += "unknown version";
-        }
-        return title;
-    }
+	public static String getVersionTitle() {
+		String title = PROG_NAME;
+		if (PROG_NAME_SHORT != null) {
+			title += " (" + PROG_NAME_SHORT + ") ";
+		} else {
+			title += " ";
+		}
+		if (VERSION != null) {
+			title += getVersion();
+		} else {
+			title += "unknown version";
+		}
+		return title;
+	}
 
-    public static String getCompleteTitle() {
-        String title = getVersionTitle();
-        if (!titleHideRevision) {
-            title += " (" + SVN_REVISION + ")";
-        }
-        return title;
-    }
+	public static String getCompleteTitle() {
+		String title = getVersionTitle();
+		if (!titleHideRevision) {
+			title += " (" + SVN_REVISION + ")";
+		}
+		return title;
+	}
 
-    public static String getUserAgent() {
-        return userAgent;
-    }
+	public static String getUserAgent() {
+		return userAgent;
+	}
 
 }

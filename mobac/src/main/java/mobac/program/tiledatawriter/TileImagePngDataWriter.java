@@ -31,39 +31,39 @@ import java.util.Iterator;
 
 public class TileImagePngDataWriter implements TileImageDataWriter {
 
-    protected final Logger log;
+	protected final Logger log;
 
-    protected ImageWriter pngImageWriter;
+	protected ImageWriter pngImageWriter;
 
-    public TileImagePngDataWriter() {
-        log = LoggerFactory.getLogger(this.getClass());
-        if (log.isTraceEnabled()) {
-            String s = "Available PNG image writers:";
-            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
-            while (writers.hasNext()) {
-                ImageWriter w = writers.next();
-                s += "\n\t" + w.getClass().getName();
-            }
-            log.trace(s);
-        }
-        pngImageWriter = ImageIO.getImageWritersByFormatName("png").next();
-        pngImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
-        log.debug("Used PNG image writer: " + pngImageWriter.getClass().getName());
-    }
+	public TileImagePngDataWriter() {
+		log = LoggerFactory.getLogger(this.getClass());
+		if (log.isTraceEnabled()) {
+			String s = "Available PNG image writers:";
+			Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
+			while (writers.hasNext()) {
+				ImageWriter w = writers.next();
+				s += "\n\t" + w.getClass().getName();
+			}
+			log.trace(s);
+		}
+		pngImageWriter = ImageIO.getImageWritersByFormatName("png").next();
+		pngImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
+		log.debug("Used PNG image writer: " + pngImageWriter.getClass().getName());
+	}
 
-    public void processImage(BufferedImage image, OutputStream out) throws IOException {
-        pngImageWriter.setOutput(ImageIO.createImageOutputStream(out));
-        IIOImage ioImage = new IIOImage(image, null, null);
-        pngImageWriter.write(ioImage);
-    }
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
+		pngImageWriter.setOutput(ImageIO.createImageOutputStream(out));
+		IIOImage ioImage = new IIOImage(image, null, null);
+		pngImageWriter.write(ioImage);
+	}
 
-    public void close() {
-        pngImageWriter.dispose();
-        pngImageWriter = null;
-    }
+	public void close() {
+		pngImageWriter.dispose();
+		pngImageWriter = null;
+	}
 
-    public TileImageType getType() {
-        return TileImageType.PNG;
-    }
+	public TileImageType getType() {
+		return TileImageType.PNG;
+	}
 
 }

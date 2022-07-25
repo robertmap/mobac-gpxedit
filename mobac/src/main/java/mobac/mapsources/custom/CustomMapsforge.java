@@ -40,101 +40,101 @@ import java.util.List;
 @XmlRootElement(name = "mapsforge")
 public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMapSource<CustomMapsforge> {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomMapsforge.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomMapsforge.class);
 
-    @XmlElement(nillable = false, defaultValue = "MapsforgeCustom")
-    private String name = "MapsforgeCustom";
+	@XmlElement(nillable = false, defaultValue = "MapsforgeCustom")
+	private String name = "MapsforgeCustom";
 
-    @XmlElement(name = "mapFile")
-    private String[] mapFileNames;
+	@XmlElement(name = "mapFile")
+	private String[] mapFileNames;
 
-    @XmlElement(name = "xmlRenderTheme", defaultValue = "")
-    private String xmlRenderThemeFileName = "";
+	@XmlElement(name = "xmlRenderTheme", defaultValue = "")
+	private String xmlRenderThemeFileName = "";
 
-    @XmlElement(defaultValue = "0")
-    private int minZoom = 0;
+	@XmlElement(defaultValue = "0")
+	private int minZoom = 0;
 
-    @XmlElement(defaultValue = "20")
-    private int maxZoom = 20;
+	@XmlElement(defaultValue = "20")
+	private int maxZoom = 20;
 
-    public CustomMapsforge() {
-        super();
-    }
+	public CustomMapsforge() {
+		super();
+	}
 
-    @Override
-    public void initialize() throws MapSourceInitializationException {
-        xmlRenderThemeFileName = xmlRenderThemeFileName.trim();
+	@Override
+	public void initialize() throws MapSourceInitializationException {
+		xmlRenderThemeFileName = xmlRenderThemeFileName.trim();
 
-        // The custom map xml file used for loading this map
-        MapSourceLoaderInfo loaderInfo = getLoaderInfo();
-        File mapSourceXmlDir = null;
-        if (loaderInfo != null) {
-            File mapSourceXmlFile = this.getLoaderInfo().getSourceFile();
-            mapSourceXmlDir = mapSourceXmlFile.getParentFile();
-        }
+		// The custom map xml file used for loading this map
+		MapSourceLoaderInfo loaderInfo = getLoaderInfo();
+		File mapSourceXmlDir = null;
+		if (loaderInfo != null) {
+			File mapSourceXmlFile = this.getLoaderInfo().getSourceFile();
+			mapSourceXmlDir = mapSourceXmlFile.getParentFile();
+		}
 
-        List<File> newMapFileList = new ArrayList<>();
-        for (String mapFileName : mapFileNames) {
-            File mapFile = Utilities.findFile(mapFileName, mapSourceXmlDir, DirectoryManager.currentDir,
-                    DirectoryManager.mapSourcesDir, DirectoryManager.mobacUserAppDataDir);
-            if (mapFile == null) {
-                JOptionPane.showMessageDialog(null, "Unable to find map file \"" + mapFileName + "\"",
-                        I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            newMapFileList.add(mapFile);
-        }
-        this.mapFileList = newMapFileList;
+		List<File> newMapFileList = new ArrayList<>();
+		for (String mapFileName : mapFileNames) {
+			File mapFile = Utilities.findFile(mapFileName, mapSourceXmlDir, DirectoryManager.currentDir,
+					DirectoryManager.mapSourcesDir, DirectoryManager.mobacUserAppDataDir);
+			if (mapFile == null) {
+				JOptionPane.showMessageDialog(null, "Unable to find map file \"" + mapFileName + "\"",
+						I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			newMapFileList.add(mapFile);
+		}
+		this.mapFileList = newMapFileList;
 
-        if (xmlRenderThemeFileName.length() > 0) {
-            File renderFile = Utilities.findFile(xmlRenderThemeFileName, mapSourceXmlDir, DirectoryManager.currentDir,
-                    DirectoryManager.mapSourcesDir, DirectoryManager.mobacUserAppDataDir);
-            if (renderFile == null) {
-                JOptionPane.showMessageDialog(null,
-                        "Unable to find xmlRenderTheme file \"" + xmlRenderThemeFileName + "\"",
-                        I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+		if (xmlRenderThemeFileName.length() > 0) {
+			File renderFile = Utilities.findFile(xmlRenderThemeFileName, mapSourceXmlDir, DirectoryManager.currentDir,
+					DirectoryManager.mapSourcesDir, DirectoryManager.mobacUserAppDataDir);
+			if (renderFile == null) {
+				JOptionPane.showMessageDialog(null,
+						"Unable to find xmlRenderTheme file \"" + xmlRenderThemeFileName + "\"",
+						I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
-            try {
-                loadExternalRenderTheme(renderFile);
-            } catch (FileNotFoundException e) {
-                log.error("", e);
-                return;
-            }
-        }
-        super.initialize();
-    }
+			try {
+				loadExternalRenderTheme(renderFile);
+			} catch (FileNotFoundException e) {
+				log.error("", e);
+				return;
+			}
+		}
+		super.initialize();
+	}
 
-    @Override
-    public void applyChangesFrom(CustomMapsforge reloadedMapSource) throws MapSourceInitializationException {
-        if (!name.equals(reloadedMapSource.getName())) {
-            throw new MapSourceInitializationException("The map name has changed");
-        }
-        mapFileNames = reloadedMapSource.mapFileNames;
-        xmlRenderThemeFileName = reloadedMapSource.xmlRenderThemeFileName;
-        minZoom = reloadedMapSource.minZoom;
-        maxZoom = reloadedMapSource.maxZoom;
-        loaderInfo = reloadedMapSource.loaderInfo;
-        initialize();
-    }
+	@Override
+	public void applyChangesFrom(CustomMapsforge reloadedMapSource) throws MapSourceInitializationException {
+		if (!name.equals(reloadedMapSource.getName())) {
+			throw new MapSourceInitializationException("The map name has changed");
+		}
+		mapFileNames = reloadedMapSource.mapFileNames;
+		xmlRenderThemeFileName = reloadedMapSource.xmlRenderThemeFileName;
+		minZoom = reloadedMapSource.minZoom;
+		maxZoom = reloadedMapSource.maxZoom;
+		loaderInfo = reloadedMapSource.loaderInfo;
+		initialize();
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public int getMaxZoom() {
-        return maxZoom;
-    }
+	public int getMaxZoom() {
+		return maxZoom;
+	}
 
-    public int getMinZoom() {
-        return minZoom;
-    }
+	public int getMinZoom() {
+		return minZoom;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

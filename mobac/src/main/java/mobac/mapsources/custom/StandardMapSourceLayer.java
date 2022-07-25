@@ -35,90 +35,91 @@ import java.io.IOException;
 
 @XmlRootElement
 /**
- * Wraps an already existing map source so that it can be loaded by name in a custom multi-layer map
+ * Wraps an already existing map source so that it can be loaded by name in a
+ * custom multi-layer map
  */
 public class StandardMapSourceLayer implements MapSource, InitializableMapSource {
 
-    protected MapSource mapSource = null;
+	protected MapSource mapSource = null;
 
-    protected MapSourceLoaderInfo loaderInfo = null;
+	protected MapSourceLoaderInfo loaderInfo = null;
 
-    @XmlElement(name = "name")
-    protected String mapSourceName;
+	@XmlElement(name = "name")
+	protected String mapSourceName;
 
-    @Override
-    public void initialize() throws MapSourceInitializationException {
-        if (mapSource instanceof InitializableMapSource) {
-            ((InitializableMapSource) mapSource).initialize();
-        }
-    }
+	@Override
+	public void initialize() throws MapSourceInitializationException {
+		if (mapSource instanceof InitializableMapSource) {
+			((InitializableMapSource) mapSource).initialize();
+		}
+	}
 
-    public MapSource getMapSource() {
-        return mapSource;
-    }
+	public MapSource getMapSource() {
+		return mapSource;
+	}
 
-    protected void afterUnmarshal(Unmarshaller u, Object parent) {
-        mapSource = MapSourcesManager.getInstance().getSourceByName(mapSourceName);
-        if (mapSource == null)
-            throw new RuntimeException("Unknown map source name used: " + mapSourceName);
-    }
+	protected void afterUnmarshal(Unmarshaller u, Object parent) {
+		mapSource = MapSourcesManager.getInstance().getSourceByName(mapSourceName);
+		if (mapSource == null)
+			throw new RuntimeException("Unknown map source name used: " + mapSourceName);
+	}
 
-    public int getMaxZoom() {
-        return mapSource.getMaxZoom();
-    }
+	public int getMaxZoom() {
+		return mapSource.getMaxZoom();
+	}
 
-    public int getMinZoom() {
-        return mapSource.getMinZoom();
-    }
+	public int getMinZoom() {
+		return mapSource.getMinZoom();
+	}
 
-    public String getName() {
-        return mapSource.getName();
-    }
+	public String getName() {
+		return mapSource.getName();
+	}
 
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        return mapSource.getTileData(zoom, x, y, loadMethod);
-    }
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		return mapSource.getTileData(zoom, x, y, loadMethod);
+	}
 
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        return mapSource.getTileImage(zoom, x, y, loadMethod);
-    }
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		return mapSource.getTileImage(zoom, x, y, loadMethod);
+	}
 
-    public TileImageType getTileImageType() {
-        return mapSource.getTileImageType();
-    }
+	public TileImageType getTileImageType() {
+		return mapSource.getTileImageType();
+	}
 
-    public MapSpace getMapSpace() {
-        return mapSource.getMapSpace();
-    }
+	public MapSpace getMapSpace() {
+		return mapSource.getMapSpace();
+	}
 
-    public Color getBackgroundColor() {
-        return mapSource.getBackgroundColor();
-    }
+	public Color getBackgroundColor() {
+		return mapSource.getBackgroundColor();
+	}
 
-    @Override
-    public String toString() {
-        return mapSource.toString();
-    }
+	@Override
+	public String toString() {
+		return mapSource.toString();
+	}
 
-    @Override
-    public int hashCode() {
-        return mapSource.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return mapSource.hashCode();
+	}
 
-    @XmlTransient
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return loaderInfo;
-    }
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
 
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-        this.loaderInfo = loaderInfo;
-    }
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		this.loaderInfo = loaderInfo;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        return mapSource.equals(obj);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		return mapSource.equals(obj);
+	}
 
 }

@@ -35,154 +35,154 @@ import java.awt.event.ActionListener;
 
 public class JProfilesPanel extends JCollapsiblePanel {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final JProfilesComboBox profilesCombo;
-    private final JButton reloadButton;
-    private final JButton deleteButton;
-    private final JButton loadButton;
-    private final JButton saveAsButton;
+	private final JProfilesComboBox profilesCombo;
+	private final JButton reloadButton;
+	private final JButton deleteButton;
+	private final JButton loadButton;
+	private final JButton saveAsButton;
 
-    public JProfilesPanel(JAtlasTree atlasTree) {
-        super(I18nUtils.localizedStringForKey("lp_atlas_profile_title"), new GridBagLayout());
+	public JProfilesPanel(JAtlasTree atlasTree) {
+		super(I18nUtils.localizedStringForKey("lp_atlas_profile_title"), new GridBagLayout());
 
-        if (atlasTree == null)
-            throw new NullPointerException();
+		if (atlasTree == null)
+			throw new NullPointerException();
 
-        // profiles combo box
-        profilesCombo = new JProfilesComboBox();
-        profilesCombo.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_combo_tips"));
-        profilesCombo.addActionListener(new ProfileListListener());
+		// profiles combo box
+		profilesCombo = new JProfilesComboBox();
+		profilesCombo.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_combo_tips"));
+		profilesCombo.addActionListener(new ProfileListListener());
 
-        // delete profile button
-        deleteButton = new JButton(I18nUtils.localizedStringForKey("lp_atlas_profile_delete_btn_title"));
-        deleteButton.addActionListener(new DeleteProfileListener());
-        deleteButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_delete_btn_tips"));
+		// delete profile button
+		deleteButton = new JButton(I18nUtils.localizedStringForKey("lp_atlas_profile_delete_btn_title"));
+		deleteButton.addActionListener(new DeleteProfileListener());
+		deleteButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_delete_btn_tips"));
 
-        // save as profile button
-        saveAsButton = new JButton(I18nUtils.localizedStringForKey("lp_atlas_profile_save_btn_title"));
-        saveAsButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_save_btn_tips"));
-        saveAsButton.addActionListener(new SaveAsProfileListener(atlasTree));
+		// save as profile button
+		saveAsButton = new JButton(I18nUtils.localizedStringForKey("lp_atlas_profile_save_btn_title"));
+		saveAsButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_save_btn_tips"));
+		saveAsButton.addActionListener(new SaveAsProfileListener(atlasTree));
 
-        loadButton = new JButton(I18nUtils.localizedStringForKey("lp_atlas_profile_load_btn_title"));
-        loadButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_load_btn_tips"));
+		loadButton = new JButton(I18nUtils.localizedStringForKey("lp_atlas_profile_load_btn_title"));
+		loadButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_load_btn_tips"));
 
-        GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
-        reloadButton = new JButton(Utilities.loadResourceImageIcon("refresh.png"));
-        reloadButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_refresh_btn_tips"));
-        reloadButton.addActionListener(new ReloadListener());
-        reloadButton.setPreferredSize(new Dimension(24, 0));
+		GBC gbc = GBC.eol().fill().insets(5, 5, 5, 5);
+		reloadButton = new JButton(Utilities.loadResourceImageIcon("refresh.png"));
+		reloadButton.setToolTipText(I18nUtils.localizedStringForKey("lp_atlas_profile_refresh_btn_tips"));
+		reloadButton.addActionListener(new ReloadListener());
+		reloadButton.setPreferredSize(new Dimension(24, 0));
 
-        JPanel p = new JPanel(new BorderLayout());
-        p.add(profilesCombo, BorderLayout.CENTER);
-        p.add(reloadButton, BorderLayout.EAST);
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(profilesCombo, BorderLayout.CENTER);
+		p.add(reloadButton, BorderLayout.EAST);
 
-        contentContainer.add(p, gbc);
-        contentContainer.add(deleteButton, gbc.toggleEol());
-        contentContainer.add(saveAsButton, gbc);
-        contentContainer.add(loadButton, gbc.toggleEol());
+		contentContainer.add(p, gbc);
+		contentContainer.add(deleteButton, gbc.toggleEol());
+		contentContainer.add(saveAsButton, gbc);
+		contentContainer.add(loadButton, gbc.toggleEol());
 
-        saveAsButton.setEnabled(false);
-        deleteButton.setEnabled(false);
-        loadButton.setEnabled(false);
-    }
+		saveAsButton.setEnabled(false);
+		deleteButton.setEnabled(false);
+		loadButton.setEnabled(false);
+	}
 
-    public void initialize() {
-        // Load all profiles from the profiles file from disk
-        profilesCombo.loadProfilesList();
-        deleteButton.setEnabled(false);
-        loadButton.setEnabled(false);
-    }
+	public void initialize() {
+		// Load all profiles from the profiles file from disk
+		profilesCombo.loadProfilesList();
+		deleteButton.setEnabled(false);
+		loadButton.setEnabled(false);
+	}
 
-    public void reloadProfileList() {
-        initialize();
-    }
+	public void reloadProfileList() {
+		initialize();
+	}
 
-    public JProfilesComboBox getProfilesCombo() {
-        return profilesCombo;
-    }
+	public JProfilesComboBox getProfilesCombo() {
+		return profilesCombo;
+	}
 
-    public JButton getLoadButton() {
-        return loadButton;
-    }
+	public JButton getLoadButton() {
+		return loadButton;
+	}
 
-    public JButton getDeleteButton() {
-        return deleteButton;
-    }
+	public JButton getDeleteButton() {
+		return deleteButton;
+	}
 
-    public JButton getSaveAsButton() {
-        return saveAsButton;
-    }
+	public JButton getSaveAsButton() {
+		return saveAsButton;
+	}
 
-    public Profile getSelectedProfile() {
-        return profilesCombo.getSelectedProfile();
-    }
+	public Profile getSelectedProfile() {
+		return profilesCombo.getSelectedProfile();
+	}
 
-    private class SaveAsProfileListener implements ActionListener {
+	private class SaveAsProfileListener implements ActionListener {
 
-        JAtlasTree jAtlasTree;
+		JAtlasTree jAtlasTree;
 
-        public SaveAsProfileListener(JAtlasTree atlasTree) {
-            super();
-            jAtlasTree = atlasTree;
-        }
+		public SaveAsProfileListener(JAtlasTree atlasTree) {
+			super();
+			jAtlasTree = atlasTree;
+		}
 
-        public void actionPerformed(ActionEvent e) {
-            if (!jAtlasTree.testAtlasContentValid())
-                return;
-            Object selObject = profilesCombo.getEditor().getItem();
-            String profileName = null;
-            Profile profile = null;
-            if (selObject instanceof Profile) {
-                profile = (Profile) selObject;
-                profileName = profile.getName();
-            } else
-                profileName = (String) selObject;
+		public void actionPerformed(ActionEvent e) {
+			if (!jAtlasTree.testAtlasContentValid())
+				return;
+			Object selObject = profilesCombo.getEditor().getItem();
+			String profileName = null;
+			Profile profile = null;
+			if (selObject instanceof Profile) {
+				profile = (Profile) selObject;
+				profileName = profile.getName();
+			} else
+				profileName = (String) selObject;
 
-            if (profileName.length() == 0) {
-                JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("lp_atlas_profile_msg_ask_name"),
-                        I18nUtils.localizedStringForKey("Error"),
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+			if (profileName.length() == 0) {
+				JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("lp_atlas_profile_msg_ask_name"),
+						I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
-            profile = new Profile(profileName);
+			profile = new Profile(profileName);
 
-            if (profile.exists()) {
-                int response = JOptionPane.showConfirmDialog(null,
-                        String.format(I18nUtils.localizedStringForKey("lp_atlas_profile_msg_overwrite_confirm"), profileName),
-                        I18nUtils.localizedStringForKey("lp_atlas_profile_msg_overwrite_confirm_title"),
-                        JOptionPane.YES_NO_OPTION);
-                if (response != JOptionPane.YES_OPTION)
-                    return;
-            }
+			if (profile.exists()) {
+				int response = JOptionPane.showConfirmDialog(null,
+						String.format(I18nUtils.localizedStringForKey("lp_atlas_profile_msg_overwrite_confirm"),
+								profileName),
+						I18nUtils.localizedStringForKey("lp_atlas_profile_msg_overwrite_confirm_title"),
+						JOptionPane.YES_NO_OPTION);
+				if (response != JOptionPane.YES_OPTION)
+					return;
+			}
 
-            if (jAtlasTree.save(profile)) {
-                reloadProfileList();
-                profilesCombo.setSelectedItem(profile);
-            }
-        }
-    }
+			if (jAtlasTree.save(profile)) {
+				reloadProfileList();
+				profilesCombo.setSelectedItem(profile);
+			}
+		}
+	}
 
-    private class DeleteProfileListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            profilesCombo.deleteSelectedProfile();
-        }
-    }
+	private class DeleteProfileListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			profilesCombo.deleteSelectedProfile();
+		}
+	}
 
-    private class ReloadListener implements ActionListener {
+	private class ReloadListener implements ActionListener {
 
-        public void actionPerformed(ActionEvent e) {
-            reloadProfileList();
-        }
-    }
+		public void actionPerformed(ActionEvent e) {
+			reloadProfileList();
+		}
+	}
 
-    private class ProfileListListener implements ActionListener {
+	private class ProfileListListener implements ActionListener {
 
-        public void actionPerformed(ActionEvent e) {
-            boolean existingProfileSelected = profilesCombo.getSelectedProfile() != null;
-            loadButton.setEnabled(existingProfileSelected);
-            deleteButton.setEnabled(existingProfileSelected);
-        }
-    }
+		public void actionPerformed(ActionEvent e) {
+			boolean existingProfileSelected = profilesCombo.getSelectedProfile() != null;
+			loadButton.setEnabled(existingProfileSelected);
+			deleteButton.setEnabled(existingProfileSelected);
+		}
+	}
 }

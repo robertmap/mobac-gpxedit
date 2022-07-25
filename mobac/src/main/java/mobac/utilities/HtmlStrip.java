@@ -18,15 +18,16 @@ package mobac.utilities;
 
 public class HtmlStrip {
 
-    /**
-     * If the specified tag exists return only the content between start and end tag, else return the unmodified string.
-     */
-    public static String getInnerText(String html, String tagName) {
-        int tagStart = html.indexOf("<" + tagName + ">");
-        if (tagStart >= 0) {
-            int tagEnd = Math.max(html.indexOf("</" + tagName + ">"), html.length());
-            return html.substring(tagStart + 2 + tagName.length(), tagEnd).trim();
-        }
-        return html;
-    }
+	/**
+	 * If the specified tag exists return only the content between start and end
+	 * tag, else return the unmodified string.
+	 */
+	public static String getInnerText(String html, String tagName) {
+		int tagStart = html.indexOf("<" + tagName + ">");
+		if (tagStart >= 0) {
+			int tagEnd = Math.max(html.indexOf("</" + tagName + ">"), html.length());
+			return html.substring(tagStart + 2 + tagName.length(), tagEnd).trim();
+		}
+		return html;
+	}
 }

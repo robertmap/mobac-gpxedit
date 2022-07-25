@@ -23,40 +23,40 @@ import mobac.utilities.I18nUtils;
 
 public class GpxRootEntry extends GpxEntry {
 
-    public GpxRootEntry(GpxLayer layer) {
-        this.setLayer(layer);
-        this.setWaypointParent(true);
-    }
+	public GpxRootEntry(GpxLayer layer) {
+		this.setLayer(layer);
+		this.setWaypointParent(true);
+	}
 
-    public String toString() {
-        String name = getMetaDataName();
-        if (name != null && !name.equals("")) {
-            return name;
-        } else {
-            if (getLayer().getFile() == null) {
-                return I18nUtils.localizedStringForKey("rp_gpx_root_default_name_nofile");
-            } else {
-                return String.format(I18nUtils.localizedStringForKey("rp_gpx_root_default_name_hasfile"), getLayer()
-                        .getFile().getName());
-            }
-        }
-    }
+	public String toString() {
+		String name = getMetaDataName();
+		if (name != null && !name.equals("")) {
+			return name;
+		} else {
+			if (getLayer().getFile() == null) {
+				return I18nUtils.localizedStringForKey("rp_gpx_root_default_name_nofile");
+			} else {
+				return String.format(I18nUtils.localizedStringForKey("rp_gpx_root_default_name_hasfile"),
+						getLayer().getFile().getName());
+			}
+		}
+	}
 
-    public String getMetaDataName() {
-        try {
-            return getLayer().getGpx().getMetadata().getName();
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
+	public String getMetaDataName() {
+		try {
+			return getLayer().getGpx().getMetadata().getName();
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
 
-    public void setMetaDataName(String name) {
-        Gpx gpx = getLayer().getGpx();
-        if (gpx.getMetadata() == null)
-            gpx.setMetadata(new MetadataType());
-        gpx.getMetadata().setName(name);
+	public void setMetaDataName(String name) {
+		Gpx gpx = getLayer().getGpx();
+		if (gpx.getMetadata() == null)
+			gpx.setMetadata(new MetadataType());
+		gpx.getMetadata().setName(name);
 
-        // Notify the model about the changed node text
-        getLayer().getPanel().getTreeModel().nodeChanged(getNode());
-    }
+		// Notify the model about the changed node text
+		getLayer().getPanel().getTreeModel().nodeChanged(getNode());
+	}
 }

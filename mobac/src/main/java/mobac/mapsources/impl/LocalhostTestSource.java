@@ -21,19 +21,19 @@ import mobac.program.model.TileImageType;
 
 public class LocalhostTestSource extends AbstractHttpMapSource {
 
-    private String baseUrl;
+	private String baseUrl;
 
-    public LocalhostTestSource(String name, TileImageType tileType) {
-        this(name, 80, tileType);
-    }
+	public LocalhostTestSource(String name, TileImageType tileType) {
+		this(name, 80, tileType);
+	}
 
-    public LocalhostTestSource(String name, int port, TileImageType tileType) {
-        super(name, 0, 22, tileType);
-        baseUrl = "http://127.0.0.1:" + port + "/tile." + tileType + "?";
-    }
+	public LocalhostTestSource(String name, int port, TileImageType tileType) {
+		super(name, 0, 22, tileType);
+		baseUrl = "http://127.0.0.1:" + port + "/tile." + tileType + "?";
+	}
 
-    public String getTileUrl(int zoom, int tilex, int tiley) {
-        return baseUrl + "x=" + tilex + "&y=" + tiley + "&z=" + zoom;
-    }
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		return baseUrl + "x=" + tilex + "&y=" + tiley + "&z=" + zoom;
+	}
 
 }

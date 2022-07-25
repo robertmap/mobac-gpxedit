@@ -27,28 +27,28 @@ import java.util.Vector;
  */
 public class PolygonAdapter extends XmlAdapter<PolygonType, Polygon> {
 
-    @Override
-    public PolygonType marshal(Polygon polygon) throws Exception {
-        Vector<Point> points = new Vector<>(polygon.npoints);
-        for (int i = 0; i < polygon.npoints; i++) {
-            Point p = new Point(polygon.xpoints[i], polygon.ypoints[i]);
-            points.add(p);
-        }
-        return new PolygonType(points);
-    }
+	@Override
+	public PolygonType marshal(Polygon polygon) throws Exception {
+		Vector<Point> points = new Vector<>(polygon.npoints);
+		for (int i = 0; i < polygon.npoints; i++) {
+			Point p = new Point(polygon.xpoints[i], polygon.ypoints[i]);
+			points.add(p);
+		}
+		return new PolygonType(points);
+	}
 
-    @Override
-    public Polygon unmarshal(PolygonType value) throws Exception {
-        int nPoints = value.points.size();
-        int[] xPoints = new int[nPoints];
-        int[] yPoints = new int[nPoints];
-        for (int i = 0; i < nPoints; i++) {
-            Point p = value.points.get(i);
-            xPoints[i] = p.x;
-            yPoints[i] = p.y;
-        }
+	@Override
+	public Polygon unmarshal(PolygonType value) throws Exception {
+		int nPoints = value.points.size();
+		int[] xPoints = new int[nPoints];
+		int[] yPoints = new int[nPoints];
+		for (int i = 0; i < nPoints; i++) {
+			Point p = value.points.get(i);
+			xPoints[i] = p.x;
+			yPoints[i] = p.y;
+		}
 
-        return new Polygon(xPoints, yPoints, nPoints);
-    }
+		return new Polygon(xPoints, yPoints, nPoints);
+	}
 
 }

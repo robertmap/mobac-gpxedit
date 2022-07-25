@@ -27,18 +27,18 @@ import java.awt.Point;
  */
 public class PointAdapter extends XmlAdapter<String, Point> {
 
-    @Override
-    public String marshal(Point point) throws Exception {
-        return point.x + "/" + point.y;
-    }
+	@Override
+	public String marshal(Point point) throws Exception {
+		return point.x + "/" + point.y;
+	}
 
-    @Override
-    public Point unmarshal(String value) throws Exception {
-        int i = value.indexOf('/');
-        if (i < 0)
-            throw new UnmarshalException("Invalid format");
-        int x = Integer.parseInt(value.substring(0, i).trim());
-        int y = Integer.parseInt(value.substring(i + 1).trim());
-        return new Point(x, y);
-    }
+	@Override
+	public Point unmarshal(String value) throws Exception {
+		int i = value.indexOf('/');
+		if (i < 0)
+			throw new UnmarshalException("Invalid format");
+		int x = Integer.parseInt(value.substring(0, i).trim());
+		int y = Integer.parseInt(value.substring(i + 1).trim());
+		return new Point(x, y);
+	}
 }

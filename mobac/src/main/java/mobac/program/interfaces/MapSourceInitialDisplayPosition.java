@@ -19,12 +19,12 @@ package mobac.program.interfaces;
 import mobac.gui.mapview.PreviewMap;
 
 /**
- * For the MOBAC {@link PreviewMap}: Allows to specify the initial view point of a map source on it's
- * {@link MapSource#getMinZoom()} zoom level.
+ * For the MOBAC {@link PreviewMap}: Allows to specify the initial view point of
+ * a map source on it's {@link MapSource#getMinZoom()} zoom level.
  */
 public interface MapSourceInitialDisplayPosition {
 
-    int getInitialDisplayPositionX();
+	int getInitialDisplayPositionX();
 
-    int getInitialDisplayPositionY();
+	int getInitialDisplayPositionY();
 }

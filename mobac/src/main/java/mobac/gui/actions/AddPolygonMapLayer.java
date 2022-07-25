@@ -39,63 +39,63 @@ import java.util.List;
 
 public class AddPolygonMapLayer implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        MainGUI mg = MainGUI.getMainGUI();
+	public void actionPerformed(ActionEvent event) {
+		MainGUI mg = MainGUI.getMainGUI();
 
-        AbstractPolygonSelectionMapController msc = (AbstractPolygonSelectionMapController) mg.previewMap
-                .getMapSelectionController();
+		AbstractPolygonSelectionMapController msc = (AbstractPolygonSelectionMapController) mg.previewMap
+				.getMapSelectionController();
 
-        JAtlasTree jAtlasTree = mg.jAtlasTree;
-        final String mapNameFmt = "%s %02d";
-        AtlasInterface atlasInterface = jAtlasTree.getAtlas();
-        String name = mg.getUserText();
-        MapSource mapSource = mg.getSelectedMapSource();
-        MapSpace mapSpace = mapSource.getMapSpace();
-        SelectedZoomLevels sZL = mg.getSelectedZoomLevels();
+		JAtlasTree jAtlasTree = mg.jAtlasTree;
+		final String mapNameFmt = "%s %02d";
+		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
+		String name = mg.getUserText();
+		MapSource mapSource = mg.getSelectedMapSource();
+		MapSpace mapSpace = mapSource.getMapSpace();
+		SelectedZoomLevels sZL = mg.getSelectedZoomLevels();
 
-        int[] zoomLevels = sZL.getZoomLevels();
-        if (zoomLevels.length == 0) {
-            JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_no_zoom_level_selected"));
-            return;
-        }
+		int[] zoomLevels = sZL.getZoomLevels();
+		if (zoomLevels.length == 0) {
+			JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_no_zoom_level_selected"));
+			return;
+		}
 
-        String layerName = name;
-        Layer layer = null;
-        int c = 1;
-        boolean success = false;
-        do {
-            try {
-                layer = new Layer(atlasInterface, layerName);
-                success = true;
-            } catch (InvalidNameException e) {
-                layerName = name + "_" + c++;
-            }
-        } while (!success);
-        List<Point> polygonPoints = msc.getPolygonPoints();
+		String layerName = name;
+		Layer layer = null;
+		int c = 1;
+		boolean success = false;
+		do {
+			try {
+				layer = new Layer(atlasInterface, layerName);
+				success = true;
+			} catch (InvalidNameException e) {
+				layerName = name + "_" + c++;
+			}
+		} while (!success);
+		List<Point> polygonPoints = msc.getPolygonPoints();
 
-        for (int zoom : zoomLevels) {
-            int[] xpoints = new int[polygonPoints.size()];
-            int[] ypoints = new int[polygonPoints.size()];
+		for (int zoom : zoomLevels) {
+			int[] xpoints = new int[polygonPoints.size()];
+			int[] ypoints = new int[polygonPoints.size()];
 
-            for (int i = 0; i < xpoints.length; i++) {
-                Point p = mapSpace.changeZoom(polygonPoints.get(i), JMapViewer.MAX_ZOOM, zoom);
-                xpoints[i] = p.x;
-                ypoints[i] = p.y;
-            }
-            TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
-            Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
-            // Rectangle bounds = polygon.getBounds();
-            // int maxMapSize = Settings.getInstance().maxMapSize;
-            // System.out.println(bounds.height + " " + bounds.width);
+			for (int i = 0; i < xpoints.length; i++) {
+				Point p = mapSpace.changeZoom(polygonPoints.get(i), JMapViewer.MAX_ZOOM, zoom);
+				xpoints[i] = p.x;
+				ypoints[i] = p.y;
+			}
+			TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
+			Polygon polygon = new Polygon(xpoints, ypoints, xpoints.length);
+			// Rectangle bounds = polygon.getBounds();
+			// int maxMapSize = Settings.getInstance().maxMapSize;
+			// System.out.println(bounds.height + " " + bounds.width);
 
-            String mapName = String.format(mapNameFmt, layerName, zoom);
-            MapPolygon map = new MapPolygon(layer, mapName, mapSource, zoom, polygon, customTileParameters);
-            layer.addMap(map);
-        }
-        atlasInterface.addLayer(layer);
-        jAtlasTree.getTreeModel().notifyNodeInsert(layer);
+			String mapName = String.format(mapNameFmt, layerName, zoom);
+			MapPolygon map = new MapPolygon(layer, mapName, mapSource, zoom, polygon, customTileParameters);
+			layer.addMap(map);
+		}
+		atlasInterface.addLayer(layer);
+		jAtlasTree.getTreeModel().notifyNodeInsert(layer);
 
-        msc.finishPolygon();
-    }
+		msc.finishPolygon();
+	}
 
 }

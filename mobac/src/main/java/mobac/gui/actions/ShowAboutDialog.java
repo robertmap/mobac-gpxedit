@@ -23,8 +23,8 @@ import java.awt.event.ActionListener;
 
 public class ShowAboutDialog implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        new AboutDialog().setVisible(true);
-    }
+	public void actionPerformed(ActionEvent e) {
+		new AboutDialog().setVisible(true);
+	}
 
 }

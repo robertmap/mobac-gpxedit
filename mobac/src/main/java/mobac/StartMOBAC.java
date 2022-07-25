@@ -22,12 +22,15 @@ import javax.swing.UIManager;
 /**
  * Main class for starting Mobile Atlas Creator.
  * <p>
- * This class performs the Java Runtime version check and if the correct version is installed it creates a new instance
- * of the class specified by {@link #MAIN_CLASS}. The class to be instantiated is specified by it's name intentionally
- * as this allows to compile this class without any further class dependencies.
+ * This class performs the Java Runtime version check and if the correct version
+ * is installed it creates a new instance of the class specified by
+ * {@link #MAIN_CLASS}. The class to be instantiated is specified by it's name
+ * intentionally as this allows to compile this class without any further class
+ * dependencies.
  * <p>
- * Note: Translation of Strings in this file do not make sense because the settings are not loaded yet. Therefore all
- * messages are always shown in the default language.
+ * Note: Translation of Strings in this file do not make sense because the
+ * settings are not loaded yet. Therefore all messages are always shown in the
+ * default language.
  */
 public class StartMOBAC {
 
@@ -83,8 +86,8 @@ public class StartMOBAC {
 					"The used Java Runtime Environment does not meet the minimum requirements.\n\n"
 							+ "Mobile Atlas Creator requires at least Java 11 or higher.\n"
 							+ "Please update your Java Runtime before starting Mobile Atlas Creator.\n\n"
-							+ "Detected Java Runtime Version: " + ver, "Java Runtime version problem detected",
-					JOptionPane.ERROR_MESSAGE);
+							+ "Detected Java Runtime Version: " + ver,
+					"Java Runtime version problem detected", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 	}

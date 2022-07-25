@@ -21,19 +21,19 @@ import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.interfaces.MapSource;
 
 /**
- * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline SQLite maps)
- * http://code.google.com/p/bigplanet/
+ * Atlas/Map creator for "BigPlanet-Maps application for Android" (offline
+ * SQLite maps) http://code.google.com/p/bigplanet/
  * <p>
- * Some source parts are taken from the "android-map.blogspot.com Version of Mobile Atlas Creator":
- * http://code.google.com/p/android-map/
+ * Some source parts are taken from the "android-map.blogspot.com Version of
+ * Mobile Atlas Creator": http://code.google.com/p/android-map/
  * </p>
  */
 @AtlasCreatorName(value = "Big Planet Tracks SQLite", type = "BigPlanet")
 public class BigPlanetTracks extends RMapsSQLite {
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
 
 }

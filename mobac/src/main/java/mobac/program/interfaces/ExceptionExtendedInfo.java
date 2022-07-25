@@ -18,5 +18,5 @@ package mobac.program.interfaces;
 
 public interface ExceptionExtendedInfo {
 
-    String getExtendedInfo();
+	String getExtendedInfo();
 }

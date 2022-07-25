@@ -47,169 +47,163 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 
-
 public class DragDropController {
 
-    static Logger log = LoggerFactory.getLogger(DragDropController.class);
-    JAtlasTree atlasTree;
+	static Logger log = LoggerFactory.getLogger(DragDropController.class);
+	JAtlasTree atlasTree;
 
-    public DragDropController(JAtlasTree atlasTree) {
-        super();
-        this.atlasTree = atlasTree;
-        new AtlasDragSource();
-        new AtlasDropTarget();
-    }
+	public DragDropController(JAtlasTree atlasTree) {
+		super();
+		this.atlasTree = atlasTree;
+		new AtlasDragSource();
+		new AtlasDropTarget();
+	}
 
-    protected class AtlasDragSource implements DragSourceListener, DragGestureListener {
+	protected class AtlasDragSource implements DragSourceListener, DragGestureListener {
 
-        final DragGestureRecognizer recognizer;
-        final DragSource source;
+		final DragGestureRecognizer recognizer;
+		final DragSource source;
 
-        public AtlasDragSource() {
-            source = new DragSource();
-            recognizer = source.createDefaultDragGestureRecognizer(atlasTree,
-                    DnDConstants.ACTION_MOVE, this);
-        }
+		public AtlasDragSource() {
+			source = new DragSource();
+			recognizer = source.createDefaultDragGestureRecognizer(atlasTree, DnDConstants.ACTION_MOVE, this);
+		}
 
-        public void dragGestureRecognized(DragGestureEvent dge) {
-            TreePath path = atlasTree.getSelectionPath();
-            if ((path == null) || (path.getPathCount() <= 1))
-                // We can't move the root node or an empty selection
-                return;
-            TreeNode oldNode = (TreeNode) path.getLastPathComponent();
-            if (!(oldNode instanceof LayerInterface || oldNode instanceof MapInterface))
-                return;
-            Transferable transferable = new NodeTransferWrapper(oldNode);
-            source.startDrag(dge, DragSource.DefaultMoveNoDrop, transferable, this);
-        }
+		public void dragGestureRecognized(DragGestureEvent dge) {
+			TreePath path = atlasTree.getSelectionPath();
+			if ((path == null) || (path.getPathCount() <= 1))
+				// We can't move the root node or an empty selection
+				return;
+			TreeNode oldNode = (TreeNode) path.getLastPathComponent();
+			if (!(oldNode instanceof LayerInterface || oldNode instanceof MapInterface))
+				return;
+			Transferable transferable = new NodeTransferWrapper(oldNode);
+			source.startDrag(dge, DragSource.DefaultMoveNoDrop, transferable, this);
+		}
 
-        /**
-         * Called whenever the drop target changes and it has bee accepted (
-         */
-        public void dragEnter(DragSourceDragEvent dsde) {
-            dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
-        }
+		/**
+		 * Called whenever the drop target changes and it has bee accepted (
+		 */
+		public void dragEnter(DragSourceDragEvent dsde) {
+			dsde.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
+		}
 
-        public void dragOver(DragSourceDragEvent dsde) {
-        }
+		public void dragOver(DragSourceDragEvent dsde) {
+		}
 
-        public void dragDropEnd(DragSourceDropEvent dsde) {
-        }
+		public void dragDropEnd(DragSourceDropEvent dsde) {
+		}
 
-        public void dragExit(DragSourceEvent dse) {
-            dse.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
-        }
+		public void dragExit(DragSourceEvent dse) {
+			dse.getDragSourceContext().setCursor(DragSource.DefaultMoveNoDrop);
+		}
 
-        public void dropActionChanged(DragSourceDragEvent dsde) {
-        }
+		public void dropActionChanged(DragSourceDragEvent dsde) {
+		}
 
-    }
+	}
 
-    protected class AtlasDropTarget implements DropTargetListener {
+	protected class AtlasDropTarget implements DropTargetListener {
 
-        final DropTarget target;
+		final DropTarget target;
 
-        public AtlasDropTarget() throws HeadlessException {
-            super();
-            target = new DropTarget(atlasTree, this);
-        }
+		public AtlasDropTarget() throws HeadlessException {
+			super();
+			target = new DropTarget(atlasTree, this);
+		}
 
-        public synchronized void dragEnter(DropTargetDragEvent dtde) {
-        }
+		public synchronized void dragEnter(DropTargetDragEvent dtde) {
+		}
 
-        public synchronized void dragExit(DropTargetEvent dte) {
-        }
+		public synchronized void dragExit(DropTargetEvent dte) {
+		}
 
-        public synchronized void dragOver(DropTargetDragEvent dtde) {
-            try {
-                Transferable t = dtde.getTransferable();
-                Object o = t.getTransferData(NodeTransferWrapper.ATLAS_OBJECT_FLAVOR);
-                TreeNode node = getNodeForEvent(dtde);
-                if (o instanceof LayerInterface && node instanceof LayerInterface) {
-                    dtde.acceptDrag(dtde.getDropAction());
-                    return;
-                }
-                if (o instanceof MapInterface && node instanceof LayerInterface
-                        || node instanceof MapInterface) {
-                    dtde.acceptDrag(dtde.getDropAction());
-                    return;
-                }
-                dtde.rejectDrag();
-            } catch (Exception e) {
-                log.error("", e);
-            }
-        }
+		public synchronized void dragOver(DropTargetDragEvent dtde) {
+			try {
+				Transferable t = dtde.getTransferable();
+				Object o = t.getTransferData(NodeTransferWrapper.ATLAS_OBJECT_FLAVOR);
+				TreeNode node = getNodeForEvent(dtde);
+				if (o instanceof LayerInterface && node instanceof LayerInterface) {
+					dtde.acceptDrag(dtde.getDropAction());
+					return;
+				}
+				if (o instanceof MapInterface && node instanceof LayerInterface || node instanceof MapInterface) {
+					dtde.acceptDrag(dtde.getDropAction());
+					return;
+				}
+				dtde.rejectDrag();
+			} catch (Exception e) {
+				log.error("", e);
+			}
+		}
 
-        public void dropActionChanged(DropTargetDragEvent dtde) {
-        }
+		public void dropActionChanged(DropTargetDragEvent dtde) {
+		}
 
-        public synchronized void drop(DropTargetDropEvent dtde) {
-            try {
-                TreeNode sourceNode = (TreeNode) dtde.getTransferable().getTransferData(
-                        NodeTransferWrapper.ATLAS_OBJECT_FLAVOR);
+		public synchronized void drop(DropTargetDropEvent dtde) {
+			try {
+				TreeNode sourceNode = (TreeNode) dtde.getTransferable()
+						.getTransferData(NodeTransferWrapper.ATLAS_OBJECT_FLAVOR);
 
-                Point pt = dtde.getLocation();
-                DropTargetContext dtc = dtde.getDropTargetContext();
-                JTree tree = (JTree) dtc.getComponent();
-                TreePath parentpath = tree.getClosestPathForLocation(pt.x, pt.y);
-                TreeNode targetNode = (TreeNode) parentpath.getLastPathComponent();
+				Point pt = dtde.getLocation();
+				DropTargetContext dtc = dtde.getDropTargetContext();
+				JTree tree = (JTree) dtc.getComponent();
+				TreePath parentpath = tree.getClosestPathForLocation(pt.x, pt.y);
+				TreeNode targetNode = (TreeNode) parentpath.getLastPathComponent();
 
-                if (targetNode.equals(sourceNode) || targetNode.getParent().equals(sourceNode)) {
-                    dtde.rejectDrop();
-                    return;
-                }
-                AtlasTreeModel atlasTreeModel = (AtlasTreeModel) atlasTree.getModel();
-                if (sourceNode instanceof LayerInterface && targetNode instanceof LayerInterface)
-                    mergeLayers(atlasTreeModel, (LayerInterface) sourceNode,
-                            (LayerInterface) targetNode);
+				if (targetNode.equals(sourceNode) || targetNode.getParent().equals(sourceNode)) {
+					dtde.rejectDrop();
+					return;
+				}
+				AtlasTreeModel atlasTreeModel = (AtlasTreeModel) atlasTree.getModel();
+				if (sourceNode instanceof LayerInterface && targetNode instanceof LayerInterface)
+					mergeLayers(atlasTreeModel, (LayerInterface) sourceNode, (LayerInterface) targetNode);
 
-                if (targetNode instanceof MapInterface)
-                    // We can not make a map child of another map
-                    // -> use it's layer instead
-                    targetNode = targetNode.getParent();
+				if (targetNode instanceof MapInterface)
+					// We can not make a map child of another map
+					// -> use it's layer instead
+					targetNode = targetNode.getParent();
 
-                if (sourceNode instanceof MapInterface && targetNode instanceof LayerInterface)
-                    moveMap(atlasTreeModel, (MapInterface) sourceNode, (LayerInterface) targetNode);
+				if (sourceNode instanceof MapInterface && targetNode instanceof LayerInterface)
+					moveMap(atlasTreeModel, (MapInterface) sourceNode, (LayerInterface) targetNode);
 
-            } catch (Exception e) {
-                log.error("", e);
-                atlasTree.getTreeModel().notifyStructureChanged();
-                dtde.rejectDrop();
-            }
-        }
+			} catch (Exception e) {
+				log.error("", e);
+				atlasTree.getTreeModel().notifyStructureChanged();
+				dtde.rejectDrop();
+			}
+		}
 
-        protected void mergeLayers(AtlasTreeModel atlasTreeModel, LayerInterface sourceLayer,
-                                   LayerInterface targetLayer) throws InvalidNameException {
-            int answer = JOptionPane.showConfirmDialog(null,
-                    String.format(I18nUtils.localizedStringForKey("msg_confirm_merge_layer"),
-                            sourceLayer.getName(), targetLayer.getName()),
-                    I18nUtils.localizedStringForKey("msg_confirm_merge_layer_title"),
-                    JOptionPane.YES_NO_OPTION);
-            if (answer != JOptionPane.YES_OPTION)
-                return;
-            try {
-                atlasTreeModel.mergeLayers(sourceLayer, targetLayer);
-            } catch (InvalidNameException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage(),
-                        I18nUtils.localizedStringForKey("msg_merge_layer_failed"),
-                        JOptionPane.ERROR_MESSAGE);
-                throw e;
-            }
-        }
+		protected void mergeLayers(AtlasTreeModel atlasTreeModel, LayerInterface sourceLayer,
+				LayerInterface targetLayer) throws InvalidNameException {
+			int answer = JOptionPane.showConfirmDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_confirm_merge_layer"), sourceLayer.getName(),
+							targetLayer.getName()),
+					I18nUtils.localizedStringForKey("msg_confirm_merge_layer_title"), JOptionPane.YES_NO_OPTION);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+			try {
+				atlasTreeModel.mergeLayers(sourceLayer, targetLayer);
+			} catch (InvalidNameException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						I18nUtils.localizedStringForKey("msg_merge_layer_failed"), JOptionPane.ERROR_MESSAGE);
+				throw e;
+			}
+		}
 
-        protected void moveMap(AtlasTreeModel atlasTreeModel, MapInterface map,
-                               LayerInterface targetLayer) throws InvalidNameException {
-            atlasTreeModel.moveMap(map, targetLayer);
-        }
+		protected void moveMap(AtlasTreeModel atlasTreeModel, MapInterface map, LayerInterface targetLayer)
+				throws InvalidNameException {
+			atlasTreeModel.moveMap(map, targetLayer);
+		}
 
-        private TreeNode getNodeForEvent(DropTargetDragEvent dtde) {
-            Point p = dtde.getLocation();
-            DropTargetContext dtc = dtde.getDropTargetContext();
-            JTree tree = (JTree) dtc.getComponent();
-            TreePath path = tree.getClosestPathForLocation(p.x, p.y);
-            return (TreeNode) path.getLastPathComponent();
-        }
+		private TreeNode getNodeForEvent(DropTargetDragEvent dtde) {
+			Point p = dtde.getLocation();
+			DropTargetContext dtc = dtde.getDropTargetContext();
+			JTree tree = (JTree) dtc.getComponent();
+			TreePath path = tree.getClosestPathForLocation(p.x, p.y);
+			return (TreeNode) path.getLastPathComponent();
+		}
 
-    }
+	}
 
 }

@@ -29,21 +29,21 @@ import java.io.OutputStream;
  * Interface for all files that are stored in a RMP file
  */
 public interface RmpFileEntry {
-    /**
-     * Returns the content of the file as byte array
-     *
-     * @throws InterruptedException
-     */
-    void writeFileContent(OutputStream os) throws IOException, InterruptedException;
+	/**
+	 * Returns the content of the file as byte array
+	 *
+	 * @throws InterruptedException
+	 */
+	void writeFileContent(OutputStream os) throws IOException, InterruptedException;
 
-    /**
-     * Returns the name of the file without extension
-     */
-    String getFileName();
+	/**
+	 * Returns the name of the file without extension
+	 */
+	String getFileName();
 
-    /**
-     * Returns the extension of the file
-     */
-    String getFileExtension();
+	/**
+	 * Returns the extension of the file
+	 */
+	String getFileExtension();
 
 }

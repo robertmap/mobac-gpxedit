@@ -38,68 +38,68 @@ import java.util.List;
 
 public class ExternalToolsLoader {
 
-    public static List<ExternalToolDef> tools = null;
+	public static List<ExternalToolDef> tools = null;
 
-    static {
-        load();
-    }
+	static {
+		load();
+	}
 
-    public static boolean load() {
-        try {
-            File dir = DirectoryManager.toolsDir;
-            if (!dir.isDirectory())
-                return false;
-            File[] files = dir.listFiles(new FileExtFilter(".xml"));
-            tools = new LinkedList<ExternalToolDef>();
-            for (File f : files) {
-                tools.add(loadFile(f));
-            }
-            return true;
-        } catch (Exception e) {
-            GUIExceptionHandler.showExceptionDialog("Failed to load external tools definition", e);
-            return false;
-        }
-    }
+	public static boolean load() {
+		try {
+			File dir = DirectoryManager.toolsDir;
+			if (!dir.isDirectory())
+				return false;
+			File[] files = dir.listFiles(new FileExtFilter(".xml"));
+			tools = new LinkedList<ExternalToolDef>();
+			for (File f : files) {
+				tools.add(loadFile(f));
+			}
+			return true;
+		} catch (Exception e) {
+			GUIExceptionHandler.showExceptionDialog("Failed to load external tools definition", e);
+			return false;
+		}
+	}
 
-    public static ExternalToolDef loadFile(File f) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(ExternalToolDef.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        try (InputStream is = new FileInputStream(f)) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder loader = factory.newDocumentBuilder();
-            Document document = loader.parse(is);
-            return (ExternalToolDef) unmarshaller.unmarshal(document);
-        } catch (JAXBException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new JAXBException(e);
-        }
-    }
+	public static ExternalToolDef loadFile(File f) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(ExternalToolDef.class);
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		try (InputStream is = new FileInputStream(f)) {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			DocumentBuilder loader = factory.newDocumentBuilder();
+			Document document = loader.parse(is);
+			return (ExternalToolDef) unmarshaller.unmarshal(document);
+		} catch (JAXBException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new JAXBException(e);
+		}
+	}
 
-    public static void save(ExternalToolDef toolsDef, File f) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(ExternalToolDef.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        try (OutputStream os = new FileOutputStream(f)) {
-            marshaller.marshal(toolsDef, os);
-        } catch (IOException e) {
-            throw new JAXBException(e);
-        }
-    }
+	public static void save(ExternalToolDef toolsDef, File f) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(ExternalToolDef.class);
+		Marshaller marshaller = context.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		try (OutputStream os = new FileOutputStream(f)) {
+			marshaller.marshal(toolsDef, os);
+		} catch (IOException e) {
+			throw new JAXBException(e);
+		}
+	}
 
-    public static final void main(String[] args) {
-        try {
-            ExternalToolDef t = new ExternalToolDef();
-            t.command = "command";
-            t.name = "test";
-            t.parameters.add(ToolParameters.MAX_LAT);
-            t.parameters.add(ToolParameters.MAX_LON);
-            t.parameters.add(ToolParameters.MIN_LAT);
-            t.parameters.add(ToolParameters.MIN_LON);
-            save(t, new File("tools/test.xml"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public static final void main(String[] args) {
+		try {
+			ExternalToolDef t = new ExternalToolDef();
+			t.command = "command";
+			t.name = "test";
+			t.parameters.add(ToolParameters.MAX_LAT);
+			t.parameters.add(ToolParameters.MAX_LON);
+			t.parameters.add(ToolParameters.MIN_LAT);
+			t.parameters.add(ToolParameters.MIN_LON);
+			save(t, new File("tools/test.xml"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

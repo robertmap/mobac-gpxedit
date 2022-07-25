@@ -48,222 +48,224 @@ import java.util.List;
 
 public class SettingsGUITileStore extends JPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SettingsGUITileStore.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SettingsGUITileStore.class);
 
-    public final JCheckBox tileStoreEnabled;
-    private final JPanel tileStoreInfoPanel;
-    protected DelayedInterruptThread tileStoreAsyncThread = null;
-    private final List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<>();
-    private JLabel totalTileCountLabel;
-    private JLabel totalTileSizeLabel;
+	public final JCheckBox tileStoreEnabled;
+	private final JPanel tileStoreInfoPanel;
+	private final List<TileSourceInfoComponents> tileStoreInfoList = new LinkedList<>();
+	protected DelayedInterruptThread tileStoreAsyncThread = null;
+	private JLabel totalTileCountLabel;
+	private JLabel totalTileSizeLabel;
 
-    public SettingsGUITileStore(SettingsGUI gui) {
-        super();
-        LOG.debug("Preparing SettingsGUITileStore");
+	public SettingsGUITileStore(SettingsGUI gui) {
+		super();
+		LOG.debug("Preparing SettingsGUITileStore");
 
-        gui.addTab(I18nUtils.localizedStringForKey("set_tile_store_title"), this);
+		gui.addTab(I18nUtils.localizedStringForKey("set_tile_store_title"), this);
 
-        tileStoreEnabled = new JCheckBox(I18nUtils.localizedStringForKey("set_tile_store_enable_checkbox"));
+		tileStoreEnabled = new JCheckBox(I18nUtils.localizedStringForKey("set_tile_store_enable_checkbox"));
 
-        JPanel tileStorePanel = new JPanel(new BorderLayout());
-        tileStorePanel
-                .setBorder(SettingsGUI.createSectionBorder(I18nUtils.localizedStringForKey("set_tile_store_settings")));
-        tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
-        tileStoreInfoPanel = new JPanel(new GridBagLayout());
-        // tileStoreInfoPanel.setBorder(createSectionBorder("Information"));
+		JPanel tileStorePanel = new JPanel(new BorderLayout());
+		tileStorePanel
+				.setBorder(SettingsGUI.createSectionBorder(I18nUtils.localizedStringForKey("set_tile_store_settings")));
+		tileStorePanel.add(tileStoreEnabled, BorderLayout.CENTER);
+		tileStoreInfoPanel = new JPanel(new GridBagLayout());
+		// tileStoreInfoPanel.setBorder(createSectionBorder("Information"));
 
-        prepareTileStoreInfoPanel();
+		prepareTileStoreInfoPanel();
 
-        setLayout(new BorderLayout());
-        add(tileStorePanel, BorderLayout.NORTH);
-        JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        tileStoreInfoPanel.setMinimumSize(new Dimension(200, 300));
-        // scrollPane.setMinimumSize(new Dimension(100, 100));
-        scrollPane.setPreferredSize(new Dimension(520, 100));
-        scrollPane.setBorder(
-                SettingsGUI.createSectionBorder(I18nUtils.localizedStringForKey("set_tile_store_information")));
+		setLayout(new BorderLayout());
+		add(tileStorePanel, BorderLayout.NORTH);
+		JScrollPane scrollPane = new JScrollPane(tileStoreInfoPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		tileStoreInfoPanel.setMinimumSize(new Dimension(200, 300));
+		// scrollPane.setMinimumSize(new Dimension(100, 100));
+		scrollPane.setPreferredSize(new Dimension(520, 100));
+		scrollPane.setBorder(
+				SettingsGUI.createSectionBorder(I18nUtils.localizedStringForKey("set_tile_store_information")));
 
-        add(scrollPane, BorderLayout.CENTER);
-    }
+		add(scrollPane, BorderLayout.CENTER);
+	}
 
-    /**
-     * @param updateStoreName name of the tile store to update or <code>null</code> in case of all tile stores to be updated
-     */
-    private void updateTileStoreInfoPanel(String updateStoreName) {
-        try {
-            TileStore tileStore = TileStore.getInstance();
+	/**
+	 * @param updateStoreName
+	 *            name of the tile store to update or <code>null</code> in case of
+	 *            all tile stores to be updated
+	 */
+	private void updateTileStoreInfoPanel(String updateStoreName) {
+		try {
+			TileStore tileStore = TileStore.getInstance();
 
-            long totalTileCount = 0;
-            long totalTileSize = 0;
-            for (final TileSourceInfoComponents info : tileStoreInfoList) {
-                String storeName = info.name;
-                Utilities.checkForInterruption();
-                int count;
-                long size;
-                if (updateStoreName == null || info.name.equals(updateStoreName)) {
-                    TileStoreInfo tsi = tileStore.getStoreInfo(storeName);
-                    count = tsi.getTileCount();
-                    size = tsi.getStoreSize();
-                    info.count = count;
-                    info.size = size;
-                    final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
-                    final String mapTileSizeText = Utilities.formatBytes(size);
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
-                            info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
-                        }
-                    });
-                } else {
-                    count = info.count;
-                    size = info.size;
-                }
-                totalTileCount += count;
-                totalTileSize += size;
-            }
-            final String totalTileCountText = "<html><b>" + totalTileCount + "</b></html>";
-            final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>";
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    totalTileCountLabel.setText(totalTileCountText);
-                    totalTileSizeLabel.setText(totalTileSizeText);
-                }
-            });
-        } catch (InterruptedException e) {
-            LOG.debug("Tile store information retrieval was canceled");
-        }
+			long totalTileCount = 0;
+			long totalTileSize = 0;
+			for (final TileSourceInfoComponents info : tileStoreInfoList) {
+				String storeName = info.name;
+				Utilities.checkForInterruption();
+				int count;
+				long size;
+				if (updateStoreName == null || info.name.equals(updateStoreName)) {
+					TileStoreInfo tsi = tileStore.getStoreInfo(storeName);
+					count = tsi.getTileCount();
+					size = tsi.getStoreSize();
+					info.count = count;
+					info.size = size;
+					final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
+					final String mapTileSizeText = Utilities.formatBytes(size);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
+							info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
+						}
+					});
+				} else {
+					count = info.count;
+					size = info.size;
+				}
+				totalTileCount += count;
+				totalTileSize += size;
+			}
+			final String totalTileCountText = "<html><b>" + totalTileCount + "</b></html>";
+			final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>";
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					totalTileCountLabel.setText(totalTileCountText);
+					totalTileSizeLabel.setText(totalTileSizeText);
+				}
+			});
+		} catch (InterruptedException e) {
+			LOG.debug("Tile store information retrieval was canceled");
+		}
 
-    }
+	}
 
-    synchronized void updateTileStoreInfoPanelAsync(final String storeName) {
-        if (tileStoreAsyncThread != null)
-            return; // An update is currently running
-        tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
+	synchronized void updateTileStoreInfoPanelAsync(final String storeName) {
+		if (tileStoreAsyncThread != null)
+			return; // An update is currently running
+		tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
 
-            @Override
-            public void run() {
-                if (storeName == null) {
-                    LOG.debug("Updating tilestore information in background");
-                } else {
-                    LOG.debug("Updating tilestore information for \"" + storeName + "\" in background");
-                }
-                updateTileStoreInfoPanel(storeName);
-                LOG.debug("Updating tilestore information finished");
-                tileStoreAsyncThread = null;
-            }
-        };
-        tileStoreAsyncThread.start();
-    }
+			@Override
+			public void run() {
+				if (storeName == null) {
+					LOG.debug("Updating tilestore information in background");
+				} else {
+					LOG.debug("Updating tilestore information for \"" + storeName + "\" in background");
+				}
+				updateTileStoreInfoPanel(storeName);
+				LOG.debug("Updating tilestore information finished");
+				tileStoreAsyncThread = null;
+			}
+		};
+		tileStoreAsyncThread.start();
+	}
 
-    private void prepareTileStoreInfoPanel() {
+	private void prepareTileStoreInfoPanel() {
 
-        final GridBagConstraints gbc_mapSource = new GridBagConstraints();
-        gbc_mapSource.insets = new Insets(5, 10, 5, 10);
-        gbc_mapSource.anchor = GridBagConstraints.WEST;
-        final GridBagConstraints gbc_mapTiles = new GridBagConstraints();
-        gbc_mapTiles.insets = gbc_mapSource.insets;
-        gbc_mapTiles.anchor = GridBagConstraints.EAST;
-        final GridBagConstraints gbc_eol = new GridBagConstraints();
-        gbc_eol.gridwidth = GridBagConstraints.REMAINDER;
+		final GridBagConstraints gbc_mapSource = new GridBagConstraints();
+		gbc_mapSource.insets = new Insets(5, 10, 5, 10);
+		gbc_mapSource.anchor = GridBagConstraints.WEST;
+		final GridBagConstraints gbc_mapTiles = new GridBagConstraints();
+		gbc_mapTiles.insets = gbc_mapSource.insets;
+		gbc_mapTiles.anchor = GridBagConstraints.EAST;
+		final GridBagConstraints gbc_eol = new GridBagConstraints();
+		gbc_eol.gridwidth = GridBagConstraints.REMAINDER;
 
-        TileStore tileStore = TileStore.getInstance();
-        MapSourcesManager mapSourcesManager = MapSourcesManager.getInstance();
+		TileStore tileStore = TileStore.getInstance();
+		MapSourcesManager mapSourcesManager = MapSourcesManager.getInstance();
 
-        tileStoreInfoPanel.add(new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_mapsrc")),
-                gbc_mapSource);
-        tileStoreInfoPanel.add(new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_tiles")), gbc_mapTiles);
-        tileStoreInfoPanel.add(new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_size")), gbc_eol);
+		tileStoreInfoPanel.add(new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_mapsrc")),
+				gbc_mapSource);
+		tileStoreInfoPanel.add(new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_tiles")), gbc_mapTiles);
+		tileStoreInfoPanel.add(new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_size")), gbc_eol);
 
-        ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
+		ImageIcon trash = Utilities.loadResourceImageIcon("trash.png");
 
-        for (String name : tileStore.getAllStoreNames()) {
-            String mapTileCountText = "  ?  ";
-            String mapTileSizeText = "    ?    ";
-            MapSource mapSource = mapSourcesManager.getSourceByName(name);
-            final JLabel mapSourceNameLabel;
-            if (mapSource != null) {
-                mapSourceNameLabel = new JLabel(name);
-            } else {
-                mapSourceNameLabel = new JLabel(
-                        name + I18nUtils.localizedStringForKey("set_tile_store_info_disabled_subfix"));
-            }
-            final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
-            final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
-            final JButton deleteButton = new JButton(trash);
-            TileSourceInfoComponents info = new TileSourceInfoComponents();
-            info.name = name;
-            info.countLabel = mapTileCountLabel;
-            info.sizeLabel = mapTileSizeLabel;
-            tileStoreInfoList.add(info);
-            deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-            deleteButton.setToolTipText(
-                    String.format(I18nUtils.localizedStringForKey("set_tile_store_info_delete_tips"), name));
-            deleteButton.addActionListener(new ClearTileCacheAction(name));
+		for (String name : tileStore.getAllStoreNames()) {
+			String mapTileCountText = "  ?  ";
+			String mapTileSizeText = "    ?    ";
+			MapSource mapSource = mapSourcesManager.getSourceByName(name);
+			final JLabel mapSourceNameLabel;
+			if (mapSource != null) {
+				mapSourceNameLabel = new JLabel(name);
+			} else {
+				mapSourceNameLabel = new JLabel(
+						name + I18nUtils.localizedStringForKey("set_tile_store_info_disabled_subfix"));
+			}
+			final JLabel mapTileCountLabel = new JLabel(mapTileCountText);
+			final JLabel mapTileSizeLabel = new JLabel(mapTileSizeText);
+			final JButton deleteButton = new JButton(trash);
+			TileSourceInfoComponents info = new TileSourceInfoComponents();
+			info.name = name;
+			info.countLabel = mapTileCountLabel;
+			info.sizeLabel = mapTileSizeLabel;
+			tileStoreInfoList.add(info);
+			deleteButton.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+			deleteButton.setToolTipText(
+					String.format(I18nUtils.localizedStringForKey("set_tile_store_info_delete_tips"), name));
+			deleteButton.addActionListener(new ClearTileCacheAction(name));
 
-            tileStoreInfoPanel.add(mapSourceNameLabel, gbc_mapSource);
-            tileStoreInfoPanel.add(mapTileCountLabel, gbc_mapTiles);
-            tileStoreInfoPanel.add(mapTileSizeLabel, gbc_mapTiles);
-            tileStoreInfoPanel.add(deleteButton, gbc_eol);
-        }
-        JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
-        hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        tileStoreInfoPanel.add(hr, gbc);
+			tileStoreInfoPanel.add(mapSourceNameLabel, gbc_mapSource);
+			tileStoreInfoPanel.add(mapTileCountLabel, gbc_mapTiles);
+			tileStoreInfoPanel.add(mapTileSizeLabel, gbc_mapTiles);
+			tileStoreInfoPanel.add(deleteButton, gbc_eol);
+		}
+		JSeparator hr = new JSeparator(JSeparator.HORIZONTAL);
+		hr.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		tileStoreInfoPanel.add(hr, gbc);
 
-        JLabel totalMapLabel = new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_total"));
-        totalTileCountLabel = new JLabel("<html><b>??</b></html>");
-        totalTileSizeLabel = new JLabel("<html><b>??</b></html>");
-        tileStoreInfoPanel.add(totalMapLabel, gbc_mapSource);
-        tileStoreInfoPanel.add(totalTileCountLabel, gbc_mapTiles);
-        tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
-    }
+		JLabel totalMapLabel = new JLabel(I18nUtils.localizedStringForKey("set_tile_store_info_total"));
+		totalTileCountLabel = new JLabel("<html><b>??</b></html>");
+		totalTileSizeLabel = new JLabel("<html><b>??</b></html>");
+		tileStoreInfoPanel.add(totalMapLabel, gbc_mapSource);
+		tileStoreInfoPanel.add(totalTileCountLabel, gbc_mapTiles);
+		tileStoreInfoPanel.add(totalTileSizeLabel, gbc_mapTiles);
+	}
 
-    public void stopThread() {
-        Thread t = tileStoreAsyncThread;
-        if (t != null) {
-            t.interrupt();
-        }
-    }
+	public void stopThread() {
+		Thread t = tileStoreAsyncThread;
+		if (t != null) {
+			t.interrupt();
+		}
+	}
 
-    private static class TileSourceInfoComponents {
-        JLabel sizeLabel;
-        JLabel countLabel;
-        String name;
+	private static class TileSourceInfoComponents {
+		JLabel sizeLabel;
+		JLabel countLabel;
+		String name;
 
-        int count = -1;
-        long size = 0;
-    }
+		int count = -1;
+		long size = 0;
+	}
 
-    private class ClearTileCacheAction implements ActionListener {
+	private class ClearTileCacheAction implements ActionListener {
 
-        String storeName;
+		String storeName;
 
-        public ClearTileCacheAction(String storeName) {
-            this.storeName = storeName;
-        }
+		public ClearTileCacheAction(String storeName) {
+			this.storeName = storeName;
+		}
 
-        public void actionPerformed(ActionEvent e) {
-            final JButton b = (JButton) e.getSource();
-            b.setEnabled(false);
-            b.setToolTipText(I18nUtils.localizedStringForKey("set_tile_store_info_deleteing_tips"));
-            Thread t = new DelayedInterruptThread("TileStore_" + storeName + "_DeleteThread") {
+		public void actionPerformed(ActionEvent e) {
+			final JButton b = (JButton) e.getSource();
+			b.setEnabled(false);
+			b.setToolTipText(I18nUtils.localizedStringForKey("set_tile_store_info_deleteing_tips"));
+			Thread t = new DelayedInterruptThread("TileStore_" + storeName + "_DeleteThread") {
 
-                @Override
-                public void run() {
-                    try {
-                        TileStore ts = TileStore.getInstance();
-                        ts.clearStore(storeName);
-                        SettingsGUITileStore.this.updateTileStoreInfoPanelAsync(storeName);
-                        SettingsGUITileStore.this.repaint();
-                    } catch (Exception e) {
-                        LOG.error("An error occured while cleaning tile cache: ", e);
-                    }
-                }
-            };
-            t.start();
-        }
-    }
+				@Override
+				public void run() {
+					try {
+						TileStore ts = TileStore.getInstance();
+						ts.clearStore(storeName);
+						SettingsGUITileStore.this.updateTileStoreInfoPanelAsync(storeName);
+						SettingsGUITileStore.this.repaint();
+					} catch (Exception e) {
+						LOG.error("An error occured while cleaning tile cache: ", e);
+					}
+				}
+			};
+			t.start();
+		}
+	}
 }

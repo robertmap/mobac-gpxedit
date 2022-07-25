@@ -49,196 +49,197 @@ import java.util.Set;
 
 public class RefreshCustomMapsources implements ActionListener {
 
-    private static final String[] COL_NAMES = new String[]{"Map name", "File path", "Status", "Restart required"};
-    private final Logger log = LoggerFactory.getLogger(RefreshCustomMapsources.class);
+	private static final String[] COL_NAMES = new String[]{"Map name", "File path", "Status", "Restart required"};
+	private final Logger log = LoggerFactory.getLogger(RefreshCustomMapsources.class);
 
-    public static void main(String[] args) {
-        List<ReloadTableEntry> list = new ArrayList<>();
-        list.add(new ReloadTableEntry("name", "path", "status", false));
-        ReloadInfoDialog dialog = new ReloadInfoDialog(list);
-        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
+	public static void main(String[] args) {
+		List<ReloadTableEntry> list = new ArrayList<>();
+		list.add(new ReloadTableEntry("name", "path", "status", false));
+		ReloadInfoDialog dialog = new ReloadInfoDialog(list);
+		dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 
-    public void actionPerformed(ActionEvent event) {
-        MapSourcesManager manager = MapSourcesManager.getInstance();
-        MainGUI gui = MainGUI.getMainGUI();
-        MapSource selectedMapSource = gui.getSelectedMapSource();
-        boolean updateGui = false;
-        int count = 0;
+	public void actionPerformed(ActionEvent event) {
+		MapSourcesManager manager = MapSourcesManager.getInstance();
+		MainGUI gui = MainGUI.getMainGUI();
+		MapSource selectedMapSource = gui.getSelectedMapSource();
+		boolean updateGui = false;
+		int count = 0;
 
-        List<ReloadTableEntry> entries = new ArrayList<>();
-        File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
-        Path mapSourcesDirPath = mapSourcesDir.toPath();
-        CustomMapSourceLoader cmsl = new CustomMapSourceLoader(manager, mapSourcesDir);
-        List<File> newFileList = cmsl.getMapSourceFiles();
+		List<ReloadTableEntry> entries = new ArrayList<>();
+		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+		Path mapSourcesDirPath = mapSourcesDir.toPath();
+		CustomMapSourceLoader cmsl = new CustomMapSourceLoader(manager, mapSourcesDir);
+		List<File> newFileList = cmsl.getMapSourceFiles();
 
-        Set<File> addedFiles = new HashSet<>(newFileList);
-        for (MapSource ms : manager.getAllAvailableMapSources()) {
-            if ((ms.getLoaderInfo() == null) || (ms.getLoaderInfo().getSourceFile() == null)) {
-                continue;
-            }
-            addedFiles.remove(ms.getLoaderInfo().getSourceFile());
-        }
+		Set<File> addedFiles = new HashSet<>(newFileList);
+		for (MapSource ms : manager.getAllAvailableMapSources()) {
+			if ((ms.getLoaderInfo() == null) || (ms.getLoaderInfo().getSourceFile() == null)) {
+				continue;
+			}
+			addedFiles.remove(ms.getLoaderInfo().getSourceFile());
+		}
 
-        for (final MapSource mapSource : manager.getAllAvailableMapSources()) {
-            String relPath = "";
-            if (mapSource.getLoaderInfo() != null) {
-                MapSourceLoaderInfo loaderInfo = mapSource.getLoaderInfo();
-                if (loaderInfo.getLoaderType() == LoaderType.MAPPACK) {
-                    continue; // skip map sources from map packs
-                }
-                if (loaderInfo.getSourceFile() != null) {
-                    relPath = mapSourcesDirPath.relativize(loaderInfo.getSourceFile().toPath()).toString();
-                }
-            }
-            try {
-                boolean reloaded = false;
-                boolean dataRefreshed = false;
-                try {
-                    reloaded = cmsl.reloadCustomMapSource(mapSource);
-                } catch (MapSourceCreateException | JAXBException | IOException | SAXException
-                        | MapSourceInitializationException e) {
-                    log.error("Failed to reload map source: " + e.getMessage(), e);
-                }
-                if (mapSource instanceof FileBasedMapSource) {
-                    FileBasedMapSource fbms = (FileBasedMapSource) mapSource;
-                    fbms.reinitialize();
-                    dataRefreshed = true;
-                }
-                if (reloaded || dataRefreshed) {
-                    count++;
-                    if (mapSource.equals(selectedMapSource)) {
-                        updateGui = true;
-                    }
-                }
-                String status = "";
-                if (reloaded) {
-                    status = "reloaded";
-                }
-                if (dataRefreshed) {
-                    if (status.length() > 0) {
-                        status += " & ";
-                    }
-                    status += "data refreshed";
-                }
-                if (status.length() == 0) {
-                    status = "unchanged";
-                }
-                entries.add(new ReloadTableEntry(mapSource.getName(), relPath, status, false));
-            } catch (Exception e) {
-                entries.add(new ReloadTableEntry(mapSource.getName(), relPath,
-                        "Reloading failed: " + e.getMessage(), true));
-            }
-        }
-        for (File f : addedFiles) {
-            String relPath = mapSourcesDirPath.relativize(f.toPath()).toString();
-            try {
-                MapSource addedMapSource = cmsl.loadCustomMapSource(f);
-                if (addedMapSource != null) {
-                    entries.add(new ReloadTableEntry(addedMapSource.getName(), relPath, "New file", false));
-                    manager.addMapSource(addedMapSource);
-                    updateGui = true;
-                }
-            } catch (Exception e) {
-                log.error("Failed to load map source " + f, e);
-                entries.add(new ReloadTableEntry("?", relPath, "New file", true));
-            }
-        }
+		for (final MapSource mapSource : manager.getAllAvailableMapSources()) {
+			String relPath = "";
+			if (mapSource.getLoaderInfo() != null) {
+				MapSourceLoaderInfo loaderInfo = mapSource.getLoaderInfo();
+				if (loaderInfo.getLoaderType() == LoaderType.MAPPACK) {
+					continue; // skip map sources from map packs
+				}
+				if (loaderInfo.getSourceFile() != null) {
+					relPath = mapSourcesDirPath.relativize(loaderInfo.getSourceFile().toPath()).toString();
+				}
+			}
+			try {
+				boolean reloaded = false;
+				boolean dataRefreshed = false;
+				try {
+					reloaded = cmsl.reloadCustomMapSource(mapSource);
+				} catch (MapSourceCreateException | JAXBException | IOException | SAXException
+						| MapSourceInitializationException e) {
+					log.error("Failed to reload map source: " + e.getMessage(), e);
+				}
+				if (mapSource instanceof FileBasedMapSource) {
+					FileBasedMapSource fbms = (FileBasedMapSource) mapSource;
+					fbms.reinitialize();
+					dataRefreshed = true;
+				}
+				if (reloaded || dataRefreshed) {
+					count++;
+					if (mapSource.equals(selectedMapSource)) {
+						updateGui = true;
+					}
+				}
+				String status = "";
+				if (reloaded) {
+					status = "reloaded";
+				}
+				if (dataRefreshed) {
+					if (status.length() > 0) {
+						status += " & ";
+					}
+					status += "data refreshed";
+				}
+				if (status.length() == 0) {
+					status = "unchanged";
+				}
+				entries.add(new ReloadTableEntry(mapSource.getName(), relPath, status, false));
+			} catch (Exception e) {
+				entries.add(new ReloadTableEntry(mapSource.getName(), relPath, "Reloading failed: " + e.getMessage(),
+						true));
+			}
+		}
+		for (File f : addedFiles) {
+			String relPath = mapSourcesDirPath.relativize(f.toPath()).toString();
+			try {
+				MapSource addedMapSource = cmsl.loadCustomMapSource(f);
+				if (addedMapSource != null) {
+					entries.add(new ReloadTableEntry(addedMapSource.getName(), relPath, "New file", false));
+					manager.addMapSource(addedMapSource);
+					updateGui = true;
+				}
+			} catch (Exception e) {
+				log.error("Failed to load map source " + f, e);
+				entries.add(new ReloadTableEntry("?", relPath, "New file", true));
+			}
+		}
 
-        Collections.sort(entries);
-        new ReloadInfoDialog(entries);
+		Collections.sort(entries);
+		new ReloadInfoDialog(entries);
 
-        if (updateGui) {
-            /*
-             * The currently selected map source was updated - we have to force an GUI update in case the available zoom
-             * levels has been changed
-             */
-            gui.updateMapSourcesList();
-            gui.mapSourceChanged(selectedMapSource);
-        }
-//		JOptionPane.showMessageDialog(gui,
-//				String.format(I18nUtils.localizedStringForKey("msg_refresh_all_map_source_done"), count));
-    }
+		if (updateGui) {
+			/*
+			 * The currently selected map source was updated - we have to force an GUI
+			 * update in case the available zoom levels has been changed
+			 */
+			gui.updateMapSourcesList();
+			gui.mapSourceChanged(selectedMapSource);
+		}
+		// JOptionPane.showMessageDialog(gui,
+		// String.format(I18nUtils.localizedStringForKey("msg_refresh_all_map_source_done"),
+		// count));
+	}
 
-    private static class ReloadInfoDialog extends JFrame {
+	private static class ReloadInfoDialog extends JFrame {
 
-        public ReloadInfoDialog(List<ReloadTableEntry> entries) throws HeadlessException {
-            super("Reloaded map sources");
-            final JTable table = new JTable(new ReloadTableModel(entries));
-            table.setFillsViewportHeight(true);
-            // table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-            // table.setFillsViewportHeight(true);
-            // setLayout(new BorderLayout());
+		public ReloadInfoDialog(List<ReloadTableEntry> entries) throws HeadlessException {
+			super("Reloaded map sources");
+			final JTable table = new JTable(new ReloadTableModel(entries));
+			table.setFillsViewportHeight(true);
+			// table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+			// table.setFillsViewportHeight(true);
+			// setLayout(new BorderLayout());
 
-            JScrollPane scrollPane = new JScrollPane(table);
-            add(scrollPane);
+			JScrollPane scrollPane = new JScrollPane(table);
+			add(scrollPane);
 
-            pack();
-            setVisible(true);
-        }
+			pack();
+			setVisible(true);
+		}
 
-    }
+	}
 
-    private static class ReloadTableModel extends AbstractTableModel {
+	private static class ReloadTableModel extends AbstractTableModel {
 
-        final List<ReloadTableEntry> entries;
+		final List<ReloadTableEntry> entries;
 
-        public ReloadTableModel(List<ReloadTableEntry> entries) {
-            super();
-            this.entries = entries;
-        }
+		public ReloadTableModel(List<ReloadTableEntry> entries) {
+			super();
+			this.entries = entries;
+		}
 
-        @Override
-        public int getRowCount() {
-            return entries.size();
-        }
+		@Override
+		public int getRowCount() {
+			return entries.size();
+		}
 
-        @Override
-        public int getColumnCount() {
-            return COL_NAMES.length;
-        }
+		@Override
+		public int getColumnCount() {
+			return COL_NAMES.length;
+		}
 
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            ReloadTableEntry entry = entries.get(rowIndex);
-            switch (columnIndex) {
-                case 0:
-                    return entry.name;
-                case 1:
-                    return entry.relativeFilePath;
-                case 2:
-                    return entry.status;
-                case 3:
-                    return entry.restartRequired ? "yes" : "no";
-            }
-            return null;
-        }
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			ReloadTableEntry entry = entries.get(rowIndex);
+			switch (columnIndex) {
+				case 0 :
+					return entry.name;
+				case 1 :
+					return entry.relativeFilePath;
+				case 2 :
+					return entry.status;
+				case 3 :
+					return entry.restartRequired ? "yes" : "no";
+			}
+			return null;
+		}
 
-        @Override
-        public String getColumnName(int column) {
-            return COL_NAMES[column];
-        }
+		@Override
+		public String getColumnName(int column) {
+			return COL_NAMES[column];
+		}
 
-    }
+	}
 
-    private static class ReloadTableEntry implements Comparable<ReloadTableEntry> {
-        public final String name;
-        public final String relativeFilePath;
-        public final String status;
-        public boolean restartRequired;
+	private static class ReloadTableEntry implements Comparable<ReloadTableEntry> {
+		public final String name;
+		public final String relativeFilePath;
+		public final String status;
+		public boolean restartRequired;
 
-        public ReloadTableEntry(String name, String relativeFilePath, String status, boolean restartRequired) {
-            super();
-            this.name = name;
-            this.relativeFilePath = relativeFilePath;
-            this.status = status;
-            this.restartRequired = restartRequired;
-        }
+		public ReloadTableEntry(String name, String relativeFilePath, String status, boolean restartRequired) {
+			super();
+			this.name = name;
+			this.relativeFilePath = relativeFilePath;
+			this.status = status;
+			this.restartRequired = restartRequired;
+		}
 
-        @Override
-        public int compareTo(ReloadTableEntry o) {
-            return relativeFilePath.compareTo(o.relativeFilePath);
-        }
+		@Override
+		public int compareTo(ReloadTableEntry o) {
+			return relativeFilePath.compareTo(o.relativeFilePath);
+		}
 
-    }
+	}
 }

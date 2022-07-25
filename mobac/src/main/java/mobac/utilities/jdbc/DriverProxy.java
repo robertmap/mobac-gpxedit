@@ -29,61 +29,62 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 
 /**
- * Proxies all calls to {@link Driver} that has been loaded using a custom {@link ClassLoader}. This is necessary as the
- * SQL {@link DriverManager} does only accept drivers loaded by the <code>SystemClassLoader</code>.
+ * Proxies all calls to {@link Driver} that has been loaded using a custom
+ * {@link ClassLoader}. This is necessary as the SQL {@link DriverManager} does
+ * only accept drivers loaded by the <code>SystemClassLoader</code>.
  */
 public class DriverProxy implements Driver {
 
-    private static final Logger log = LoggerFactory.getLogger(DriverProxy.class);
+	private static final Logger log = LoggerFactory.getLogger(DriverProxy.class);
 
-    private final Driver driver;
+	private final Driver driver;
 
-    @SuppressWarnings("unchecked")
-    public DriverProxy(String className, ClassLoader classLoader)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, NoSuchMethodException, SecurityException {
-        Class<Driver> c = (Class<Driver>) classLoader.loadClass(className);
-        driver = c.getConstructor().newInstance();
-        log.info("SQL driver loaded: v" + driver.getMajorVersion() + "." + driver.getMinorVersion() + " ["
-                + driver.getClass().getName() + "]");
-    }
+	@SuppressWarnings("unchecked")
+	public DriverProxy(String className, ClassLoader classLoader)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
+		Class<Driver> c = (Class<Driver>) classLoader.loadClass(className);
+		driver = c.getConstructor().newInstance();
+		log.info("SQL driver loaded: v" + driver.getMajorVersion() + "." + driver.getMinorVersion() + " ["
+				+ driver.getClass().getName() + "]");
+	}
 
-    public static void loadSQLDriver(String className, ClassLoader classLoader)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        DriverProxy driver = new DriverProxy(className, classLoader);
-        DriverManager.registerDriver(driver);
-    }
+	public static void loadSQLDriver(String className, ClassLoader classLoader)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		DriverProxy driver = new DriverProxy(className, classLoader);
+		DriverManager.registerDriver(driver);
+	}
 
-    public boolean acceptsURL(String url) throws SQLException {
-        return driver.acceptsURL(url);
-    }
+	public boolean acceptsURL(String url) throws SQLException {
+		return driver.acceptsURL(url);
+	}
 
-    public Connection connect(String url, Properties info) throws SQLException {
-        return driver.connect(url, info);
-    }
+	public Connection connect(String url, Properties info) throws SQLException {
+		return driver.connect(url, info);
+	}
 
-    public int getMajorVersion() {
-        return driver.getMajorVersion();
-    }
+	public int getMajorVersion() {
+		return driver.getMajorVersion();
+	}
 
-    public int getMinorVersion() {
-        return driver.getMinorVersion();
-    }
+	public int getMinorVersion() {
+		return driver.getMinorVersion();
+	}
 
-    public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
-        return driver.getPropertyInfo(url, info);
-    }
+	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+		return driver.getPropertyInfo(url, info);
+	}
 
-    public boolean jdbcCompliant() {
-        return driver.jdbcCompliant();
-    }
+	public boolean jdbcCompliant() {
+		return driver.jdbcCompliant();
+	}
 
-    /**
-     * Required for Java 7
-     */
-    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
-    }
+	/**
+	 * Required for Java 7
+	 */
+	public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		throw new SQLFeatureNotSupportedException();
+	}
 
 }

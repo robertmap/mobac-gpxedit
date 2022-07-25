@@ -25,17 +25,17 @@ import java.awt.event.ActionListener;
 
 public class JBookmarkMenuItem extends JMenuItem implements ActionListener {
 
-    private final Bookmark bookmark;
+	private final Bookmark bookmark;
 
-    public JBookmarkMenuItem(Bookmark bookmark) {
-        super(bookmark.toString());
-        this.bookmark = bookmark;
-        addActionListener(this);
-    }
+	public JBookmarkMenuItem(Bookmark bookmark) {
+		super(bookmark.toString());
+		this.bookmark = bookmark;
+		addActionListener(this);
+	}
 
-    public void actionPerformed(ActionEvent paramActionEvent) {
-        MainGUI.getMainGUI().previewMap.gotoPositionBookmark(bookmark);
+	public void actionPerformed(ActionEvent paramActionEvent) {
+		MainGUI.getMainGUI().previewMap.gotoPositionBookmark(bookmark);
 
-    }
+	}
 
 }

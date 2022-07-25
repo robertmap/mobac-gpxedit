@@ -19,16 +19,17 @@ package mobac.program.atlascreators;
 import mobac.program.annotations.AtlasCreatorName;
 
 /**
- * Creates maps using the <a href="http://www.codesector.com/maverick.php">Maverick</a> atlas format (Android
- * application).
+ * Creates maps using the
+ * <a href="http://www.codesector.com/maverick.php">Maverick</a> atlas format
+ * (Android application).
  * <p>
  * Map/Atlas format see http://help.codesector.com/MapsCache
  */
 @AtlasCreatorName("Maverick SQLite atlas format")
 public class Maverick extends RMapsSQLite {
 
-    public Maverick() {
-        super();
-    }
+	public Maverick() {
+		super();
+	}
 
 }

@@ -23,40 +23,40 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * Implements the GUI logic for the preview map panel that manages the map selection and actions triggered by key
- * strokes.
+ * Implements the GUI logic for the preview map panel that manages the map
+ * selection and actions triggered by key strokes.
  */
 public class PolygonSelectionMapController extends AbstractPolygonSelectionMapController implements MouseListener {
 
-    public PolygonSelectionMapController(PreviewMap map) {
-        super(map);
-    }
+	public PolygonSelectionMapController(PreviewMap map) {
+		super(map);
+	}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+	public void mouseClicked(MouseEvent e) {
+	}
 
-    public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {
 
-    }
+	}
 
-    public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            if (finished)
-                reset();
-            Point mapPoint = map.getTopLeftCoordinate();
-            mapPoint.x += e.getX();
-            mapPoint.y += e.getY();
-            mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
-            polygonPoints.add(mapPoint);
-        }
-        map.grabFocus();
-        map.repaint();
-    }
+	public void mouseReleased(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (finished)
+				reset();
+			Point mapPoint = map.getTopLeftCoordinate();
+			mapPoint.x += e.getX();
+			mapPoint.y += e.getY();
+			mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
+			polygonPoints.add(mapPoint);
+		}
+		map.grabFocus();
+		map.repaint();
+	}
 
-    public void mouseEntered(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+	}
 
-    public void mouseExited(MouseEvent e) {
-    }
+	public void mouseExited(MouseEvent e) {
+	}
 
 }

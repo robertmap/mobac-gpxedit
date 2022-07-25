@@ -22,19 +22,18 @@ import javax.swing.JCheckBox;
 
 public class JZoomCheckBox extends JCheckBox {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final int zoomLevel;
+	private final int zoomLevel;
 
-    public JZoomCheckBox(int zoomLevel) {
-        super();
-        this.zoomLevel = zoomLevel;
-        setToolTipText(String.format(I18nUtils.localizedStringForKey("lp_zoom_number_tips"), zoomLevel));
-    }
+	public JZoomCheckBox(int zoomLevel) {
+		super();
+		this.zoomLevel = zoomLevel;
+		setToolTipText(String.format(I18nUtils.localizedStringForKey("lp_zoom_number_tips"), zoomLevel));
+	}
 
-    public int getZoomLevel() {
-        return zoomLevel;
-    }
-
+	public int getZoomLevel() {
+		return zoomLevel;
+	}
 
 }

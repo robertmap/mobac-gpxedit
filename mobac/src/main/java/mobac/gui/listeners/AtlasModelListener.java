@@ -27,32 +27,32 @@ import javax.swing.event.TreeModelListener;
 
 public class AtlasModelListener implements TreeModelListener {
 
-    JAtlasTree atlasTree;
-    JProfilesPanel profilesPanel;
+	JAtlasTree atlasTree;
+	JProfilesPanel profilesPanel;
 
-    public AtlasModelListener(JAtlasTree atlasTree, JProfilesPanel profilesPanel) {
-        super();
-        this.atlasTree = atlasTree;
-        this.profilesPanel = profilesPanel;
-    }
+	public AtlasModelListener(JAtlasTree atlasTree, JProfilesPanel profilesPanel) {
+		super();
+		this.atlasTree = atlasTree;
+		this.profilesPanel = profilesPanel;
+	}
 
-    protected void changed() {
-        profilesPanel.getSaveAsButton().setEnabled(atlasTree.getAtlas().getLayerCount() > 0);
-    }
+	protected void changed() {
+		profilesPanel.getSaveAsButton().setEnabled(atlasTree.getAtlas().getLayerCount() > 0);
+	}
 
-    public void treeNodesChanged(TreeModelEvent e) {
-        changed();
-    }
+	public void treeNodesChanged(TreeModelEvent e) {
+		changed();
+	}
 
-    public void treeNodesInserted(TreeModelEvent e) {
-        changed();
-    }
+	public void treeNodesInserted(TreeModelEvent e) {
+		changed();
+	}
 
-    public void treeNodesRemoved(TreeModelEvent e) {
-        changed();
-    }
+	public void treeNodesRemoved(TreeModelEvent e) {
+		changed();
+	}
 
-    public void treeStructureChanged(TreeModelEvent e) {
-        changed();
-    }
+	public void treeStructureChanged(TreeModelEvent e) {
+		changed();
+	}
 }

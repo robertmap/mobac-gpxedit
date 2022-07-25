@@ -18,18 +18,18 @@ package mobac.exceptions;
 
 public class NotImplementedException extends RuntimeException {
 
-    private static final String NOT_IMPLEMENTED = "Method not implemented";
+	private static final String NOT_IMPLEMENTED = "Method not implemented";
 
-    public NotImplementedException() {
-        super(NOT_IMPLEMENTED);
-    }
+	public NotImplementedException() {
+		super(NOT_IMPLEMENTED);
+	}
 
-    public NotImplementedException(Throwable cause) {
-        super(NOT_IMPLEMENTED, cause);
-    }
+	public NotImplementedException(Throwable cause) {
+		super(NOT_IMPLEMENTED, cause);
+	}
 
-    public NotImplementedException(Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(NOT_IMPLEMENTED, cause, enableSuppression, writableStackTrace);
-    }
+	public NotImplementedException(Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+		super(NOT_IMPLEMENTED, cause, enableSuppression, writableStackTrace);
+	}
 
 }

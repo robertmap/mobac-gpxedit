@@ -47,99 +47,99 @@ import java.util.Set;
 @AtlasCreatorName(value = "Mobile Trail Explorer Cache", type = "MTECache")
 public class MobileTrailExplorerCache extends AtlasCreator {
 
-    protected DataOutputStream cacheOutStream = null;
-    protected long lastTileOffset = 0;
-    protected Set<String> availableTileList = new HashSet<String>();
+	protected DataOutputStream cacheOutStream = null;
+	protected long lastTileOffset = 0;
+	protected Set<String> availableTileList = new HashSet<String>();
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
 
-    @Override
-    public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException, InterruptedException,
-            AtlasTestException {
-        super.startAtlasCreation(atlas, customAtlasDir);
-        File cacheFile = new File(atlasDir, "MTEFileCache");
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(cacheFile), 8216);
-        cacheOutStream = new DataOutputStream(out);
-    }
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
+			throws IOException, InterruptedException, AtlasTestException {
+		super.startAtlasCreation(atlas, customAtlasDir);
+		File cacheFile = new File(atlasDir, "MTEFileCache");
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(cacheFile), 8216);
+		cacheOutStream = new DataOutputStream(out);
+	}
 
-    @Override
-    public void abortAtlasCreation() throws IOException {
-        Utilities.closeQuietly(cacheOutStream);
-        super.abortAtlasCreation();
-    }
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		Utilities.closeQuietly(cacheOutStream);
+		super.abortAtlasCreation();
+	}
 
-    @Override
-    public void finishAtlasCreation() throws IOException, InterruptedException {
-        super.finishAtlasCreation();
-        cacheOutStream.close();
-    }
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		super.finishAtlasCreation();
+		cacheOutStream.close();
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+	}
 
-    public void createMap() throws MapCreationException, InterruptedException {
-        if (mapSource.getTileImageType() != TileImageType.PNG)
-            // If the tile image format is not png we have to convert it
-            mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
-        createTiles();
-    }
+	public void createMap() throws MapCreationException, InterruptedException {
+		if (mapSource.getTileImageType() != TileImageType.PNG)
+			// If the tile image format is not png we have to convert it
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		createTiles();
+	}
 
-    protected void createTiles() throws InterruptedException, MapCreationException {
-        atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-        ImageIO.setUseCache(false);
-        String mapName = map.getMapSource().getName().replaceAll(" ", "_");
+	protected void createTiles() throws InterruptedException, MapCreationException {
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+		ImageIO.setUseCache(false);
+		String mapName = map.getMapSource().getName().replaceAll(" ", "_");
 
-        for (int x = xMin; x <= xMax; x++) {
-            for (int y = yMin; y <= yMax; y++) {
-                checkUserAbort();
-                atlasProgress.incMapCreationProgress();
-                try {
-                    byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-                    if (sourceTileData != null)
-                        writeTile(mapName, sourceTileData, x, y, zoom);
-                } catch (IOException e) {
-                    throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-                }
-            }
-        }
-    }
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				checkUserAbort();
+				atlasProgress.incMapCreationProgress();
+				try {
+					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+					if (sourceTileData != null)
+						writeTile(mapName, sourceTileData, x, y, zoom);
+				} catch (IOException e) {
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+				}
+			}
+		}
+	}
 
-    protected boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom) throws IOException {
-        String url = "not used";
-        String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
+	protected boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom) throws IOException {
+		String url = "not used";
+		String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
 
-        if (availableTileList.contains(cacheKey)) {
-            log.warn("Map tile already in cache: " + cacheKey + " -> ignoring");
-            return false;
-        }
+		if (availableTileList.contains(cacheKey)) {
+			log.warn("Map tile already in cache: " + cacheKey + " -> ignoring");
+			return false;
+		}
 
-        cacheOutStream.writeInt(x);
-        cacheOutStream.writeInt(y);
-        cacheOutStream.writeInt(zoom);
+		cacheOutStream.writeInt(x);
+		cacheOutStream.writeInt(y);
+		cacheOutStream.writeInt(zoom);
 
-        byte[] urlBytes = url.getBytes();
-        cacheOutStream.writeShort(urlBytes.length);
-        cacheOutStream.write(urlBytes);
+		byte[] urlBytes = url.getBytes();
+		cacheOutStream.writeShort(urlBytes.length);
+		cacheOutStream.write(urlBytes);
 
-        byte[] keyBytes = cacheKey.getBytes();
-        cacheOutStream.writeShort(keyBytes.length);
-        cacheOutStream.write(keyBytes);
-        cacheOutStream.writeLong(lastTileOffset);
+		byte[] keyBytes = cacheKey.getBytes();
+		cacheOutStream.writeShort(keyBytes.length);
+		cacheOutStream.write(keyBytes);
+		cacheOutStream.writeLong(lastTileOffset);
 
-        lastTileOffset += 12 + // x, y and z
-                2 + urlBytes.length + // strings and their lengths
-                2 + keyBytes.length + 8 + // tile offset (long)
-                4 + // image byte array length (int)
-                tileData.length;
+		lastTileOffset += 12 + // x, y and z
+				2 + urlBytes.length + // strings and their lengths
+				2 + keyBytes.length + 8 + // tile offset (long)
+				4 + // image byte array length (int)
+				tileData.length;
 
-        cacheOutStream.writeInt(tileData.length);
-        cacheOutStream.write(tileData);
-        return true;
-    }
+		cacheOutStream.writeInt(tileData.length);
+		cacheOutStream.write(tileData);
+		return true;
+	}
 
 }

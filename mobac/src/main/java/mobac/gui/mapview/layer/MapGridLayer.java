@@ -21,20 +21,19 @@ import mobac.program.interfaces.MapSource;
 
 import java.awt.Graphics;
 
-
 /**
  * A simple layer that paints the tile borders.
  */
 public class MapGridLayer implements MapTileLayer {
 
-    protected int tileSize;
+	protected int tileSize;
 
-    public void startPainting(MapSource mapSource) {
-        tileSize = mapSource.getMapSpace().getTileSize();
-    }
+	public void startPainting(MapSource mapSource) {
+		tileSize = mapSource.getMapSpace().getTileSize();
+	}
 
-    public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
-        g.drawRect(gx, gy, tileSize, tileSize);
-    }
+	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
+		g.drawRect(gx, gy, tileSize, tileSize);
+	}
 
 }

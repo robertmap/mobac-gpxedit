@@ -23,20 +23,20 @@ import mobac.program.interfaces.FileBasedMapSource;
  */
 public class DebugLocalMapSource extends DebugMapSource implements FileBasedMapSource {
 
-    public void initialize() {
-    }
+	public void initialize() {
+	}
 
-    public void reinitialize() {
-    }
+	public void reinitialize() {
+	}
 
-    @Override
-    public String getName() {
-        return "DebugLocal";
-    }
+	@Override
+	public String getName() {
+		return "DebugLocal";
+	}
 
-    @Override
-    public String toString() {
-        return "Debug (local)";
-    }
+	@Override
+	public String toString() {
+		return "Debug (local)";
+	}
 
 }

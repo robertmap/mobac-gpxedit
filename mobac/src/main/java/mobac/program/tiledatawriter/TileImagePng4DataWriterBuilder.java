@@ -27,22 +27,22 @@ import java.io.OutputStream;
 
 public class TileImagePng4DataWriterBuilder implements TileImageDataWriterBuilder {
 
-    public TileImagePng4DataWriterBuilder() {
-    }
+	public TileImagePng4DataWriterBuilder() {
+	}
 
-    public TileImagePng4DataWriter build() {
-        return new TileImagePng4DataWriter();
-    }
+	public TileImagePng4DataWriter build() {
+		return new TileImagePng4DataWriter();
+	}
 
-    public void processImage(BufferedImage image, OutputStream out) throws IOException {
-        BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 16);
-        Png4BitWriter.writeImage(out, image2);
-    }
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
+		BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 16);
+		Png4BitWriter.writeImage(out, image2);
+	}
 
-    public void dispose() {
-    }
+	public void dispose() {
+	}
 
-    public TileImageType getType() {
-        return TileImageType.PNG;
-    }
+	public TileImageType getType() {
+		return TileImageType.PNG;
+	}
 }

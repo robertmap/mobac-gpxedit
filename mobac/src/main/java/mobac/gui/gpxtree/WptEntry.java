@@ -21,28 +21,28 @@ import mobac.gui.mapview.layer.GpxLayer;
 import mobac.utilities.I18nUtils;
 
 public class WptEntry extends GpxEntry {
-    private WptType wpt;
+	private WptType wpt;
 
-    public WptEntry(WptType wpt, GpxLayer layer) {
-        this.wpt = wpt;
-        this.setLayer(layer);
-    }
+	public WptEntry(WptType wpt, GpxLayer layer) {
+		this.wpt = wpt;
+		this.setLayer(layer);
+	}
 
-    public String toString() {
-        String name = "";
-        try {
-            name = wpt.getName();
-        } catch (NullPointerException e) {
-            // no name set
-        }
-        if (name != null && !name.equals("")) {
-            return name;
-        } else {
-            return I18nUtils.localizedStringForKey("rp_gpx_unname_wpt_name");
-        }
-    }
+	public String toString() {
+		String name = "";
+		try {
+			name = wpt.getName();
+		} catch (NullPointerException e) {
+			// no name set
+		}
+		if (name != null && !name.equals("")) {
+			return name;
+		} else {
+			return I18nUtils.localizedStringForKey("rp_gpx_unname_wpt_name");
+		}
+	}
 
-    public WptType getWpt() {
-        return wpt;
-    }
+	public WptType getWpt() {
+		return wpt;
+	}
 }

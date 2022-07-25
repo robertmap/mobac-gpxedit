@@ -24,57 +24,59 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * A {@link TileProvider} implementation that retrieves all tiles directly from the {@link MapSource}.
+ * A {@link TileProvider} implementation that retrieves all tiles directly from
+ * the {@link MapSource}.
  */
 public class MapSourceProvider implements TileProvider {
 
-    protected final MapSource mapSource;
-    protected final int zoom;
-    protected final LoadMethod loadMethod;
+	protected final MapSource mapSource;
+	protected final int zoom;
+	protected final LoadMethod loadMethod;
 
-    /**
-     * @param mapSource
-     * @param zoom
-     * @param loadMethod defines if the tile should be taken from tile cache or from it's original source (web server,
-     *                   generated...).
-     */
-    public MapSourceProvider(MapSource mapSource, int zoom, LoadMethod loadMethod) {
-        super();
-        this.mapSource = mapSource;
-        this.zoom = zoom;
-        this.loadMethod = loadMethod;
-    }
+	/**
+	 * @param mapSource
+	 * @param zoom
+	 * @param loadMethod
+	 *            defines if the tile should be taken from tile cache or from it's
+	 *            original source (web server, generated...).
+	 */
+	public MapSourceProvider(MapSource mapSource, int zoom, LoadMethod loadMethod) {
+		super();
+		this.mapSource = mapSource;
+		this.zoom = zoom;
+		this.loadMethod = loadMethod;
+	}
 
-    public byte[] getTileData(int x, int y) throws IOException {
-        try {
-            return mapSource.getTileData(zoom, x, y, loadMethod);
-        } catch (TileException e) {
-            throw new IOException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public byte[] getTileData(int x, int y) throws IOException {
+		try {
+			return mapSource.getTileData(zoom, x, y, loadMethod);
+		} catch (TileException e) {
+			throw new IOException(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public BufferedImage getTileImage(int x, int y) throws IOException {
-        try {
-            return mapSource.getTileImage(zoom, x, y, loadMethod);
-        } catch (TileException e) {
-            throw new IOException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public BufferedImage getTileImage(int x, int y) throws IOException {
+		try {
+			return mapSource.getTileImage(zoom, x, y, loadMethod);
+		} catch (TileException e) {
+			throw new IOException(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public boolean preferTileImageUsage() {
-        return false;
-    }
+	public boolean preferTileImageUsage() {
+		return false;
+	}
 
-    public MapSource getMapSource() {
-        return mapSource;
-    }
+	public MapSource getMapSource() {
+		return mapSource;
+	}
 
-    public int getZoom() {
-        return zoom;
-    }
+	public int getZoom() {
+		return zoom;
+	}
 
 }

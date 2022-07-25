@@ -28,27 +28,27 @@ import java.awt.event.ActionListener;
 
 public class AtlasCreate implements ActionListener {
 
-    private final JAtlasTree jAtlasTree;
+	private final JAtlasTree jAtlasTree;
 
-    public AtlasCreate(JAtlasTree jAtlasTree) {
-        this.jAtlasTree = jAtlasTree;
-    }
+	public AtlasCreate(JAtlasTree jAtlasTree) {
+		this.jAtlasTree = jAtlasTree;
+	}
 
-    public void actionPerformed(ActionEvent event) {
-        if (!jAtlasTree.testAtlasContentValid())
-            return;
-        try {
-            // We have to work on a deep clone otherwise the user would be
-            // able to modify settings of maps, layers and the atlas itself
-            // while the AtlasThread works on that atlas reference
-            AtlasInterface atlasToCreate = jAtlasTree.getAtlas().deepClone();
-            Thread atlasThread = new AtlasThread(atlasToCreate);
-            atlasThread.start();
-        } catch (AtlasTestException e) {
-            JOptionPane.showMessageDialog(null, "<html>" + e.getMessage() + "</html>",
-                    I18nUtils.localizedStringForKey("msg_convert_incompatible_format"), JOptionPane.ERROR_MESSAGE);
+	public void actionPerformed(ActionEvent event) {
+		if (!jAtlasTree.testAtlasContentValid())
+			return;
+		try {
+			// We have to work on a deep clone otherwise the user would be
+			// able to modify settings of maps, layers and the atlas itself
+			// while the AtlasThread works on that atlas reference
+			AtlasInterface atlasToCreate = jAtlasTree.getAtlas().deepClone();
+			Thread atlasThread = new AtlasThread(atlasToCreate);
+			atlasThread.start();
+		} catch (AtlasTestException e) {
+			JOptionPane.showMessageDialog(null, "<html>" + e.getMessage() + "</html>",
+					I18nUtils.localizedStringForKey("msg_convert_incompatible_format"), JOptionPane.ERROR_MESSAGE);
 
-        }
-    }
+		}
+	}
 
 }

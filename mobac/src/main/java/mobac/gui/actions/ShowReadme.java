@@ -30,20 +30,19 @@ import java.io.IOException;
 
 public class ShowReadme implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        File readme = new File(DirectoryManager.programDir, "README.HTM");
-        if (!readme.isFile()) {
-            JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
-                    I18nUtils.localizedStringForKey("msg_no_found_readme_file"),
-                    I18nUtils.localizedStringForKey("Error"),
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        try {
-            Desktop.getDesktop().browse(readme.toURI());
-        } catch (IOException e) {
-            GUIExceptionHandler.processException(e);
-        }
-    }
+	public void actionPerformed(ActionEvent event) {
+		File readme = new File(DirectoryManager.programDir, "README.HTM");
+		if (!readme.isFile()) {
+			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
+					I18nUtils.localizedStringForKey("msg_no_found_readme_file"),
+					I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		try {
+			Desktop.getDesktop().browse(readme.toURI());
+		} catch (IOException e) {
+			GUIExceptionHandler.processException(e);
+		}
+	}
 
 }

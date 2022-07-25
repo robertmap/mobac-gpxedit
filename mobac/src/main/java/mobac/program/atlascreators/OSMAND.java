@@ -20,8 +20,8 @@ import mobac.program.annotations.AtlasCreatorName;
 
 @AtlasCreatorName(value = "OsmAnd tile storage")
 public class OSMAND extends OSMTracker {
-    public OSMAND() {
-        super();
-        tileFileNamePattern = "%d/%d/%d%s.tile";
-    }
+	public OSMAND() {
+		super();
+		tileFileNamePattern = "%d/%d/%d%s.tile";
+	}
 }

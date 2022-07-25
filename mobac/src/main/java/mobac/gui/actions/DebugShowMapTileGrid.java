@@ -25,13 +25,13 @@ import java.awt.event.ActionListener;
 
 public class DebugShowMapTileGrid implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
-        previewMap.setTileGridVisible(!previewMap.isTileGridVisible());
-        if (e.getSource() instanceof JCheckBoxMenuItem) {
-            JCheckBoxMenuItem m = (JCheckBoxMenuItem) e.getSource();
-            m.setSelected(previewMap.isTileGridVisible());
-        }
-    }
+	public void actionPerformed(ActionEvent e) {
+		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+		previewMap.setTileGridVisible(!previewMap.isTileGridVisible());
+		if (e.getSource() instanceof JCheckBoxMenuItem) {
+			JCheckBoxMenuItem m = (JCheckBoxMenuItem) e.getSource();
+			m.setSelected(previewMap.isTileGridVisible());
+		}
+	}
 
 }

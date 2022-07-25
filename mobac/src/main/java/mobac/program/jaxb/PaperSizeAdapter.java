@@ -25,37 +25,37 @@ import mobac.program.model.PaperSize.Format;
  */
 public class PaperSizeAdapter extends XmlAdapter<String, PaperSize> {
 
-    private static final String LANDSCAPE = "_LANDSCAPE", SELECTION = "SELECTION", X = "x";
+	private static final String LANDSCAPE = "_LANDSCAPE", SELECTION = "SELECTION", X = "x";
 
-    @Override
-    public PaperSize unmarshal(String value) throws Exception {
-        if (value.equals(SELECTION)) {
-            return null;
-        }
-        if (value.contains(X)) {
-            String[] split = value.split(X);
-            double width = Double.parseDouble(split[0]);
-            double height = Double.parseDouble(split[1]);
-            return new PaperSize(width, height);
-        }
-        boolean landscape = false;
-        if (value.contains(LANDSCAPE)) {
-            value = value.substring(0, value.indexOf(LANDSCAPE));
-            landscape = true;
-        }
-        Format format = Format.valueOf(value);
-        return new PaperSize(format, landscape);
-    }
+	@Override
+	public PaperSize unmarshal(String value) throws Exception {
+		if (value.equals(SELECTION)) {
+			return null;
+		}
+		if (value.contains(X)) {
+			String[] split = value.split(X);
+			double width = Double.parseDouble(split[0]);
+			double height = Double.parseDouble(split[1]);
+			return new PaperSize(width, height);
+		}
+		boolean landscape = false;
+		if (value.contains(LANDSCAPE)) {
+			value = value.substring(0, value.indexOf(LANDSCAPE));
+			landscape = true;
+		}
+		Format format = Format.valueOf(value);
+		return new PaperSize(format, landscape);
+	}
 
-    @Override
-    public String marshal(PaperSize v) throws Exception {
-        if (v == null) {
-            return SELECTION;
-        }
-        if (v.format != null) {
-            return v.format.name() + (v.landscape ? LANDSCAPE : "");
-        } else {
-            return v.width + X + v.height;
-        }
-    }
+	@Override
+	public String marshal(PaperSize v) throws Exception {
+		if (v == null) {
+			return SELECTION;
+		}
+		if (v.format != null) {
+			return v.format.name() + (v.landscape ? LANDSCAPE : "");
+		} else {
+			return v.width + X + v.height;
+		}
+	}
 }

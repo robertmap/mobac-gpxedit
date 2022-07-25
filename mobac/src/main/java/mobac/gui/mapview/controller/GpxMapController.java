@@ -39,75 +39,75 @@ import java.math.BigDecimal;
  */
 public class GpxMapController extends JMapController implements MouseListener {
 
-    private final JGpxPanel panel;
-    private GpxEntry entry;
+	private final JGpxPanel panel;
+	private GpxEntry entry;
 
-    public GpxMapController(PreviewMap map, JGpxPanel panel, boolean enabled) {
-        super(map, enabled);
-        this.panel = panel;
-    }
+	public GpxMapController(PreviewMap map, JGpxPanel panel, boolean enabled) {
+		super(map, enabled);
+		this.panel = panel;
+	}
 
-    public void mouseClicked(MouseEvent e) {
-        // Add new GPX point to currently selected GPX file
-        disable();
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            entry = panel.getSelectedEntry();
-            Gpx gpx = entry.getLayer().getGpx();
-            Point p = e.getPoint();
-            Point tl = map.getTopLeftCoordinate();
-            p.x += tl.x;
-            p.y += tl.y;
-            MapSpace mapSpace = map.getMapSource().getMapSpace();
-            int maxPixel = mapSpace.getMaxPixels(map.getZoom());
-            if (p.x < 0 || p.x > maxPixel || p.y < 0 || p.y > maxPixel)
-                return; // outside of world region
-            double lon = mapSpace.cXToLon(p.x, map.getZoom());
-            double lat = mapSpace.cYToLat(p.y, map.getZoom());
-            String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("dlg_gpx_inpu_point_name"));
-            if (name == null) {
-                return;
-            }
-            Gpx gpx11 = gpx;
-            WptType wpt = new WptType();
-            wpt.setName(name);
-            wpt.setLat(new BigDecimal(lat));
-            wpt.setLon(new BigDecimal(lon));
-            GpxEditor editor = GpxEditor.getInstance();
-            if (entry.getClass() == GpxRootEntry.class) {
-                gpx11.getWpt().add(wpt);
-            } else if (entry instanceof RteEntry) {
-                editor.findRteAndAdd((RteEntry) entry, wpt);
-            } else if (entry instanceof TrksegEntry) {
-                editor.findTrksegAndAdd((TrksegEntry) entry, wpt);
-            }
-            panel.addWpt(wpt, entry);
-        }
-        map.repaint();
-    }
+	public void mouseClicked(MouseEvent e) {
+		// Add new GPX point to currently selected GPX file
+		disable();
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			entry = panel.getSelectedEntry();
+			Gpx gpx = entry.getLayer().getGpx();
+			Point p = e.getPoint();
+			Point tl = map.getTopLeftCoordinate();
+			p.x += tl.x;
+			p.y += tl.y;
+			MapSpace mapSpace = map.getMapSource().getMapSpace();
+			int maxPixel = mapSpace.getMaxPixels(map.getZoom());
+			if (p.x < 0 || p.x > maxPixel || p.y < 0 || p.y > maxPixel)
+				return; // outside of world region
+			double lon = mapSpace.cXToLon(p.x, map.getZoom());
+			double lat = mapSpace.cYToLat(p.y, map.getZoom());
+			String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("dlg_gpx_inpu_point_name"));
+			if (name == null) {
+				return;
+			}
+			Gpx gpx11 = gpx;
+			WptType wpt = new WptType();
+			wpt.setName(name);
+			wpt.setLat(new BigDecimal(lat));
+			wpt.setLon(new BigDecimal(lon));
+			GpxEditor editor = GpxEditor.getInstance();
+			if (entry.getClass() == GpxRootEntry.class) {
+				gpx11.getWpt().add(wpt);
+			} else if (entry instanceof RteEntry) {
+				editor.findRteAndAdd((RteEntry) entry, wpt);
+			} else if (entry instanceof TrksegEntry) {
+				editor.findTrksegAndAdd((TrksegEntry) entry, wpt);
+			}
+			panel.addWpt(wpt, entry);
+		}
+		map.repaint();
+	}
 
-    public void repaint() {
-        map.repaint();
-    }
+	public void repaint() {
+		map.repaint();
+	}
 
-    public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent e) {
 
-    }
+	}
 
-    public void mouseExited(MouseEvent e) {
+	public void mouseExited(MouseEvent e) {
 
-    }
+	}
 
-    public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {
 
-    }
+	}
 
-    public void mouseReleased(MouseEvent e) {
+	public void mouseReleased(MouseEvent e) {
 
-    }
+	}
 
-    @Override
-    public void disable() {
-        super.disable();
-        map.getMapSelectionController().enable();
-    }
+	@Override
+	public void disable() {
+		super.disable();
+		map.getMapSelectionController().enable();
+	}
 }

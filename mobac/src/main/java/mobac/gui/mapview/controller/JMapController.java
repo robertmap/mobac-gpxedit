@@ -26,8 +26,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 
 /**
- * Abstract base class for all mouse controller implementations. For implementing your own controller create a class
- * that derives from this one and implements one or more of the following interfaces:
+ * Abstract base class for all mouse controller implementations. For
+ * implementing your own controller create a class that derives from this one
+ * and implements one or more of the following interfaces:
  * <ul>
  * <li>{@link MouseListener}</li>
  * <li>{@link MouseMotionListener}</li>
@@ -36,48 +37,48 @@ import java.awt.event.MouseWheelListener;
  */
 public abstract class JMapController {
 
-    protected final PreviewMap map;
-    protected boolean enabled = false;
+	protected final PreviewMap map;
+	protected boolean enabled = false;
 
-    public JMapController(PreviewMap map) {
-        this.map = map;
-    }
+	public JMapController(PreviewMap map) {
+		this.map = map;
+	}
 
-    public JMapController(PreviewMap map, boolean enabled) {
-        this(map);
-        if (enabled)
-            enable();
-    }
+	public JMapController(PreviewMap map, boolean enabled) {
+		this(map);
+		if (enabled)
+			enable();
+	}
 
-    public void enable() {
-        if (enabled)
-            return;
-        if (this instanceof MouseListener)
-            map.addMouseListener((MouseListener) this);
-        if (this instanceof MouseWheelListener)
-            map.addMouseWheelListener((MouseWheelListener) this);
-        if (this instanceof MouseMotionListener)
-            map.addMouseMotionListener((MouseMotionListener) this);
-        this.enabled = true;
-    }
+	public void enable() {
+		if (enabled)
+			return;
+		if (this instanceof MouseListener)
+			map.addMouseListener((MouseListener) this);
+		if (this instanceof MouseWheelListener)
+			map.addMouseWheelListener((MouseWheelListener) this);
+		if (this instanceof MouseMotionListener)
+			map.addMouseMotionListener((MouseMotionListener) this);
+		this.enabled = true;
+	}
 
-    public void disable() {
-        if (!enabled)
-            return;
-        if (this instanceof MouseListener)
-            map.removeMouseListener((MouseListener) this);
-        if (this instanceof MouseWheelListener)
-            map.removeMouseWheelListener((MouseWheelListener) this);
-        if (this instanceof MouseMotionListener)
-            map.removeMouseMotionListener((MouseMotionListener) this);
-        this.enabled = false;
-    }
+	public void disable() {
+		if (!enabled)
+			return;
+		if (this instanceof MouseListener)
+			map.removeMouseListener((MouseListener) this);
+		if (this instanceof MouseWheelListener)
+			map.removeMouseWheelListener((MouseWheelListener) this);
+		if (this instanceof MouseMotionListener)
+			map.removeMouseMotionListener((MouseMotionListener) this);
+		this.enabled = false;
+	}
 
-    protected Point convertToAbsolutePoint(Point p) {
-        Point mapPoint = map.getTopLeftCoordinate();
-        mapPoint.x += p.getX();
-        mapPoint.y += p.getY();
-        mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
-        return mapPoint;
-    }
+	protected Point convertToAbsolutePoint(Point p) {
+		Point mapPoint = map.getTopLeftCoordinate();
+		mapPoint.x += p.getX();
+		mapPoint.y += p.getY();
+		mapPoint = map.getMapSource().getMapSpace().changeZoom(mapPoint, map.getZoom(), PreviewMap.MAX_ZOOM);
+		return mapPoint;
+	}
 }

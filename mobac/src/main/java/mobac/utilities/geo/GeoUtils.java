@@ -20,22 +20,22 @@ import java.util.Locale;
 
 public class GeoUtils {
 
-    public static String getDegMinFormat(double coord, boolean isLatitude) {
+	public static String getDegMinFormat(double coord, boolean isLatitude) {
 
-        boolean neg = (coord < 0.0);
-        coord = Math.abs(coord);
-        int deg = (int) coord;
-        double min = (coord - deg) * 60.0;
+		boolean neg = (coord < 0.0);
+		coord = Math.abs(coord);
+		int deg = (int) coord;
+		double min = (coord - deg) * 60.0;
 
-        String degMinFormat = "%d, %3.6f, %c";
+		String degMinFormat = "%d, %3.6f, %c";
 
-        char dirC;
-        if (isLatitude)
-            dirC = (neg ? 'S' : 'N');
-        else
-            dirC = (neg ? 'W' : 'E');
+		char dirC;
+		if (isLatitude)
+			dirC = (neg ? 'S' : 'N');
+		else
+			dirC = (neg ? 'W' : 'E');
 
-        return String.format(Locale.ENGLISH, degMinFormat, deg, min, dirC);
-    }
+		return String.format(Locale.ENGLISH, degMinFormat, deg, min, dirC);
+	}
 
 }

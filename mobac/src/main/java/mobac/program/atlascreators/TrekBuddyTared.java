@@ -35,95 +35,95 @@ import java.util.List;
 @AtlasCreatorName(value = "TrekBuddy tared atlas", type = "TaredAtlas")
 public class TrekBuddyTared extends TrekBuddy {
 
-    @Override
-    protected void testAtlas() throws AtlasTestException {
-        super.testAtlas();
-        for (LayerInterface layer : atlas) {
-            for (MapInterface map : layer) {
-                String mapFileName = layer.getName() + "/" + map.getName() + "/" + map.getName() + ".map";
-                if (mapFileName.length() > 100)
-                    throw new AtlasTestException("Layer and map name too long for Trekbuddy Tar format!\n" + mapFileName
-                            + "\n\nCurrent length: " + mapFileName.length()
-                            + " characters\nMaximum length: 100 characters", map);
-            }
-        }
-    }
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		super.testAtlas();
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				String mapFileName = layer.getName() + "/" + map.getName() + "/" + map.getName() + ".map";
+				if (mapFileName.length() > 100)
+					throw new AtlasTestException("Layer and map name too long for Trekbuddy Tar format!\n" + mapFileName
+							+ "\n\nCurrent length: " + mapFileName.length()
+							+ " characters\nMaximum length: 100 characters", map);
+			}
+		}
+	}
 
-    @Override
-    public void finishAtlasCreation() {
-        createAtlasTarArchive("cr");
-    }
+	@Override
+	public void finishAtlasCreation() {
+		createAtlasTarArchive("cr");
+	}
 
-    private void createAtlasTarArchive(String name) {
-        log.trace("Creating cr.tar for atlas in dir \"" + atlasDir.getPath() + "\"");
+	private void createAtlasTarArchive(String name) {
+		log.trace("Creating cr.tar for atlas in dir \"" + atlasDir.getPath() + "\"");
 
-        File[] atlasLayerDirs = Utilities.listSubDirectories(atlasDir);
-        List<File> atlasMapDirs = new LinkedList<File>();
-        for (File dir : atlasLayerDirs)
-            Utilities.addSubDirectories(atlasMapDirs, dir, 0);
+		File[] atlasLayerDirs = Utilities.listSubDirectories(atlasDir);
+		List<File> atlasMapDirs = new LinkedList<File>();
+		for (File dir : atlasLayerDirs)
+			Utilities.addSubDirectories(atlasMapDirs, dir, 0);
 
-        File crFile = new File(atlasDir, name + ".tar");
-        try (TarArchive ta = new TarArchive(crFile, atlasDir)) {
-            ta.writeFileFromData(name + ".tba", "Atlas 1.0\r\n".getBytes());
+		File crFile = new File(atlasDir, name + ".tar");
+		try (TarArchive ta = new TarArchive(crFile, atlasDir)) {
+			ta.writeFileFromData(name + ".tba", "Atlas 1.0\r\n".getBytes());
 
-            for (File mapDir : atlasMapDirs) {
-                ta.writeFile(mapDir);
-                File mapFile = new File(mapDir, mapDir.getName() + ".map");
-                ta.writeFile(mapFile);
-                mapFile.delete();
-            }
-            ta.writeEndofArchive();
-        } catch (IOException e) {
-            log.error("Failed writing tar file \"" + crFile.getPath() + "\"", e);
-        }
-    }
+			for (File mapDir : atlasMapDirs) {
+				ta.writeFile(mapDir);
+				File mapFile = new File(mapDir, mapDir.getName() + ".map");
+				ta.writeFile(mapFile);
+				mapFile.delete();
+			}
+			ta.writeEndofArchive();
+		} catch (IOException e) {
+			log.error("Failed writing tar file \"" + crFile.getPath() + "\"", e);
+		}
+	}
 
-    @Override
-    protected MapTileWriter createMapTileWriter() throws IOException {
-        return new TarTileWriter();
-    }
+	@Override
+	protected MapTileWriter createMapTileWriter() throws IOException {
+		return new TarTileWriter();
+	}
 
-    private class TarTileWriter implements MapTileWriter {
+	private class TarTileWriter implements MapTileWriter {
 
-        TarArchive ta = null;
-        int tileHeight = 256;
-        int tileWidth = 256;
+		TarArchive ta = null;
+		int tileHeight = 256;
+		int tileWidth = 256;
 
-        public TarTileWriter() {
-            super();
-            if (parameters != null) {
-                tileHeight = parameters.getHeight();
-                tileWidth = parameters.getWidth();
-            }
-            File mapTarFile = new File(mapDir, map.getName() + ".tar");
-            log.debug("Writing tiles to tared map: " + mapTarFile);
-            try {
-                ta = new TarTmiArchive(mapTarFile, null);
-                ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
-                writeMapFile(buf);
-                ta.writeFileFromData(map.getName() + ".map", buf.toByteArray());
-            } catch (IOException e) {
-                log.error("", e);
-            }
-        }
+		public TarTileWriter() {
+			super();
+			if (parameters != null) {
+				tileHeight = parameters.getHeight();
+				tileWidth = parameters.getWidth();
+			}
+			File mapTarFile = new File(mapDir, map.getName() + ".tar");
+			log.debug("Writing tiles to tared map: " + mapTarFile);
+			try {
+				ta = new TarTmiArchive(mapTarFile, null);
+				ByteArrayOutputStream buf = new ByteArrayOutputStream(8192);
+				writeMapFile(buf);
+				ta.writeFileFromData(map.getName() + ".map", buf.toByteArray());
+			} catch (IOException e) {
+				log.error("", e);
+			}
+		}
 
-        public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
-            String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth), (tiley * tileHeight),
-                    imageFormat);
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
+			String tileFileName = String.format(FILENAME_PATTERN, (tilex * tileWidth), (tiley * tileHeight),
+					imageFormat);
 
-            ta.writeFileFromData("set/" + tileFileName, tileData);
-        }
+			ta.writeFileFromData("set/" + tileFileName, tileData);
+		}
 
-        public void finalizeMap() {
-            try {
-                ta.writeEndofArchive();
-            } catch (IOException e) {
-                log.error("", e);
-            } finally {
-                IOUtils.closeQuietly(ta);
-            }
-        }
+		public void finalizeMap() {
+			try {
+				ta.writeEndofArchive();
+			} catch (IOException e) {
+				log.error("", e);
+			} finally {
+				IOUtils.closeQuietly(ta);
+			}
+		}
 
-    }
+	}
 
 }

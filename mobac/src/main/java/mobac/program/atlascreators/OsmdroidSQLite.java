@@ -46,109 +46,109 @@ import java.sql.Statement;
 @SupportedParameters(names = {Name.format})
 public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
-    protected Connection conn = null;
+	protected Connection conn = null;
 
-    public OsmdroidSQLite() {
-        super();
-        SQLiteLoader.loadSQLiteOrShowError();
-    }
+	public OsmdroidSQLite() {
+		super();
+		SQLiteLoader.loadSQLiteOrShowError();
+	}
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return mapSource.getMapSpace().getProjectionCategory().equals(ProjectionCategory.SPHERE);
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return mapSource.getMapSpace().getProjectionCategory().equals(ProjectionCategory.SPHERE);
+	}
 
-    @Override
-    public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws IOException, AtlasTestException,
-            InterruptedException {
-        super.startAtlasCreation(atlas, customAtlasDir);
-        String databaseFile = new File(atlasDir, atlas.getName() + ".sqlite").getAbsolutePath();
-        try {
-            SQLiteLoader.loadSQLite();
-        } catch (SQLException e) {
-            throw new AtlasTestException(SQLiteLoader.getMsgSqliteMissing());
-        }
-        try {
-            conn = DriverManager.getConnection("jdbc:sqlite:" + databaseFile);
-            Statement stat = conn.createStatement();
-            stat.executeUpdate("CREATE TABLE IF NOT EXISTS tiles (key INTEGER PRIMARY KEY, provider TEXT, tile BLOB)");
-            stat.close();
-        } catch (SQLException e) {
-            throw new IOException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage(), e);
-        }
-        log.debug("SQLite Database file: " + databaseFile);
-    }
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
+			throws IOException, AtlasTestException, InterruptedException {
+		super.startAtlasCreation(atlas, customAtlasDir);
+		String databaseFile = new File(atlasDir, atlas.getName() + ".sqlite").getAbsolutePath();
+		try {
+			SQLiteLoader.loadSQLite();
+		} catch (SQLException e) {
+			throw new AtlasTestException(SQLiteLoader.getMsgSqliteMissing());
+		}
+		try {
+			conn = DriverManager.getConnection("jdbc:sqlite:" + databaseFile);
+			Statement stat = conn.createStatement();
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS tiles (key INTEGER PRIMARY KEY, provider TEXT, tile BLOB)");
+			stat.close();
+		} catch (SQLException e) {
+			throw new IOException("Error creating SQL database \"" + databaseFile + "\": " + e.getMessage(), e);
+		}
+		log.debug("SQLite Database file: " + databaseFile);
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-        if (parameters != null)
-            mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+		if (parameters != null)
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-        try {
-            String provider = map.getMapSource().getName();
-            int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
-            atlasProgress.initMapCreation(maxMapProgress);
-            conn.setAutoCommit(false);
-            int batchTileCount = 0;
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		try {
+			String provider = map.getMapSource().getName();
+			int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
+			atlasProgress.initMapCreation(maxMapProgress);
+			conn.setAutoCommit(false);
+			int batchTileCount = 0;
 
-            ImageIO.setUseCache(false);
-            PreparedStatement prep = conn.prepareStatement("INSERT or REPLACE INTO tiles VALUES (?, ?, ?);");
-            Runtime r = Runtime.getRuntime();
-            long heapMaxSize = r.maxMemory();
+			ImageIO.setUseCache(false);
+			PreparedStatement prep = conn.prepareStatement("INSERT or REPLACE INTO tiles VALUES (?, ?, ?);");
+			Runtime r = Runtime.getRuntime();
+			long heapMaxSize = r.maxMemory();
 
-            for (long x = xMin; x <= xMax; x++)
-                for (long y = yMin; y <= yMax; y++) {
-                    checkUserAbort();
-                    atlasProgress.incMapCreationProgress();
-                    byte[] sourceTileData = mapDlTileProvider.getTileData((int) x, (int) y);
-                    if (sourceTileData != null) {
-                        long z = zoom;
-                        long index = (((z << z) + x) << z) + y;
-                        prep.setLong(1, index);
-                        prep.setString(2, provider);
-                        prep.setBytes(3, sourceTileData);
-                        prep.addBatch();
+			for (long x = xMin; x <= xMax; x++)
+				for (long y = yMin; y <= yMax; y++) {
+					checkUserAbort();
+					atlasProgress.incMapCreationProgress();
+					byte[] sourceTileData = mapDlTileProvider.getTileData((int) x, (int) y);
+					if (sourceTileData != null) {
+						long z = zoom;
+						long index = (((z << z) + x) << z) + y;
+						prep.setLong(1, index);
+						prep.setString(2, provider);
+						prep.setBytes(3, sourceTileData);
+						prep.addBatch();
 
-                        long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
+						long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
 
-                        if ((heapAvailable < HEAP_MIN) || (batchTileCount >= MAX_BATCH_SIZE)) {
-                            log.trace("Executing batch containing " + batchTileCount + " tiles");
-                            prep.executeBatch();
-                            prep.clearBatch();
-                            System.gc();
-                            conn.commit();
-                            atlasProgress.incMapCreationProgress(batchTileCount);
-                            batchTileCount = 0;
-                        }
+						if ((heapAvailable < HEAP_MIN) || (batchTileCount >= MAX_BATCH_SIZE)) {
+							log.trace("Executing batch containing " + batchTileCount + " tiles");
+							prep.executeBatch();
+							prep.clearBatch();
+							System.gc();
+							conn.commit();
+							atlasProgress.incMapCreationProgress(batchTileCount);
+							batchTileCount = 0;
+						}
 
-                    }
-                }
-            prep.executeBatch();
-            conn.setAutoCommit(true);
-            atlasProgress.setMapCreationProgress(maxMapProgress);
-        } catch (SQLException e) {
-            throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-        } catch (IOException e) {
-            throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-        }
-    }
+					}
+				}
+			prep.executeBatch();
+			conn.setAutoCommit(true);
+			atlasProgress.setMapCreationProgress(maxMapProgress);
+		} catch (SQLException e) {
+			throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+		} catch (IOException e) {
+			throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+		}
+	}
 
-    @Override
-    public void abortAtlasCreation() throws IOException {
-        SQLiteLoader.closeConnection(conn);
-        conn = null;
-        super.abortAtlasCreation();
-    }
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		SQLiteLoader.closeConnection(conn);
+		conn = null;
+		super.abortAtlasCreation();
+	}
 
-    @Override
-    public void finishAtlasCreation() throws IOException, InterruptedException {
-        SQLiteLoader.closeConnection(conn);
-        conn = null;
-        super.finishAtlasCreation();
-    }
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		SQLiteLoader.closeConnection(conn);
+		conn = null;
+		super.finishAtlasCreation();
+	}
 
 }

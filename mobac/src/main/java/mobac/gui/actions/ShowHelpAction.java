@@ -21,9 +21,8 @@ import mobac.gui.dialogs.Help;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class ShowHelpAction implements ActionListener {
-    public void actionPerformed(ActionEvent event) {
-        Help.showHelp();
-    }
+	public void actionPerformed(ActionEvent event) {
+		Help.showHelp();
+	}
 }

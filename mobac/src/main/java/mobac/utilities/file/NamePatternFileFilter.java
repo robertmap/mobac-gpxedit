@@ -23,19 +23,19 @@ import java.util.regex.Pattern;
 
 public class NamePatternFileFilter implements FileFilter {
 
-    protected final Pattern pattern;
+	protected final Pattern pattern;
 
-    public NamePatternFileFilter(Pattern pattern) {
-        this.pattern = pattern;
-    }
+	public NamePatternFileFilter(Pattern pattern) {
+		this.pattern = pattern;
+	}
 
-    public NamePatternFileFilter(String regex) {
-        this.pattern = Pattern.compile(regex);
-    }
+	public NamePatternFileFilter(String regex) {
+		this.pattern = Pattern.compile(regex);
+	}
 
-    public boolean accept(File pathname) {
-        Matcher m = pattern.matcher(pathname.getName());
-        return m.matches();
-    }
+	public boolean accept(File pathname) {
+		Matcher m = pattern.matcher(pathname.getName());
+		return m.matches();
+	}
 
 }

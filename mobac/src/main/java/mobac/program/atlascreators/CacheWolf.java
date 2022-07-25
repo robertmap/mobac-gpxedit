@@ -38,112 +38,113 @@ import java.io.Writer;
 @SupportedParameters(names = {Name.format, Name.height, Name.width})
 public class CacheWolf extends Ozi {
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-        try {
-            Utilities.mkDirs(layerDir);
-        } catch (IOException e1) {
-            throw new MapCreationException(map, e1);
-        }
-        if (parameters == null) {
-            // One image per map
-            super.createTiles();
-            writeWflFile();
-        } else
-            // Use automatic tiling as specified in the parameters
-            createTiles();
-    }
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		try {
+			Utilities.mkDirs(layerDir);
+		} catch (IOException e1) {
+			throw new MapCreationException(map, e1);
+		}
+		if (parameters == null) {
+			// One image per map
+			super.createTiles();
+			writeWflFile();
+		} else
+			// Use automatic tiling as specified in the parameters
+			createTiles();
+	}
 
-    @Override
-    protected void createTiles() throws InterruptedException, MapCreationException {
-        MapTileWriter mapTileWriter;
+	@Override
+	protected void createTiles() throws InterruptedException, MapCreationException {
+		MapTileWriter mapTileWriter;
 
-        CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-        try {
-            mapDlTileProvider = ctp;
-            mapTileWriter = new CWFileTileWriter();
-            MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
-            atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
-            mapTileBuilder.createTiles();
-        } catch (IOException e) {
-            throw new MapCreationException(map, e);
-        } finally {
-            ctp.cleanup();
-        }
-    }
+		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+		try {
+			mapDlTileProvider = ctp;
+			mapTileWriter = new CWFileTileWriter();
+			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
+			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+			mapTileBuilder.createTiles();
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		} finally {
+			ctp.cleanup();
+		}
+	}
 
-    private void writeWflFile() throws MapCreationException {
-        int width = (xMax - xMin + 1) * tileSize;
-        int height = (yMax - yMin + 1) * tileSize;
-        try {
-            writeWflFile(mapName, 0, 0, width, height);
-        } catch (IOException e) {
-            throw new MapCreationException("Error writing wfl file: " + e.getMessage(), map, e);
-        }
-    }
+	private void writeWflFile() throws MapCreationException {
+		int width = (xMax - xMin + 1) * tileSize;
+		int height = (yMax - yMin + 1) * tileSize;
+		try {
+			writeWflFile(mapName, 0, 0, width, height);
+		} catch (IOException e) {
+			throw new MapCreationException("Error writing wfl file: " + e.getMessage(), map, e);
+		}
+	}
 
-    private void writeWflFile(String filename, int tilex, int tiley, int width, int height) throws IOException {
-        try (Writer mapWriter = new OutputStreamWriter(new FileOutputStream(new File(layerDir, filename + ".wfl")), TEXT_FILE_CHARSET)) {
+	private void writeWflFile(String filename, int tilex, int tiley, int width, int height) throws IOException {
+		try (Writer mapWriter = new OutputStreamWriter(new FileOutputStream(new File(layerDir, filename + ".wfl")),
+				TEXT_FILE_CHARSET)) {
 
-            MapSpace mapSpace = mapSource.getMapSpace();
+			MapSpace mapSpace = mapSource.getMapSpace();
 
-            int xStart = xMin * tileSize;
-            int yStart = yMin * tileSize;
+			int xStart = xMin * tileSize;
+			int yStart = yMin * tileSize;
 
-            if (parameters != null) {
-                xStart += tilex * parameters.getWidth();
-                yStart += tiley * parameters.getHeight();
-            }
+			if (parameters != null) {
+				xStart += tilex * parameters.getWidth();
+				yStart += tiley * parameters.getHeight();
+			}
 
-            double topLeftLon = mapSpace.cXToLon(xStart, zoom);
-            double topLeftLat = mapSpace.cYToLat(yStart, zoom);
+			double topLeftLon = mapSpace.cXToLon(xStart, zoom);
+			double topLeftLat = mapSpace.cYToLat(yStart, zoom);
 
-            double bottomRightLon = mapSpace.cXToLon(xStart + width, zoom);
-            double bottomRightLat = mapSpace.cYToLat(yStart + height, zoom);
+			double bottomRightLon = mapSpace.cXToLon(xStart + width, zoom);
+			double bottomRightLat = mapSpace.cYToLat(yStart + height, zoom);
 
-            double[] affine = {0, 0, 0, 0};
+			double[] affine = {0, 0, 0, 0};
 
-            // Mobile Atlas Creator does only output maps with north at top
-            // (no rotation). Therefore we should be able to simplify the affine
-            // calculation process:
-            affine[1] = (bottomRightLon - topLeftLon) / width;
-            affine[2] = (bottomRightLat - topLeftLat) / height;
+			// Mobile Atlas Creator does only output maps with north at top
+			// (no rotation). Therefore we should be able to simplify the affine
+			// calculation process:
+			affine[1] = (bottomRightLon - topLeftLon) / width;
+			affine[2] = (bottomRightLat - topLeftLat) / height;
 
-            for (double d : affine)
-                mapWriter.write(d + "\n");
+			for (double d : affine)
+				mapWriter.write(d + "\n");
 
-            mapWriter.write(topLeftLat + "\n");
-            mapWriter.write(topLeftLon + "\n");
-            mapWriter.write(bottomRightLat + "\n");
-            mapWriter.write(bottomRightLon + "\n");
+			mapWriter.write(topLeftLat + "\n");
+			mapWriter.write(topLeftLon + "\n");
+			mapWriter.write(bottomRightLat + "\n");
+			mapWriter.write(bottomRightLon + "\n");
 
-            mapWriter.flush();
-        }
-    }
+			mapWriter.flush();
+		}
+	}
 
-    public class CWFileTileWriter implements MapTileWriter {
+	public class CWFileTileWriter implements MapTileWriter {
 
-        public CWFileTileWriter() throws IOException {
-            super();
-            log.debug("Writing tiles to set folder: " + layerDir);
-        }
+		public CWFileTileWriter() throws IOException {
+			super();
+			log.debug("Writing tiles to set folder: " + layerDir);
+		}
 
-        public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
-            String tileFileName = String.format("%s_%dx%d", mapName, tilex, tiley);
-            File f = new File(layerDir, tileFileName + '.' + imageFormat);
-            try (FileOutputStream out = new FileOutputStream(f)) {
-                out.write(tileData);
-            }
-            writeWflFile(tileFileName, tilex, tiley, parameters.getWidth(), parameters.getHeight());
-        }
+		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {
+			String tileFileName = String.format("%s_%dx%d", mapName, tilex, tiley);
+			File f = new File(layerDir, tileFileName + '.' + imageFormat);
+			try (FileOutputStream out = new FileOutputStream(f)) {
+				out.write(tileData);
+			}
+			writeWflFile(tileFileName, tilex, tiley, parameters.getWidth(), parameters.getHeight());
+		}
 
-        public void finalizeMap() {
-        }
-    }
+		public void finalizeMap() {
+		}
+	}
 
 }

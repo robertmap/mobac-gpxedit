@@ -24,30 +24,31 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Base implementation of an {@link TileProvider} that changes somehow the images, e.g. combines two layers to one or
- * paints something onto a tile image.
+ * Base implementation of an {@link TileProvider} that changes somehow the
+ * images, e.g. combines two layers to one or paints something onto a tile
+ * image.
  */
 public abstract class FilterTileProvider implements TileProvider {
 
-    protected final Logger log;
+	protected final Logger log;
 
-    protected final TileProvider tileProvider;
+	protected final TileProvider tileProvider;
 
-    public FilterTileProvider(TileProvider tileProvider) {
-        log = LoggerFactory.getLogger(this.getClass());
-        this.tileProvider = tileProvider;
-    }
+	public FilterTileProvider(TileProvider tileProvider) {
+		log = LoggerFactory.getLogger(this.getClass());
+		this.tileProvider = tileProvider;
+	}
 
-    public BufferedImage getTileImage(int x, int y) throws IOException {
-        return tileProvider.getTileImage(x, y);
-    }
+	public BufferedImage getTileImage(int x, int y) throws IOException {
+		return tileProvider.getTileImage(x, y);
+	}
 
-    public byte[] getTileData(int x, int y) throws IOException {
-        return tileProvider.getTileData(x, y);
-    }
+	public byte[] getTileData(int x, int y) throws IOException {
+		return tileProvider.getTileData(x, y);
+	}
 
-    public MapSource getMapSource() {
-        return tileProvider.getMapSource();
-    }
+	public MapSource getMapSource() {
+		return tileProvider.getMapSource();
+	}
 
 }

@@ -23,16 +23,16 @@ import mobac.program.interfaces.MapSource;
 @AtlasCreatorName(value = "Tile store download only", type = "TILESTORE")
 public class TileStoreDownload extends AtlasCreator {
 
-    public TileStoreDownload() {
-    }
+	public TileStoreDownload() {
+	}
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return true;
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return true;
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-    }
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+	}
 
 }

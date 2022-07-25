@@ -18,41 +18,41 @@ package mobac.program.download;
 
 public class UserAgent {
 
-    public static final String IE7_XP = "Mozilla/4.0 (compatible; MSIE 7.0; "
-            + "Windows NT 5.1; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1))";
+	public static final String IE7_XP = "Mozilla/4.0 (compatible; MSIE 7.0; "
+			+ "Windows NT 5.1; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1))";
 
-    public static final String IE6_XP = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)";
+	public static final String IE6_XP = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)";
 
-    public static final String IE9_WIN7 = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)";
+	public static final String IE9_WIN7 = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)";
 
-    public static final String FF2_XP = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en; rv:1.8.1.17) Gecko/20080829";
+	public static final String FF2_XP = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en; rv:1.8.1.17) Gecko/20080829";
 
-    public static final String FF3_XP = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en; rv:1.9.2) Gecko/20100115 Firefox/3.6";
+	public static final String FF3_XP = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en; rv:1.9.2) Gecko/20100115 Firefox/3.6";
 
-    public static final String FF3_WIN7 = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15";
+	public static final String FF3_WIN7 = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15";
 
-    public static final String OPERA11_WIN7 = "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.7.62 Version/11.01";
+	public static final String OPERA11_WIN7 = "Opera/9.80 (Windows NT 6.1; U; en) Presto/2.7.62 Version/11.01";
 
-    private final String name;
-    private final String userAgent;
+	private final String name;
+	private final String userAgent;
 
-    protected UserAgent(String name, String userAgent) {
-        super();
-        this.name = name;
-        this.userAgent = userAgent;
-    }
+	protected UserAgent(String name, String userAgent) {
+		super();
+		this.name = name;
+		this.userAgent = userAgent;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getUserAgent() {
-        return userAgent;
-    }
+	public String getUserAgent() {
+		return userAgent;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }

@@ -44,78 +44,79 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({CustomMapSource.class})
 public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource
-        implements ReloadableMapSource<CustomMultiLayerMapSource> {
+		implements
+			ReloadableMapSource<CustomMultiLayerMapSource> {
 
-    @XmlElementWrapper(name = "layers")
-    @XmlElements({@XmlElement(name = "customMapSource", type = CustomMapSource.class),
-            @XmlElement(name = "customWmsMapSource", type = CustomWmsMapSource.class),
-            @XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
-            @XmlElement(name = "mapsforge", type = CustomMapsforge.class),
-            @XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
-            @XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
-            @XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
-            @XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
-    protected List<CustomMapSource> layers = new ArrayList<>();
+	@XmlElementWrapper(name = "layers")
+	@XmlElements({@XmlElement(name = "customMapSource", type = CustomMapSource.class),
+			@XmlElement(name = "customWmsMapSource", type = CustomWmsMapSource.class),
+			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
+			@XmlElement(name = "mapsforge", type = CustomMapsforge.class),
+			@XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
+			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
+			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
+			@XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
+	protected List<CustomMapSource> layers = new ArrayList<>();
 
-    @XmlList()
-    protected List<Float> layersAlpha = new ArrayList<>();
+	@XmlList()
+	protected List<Float> layersAlpha = new ArrayList<>();
 
-    @XmlElement(defaultValue = "#000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    protected Color backgroundColor = Color.BLACK;
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	protected Color backgroundColor = Color.BLACK;
 
-    public CustomMultiLayerMapSource() {
-        super();
-        mapSources = new MapSource[0];
-    }
+	public CustomMultiLayerMapSource() {
+		super();
+		mapSources = new MapSource[0];
+	}
 
-    @Override
-    public void applyChangesFrom(CustomMultiLayerMapSource reloadedMapSource) throws MapSourceInitializationException {
-        if (!name.equals(reloadedMapSource.getName())) {
-            throw new MapSourceInitializationException("The map name has changed");
-        }
-        this.layers = reloadedMapSource.layers;
-        this.layersAlpha = reloadedMapSource.layersAlpha;
-        this.backgroundColor = reloadedMapSource.backgroundColor;
-        this.tileType = reloadedMapSource.tileType;
-        this.mapSources = reloadedMapSource.mapSources;
-        this.maxZoom = reloadedMapSource.maxZoom;
-        this.minZoom = reloadedMapSource.minZoom;
-    }
+	@Override
+	public void applyChangesFrom(CustomMultiLayerMapSource reloadedMapSource) throws MapSourceInitializationException {
+		if (!name.equals(reloadedMapSource.getName())) {
+			throw new MapSourceInitializationException("The map name has changed");
+		}
+		this.layers = reloadedMapSource.layers;
+		this.layersAlpha = reloadedMapSource.layersAlpha;
+		this.backgroundColor = reloadedMapSource.backgroundColor;
+		this.tileType = reloadedMapSource.tileType;
+		this.mapSources = reloadedMapSource.mapSources;
+		this.maxZoom = reloadedMapSource.maxZoom;
+		this.minZoom = reloadedMapSource.minZoom;
+	}
 
-    public TileImageType getTileType() {
-        return tileType;
-    }
+	public TileImageType getTileType() {
+		return tileType;
+	}
 
-    public void setTileType(TileImageType tileType) {
-        this.tileType = tileType;
-    }
+	public void setTileType(TileImageType tileType) {
+		this.tileType = tileType;
+	}
 
-    protected void afterUnmarshal(Unmarshaller u, Object parent) {
-        mapSources = new MapSource[layers.size()];
-        layers.toArray(mapSources);
-        initializeValues();
-    }
+	protected void afterUnmarshal(Unmarshaller u, Object parent) {
+		mapSources = new MapSource[layers.size()];
+		layers.toArray(mapSources);
+		initializeValues();
+	}
 
-    @XmlElement(name = "name")
-    public String getMLName() {
-        return name;
-    }
+	@XmlElement(name = "name")
+	public String getMLName() {
+		return name;
+	}
 
-    public void setMLName(String name) {
-        this.name = name;
-    }
+	public void setMLName(String name) {
+		this.name = name;
+	}
 
-    @Override
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
+	@Override
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-    @Override
-    protected float getLayerAlpha(int layerIndex) {
-        if (layersAlpha.size() <= layerIndex)
-            return 1.0f;
+	@Override
+	protected float getLayerAlpha(int layerIndex) {
+		if (layersAlpha.size() <= layerIndex)
+			return 1.0f;
 
-        return layersAlpha.get(layerIndex);
-    }
+		return layersAlpha.get(layerIndex);
+	}
 }

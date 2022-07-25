@@ -36,91 +36,91 @@ import java.io.IOException;
 @AtlasCreatorName(value = "Paper Atlas (PDF)")
 public class PaperAtlasPdf extends PaperAtlas {
 
-    private Document document;
+	private Document document;
 
-    public PaperAtlasPdf() {
-        super(false);
-    }
+	public PaperAtlasPdf() {
+		super(false);
+	}
 
-    private Document createDocument(Rectangle r) throws MapCreationException {
-        File pdfFile = new File(getLayerFolder(), map.getName() + ".pdf");
-        float left = (float) s.marginLeft;
-        float right = (float) s.marginRight;
-        float top = (float) s.marginTop;
-        float bottom = (float) s.marginBottom;
-        Document document = new Document(r, left, right, top, bottom);
-        PdfWriter pdfWriter;
-        try {
-            pdfFile.createNewFile();
-            pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-        } catch (IOException e) {
-            throw new MapCreationException(map, e);
-        } catch (DocumentException e) {
-            throw new MapCreationException(map, e);
-        }
-        pdfWriter.setCompressionLevel(s.compression);
-        document.open();
-        document.addAuthor(ProgramInfo.PROG_NAME);
-        document.addCreationDate();
-        document.addCreator(ProgramInfo.PROG_NAME);
-        document.addProducer();
-        return document;
-    }
+	private Document createDocument(Rectangle r) throws MapCreationException {
+		File pdfFile = new File(getLayerFolder(), map.getName() + ".pdf");
+		float left = (float) s.marginLeft;
+		float right = (float) s.marginRight;
+		float top = (float) s.marginTop;
+		float bottom = (float) s.marginBottom;
+		Document document = new Document(r, left, right, top, bottom);
+		PdfWriter pdfWriter;
+		try {
+			pdfFile.createNewFile();
+			pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		} catch (DocumentException e) {
+			throw new MapCreationException(map, e);
+		}
+		pdfWriter.setCompressionLevel(s.compression);
+		document.open();
+		document.addAuthor(ProgramInfo.PROG_NAME);
+		document.addCreationDate();
+		document.addCreator(ProgramInfo.PROG_NAME);
+		document.addProducer();
+		return document;
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
 
-        if (s.paperSize != null) {
-            document = createDocument(s.paperSize.createRectangle());
-        }
+		if (s.paperSize != null) {
+			document = createDocument(s.paperSize.createRectangle());
+		}
 
-        try {
-            super.createMap();
-        } finally {
-            try {
-                document.close();
-            } catch (Exception e) {
-                new MapCreationException(map, e);
-            }
-            document = null;
-        }
-    }
+		try {
+			super.createMap();
+		} finally {
+			try {
+				document.close();
+			} catch (Exception e) {
+				new MapCreationException(map, e);
+			}
+			document = null;
+		}
+	}
 
-    @Override
-    protected void processPage(BufferedImage image, int pageNumber) throws MapCreationException {
-        int imageWidth = image.getWidth();
-        int imageHeight = image.getHeight();
+	@Override
+	protected void processPage(BufferedImage image, int pageNumber) throws MapCreationException {
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
 
-        if (document == null) {
-            double width = UnitSystem.pixelsToPoints(imageWidth, s.dpi);
-            double height = UnitSystem.pixelsToPoints(imageHeight, s.dpi);
-            width += s.marginLeft + s.marginRight;
-            height += s.marginTop + s.marginBottom;
-            Rectangle r = new Rectangle((float) width, (float) height);
-            document = createDocument(r);
-        }
+		if (document == null) {
+			double width = UnitSystem.pixelsToPoints(imageWidth, s.dpi);
+			double height = UnitSystem.pixelsToPoints(imageHeight, s.dpi);
+			width += s.marginLeft + s.marginRight;
+			height += s.marginTop + s.marginBottom;
+			Rectangle r = new Rectangle((float) width, (float) height);
+			document = createDocument(r);
+		}
 
-        Image iTextImage;
-        try {
-            iTextImage = Image.getInstance(image, Color.WHITE);
-        } catch (BadElementException e) {
-            throw new MapCreationException(map, e);
-        } catch (IOException e) {
-            throw new MapCreationException(map, e);
-        }
-        iTextImage.setCompressionLevel(s.compression);
-        iTextImage.setDpi(s.dpi, s.dpi);
+		Image iTextImage;
+		try {
+			iTextImage = Image.getInstance(image, Color.WHITE);
+		} catch (BadElementException e) {
+			throw new MapCreationException(map, e);
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		}
+		iTextImage.setCompressionLevel(s.compression);
+		iTextImage.setDpi(s.dpi, s.dpi);
 
-        float width = (float) UnitSystem.pixelsToPoints(imageWidth, s.dpi);
-        float height = (float) UnitSystem.pixelsToPoints(imageHeight, s.dpi);
-        iTextImage.scaleAbsolute(width, height);
+		float width = (float) UnitSystem.pixelsToPoints(imageWidth, s.dpi);
+		float height = (float) UnitSystem.pixelsToPoints(imageHeight, s.dpi);
+		iTextImage.scaleAbsolute(width, height);
 
-        try {
-            document.add(iTextImage);
-        } catch (DocumentException e) {
-            throw new MapCreationException(map, e);
-        }
-        document.newPage();
-    }
+		try {
+			document.add(iTextImage);
+		} catch (DocumentException e) {
+			throw new MapCreationException(map, e);
+		}
+		document.newPage();
+	}
 
 }

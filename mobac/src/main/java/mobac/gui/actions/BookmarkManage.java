@@ -24,11 +24,11 @@ import java.awt.event.ActionListener;
 
 public class BookmarkManage implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        ManageBookmarks mb = new ManageBookmarks(MainGUI.getMainGUI());
-        mb.setModal(true);
-        mb.setVisible(true);
-        MainGUI.getMainGUI().updateBookmarksMenu();
-    }
+	public void actionPerformed(ActionEvent event) {
+		ManageBookmarks mb = new ManageBookmarks(MainGUI.getMainGUI());
+		mb.setModal(true);
+		mb.setVisible(true);
+		MainGUI.getMainGUI().updateBookmarksMenu();
+	}
 
 }

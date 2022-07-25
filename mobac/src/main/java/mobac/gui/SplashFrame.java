@@ -27,38 +27,38 @@ import java.awt.Toolkit;
 
 public class SplashFrame extends JFrame {
 
-    private static SplashFrame startupFrame;
+	private static SplashFrame startupFrame;
 
-    public SplashFrame() throws HeadlessException {
-        //super(MainGUI.localizedStringForKey("splash_title"));
-        super("MOBAC");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setUndecorated(true);
-        setIconImages(MainGUI.MOBAC_ICONS);
-        JLabel image = new JLabel(Utilities.loadResourceImageIcon("Splash.jpg"));
-        image.setBorder(BorderFactory.createEtchedBorder());
-        add(image);
-        pack();
-        setFocusable(false);
-        Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
-        setSize(getMinimumSize());
-        setVisible(true);
-    }
+	public SplashFrame() throws HeadlessException {
+		// super(MainGUI.localizedStringForKey("splash_title"));
+		super("MOBAC");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setUndecorated(true);
+		setIconImages(MainGUI.MOBAC_ICONS);
+		JLabel image = new JLabel(Utilities.loadResourceImageIcon("Splash.jpg"));
+		image.setBorder(BorderFactory.createEtchedBorder());
+		add(image);
+		pack();
+		setFocusable(false);
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation((dScreen.width - getWidth()) / 2, (dScreen.height - getHeight()) / 2);
+		setSize(getMinimumSize());
+		setVisible(true);
+	}
 
-    public static void showFrame() {
-        startupFrame = new SplashFrame();
-    }
+	public static void showFrame() {
+		startupFrame = new SplashFrame();
+	}
 
-    public static void hideFrame() {
-        if (startupFrame == null)
-            return;
-        startupFrame.setVisible(false);
-        startupFrame.dispose();
-        startupFrame = null;
-    }
+	public static void hideFrame() {
+		if (startupFrame == null)
+			return;
+		startupFrame.setVisible(false);
+		startupFrame.dispose();
+		startupFrame = null;
+	}
 
-    public static void main(String[] arg) {
-        new SplashFrame();
-    }
+	public static void main(String[] arg) {
+		new SplashFrame();
+	}
 }

@@ -40,132 +40,132 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Alpine Quest Map : http://alpinequest.net/
- * Developer : ph-t@users.sourceforge.net
+ * Alpine Quest Map : http://alpinequest.net/ Developer :
+ * ph-t@users.sourceforge.net
  */
 
 @XmlRootElement(name = "localAQMfile")
 public class CustomLocalAqmMapSource implements InitializableMapSource, MapSourceInitialDisplayPosition {
 
-    private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true); // todo créer avec les données AQM
-    @XmlElement(nillable = false, defaultValue = "CustomLocalAQMfile")
-    private String name = "CustomLocalAQMfile";
-    private int minZoom;
-    private int maxZoom;
-    @XmlElement(required = true)
-    private File sourceFile = null;
-    @XmlElement(required = false)
-    private TileImageType tileImageType = TileImageType.JPG;
-    @XmlElement(defaultValue = "#000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    private Color backgroundColor = Color.BLACK;
+	private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true); // todo créer avec les données AQM
+	@XmlElement(nillable = false, defaultValue = "CustomLocalAQMfile")
+	private String name = "CustomLocalAQMfile";
+	private int minZoom;
+	private int maxZoom;
+	@XmlElement(required = true)
+	private File sourceFile = null;
+	@XmlElement(required = false)
+	private TileImageType tileImageType = TileImageType.JPG;
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	private Color backgroundColor = Color.BLACK;
 
-    private MapSourceLoaderInfo loaderInfo = null; // todo créer avec les données AQM
+	private MapSourceLoaderInfo loaderInfo = null; // todo créer avec les données AQM
 
-    private AqmMap map;
+	private AqmMap map;
 
-    public CustomLocalAqmMapSource() {
-        super();
-    }
+	public CustomLocalAqmMapSource() {
+		super();
+	}
 
-    public int getInitialDisplayPositionX() {
-        if (map == null) {
-            return 0;
-        }
-        return map.getMinZoomXtCenter();
-    }
+	public int getInitialDisplayPositionX() {
+		if (map == null) {
+			return 0;
+		}
+		return map.getMinZoomXtCenter();
+	}
 
-    public int getInitialDisplayPositionY() {
-        if (map == null) {
-            return 0;
-        }
-        return map.getMinZoomYtCenter();
-    }
+	public int getInitialDisplayPositionY() {
+		if (map == null) {
+			return 0;
+		}
+		return map.getMinZoomYtCenter();
+	}
 
-    @Override
-    public int getMaxZoom() {
-        return maxZoom;
-    }
+	@Override
+	public int getMaxZoom() {
+		return maxZoom;
+	}
 
-    @Override
-    public int getMinZoom() {
-        return minZoom;
-    }
+	@Override
+	public int getMinZoom() {
+		return minZoom;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
-    @Override
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
 
-        long longNbTotalTiles = Math.round(Math.pow(2, zoom));
-        Integer intNbTotalTiles = Math.toIntExact(longNbTotalTiles);
-        int inverted_y = intNbTotalTiles - y;
+		long longNbTotalTiles = Math.round(Math.pow(2, zoom));
+		Integer intNbTotalTiles = Math.toIntExact(longNbTotalTiles);
+		int inverted_y = intNbTotalTiles - y;
 
-        return map.getByteTile(zoom, x, inverted_y);
-    }
+		return map.getByteTile(zoom, x, inverted_y);
+	}
 
-    @Override
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        byte[] bTile = getTileData(zoom, x, y, loadMethod);
-        if (bTile == null) {
-            return null;
-        }
-        return ImageIO.read(new ByteArrayInputStream(bTile));
-    }
+	@Override
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		byte[] bTile = getTileData(zoom, x, y, loadMethod);
+		if (bTile == null) {
+			return null;
+		}
+		return ImageIO.read(new ByteArrayInputStream(bTile));
+	}
 
-    @Override
-    public TileImageType getTileImageType() {
-        return tileImageType;
-    }
+	@Override
+	public TileImageType getTileImageType() {
+		return tileImageType;
+	}
 
-    @Override
-    public MapSpace getMapSpace() {
-        return mapSpace;
-    }
+	@Override
+	public MapSpace getMapSpace() {
+		return mapSpace;
+	}
 
-    @Override
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
+	@Override
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-    @Override
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return loaderInfo;
-    }
+	@Override
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
 
-    @Override
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-        this.loaderInfo = loaderInfo;
-    }
+	@Override
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		this.loaderInfo = loaderInfo;
+	}
 
-    @Override
-    public void initialize() throws MapSourceInitializationException {
-        if (!sourceFile.isFile()) {
-            JOptionPane.showMessageDialog(null,
-                    String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_aqm"), name,
-                            sourceFile),
-                    I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        try {
-            this.map = new AqmMap(sourceFile);
-        } catch (IOException e) {
-            throw new MapSourceInitializationException(e);
-        }
-        this.minZoom = map.minZoom;
-        this.maxZoom = map.maxZoom;
-        this.tileImageType = TileImageType.getTileImageType(map.imgFormat);
-    }
+	@Override
+	public void initialize() throws MapSourceInitializationException {
+		if (!sourceFile.isFile()) {
+			JOptionPane.showMessageDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_aqm"), name,
+							sourceFile),
+					I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		try {
+			this.map = new AqmMap(sourceFile);
+		} catch (IOException e) {
+			throw new MapSourceInitializationException(e);
+		}
+		this.minZoom = map.minZoom;
+		this.maxZoom = map.maxZoom;
+		this.tileImageType = TileImageType.getTileImageType(map.imgFormat);
+	}
 
 }

@@ -18,7 +18,6 @@ package mobac.program.atlascreators;
 
 import mobac.program.annotations.AtlasCreatorName;
 
-
 /**
  * Creates maps using the AndNav atlas format.
  * <p>
@@ -29,9 +28,9 @@ import mobac.program.annotations.AtlasCreatorName;
 @AtlasCreatorName("AndNav atlas format")
 public class AndNav extends OSMTracker {
 
-    public AndNav() {
-        super();
-        tileFileNamePattern += ".andnav";
-    }
+	public AndNav() {
+		super();
+		tileFileNamePattern += ".andnav";
+	}
 
 }

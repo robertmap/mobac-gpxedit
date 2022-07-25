@@ -21,46 +21,47 @@ import mobac.gui.mapview.layer.GpxLayer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
- * Generalized entry in the gpx tree. All actual entries derive from this class. The class encapsulates everything
- * gui-related as well as the actual gpx data for the editor. Subclasses: {@link GpxRootEntry}, {@link TrkEntry},
+ * Generalized entry in the gpx tree. All actual entries derive from this class.
+ * The class encapsulates everything gui-related as well as the actual gpx data
+ * for the editor. Subclasses: {@link GpxRootEntry}, {@link TrkEntry},
  * {@link RteEntry}, {@link WptEntry}
  *
  * @author lhoeppner
  */
 public class GpxEntry {
-    private DefaultMutableTreeNode node;
-    private GpxLayer layer;
-    /**
-     * determines whether an entry can be a parent for waypoints
-     */
-    private boolean isWaypointParent = false;
+	private DefaultMutableTreeNode node;
+	private GpxLayer layer;
+	/**
+	 * determines whether an entry can be a parent for waypoints
+	 */
+	private boolean isWaypointParent = false;
 
-    public GpxLayer getLayer() {
-        return layer;
-    }
+	public GpxLayer getLayer() {
+		return layer;
+	}
 
-    public void setLayer(GpxLayer layer) {
-        this.layer = layer;
-    }
+	public void setLayer(GpxLayer layer) {
+		this.layer = layer;
+	}
 
-    public DefaultMutableTreeNode getNode() {
-        return node;
-    }
+	public DefaultMutableTreeNode getNode() {
+		return node;
+	}
 
-    /**
-     * Remembers the associated tree node.
-     *
-     * @param node
-     */
-    public void setNode(DefaultMutableTreeNode node) {
-        this.node = node;
-    }
+	/**
+	 * Remembers the associated tree node.
+	 *
+	 * @param node
+	 */
+	public void setNode(DefaultMutableTreeNode node) {
+		this.node = node;
+	}
 
-    public boolean isWaypointParent() {
-        return isWaypointParent;
-    }
+	public boolean isWaypointParent() {
+		return isWaypointParent;
+	}
 
-    public void setWaypointParent(boolean isWaypointParent) {
-        this.isWaypointParent = isWaypointParent;
-    }
+	public void setWaypointParent(boolean isWaypointParent) {
+		this.isWaypointParent = isWaypointParent;
+	}
 }

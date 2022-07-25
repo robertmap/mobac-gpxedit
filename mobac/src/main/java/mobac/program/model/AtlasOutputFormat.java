@@ -80,130 +80,130 @@ import java.util.Vector;
 @XmlJavaTypeAdapter(AtlasOutputFormatAdapter.class)
 public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 
-    public static final AtlasOutputFormat TILESTORE = createByClass(TileStoreDownload.class);
-    public static List<AtlasOutputFormat> FORMATS;
+	public static final AtlasOutputFormat TILESTORE = createByClass(TileStoreDownload.class);
+	public static List<AtlasOutputFormat> FORMATS;
 
-    static {
-        FORMATS = new ArrayList<AtlasOutputFormat>(40);
-        FORMATS.add(createByClass(AFTrack.class));
-        FORMATS.add(createByClass(AlpineQuestMap.class));
-        FORMATS.add(createByClass(AndNav.class));
-        FORMATS.add(createByClass(BackCountryNavigator.class));
-        FORMATS.add(createByClass(BigPlanetTracks.class));
-        FORMATS.add(createByClass(CacheBox.class));
-        FORMATS.add(createByClass(CacheWolf.class));
-        FORMATS.add(createByClass(Galileo.class));
-        FORMATS.add(createByClass(GarminCustom.class));
-        FORMATS.add(createByClass(GCLive.class));
-        // FORMATS.add(createByClass(GeoPackage.class));
-        FORMATS.add(createByClass(Glopus.class));
-        FORMATS.add(createByClass(GlopusMapFile.class));
-        FORMATS.add(createByClass(GoogleEarthOverlay.class));
-        FORMATS.add(createByClass(GpsSportsTracker.class));
-        FORMATS.add(createByClass(IPhone3MapTiles5.class));
-        FORMATS.add(createByClass(MagellanRmp.class));
-        FORMATS.add(createByClass(Maplorer.class));
-        FORMATS.add(createByClass(Maverick.class));
-        FORMATS.add(createByClass(MaverickOld.class));
-        FORMATS.add(createByClass(MBTiles.class));
-        FORMATS.add(createByClass(MGMaps.class));
-        FORMATS.add(createByClass(MobileTrailExplorer.class));
-        FORMATS.add(createByClass(MobileTrailExplorerCache.class));
-        FORMATS.add(createByClass(NaviComputer.class));
-        FORMATS.add(createByClass(NFComPass.class));
-        FORMATS.add(createByClass(OruxMaps.class));
-        FORMATS.add(createByClass(OruxMapsSqlite.class));
-        FORMATS.add(createByClass(OSMAND.class));
-        FORMATS.add(createByClass(OSMAND_SQLite.class));
-        FORMATS.add(createByClass(Osmdroid.class));
-        FORMATS.add(createByClass(OsmdroidGEMF.class));
-        FORMATS.add(createByClass(OsmdroidSQLite.class));
-        FORMATS.add(createByClass(OSMTracker.class));
-        FORMATS.add(createByClass(Ozi.class));
-        FORMATS.add(createByClass(PaperAtlasPdf.class));
-        FORMATS.add(createByClass(PaperAtlasPng.class));
-        FORMATS.add(createByClass(PathAway.class));
-        FORMATS.add(createByClass(PNGWorldfile.class));
-        FORMATS.add(createByClass(RMapsSQLite.class));
-        FORMATS.add(createByClass(RunGPSAtlas.class));
-        FORMATS.add(createByClass(SportsTracker.class));
-        FORMATS.add(createByClass(TomTomRaster.class));
-        FORMATS.add(createByClass(TTQV.class));
-        FORMATS.add(createByClass(TrekBuddyTared.class));
-        FORMATS.add(createByClass(TrekBuddy.class));
-        FORMATS.add(createByClass(TwoNavRMAP.class));
-        FORMATS.add(createByClass(Ublox.class));
-        FORMATS.add(createByClass(Viewranger.class));
-        FORMATS.add(TILESTORE);
-    }
+	static {
+		FORMATS = new ArrayList<AtlasOutputFormat>(40);
+		FORMATS.add(createByClass(AFTrack.class));
+		FORMATS.add(createByClass(AlpineQuestMap.class));
+		FORMATS.add(createByClass(AndNav.class));
+		FORMATS.add(createByClass(BackCountryNavigator.class));
+		FORMATS.add(createByClass(BigPlanetTracks.class));
+		FORMATS.add(createByClass(CacheBox.class));
+		FORMATS.add(createByClass(CacheWolf.class));
+		FORMATS.add(createByClass(Galileo.class));
+		FORMATS.add(createByClass(GarminCustom.class));
+		FORMATS.add(createByClass(GCLive.class));
+		// FORMATS.add(createByClass(GeoPackage.class));
+		FORMATS.add(createByClass(Glopus.class));
+		FORMATS.add(createByClass(GlopusMapFile.class));
+		FORMATS.add(createByClass(GoogleEarthOverlay.class));
+		FORMATS.add(createByClass(GpsSportsTracker.class));
+		FORMATS.add(createByClass(IPhone3MapTiles5.class));
+		FORMATS.add(createByClass(MagellanRmp.class));
+		FORMATS.add(createByClass(Maplorer.class));
+		FORMATS.add(createByClass(Maverick.class));
+		FORMATS.add(createByClass(MaverickOld.class));
+		FORMATS.add(createByClass(MBTiles.class));
+		FORMATS.add(createByClass(MGMaps.class));
+		FORMATS.add(createByClass(MobileTrailExplorer.class));
+		FORMATS.add(createByClass(MobileTrailExplorerCache.class));
+		FORMATS.add(createByClass(NaviComputer.class));
+		FORMATS.add(createByClass(NFComPass.class));
+		FORMATS.add(createByClass(OruxMaps.class));
+		FORMATS.add(createByClass(OruxMapsSqlite.class));
+		FORMATS.add(createByClass(OSMAND.class));
+		FORMATS.add(createByClass(OSMAND_SQLite.class));
+		FORMATS.add(createByClass(Osmdroid.class));
+		FORMATS.add(createByClass(OsmdroidGEMF.class));
+		FORMATS.add(createByClass(OsmdroidSQLite.class));
+		FORMATS.add(createByClass(OSMTracker.class));
+		FORMATS.add(createByClass(Ozi.class));
+		FORMATS.add(createByClass(PaperAtlasPdf.class));
+		FORMATS.add(createByClass(PaperAtlasPng.class));
+		FORMATS.add(createByClass(PathAway.class));
+		FORMATS.add(createByClass(PNGWorldfile.class));
+		FORMATS.add(createByClass(RMapsSQLite.class));
+		FORMATS.add(createByClass(RunGPSAtlas.class));
+		FORMATS.add(createByClass(SportsTracker.class));
+		FORMATS.add(createByClass(TomTomRaster.class));
+		FORMATS.add(createByClass(TTQV.class));
+		FORMATS.add(createByClass(TrekBuddyTared.class));
+		FORMATS.add(createByClass(TrekBuddy.class));
+		FORMATS.add(createByClass(TwoNavRMAP.class));
+		FORMATS.add(createByClass(Ublox.class));
+		FORMATS.add(createByClass(Viewranger.class));
+		FORMATS.add(TILESTORE);
+	}
 
-    private final Class<? extends AtlasCreator> atlasCreatorClass;
-    private final String typeName;
-    private final String name;
+	private final Class<? extends AtlasCreator> atlasCreatorClass;
+	private final String typeName;
+	private final String name;
 
-    private AtlasOutputFormat(Class<? extends AtlasCreator> atlasCreatorClass, String typeName, String name) {
-        this.atlasCreatorClass = atlasCreatorClass;
-        this.typeName = typeName;
-        this.name = name;
-    }
+	private AtlasOutputFormat(Class<? extends AtlasCreator> atlasCreatorClass, String typeName, String name) {
+		this.atlasCreatorClass = atlasCreatorClass;
+		this.typeName = typeName;
+		this.name = name;
+	}
 
-    public static Vector<AtlasOutputFormat> getFormatsAsVector() {
-        return new Vector<AtlasOutputFormat>(FORMATS);
-    }
+	public static Vector<AtlasOutputFormat> getFormatsAsVector() {
+		return new Vector<AtlasOutputFormat>(FORMATS);
+	}
 
-    public static AtlasOutputFormat getFormatByName(String Name) {
-        for (AtlasOutputFormat af : FORMATS) {
-            if (af.getTypeName().equals(Name))
-                return af;
-        }
-        throw new NoSuchElementException("Unknown atlas format: \"" + Name + "\"");
-    }
+	public static AtlasOutputFormat getFormatByName(String Name) {
+		for (AtlasOutputFormat af : FORMATS) {
+			if (af.getTypeName().equals(Name))
+				return af;
+		}
+		throw new NoSuchElementException("Unknown atlas format: \"" + Name + "\"");
+	}
 
-    private static AtlasOutputFormat createByClass(Class<? extends AtlasCreator> atlasCreatorClass) {
-        AtlasCreatorName acName = atlasCreatorClass.getAnnotation(AtlasCreatorName.class);
-        if (acName == null)
-            throw new RuntimeException("AtlasCreator " + atlasCreatorClass.getName() + " has no name");
-        String typeName = acName.type();
-        if (typeName == null || typeName.isEmpty()) {
-            typeName = atlasCreatorClass.getSimpleName();
-        }
-        String name = acName.value();
-        return new AtlasOutputFormat(atlasCreatorClass, typeName, name);
-    }
+	private static AtlasOutputFormat createByClass(Class<? extends AtlasCreator> atlasCreatorClass) {
+		AtlasCreatorName acName = atlasCreatorClass.getAnnotation(AtlasCreatorName.class);
+		if (acName == null)
+			throw new RuntimeException("AtlasCreator " + atlasCreatorClass.getName() + " has no name");
+		String typeName = acName.type();
+		if (typeName == null || typeName.isEmpty()) {
+			typeName = atlasCreatorClass.getSimpleName();
+		}
+		String name = acName.value();
+		return new AtlasOutputFormat(atlasCreatorClass, typeName, name);
+	}
 
-    /**
-     * Print all atlas formats
-     */
-    public static void main(String[] args) {
-        for (AtlasOutputFormat s : FORMATS) {
-            System.out.println("|" + s);
-            System.out.println("|-");
-        }
-    }
+	/**
+	 * Print all atlas formats
+	 */
+	public static void main(String[] args) {
+		for (AtlasOutputFormat s : FORMATS) {
+			System.out.println("|" + s);
+			System.out.println("|-");
+		}
+	}
 
-    public String toString() {
-        return name;
-    }
+	public String toString() {
+		return name;
+	}
 
-    public Class<? extends AtlasCreator> getMapCreatorClass() {
-        return atlasCreatorClass;
-    }
+	public Class<? extends AtlasCreator> getMapCreatorClass() {
+		return atlasCreatorClass;
+	}
 
-    public String getTypeName() {
-        return typeName;
-    }
+	public String getTypeName() {
+		return typeName;
+	}
 
-    public AtlasCreator createAtlasCreatorInstance() {
-        if (atlasCreatorClass == null)
-            return null;
-        try {
-            return atlasCreatorClass.getConstructor().newInstance();
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-    }
+	public AtlasCreator createAtlasCreatorInstance() {
+		if (atlasCreatorClass == null)
+			return null;
+		try {
+			return atlasCreatorClass.getConstructor().newInstance();
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
 
-    public int compareTo(AtlasOutputFormat o) {
-        return getTypeName().compareTo(o.toString());
-    }
+	public int compareTo(AtlasOutputFormat o) {
+		return getTypeName().compareTo(o.toString());
+	}
 }

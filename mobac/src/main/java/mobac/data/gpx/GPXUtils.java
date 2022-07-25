@@ -40,58 +40,56 @@ import java.io.OutputStream;
 
 public class GPXUtils {
 
-    public static Gpx loadGpxFile(File f) throws JAXBException {
-        // Create GPX 1.1 JAXB context
-        JAXBContext context = JAXBContext.newInstance(Gpx.class);
+	public static Gpx loadGpxFile(File f) throws JAXBException {
+		// Create GPX 1.1 JAXB context
+		JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        try (InputStream is = new FileInputStream(f)) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder loader = factory.newDocumentBuilder();
-            Document document = loader.parse(is);
-            String namespace = document.getDocumentElement().getNamespaceURI();
-            if ("http://www.topografix.com/GPX/1/1".equals(namespace)) {
-                return (Gpx) unmarshaller.unmarshal(document);
-            }
-            if ("http://www.topografix.com/GPX/1/0".equals(namespace)) {
-                Source xmlSource = new javax.xml.transform.dom.DOMSource(document);
-                Source xsltSource = new StreamSource(Utilities
-                        .loadResourceAsStream("xsl/gpx10to11.xsl"));
-                JAXBResult result = new JAXBResult(unmarshaller);
-                TransformerFactory transFact = TransformerFactory.newInstance();
-                Transformer trans = transFact.newTransformer(xsltSource);
-                trans.transform(xmlSource, result);
-                return (Gpx) result.getResult();
-            }
-            throw new JAXBException("Expected GPX 1.0 or GPX1.1 namespace but found \n\""
-                    + namespace + "\"");
-        } catch (JAXBException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new JAXBException(e);
-        }
-    }
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		try (InputStream is = new FileInputStream(f)) {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			DocumentBuilder loader = factory.newDocumentBuilder();
+			Document document = loader.parse(is);
+			String namespace = document.getDocumentElement().getNamespaceURI();
+			if ("http://www.topografix.com/GPX/1/1".equals(namespace)) {
+				return (Gpx) unmarshaller.unmarshal(document);
+			}
+			if ("http://www.topografix.com/GPX/1/0".equals(namespace)) {
+				Source xmlSource = new javax.xml.transform.dom.DOMSource(document);
+				Source xsltSource = new StreamSource(Utilities.loadResourceAsStream("xsl/gpx10to11.xsl"));
+				JAXBResult result = new JAXBResult(unmarshaller);
+				TransformerFactory transFact = TransformerFactory.newInstance();
+				Transformer trans = transFact.newTransformer(xsltSource);
+				trans.transform(xmlSource, result);
+				return (Gpx) result.getResult();
+			}
+			throw new JAXBException("Expected GPX 1.0 or GPX1.1 namespace but found \n\"" + namespace + "\"");
+		} catch (JAXBException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new JAXBException(e);
+		}
+	}
 
-    public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
-        // Create GPX 1.1 JAXB context
-        JAXBContext context = JAXBContext.newInstance(Gpx.class);
+	public static void saveGpxFile(Gpx gpx, File f) throws JAXBException {
+		// Create GPX 1.1 JAXB context
+		JAXBContext context = JAXBContext.newInstance(Gpx.class);
 
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        try (OutputStream os = new FileOutputStream(f)) {
-            marshaller.marshal(gpx, os);
-        } catch (IOException e) {
-            throw new JAXBException(e);
-        }
-    }
+		Marshaller marshaller = context.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		try (OutputStream os = new FileOutputStream(f)) {
+			marshaller.marshal(gpx, os);
+		} catch (IOException e) {
+			throw new JAXBException(e);
+		}
+	}
 
-    public static void main(String[] args) {
-        try {
-            loadGpxFile(new File("misc/samples/gpx/gpx11 wpt.gpx"));
-            loadGpxFile(new File("misc/samples/gpx/gpx10 wpt.gpx"));
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-    }
+	public static void main(String[] args) {
+		try {
+			loadGpxFile(new File("misc/samples/gpx/gpx11 wpt.gpx"));
+			loadGpxFile(new File("misc/samples/gpx/gpx10 wpt.gpx"));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+	}
 }

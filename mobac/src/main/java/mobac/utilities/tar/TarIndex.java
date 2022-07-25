@@ -27,47 +27,47 @@ import java.io.RandomAccessFile;
 
 public class TarIndex {
 
-    private static final Logger log = LoggerFactory.getLogger(TarIndex.class);
+	private static final Logger log = LoggerFactory.getLogger(TarIndex.class);
 
-    private final File tarFile;
-    private final RandomAccessFile tarRAFile;
+	private final File tarFile;
+	private final RandomAccessFile tarRAFile;
 
-    private final TarIndexTable tarIndex;
+	private final TarIndexTable tarIndex;
 
-    public TarIndex(File tarFile, TarIndexTable tarIndex) throws FileNotFoundException {
-        super();
-        this.tarFile = tarFile;
-        this.tarIndex = tarIndex;
-        tarRAFile = new RandomAccessFile(tarFile, "r");
-    }
+	public TarIndex(File tarFile, TarIndexTable tarIndex) throws FileNotFoundException {
+		super();
+		this.tarFile = tarFile;
+		this.tarIndex = tarIndex;
+		tarRAFile = new RandomAccessFile(tarFile, "r");
+	}
 
-    public byte[] getEntryContent(String entryName) throws IOException {
-        long off = tarIndex.getEntryOffset(entryName);
-        if (off < 0)
-            return null;
-        tarRAFile.seek(off);
-        byte[] buf = new byte[512];
-        tarRAFile.readFully(buf);
-        TarHeader th = new TarHeader();
-        th.read(buf);
-        int fileSize = th.getFileSizeInt();
-        log.trace("reading file " + entryName + " off=" + off + " size=" + fileSize);
-        byte[] data = new byte[fileSize];
-        tarRAFile.readFully(data);
-        return data;
-    }
+	public byte[] getEntryContent(String entryName) throws IOException {
+		long off = tarIndex.getEntryOffset(entryName);
+		if (off < 0)
+			return null;
+		tarRAFile.seek(off);
+		byte[] buf = new byte[512];
+		tarRAFile.readFully(buf);
+		TarHeader th = new TarHeader();
+		th.read(buf);
+		int fileSize = th.getFileSizeInt();
+		log.trace("reading file " + entryName + " off=" + off + " size=" + fileSize);
+		byte[] data = new byte[fileSize];
+		tarRAFile.readFully(data);
+		return data;
+	}
 
-    public int size() {
-        return tarIndex.size();
-    }
+	public int size() {
+		return tarIndex.size();
+	}
 
-    public void close() {
-        IOUtils.closeQuietly(tarRAFile);
-    }
+	public void close() {
+		IOUtils.closeQuietly(tarRAFile);
+	}
 
-    public void closeAndDelete() {
-        close();
-        tarFile.deleteOnExit();
-        tarFile.delete();
-    }
+	public void closeAndDelete() {
+		close();
+		tarFile.deleteOnExit();
+		tarFile.delete();
+	}
 }

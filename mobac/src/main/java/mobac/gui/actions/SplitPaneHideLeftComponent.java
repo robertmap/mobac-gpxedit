@@ -24,29 +24,29 @@ import java.awt.event.ActionListener;
 
 public class SplitPaneHideLeftComponent implements ActionListener {
 
-    private final JSplitPane splitPane;
-    private final Component leftComponent;
-    private int dividerSize = 0;
+	private final JSplitPane splitPane;
+	private final Component leftComponent;
+	private int dividerSize = 0;
 
-    public SplitPaneHideLeftComponent(JSplitPane splitPane) {
-        super();
-        this.splitPane = splitPane;
-        this.leftComponent = splitPane.getLeftComponent();
-    }
+	public SplitPaneHideLeftComponent(JSplitPane splitPane) {
+		super();
+		this.splitPane = splitPane;
+		this.leftComponent = splitPane.getLeftComponent();
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        if (splitPane.getLeftComponent() == null) {
-            // show left panel
-            splitPane.setLeftComponent(leftComponent);
-            splitPane.setDividerSize(dividerSize);
-        } else {
-            // hide left panel
-            dividerSize = splitPane.getDividerSize();
-            leftComponent.setPreferredSize(new Dimension(leftComponent.getWidth(), 100));
-            splitPane.setDividerSize(0);
-            splitPane.setLeftComponent(null);
-        }
-        splitPane.revalidate();
-    }
+	public void actionPerformed(ActionEvent e) {
+		if (splitPane.getLeftComponent() == null) {
+			// show left panel
+			splitPane.setLeftComponent(leftComponent);
+			splitPane.setDividerSize(dividerSize);
+		} else {
+			// hide left panel
+			dividerSize = splitPane.getDividerSize();
+			leftComponent.setPreferredSize(new Dimension(leftComponent.getWidth(), 100));
+			splitPane.setDividerSize(0);
+			splitPane.setLeftComponent(null);
+		}
+		splitPane.revalidate();
+	}
 
 }

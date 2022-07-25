@@ -34,47 +34,47 @@ import java.awt.event.ActionListener;
 
 public class AtlasNew implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        MainGUI mg = MainGUI.getMainGUI();
-        JPanel panel = new JPanel();
-        BorderLayout layout = new BorderLayout();
-        layout.setVgap(4);
-        panel.setLayout(layout);
+	public void actionPerformed(ActionEvent event) {
+		MainGUI mg = MainGUI.getMainGUI();
+		JPanel panel = new JPanel();
+		BorderLayout layout = new BorderLayout();
+		layout.setVgap(4);
+		panel.setLayout(layout);
 
-        JPanel formatPanel = new JPanel(new BorderLayout());
+		JPanel formatPanel = new JPanel(new BorderLayout());
 
-        formatPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_new_atlas_select_format_title")),
-                BorderLayout.NORTH);
-        JList<AtlasOutputFormat> atlasFormatList = new JList<>(AtlasOutputFormat.getFormatsAsVector());
-        atlasFormatList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scroller = new JScrollPane(atlasFormatList);
-        scroller.setPreferredSize(new Dimension(140, 200));
-        formatPanel.add(scroller, BorderLayout.CENTER);
+		formatPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_new_atlas_select_format_title")),
+				BorderLayout.NORTH);
+		JList<AtlasOutputFormat> atlasFormatList = new JList<>(AtlasOutputFormat.getFormatsAsVector());
+		atlasFormatList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scroller = new JScrollPane(atlasFormatList);
+		scroller.setPreferredSize(new Dimension(140, 200));
+		formatPanel.add(scroller, BorderLayout.CENTER);
 
-        JPanel namePanel = new JPanel(new BorderLayout());
-        namePanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_new_atlas_name_title")), BorderLayout.NORTH);
-        JTextField atlasName = new JTextField(I18nUtils.localizedStringForKey("dlg_new_atlas_default_atlas_name"));
-        namePanel.add(atlasName, BorderLayout.SOUTH);
+		JPanel namePanel = new JPanel(new BorderLayout());
+		namePanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_new_atlas_name_title")), BorderLayout.NORTH);
+		JTextField atlasName = new JTextField(I18nUtils.localizedStringForKey("dlg_new_atlas_default_atlas_name"));
+		namePanel.add(atlasName, BorderLayout.SOUTH);
 
-        panel.add(namePanel, BorderLayout.NORTH);
-        panel.add(formatPanel, BorderLayout.CENTER);
-        panel.setPreferredSize(new Dimension(300, 300));
-        AtlasOutputFormat currentAOF = null;
-        try {
-            currentAOF = mg.getAtlas().getOutputFormat();
-        } catch (Exception e) {
-        }
-        if (currentAOF != null)
-            atlasFormatList.setSelectedValue(currentAOF, true);
-        else
-            atlasFormatList.setSelectedIndex(1);
-        int result = JOptionPane.showConfirmDialog(MainGUI.getMainGUI(), panel,
-                I18nUtils.localizedStringForKey("dlg_new_atlas_title"), JOptionPane.OK_CANCEL_OPTION);
-        if (result != JOptionPane.OK_OPTION)
-            return;
+		panel.add(namePanel, BorderLayout.NORTH);
+		panel.add(formatPanel, BorderLayout.CENTER);
+		panel.setPreferredSize(new Dimension(300, 300));
+		AtlasOutputFormat currentAOF = null;
+		try {
+			currentAOF = mg.getAtlas().getOutputFormat();
+		} catch (Exception e) {
+		}
+		if (currentAOF != null)
+			atlasFormatList.setSelectedValue(currentAOF, true);
+		else
+			atlasFormatList.setSelectedIndex(1);
+		int result = JOptionPane.showConfirmDialog(MainGUI.getMainGUI(), panel,
+				I18nUtils.localizedStringForKey("dlg_new_atlas_title"), JOptionPane.OK_CANCEL_OPTION);
+		if (result != JOptionPane.OK_OPTION)
+			return;
 
-        AtlasOutputFormat format = atlasFormatList.getSelectedValue();
-        mg.jAtlasTree.newAtlas(atlasName.getText(), format);
-        mg.getParametersPanel().atlasFormatChanged(format);
-    }
+		AtlasOutputFormat format = atlasFormatList.getSelectedValue();
+		mg.jAtlasTree.newAtlas(atlasName.getText(), format);
+		mg.getParametersPanel().atlasFormatChanged(format);
+	}
 }

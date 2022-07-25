@@ -28,71 +28,71 @@ import java.text.ParsePosition;
 
 public class CoordinateTileFormat extends NumberFormat {
 
-    protected static Logger log = LoggerFactory.getLogger(CoordinateTileFormat.class);
+	protected static Logger log = LoggerFactory.getLogger(CoordinateTileFormat.class);
 
-    private final boolean isLongitude;
+	private final boolean isLongitude;
 
-    public CoordinateTileFormat(boolean isLongitude) {
-        this.isLongitude = isLongitude;
-    }
+	public CoordinateTileFormat(boolean isLongitude) {
+		this.isLongitude = isLongitude;
+	}
 
-    @Override
-    public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-        MainGUI gui = MainGUI.getMainGUI();
-        MapSource mapSource = gui.getSelectedMapSource();
-        if (mapSource == null)
-            return toAppendTo;
-        MapSpace mapSpace = mapSource.getMapSpace();
-        int zoom = gui.previewMap.getZoom();
-        int tileNum = 0;
-        if (isLongitude)
-            tileNum = mapSpace.cLonToX(number, zoom);
-        else
-            tileNum = mapSpace.cLatToY(number, zoom);
-        toAppendTo.append(String.format("%d / z%d ", tileNum / mapSpace.getTileSize(), zoom));
-        return toAppendTo;
-    }
+	@Override
+	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+		MainGUI gui = MainGUI.getMainGUI();
+		MapSource mapSource = gui.getSelectedMapSource();
+		if (mapSource == null)
+			return toAppendTo;
+		MapSpace mapSpace = mapSource.getMapSpace();
+		int zoom = gui.previewMap.getZoom();
+		int tileNum = 0;
+		if (isLongitude)
+			tileNum = mapSpace.cLonToX(number, zoom);
+		else
+			tileNum = mapSpace.cLatToY(number, zoom);
+		toAppendTo.append(String.format("%d / z%d ", tileNum / mapSpace.getTileSize(), zoom));
+		return toAppendTo;
+	}
 
-    @Override
-    public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-        throw new RuntimeException("Not implemented");
-    }
+	@Override
+	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+		throw new RuntimeException("Not implemented");
+	}
 
-    @Override
-    public Number parse(String source, ParsePosition parsePosition) {
-        MainGUI gui = MainGUI.getMainGUI();
-        MapSpace mapSpace = gui.getSelectedMapSource().getMapSpace();
-        try {
-            String[] tokens = source.trim().split("/");
-            int zoom = 0;
-            int tileNum = 0;
-            if (tokens.length == 2) {
-                String s = tokens[1].trim();
-                if (s.startsWith("z"))
-                    s = s.substring(1);
-                zoom = Integer.parseInt(s);
-            } else {
-                zoom = gui.previewMap.getZoom();
-            }
-            if (tokens.length > 0) {
-                String s = tokens[0];
-                s = s.trim();
-                if ((s.indexOf('.') < 0) && (s.indexOf(',') < 0)) {
-                    tileNum = Integer.parseInt(s);
-                    tileNum *= mapSpace.getTileSize();
-                } else {
-                    double num = Double.parseDouble(s);
-                    tileNum = (int) (num * mapSpace.getTileSize());
-                }
-            }
-            parsePosition.setIndex(source.length());
-            if (isLongitude)
-                return mapSpace.cXToLon(tileNum, zoom);
-            return mapSpace.cYToLat(tileNum, zoom);
-        } catch (Exception e) {
-            parsePosition.setErrorIndex(0);
-            log.error("e");
-            return null;
-        }
-    }
+	@Override
+	public Number parse(String source, ParsePosition parsePosition) {
+		MainGUI gui = MainGUI.getMainGUI();
+		MapSpace mapSpace = gui.getSelectedMapSource().getMapSpace();
+		try {
+			String[] tokens = source.trim().split("/");
+			int zoom = 0;
+			int tileNum = 0;
+			if (tokens.length == 2) {
+				String s = tokens[1].trim();
+				if (s.startsWith("z"))
+					s = s.substring(1);
+				zoom = Integer.parseInt(s);
+			} else {
+				zoom = gui.previewMap.getZoom();
+			}
+			if (tokens.length > 0) {
+				String s = tokens[0];
+				s = s.trim();
+				if ((s.indexOf('.') < 0) && (s.indexOf(',') < 0)) {
+					tileNum = Integer.parseInt(s);
+					tileNum *= mapSpace.getTileSize();
+				} else {
+					double num = Double.parseDouble(s);
+					tileNum = (int) (num * mapSpace.getTileSize());
+				}
+			}
+			parsePosition.setIndex(source.length());
+			if (isLongitude)
+				return mapSpace.cXToLon(tileNum, zoom);
+			return mapSpace.cYToLat(tileNum, zoom);
+		} catch (Exception e) {
+			parsePosition.setErrorIndex(0);
+			log.error("e");
+			return null;
+		}
+	}
 }

@@ -25,38 +25,39 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Based on a given {@link TileFilter} implementation an {@link FilteredMapSourceProvider} instance ignores certain
- * requests via {@link #getTileData(int, int)} and {@link #getTileImage(int, int)} and returns <code>null</code>
- * instead.
+ * Based on a given {@link TileFilter} implementation an
+ * {@link FilteredMapSourceProvider} instance ignores certain requests via
+ * {@link #getTileData(int, int)} and {@link #getTileImage(int, int)} and
+ * returns <code>null</code> instead.
  * <p>
- * This functionality is required especially for polygonal maps where certain tiles which are located outside of the
- * polygon should be ignored.
+ * This functionality is required especially for polygonal maps where certain
+ * tiles which are located outside of the polygon should be ignored.
  */
 public class FilteredMapSourceProvider extends MapSourceProvider {
 
-    protected final TileFilter tileFilter;
+	protected final TileFilter tileFilter;
 
-    public FilteredMapSourceProvider(MapInterface map, LoadMethod loadMethod) {
-        this(map.getMapSource(), map.getZoom(), loadMethod, map.getTileFilter());
-    }
+	public FilteredMapSourceProvider(MapInterface map, LoadMethod loadMethod) {
+		this(map.getMapSource(), map.getZoom(), loadMethod, map.getTileFilter());
+	}
 
-    public FilteredMapSourceProvider(MapSource mapSource, int zoom, LoadMethod loadMethod, TileFilter tileFilter) {
-        super(mapSource, zoom, loadMethod);
-        this.tileFilter = tileFilter;
-    }
+	public FilteredMapSourceProvider(MapSource mapSource, int zoom, LoadMethod loadMethod, TileFilter tileFilter) {
+		super(mapSource, zoom, loadMethod);
+		this.tileFilter = tileFilter;
+	}
 
-    @Override
-    public byte[] getTileData(int x, int y) throws IOException {
-        if (!tileFilter.testTile(x, y, zoom, mapSource))
-            return null;
-        return super.getTileData(x, y);
-    }
+	@Override
+	public byte[] getTileData(int x, int y) throws IOException {
+		if (!tileFilter.testTile(x, y, zoom, mapSource))
+			return null;
+		return super.getTileData(x, y);
+	}
 
-    @Override
-    public BufferedImage getTileImage(int x, int y) throws IOException {
-        if (!tileFilter.testTile(x, y, zoom, mapSource))
-            return null;
-        return super.getTileImage(x, y);
-    }
+	@Override
+	public BufferedImage getTileImage(int x, int y) throws IOException {
+		if (!tileFilter.testTile(x, y, zoom, mapSource))
+			return null;
+		return super.getTileImage(x, y);
+	}
 
 }

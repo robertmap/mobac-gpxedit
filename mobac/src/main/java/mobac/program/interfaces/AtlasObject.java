@@ -19,47 +19,47 @@ package mobac.program.interfaces;
 import mobac.exceptions.InvalidNameException;
 
 /**
- * Marker interface that indicates that the implementing class/instance is an atlas or is part of an atlas (layer or
- * map)
+ * Marker interface that indicates that the implementing class/instance is an
+ * atlas or is part of an atlas (layer or map)
  */
 public interface AtlasObject {
 
-    String getName();
+	String getName();
 
-    void setName(String newName) throws InvalidNameException;
+	void setName(String newName) throws InvalidNameException;
 
-    /**
-     * Called after loading the complete atlas from a profile.
-     *
-     * @return any problems found? <code>true</code>=yes
-     */
-    boolean checkData();
+	/**
+	 * Called after loading the complete atlas from a profile.
+	 *
+	 * @return any problems found? <code>true</code>=yes
+	 */
+	boolean checkData();
 
-    /**
-     * minimum latitude (corresponds to row/y value)
-     *
-     * @return
-     */
-    double getMinLat();
+	/**
+	 * minimum latitude (corresponds to row/y value)
+	 *
+	 * @return
+	 */
+	double getMinLat();
 
-    /**
-     * maximum latitude (corresponds to row/y value)
-     *
-     * @return
-     */
-    double getMaxLat();
+	/**
+	 * maximum latitude (corresponds to row/y value)
+	 *
+	 * @return
+	 */
+	double getMaxLat();
 
-    /**
-     * minimum longitude (corresponds to column/x value)
-     *
-     * @return
-     */
-    double getMinLon();
+	/**
+	 * minimum longitude (corresponds to column/x value)
+	 *
+	 * @return
+	 */
+	double getMinLon();
 
-    /**
-     * maximum longitude (corresponds to column/x value)
-     *
-     * @return
-     */
-    double getMaxLon();
+	/**
+	 * maximum longitude (corresponds to column/x value)
+	 *
+	 * @return
+	 */
+	double getMaxLon();
 }

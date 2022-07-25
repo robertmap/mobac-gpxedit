@@ -20,32 +20,32 @@ import mobac.utilities.I18nUtils;
 
 public class GridZoom {
 
-    private final int zoom;
+	private final int zoom;
 
-    public GridZoom(int zoom) {
-        this.zoom = zoom;
-    }
+	public GridZoom(int zoom) {
+		this.zoom = zoom;
+	}
 
-    public int getZoom() {
-        return zoom;
-    }
+	public int getZoom() {
+		return zoom;
+	}
 
-    @Override
-    public String toString() {
-        return String.format(I18nUtils.localizedStringForKey("map_ctrl_zoom_grid_prefix_fmt"), zoom);
-    }
+	@Override
+	public String toString() {
+		return String.format(I18nUtils.localizedStringForKey("map_ctrl_zoom_grid_prefix_fmt"), zoom);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof GridZoom))
-            return false;
-        return ((GridZoom) obj).zoom == zoom;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof GridZoom))
+			return false;
+		return ((GridZoom) obj).zoom == zoom;
+	}
 
-    @Override
-    public int hashCode() {
-        assert false : "hashCode not designed";
-        return -1;
-    }
+	@Override
+	public int hashCode() {
+		assert false : "hashCode not designed";
+		return -1;
+	}
 
 }

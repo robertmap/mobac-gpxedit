@@ -18,39 +18,38 @@ package mobac.program.model;
 
 public class Coordinate {
 
-    public static int doubleToInt(double value) {
-        int degree = (int) value;
-        int minute = (int) (value = (value - degree) * 60d);
-        int second = (int) (value = (value - minute) * 60d);
-        int milisecond = (int) (value = (value - second) * 1000d);
-        return degree * DEGREE + minute * MINUTE + second * SECOND + milisecond * MILISECOND;
-    }
+	public static int doubleToInt(double value) {
+		int degree = (int) value;
+		int minute = (int) (value = (value - degree) * 60d);
+		int second = (int) (value = (value - minute) * 60d);
+		int milisecond = (int) (value = (value - second) * 1000d);
+		return degree * DEGREE + minute * MINUTE + second * SECOND + milisecond * MILISECOND;
+	}
 
-    public static double intToDouble(int value) {
-        double degree = value / DEGREE;
-        double minute = (value = value % DEGREE) / MINUTE;
-        double second = (int) (value %= MINUTE) / SECOND;
-        double milisecond = (int) (value %= SECOND) / MILISECOND;
-        return degree + minute / 60d + second / 3600d + milisecond / 3600000d;
-    }
+	public static double intToDouble(int value) {
+		double degree = value / DEGREE;
+		double minute = (value = value % DEGREE) / MINUTE;
+		double second = (int) (value %= MINUTE) / SECOND;
+		double milisecond = (int) (value %= SECOND) / MILISECOND;
+		return degree + minute / 60d + second / 3600d + milisecond / 3600000d;
+	}
 
-    public static final int MILISECOND = 1, SECOND = MILISECOND * 1000, MINUTE = SECOND * 60, DEGREE = MINUTE * 60;
+	public static final int MILISECOND = 1, SECOND = MILISECOND * 1000, MINUTE = SECOND * 60, DEGREE = MINUTE * 60;
 
-    public static int getDegree(int value) {
-        return value / DEGREE;
-    }
+	public static int getDegree(int value) {
+		return value / DEGREE;
+	}
 
-    public static int getMinute(int value) {
-        return Math.abs(value) % DEGREE / MINUTE;
-    }
+	public static int getMinute(int value) {
+		return Math.abs(value) % DEGREE / MINUTE;
+	}
 
-    public static int getSecond(int value) {
-        return Math.abs(value) % MINUTE / SECOND;
-    }
+	public static int getSecond(int value) {
+		return Math.abs(value) % MINUTE / SECOND;
+	}
 
-    public static int getMilisecond(int value) {
-        return Math.abs(value) % SECOND / MILISECOND;
-    }
-
+	public static int getMilisecond(int value) {
+		return Math.abs(value) % SECOND / MILISECOND;
+	}
 
 }

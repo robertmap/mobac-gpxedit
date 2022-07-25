@@ -38,56 +38,56 @@ import java.util.Date;
 @AtlasCreatorName("Osmdroid ZIP")
 public class Osmdroid extends OSMTracker {
 
-    protected ZipStoreOutputStream zipStream = null;
-    protected String currentMapStoreName = null;
+	protected ZipStoreOutputStream zipStream = null;
+	protected String currentMapStoreName = null;
 
-    public void createMap() throws MapCreationException, InterruptedException {
-        createTiles();
-    }
+	public void createMap() throws MapCreationException, InterruptedException {
+		createTiles();
+	}
 
-    @Override
-    public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws AtlasTestException, IOException,
-            InterruptedException {
-        if (customAtlasDir == null)
-            customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-        String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
-        super.startAtlasCreation(atlas, customAtlasDir);
-        zipStream = new ZipStoreOutputStream(new File(atlasDir, atlasDirName + ".zip"));
-        mapTileWriter = new OSMDroidTileWriter();
-    }
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
+			throws AtlasTestException, IOException, InterruptedException {
+		if (customAtlasDir == null)
+			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
+		super.startAtlasCreation(atlas, customAtlasDir);
+		zipStream = new ZipStoreOutputStream(new File(atlasDir, atlasDirName + ".zip"));
+		mapTileWriter = new OSMDroidTileWriter();
+	}
 
-    @Override
-    public void abortAtlasCreation() throws IOException {
-        Utilities.closeQuietly(zipStream);
-        super.abortAtlasCreation();
-    }
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		Utilities.closeQuietly(zipStream);
+		super.abortAtlasCreation();
+	}
 
-    @Override
-    public void finishAtlasCreation() throws IOException, InterruptedException {
-        Utilities.closeQuietly(zipStream);
-        super.finishAtlasCreation();
-    }
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		Utilities.closeQuietly(zipStream);
+		super.finishAtlasCreation();
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-        currentMapStoreName = map.getMapSource().getName();
-        if (currentMapStoreName.equals("TilesAtHome"))
-            currentMapStoreName = "Osmarender";
-        else if (currentMapStoreName.equals("OSM Cycle Map"))
-            currentMapStoreName = "CycleMap";
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+		currentMapStoreName = map.getMapSource().getName();
+		if (currentMapStoreName.equals("TilesAtHome"))
+			currentMapStoreName = "Osmarender";
+		else if (currentMapStoreName.equals("OSM Cycle Map"))
+			currentMapStoreName = "CycleMap";
+	}
 
-    private class OSMDroidTileWriter implements MapTileWriter {
+	private class OSMDroidTileWriter implements MapTileWriter {
 
-        public void finalizeMap() throws IOException {
-        }
+		public void finalizeMap() throws IOException {
+		}
 
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-            String tileName = currentMapStoreName + "/"
-                    + String.format(tileFileNamePattern, zoom, tilex, tiley, tileType);
-            zipStream.writeStoredEntry(tileName, tileData);
-        }
-    }
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			String tileName = currentMapStoreName + "/"
+					+ String.format(tileFileNamePattern, zoom, tilex, tiley, tileType);
+			zipStream.writeStoredEntry(tileName, tileData);
+		}
+	}
 }

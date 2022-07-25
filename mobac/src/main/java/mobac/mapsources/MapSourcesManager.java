@@ -22,42 +22,44 @@ import java.util.Vector;
 
 public abstract class MapSourcesManager {
 
-    protected static MapSourcesManager INSTANCE = null;
+	protected static MapSourcesManager INSTANCE = null;
 
-    public static MapSourcesManager getInstance() {
-        return INSTANCE;
-    }
+	public static MapSourcesManager getInstance() {
+		return INSTANCE;
+	}
 
-    public abstract void addMapSource(MapSource mapSource);
+	public abstract void addMapSource(MapSource mapSource);
 
-    public abstract Vector<MapSource> getAllMapSources();
+	public abstract Vector<MapSource> getAllMapSources();
 
-    /**
-     * Returns all {@link MapSource} used implementations that represent a map layer (have a visible result).
-     * Meta-map-sources like multi-layer map sources are ignored. The result does contain each {@link MapSource} only
-     * once (no duplicates).
-     *
-     * @return
-     */
-    public abstract Vector<MapSource> getAllLayerMapSources();
+	/**
+	 * Returns all {@link MapSource} used implementations that represent a map layer
+	 * (have a visible result). Meta-map-sources like multi-layer map sources are
+	 * ignored. The result does contain each {@link MapSource} only once (no
+	 * duplicates).
+	 *
+	 * @return
+	 */
+	public abstract Vector<MapSource> getAllLayerMapSources();
 
-    public abstract Vector<MapSource> getEnabledOrderedMapSources();
+	public abstract Vector<MapSource> getEnabledOrderedMapSources();
 
-    public abstract MapSource getDefaultMapSource();
+	public abstract MapSource getDefaultMapSource();
 
-    public abstract MapSource getSourceByName(String name);
+	public abstract MapSource getSourceByName(String name);
 
-    public abstract Vector<MapSource> getDisabledMapSources();
+	public abstract Vector<MapSource> getDisabledMapSources();
 
-    /**
-     * All means all visible map sources to the user plus all layers of multi-layer map sources
-     *
-     * @return
-     */
-    public abstract Vector<MapSource> getAllAvailableMapSources();
+	/**
+	 * All means all visible map sources to the user plus all layers of multi-layer
+	 * map sources
+	 *
+	 * @return
+	 */
+	public abstract Vector<MapSource> getAllAvailableMapSources();
 
-    public void reloadMapSources() {
+	public void reloadMapSources() {
 
-    }
+	}
 
 }

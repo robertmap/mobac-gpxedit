@@ -18,12 +18,12 @@ package mobac.exceptions;
 
 public class MapSourceCreateException extends Exception {
 
-    public MapSourceCreateException(String message) {
-        super(message);
-    }
+	public MapSourceCreateException(String message) {
+		super(message);
+	}
 
-    public MapSourceCreateException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public MapSourceCreateException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }

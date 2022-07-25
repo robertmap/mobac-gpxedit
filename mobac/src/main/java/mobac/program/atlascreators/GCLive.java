@@ -86,225 +86,226 @@ import java.util.Collections;
 @SupportedParameters(names = {Name.format})
 public class GCLive extends AtlasCreator {
 
-    private static final int MAX_TILES = 65535;
+	private static final int MAX_TILES = 65535;
 
-    private MapTileWriter mapTileWriter = null;
+	private MapTileWriter mapTileWriter = null;
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
 
-    @Override
-    protected void testAtlas() throws AtlasTestException {
-        long tileCount = 0;
-        for (LayerInterface layer : atlas) {
-            for (MapInterface map : layer) {
-                // We can not use map.calculateTilesToDownload() because be need the full tile count not the sparse
-                int tileSize_t = 256; // Everything else is not allowed
-                int xMin_t = map.getMinTileCoordinate().x / tileSize_t;
-                int xMax_t = map.getMaxTileCoordinate().x / tileSize_t;
-                int yMin_t = map.getMinTileCoordinate().y / tileSize_t;
-                int yMax_t = map.getMaxTileCoordinate().y / tileSize_t;
-                tileCount += (xMax_t - xMin_t + 1) * (yMax_t - yMin_t + 1);
-            }
-            // Check for max tile count <= 65535
-            if (tileCount > MAX_TILES)
-                throw new AtlasTestException("Tile count too high in layer " + layer.getName()
-                        + "\n - please select smaller/fewer areas");
-        }
-    }
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		long tileCount = 0;
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				// We can not use map.calculateTilesToDownload() because be need the full tile
+				// count not the sparse
+				int tileSize_t = 256; // Everything else is not allowed
+				int xMin_t = map.getMinTileCoordinate().x / tileSize_t;
+				int xMax_t = map.getMaxTileCoordinate().x / tileSize_t;
+				int yMin_t = map.getMinTileCoordinate().y / tileSize_t;
+				int yMax_t = map.getMaxTileCoordinate().y / tileSize_t;
+				tileCount += (xMax_t - xMin_t + 1) * (yMax_t - yMin_t + 1);
+			}
+			// Check for max tile count <= 65535
+			if (tileCount > MAX_TILES)
+				throw new AtlasTestException(
+						"Tile count too high in layer " + layer.getName() + "\n - please select smaller/fewer areas");
+		}
+	}
 
-    @Override
-    public void initLayerCreation(LayerInterface layer) throws IOException {
-        super.initLayerCreation(layer);
-        mapTileWriter = new GCLiveWriter(new File(atlasDir, layer.getName()));
-    }
+	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
+		mapTileWriter = new GCLiveWriter(new File(atlasDir, layer.getName()));
+	}
 
-    @Override
-    public void finishLayerCreation() throws IOException {
-        mapTileWriter.finalizeMap();
-        mapTileWriter = null;
-        super.finishLayerCreation();
-    }
+	@Override
+	public void finishLayerCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
+		super.finishLayerCreation();
+	}
 
-    @Override
-    public void abortAtlasCreation() throws IOException {
-        mapTileWriter.finalizeMap();
-        mapTileWriter = null;
-        super.abortAtlasCreation();
-    }
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
+		super.abortAtlasCreation();
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-        if (parameters != null) {
-            mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
-        }
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+		if (parameters != null) {
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+		}
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-        createTiles();
-    }
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		createTiles();
+	}
 
-    protected void createTiles() throws InterruptedException, MapCreationException {
-        atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-        ImageIO.setUseCache(false);
+	protected void createTiles() throws InterruptedException, MapCreationException {
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+		ImageIO.setUseCache(false);
 
-        //byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
+		// byte[] emptyTileData = Utilities.createEmptyTileData(mapSource);
 
-        for (int x = xMin; x <= xMax; x++) {
-            for (int y = yMin; y <= yMax; y++) {
-                checkUserAbort();
-                atlasProgress.incMapCreationProgress();
-                try {
-                    byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-                    if (sourceTileData != null)
-                        mapTileWriter.writeTile(x, y, null, sourceTileData);
-                    // else
-                    // mapTileWriter.writeTile(x, y, null, emptyTileData);
-                } catch (IOException e) {
-                    throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-                }
-            }
-        }
-    }
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				checkUserAbort();
+				atlasProgress.incMapCreationProgress();
+				try {
+					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+					if (sourceTileData != null)
+						mapTileWriter.writeTile(x, y, null, sourceTileData);
+					// else
+					// mapTileWriter.writeTile(x, y, null, emptyTileData);
+				} catch (IOException e) {
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+				}
+			}
+		}
+	}
 
-    public static class GCHeaderEntry implements Comparable<GCHeaderEntry> {
-        public final int zoom;
-        public final int tilex;
-        public final int tiley;
-        public final int dataFileIndex;
-        public final int offset;
-        public final int len;
+	public static class GCHeaderEntry implements Comparable<GCHeaderEntry> {
+		public final int zoom;
+		public final int tilex;
+		public final int tiley;
+		public final int dataFileIndex;
+		public final int offset;
+		public final int len;
 
-        public GCHeaderEntry(int zoom, int tilex, int tiley, int dataFileIndex, int offset, int len) {
-            super();
-            this.zoom = zoom;
-            this.tilex = tilex;
-            this.tiley = tiley;
-            this.dataFileIndex = dataFileIndex;
-            this.offset = offset;
-            this.len = len;
-        }
+		public GCHeaderEntry(int zoom, int tilex, int tiley, int dataFileIndex, int offset, int len) {
+			super();
+			this.zoom = zoom;
+			this.tilex = tilex;
+			this.tiley = tiley;
+			this.dataFileIndex = dataFileIndex;
+			this.offset = offset;
+			this.len = len;
+		}
 
-        public void writeHeader(RandomAccessFile file) throws IOException {
-            file.writeShort((short) (17 - zoom));
-            file.write((tilex >> 16) & 0xFF);
-            file.write((tilex >> 8) & 0xFF);
-            file.write(tilex & 0xFF);
-            file.write((tiley >> 16) & 0xFF);
-            file.write((tiley >> 8) & 0xFF);
-            file.write(tiley & 0xFF);
-            file.writeInt(offset);
+		public void writeHeader(RandomAccessFile file) throws IOException {
+			file.writeShort((short) (17 - zoom));
+			file.write((tilex >> 16) & 0xFF);
+			file.write((tilex >> 8) & 0xFF);
+			file.write(tilex & 0xFF);
+			file.write((tiley >> 16) & 0xFF);
+			file.write((tiley >> 8) & 0xFF);
+			file.write(tiley & 0xFF);
+			file.writeInt(offset);
 
-            int tmp = (len << 4);
-            tmp = tmp | ((dataFileIndex >> 8) & 0x0F);
+			int tmp = (len << 4);
+			tmp = tmp | ((dataFileIndex >> 8) & 0x0F);
 
-            file.write((tmp >> 16) & 0xFF);
-            file.write((tmp >> 8) & 0xFF);
-            file.write(tmp & 0xFF);
-            file.write(dataFileIndex & 0xFF);
-        }
+			file.write((tmp >> 16) & 0xFF);
+			file.write((tmp >> 8) & 0xFF);
+			file.write(tmp & 0xFF);
+			file.write(dataFileIndex & 0xFF);
+		}
 
-        public int compareTo(GCHeaderEntry o) {
-            if (zoom > o.zoom)
-                return -1;
-            if (zoom < o.zoom)
-                return 1;
-            if (tilex > o.tilex)
-                return 1;
-            if (tilex < o.tilex)
-                return -1;
-            if (tiley > o.tiley)
-                return 1;
-            if (tiley < o.tiley)
-                return -1;
-            return 0;
-        }
+		public int compareTo(GCHeaderEntry o) {
+			if (zoom > o.zoom)
+				return -1;
+			if (zoom < o.zoom)
+				return 1;
+			if (tilex > o.tilex)
+				return 1;
+			if (tilex < o.tilex)
+				return -1;
+			if (tiley > o.tiley)
+				return 1;
+			if (tiley < o.tiley)
+				return -1;
+			return 0;
+		}
 
-        @Override
-        public String toString() {
-            return "GCHeaderEntry [zoom=" + zoom + ", tilex=" + tilex + ", tiley=" + tiley + ", dataFileIndex="
-                    + dataFileIndex + ", offset=" + offset + ", len=" + len + "]";
-        }
+		@Override
+		public String toString() {
+			return "GCHeaderEntry [zoom=" + zoom + ", tilex=" + tilex + ", tiley=" + tiley + ", dataFileIndex="
+					+ dataFileIndex + ", offset=" + offset + ", len=" + len + "]";
+		}
 
-    }
+	}
 
-    protected class GCLiveWriter implements MapTileWriter {
+	protected class GCLiveWriter implements MapTileWriter {
 
-        private final File mapDir;
+		private final File mapDir;
 
-        private int dataDirCounter = 0;
-        private int dataFileCounter = 0;
-        private int imageCounter = 0;
+		private int dataDirCounter = 0;
+		private int dataFileCounter = 0;
+		private int imageCounter = 0;
 
-        private RandomAccessFile currentDataFile;
+		private RandomAccessFile currentDataFile;
 
-        private ArrayList<GCHeaderEntry> headerEntries;
+		private ArrayList<GCHeaderEntry> headerEntries;
 
-        public GCLiveWriter(File mapDir) throws IOException {
-            super();
-            this.mapDir = mapDir;
-            Utilities.mkDir(mapDir);
-            headerEntries = new ArrayList<GCHeaderEntry>(MAX_TILES);
-            prepareDataFile();
-        }
+		public GCLiveWriter(File mapDir) throws IOException {
+			super();
+			this.mapDir = mapDir;
+			Utilities.mkDir(mapDir);
+			headerEntries = new ArrayList<GCHeaderEntry>(MAX_TILES);
+			prepareDataFile();
+		}
 
-        private void prepareDataFile() throws IOException {
-            if (currentDataFile != null)
-                Utilities.closeQuietly(currentDataFile);
-            currentDataFile = null;
-            File dataDir = new File(mapDir, Integer.toString(dataDirCounter));
-            Utilities.mkDir(dataDir);
-            File dataFile = new File(dataDir, "data" + dataFileCounter);
-            currentDataFile = new RandomAccessFile(dataFile, "rw");
-            imageCounter = 0;
-        }
+		private void prepareDataFile() throws IOException {
+			if (currentDataFile != null)
+				Utilities.closeQuietly(currentDataFile);
+			currentDataFile = null;
+			File dataDir = new File(mapDir, Integer.toString(dataDirCounter));
+			Utilities.mkDir(dataDir);
+			File dataFile = new File(dataDir, "data" + dataFileCounter);
+			currentDataFile = new RandomAccessFile(dataFile, "rw");
+			imageCounter = 0;
+		}
 
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-            imageCounter++;
-            if (imageCounter >= 32) {
-                dataFileCounter++;
-                if (dataFileCounter % 32 == 0) {
-                    dataDirCounter++;
-                    if (dataDirCounter >= 32)
-                        throw new RuntimeException("Maximum number of tiles exceeded");
-                }
-                prepareDataFile();
-            }
-            long offset = currentDataFile.getFilePointer();
-            currentDataFile.write(tileData);
-            int len = tileData.length;
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			imageCounter++;
+			if (imageCounter >= 32) {
+				dataFileCounter++;
+				if (dataFileCounter % 32 == 0) {
+					dataDirCounter++;
+					if (dataDirCounter >= 32)
+						throw new RuntimeException("Maximum number of tiles exceeded");
+				}
+				prepareDataFile();
+			}
+			long offset = currentDataFile.getFilePointer();
+			currentDataFile.write(tileData);
+			int len = tileData.length;
 
-            GCHeaderEntry header = new GCHeaderEntry(zoom, tilex, tiley, dataFileCounter, (int) offset, len);
-            headerEntries.add(header);
-        }
+			GCHeaderEntry header = new GCHeaderEntry(zoom, tilex, tiley, dataFileCounter, (int) offset, len);
+			headerEntries.add(header);
+		}
 
-        public void finalizeMap() throws IOException {
-            int dataPos = (int) currentDataFile.getFilePointer();
-            Utilities.closeQuietly(currentDataFile);
-            Collections.sort(headerEntries);
+		public void finalizeMap() throws IOException {
+			int dataPos = (int) currentDataFile.getFilePointer();
+			Utilities.closeQuietly(currentDataFile);
+			Collections.sort(headerEntries);
 
-            RandomAccessFile indexFile;
-            indexFile = new RandomAccessFile(new File(mapDir, "index"), "rw");
+			RandomAccessFile indexFile;
+			indexFile = new RandomAccessFile(new File(mapDir, "index"), "rw");
 
-            // Write index header (first 16 bytes)
-            indexFile.seek(0);
-            int dataFileIndex = dataDirCounter * 32 + dataFileCounter;
-            indexFile.writeInt(dataFileIndex); // Highest index used currently for the data files. Index is incremented
-            // starting with 0.
-            indexFile.writeInt(headerEntries.size()); // Max. number of tiles index. Current max. number is 20000.
-            indexFile.writeInt(headerEntries.size()); // Number of tile entries (16 bytes) indexed.
-            indexFile.writeInt(dataPos); // Size of the data file with the currently used highest index.
+			// Write index header (first 16 bytes)
+			indexFile.seek(0);
+			int dataFileIndex = dataDirCounter * 32 + dataFileCounter;
+			indexFile.writeInt(dataFileIndex); // Highest index used currently for the data files. Index is incremented
+			// starting with 0.
+			indexFile.writeInt(headerEntries.size()); // Max. number of tiles index. Current max. number is 20000.
+			indexFile.writeInt(headerEntries.size()); // Number of tile entries (16 bytes) indexed.
+			indexFile.writeInt(dataPos); // Size of the data file with the currently used highest index.
 
-            for (GCHeaderEntry entry : headerEntries) {
-                entry.writeHeader(indexFile);
-                System.out.println(entry);
-            }
-            headerEntries = null;
-            Utilities.closeQuietly(indexFile);
-        }
-    }
+			for (GCHeaderEntry entry : headerEntries) {
+				entry.writeHeader(indexFile);
+				System.out.println(entry);
+			}
+			headerEntries = null;
+			Utilities.closeQuietly(indexFile);
+		}
+	}
 }

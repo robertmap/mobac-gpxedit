@@ -62,433 +62,439 @@ import static mobac.gui.MainGUI.LEFT_PANEL_MIN_SIZE;
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class Settings {
 
-    public static final File FILE = new File(DirectoryManager.userSettingsDir, "settings.xml");
-    private static final Logger log = LoggerFactory.getLogger(Settings.class);
-    private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
-    private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
+	public static final File FILE = new File(DirectoryManager.userSettingsDir, "settings.xml");
+	private static final Logger log = LoggerFactory.getLogger(Settings.class);
+	private static final String SYSTEM_PROXY_HOST = System.getProperty("http.proxyHost");
+	private static final String SYSTEM_PROXY_PORT = System.getProperty("http.proxyPort");
 
-    private static long SETTINGS_LAST_MODIFIED = 0;
-    private static Settings instance = new Settings();
-    public final Directories directories = new Directories();
-    public final AtlasFormatSpecificSettings atlasFormatSpecificSettings = new AtlasFormatSpecificSettings();
-    public final MainWindowSettings mainWindow = new MainWindowSettings();
-    @XmlElement(name = "MapSourcesUpdate")
-    public final MapSourcesUpdate mapSourcesUpdate = new MapSourcesUpdate();
-    public final SettingsPaperAtlas paperAtlas = new SettingsPaperAtlas();
-    public final SettingsWgsGrid wgsGrid = new SettingsWgsGrid();
-    public int maxMapSize = 65536;
-    public int mapOverlapTiles = 0;
-    public boolean tileStoreEnabled = true;
-    /**
-     * Mapview related settings
-     */
-    public int mapviewZoom = 3;
-    public int mapviewGridZoom = -1;
-    public EastNorthCoordinate mapviewCenterCoordinate = new EastNorthCoordinate(50, 9);
-    public Point mapviewSelectionMax = null;
-    public Point mapviewSelectionMin = null;
-    @XmlElementWrapper(name = "selectedZoomLevels")
-    @XmlElement(name = "zoomLevel")
-    public List<Integer> selectedZoomLevels = null;
-    private static final String ACCEPT = "text/html,image/png,image/jpeg,image/gif,image/webp,*/*; q=0.1";
-    @XmlElement(nillable = false)
-    public String mapviewMapSource;
-    public int downloadThreadCount = 2;
-    public int downloadRetryCount = 1;
-    public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEG_LOCAL;
-    @XmlElementWrapper(name = "placeBookmarks")
-    @XmlElement(name = "bookmark")
-    public List<Bookmark> placeBookmarks = new ArrayList<>();
-    /**
-     * Connection timeout in seconds (default 10 seconds)
-     */
-    public int httpConnectionTimeout = 10;
-    /**
-     * Read timeout in seconds (default 10 seconds)
-     */
-    public int httpReadTimeout = 10;
-    /**
-     * Maximum expiration (in milliseconds) acceptable. If a server sets an expiration time larger than this value it is
-     * truncated to this value on next download.
-     */
-    public long tileMaxExpirationTime = TimeUnit.DAYS.toMillis(365);
-    /**
-     * Minimum expiration (in milliseconds) acceptable. If a server sets an expiration time smaller than this value it
-     * is truncated to this value on next download.
-     */
-    public long tileMinExpirationTime = TimeUnit.DAYS.toMillis(5);
-    /**
-     * Expiration time (in milliseconds) of a tile if the server does not provide an expiration time
-     */
-    public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(28);
-    public String googleLanguage = "en";
-    public String osmHikingTicket = "";
-    /**
-     * Development mode enabled/disabled
-     * <p>
-     * In development mode one additional map source is available for using MOBAC Debug TileServer
-     * </p>
-     */
-    @XmlElement
-    public boolean devMode = false;
-    /**
-     * Saves the last used directory of the GPX file chooser dialog. Used in {@link GpxLoad}.
-     */
-    public String gpxFileChooserDir = "";
-    @XmlElementWrapper(name = "mapSourcesDisabled")
-    @XmlElement(name = "mapSource")
-    public Vector<String> mapSourcesDisabled = new Vector<>();
-    @XmlElementWrapper(name = "mapSourcesEnabled")
-    @XmlElement(name = "mapSource")
-    public Vector<String> mapSourcesEnabled = new Vector<>();
-    public transient UnitSystem unitSystem = UnitSystem.Metric;
-    public boolean ignoreDlErrors = false;
-    public String elementName;
-    public String localeLanguage;
-    @XmlElement(defaultValue = "")
-    private String version;
-    public String localeCountry;
-    private String userAgent;
-    private boolean customTileProcessing = false;
-    private Dimension tileSize = new Dimension(256, 256);
-    private TileImageFormat tileImageFormat = TileImageFormat.PNG;
-    /**
-     * Network settings
-     */
-    private ProxyType proxyType = ProxyType.CUSTOM;
-    private String customProxyHost = "";
-    private String customProxyPort = "";
-    private String customProxyUserName = "";
-    private String customProxyPassword = "";
-    private long bandwidthLimit = 0;
+	private static long SETTINGS_LAST_MODIFIED = 0;
+	private static Settings instance = new Settings();
+	public final Directories directories = new Directories();
+	public final AtlasFormatSpecificSettings atlasFormatSpecificSettings = new AtlasFormatSpecificSettings();
+	public final MainWindowSettings mainWindow = new MainWindowSettings();
+	@XmlElement(name = "MapSourcesUpdate")
+	public final MapSourcesUpdate mapSourcesUpdate = new MapSourcesUpdate();
+	public final SettingsPaperAtlas paperAtlas = new SettingsPaperAtlas();
+	public final SettingsWgsGrid wgsGrid = new SettingsWgsGrid();
+	public int maxMapSize = 65536;
+	public int mapOverlapTiles = 0;
+	public boolean tileStoreEnabled = true;
+	/**
+	 * Mapview related settings
+	 */
+	public int mapviewZoom = 3;
+	public int mapviewGridZoom = -1;
+	public EastNorthCoordinate mapviewCenterCoordinate = new EastNorthCoordinate(50, 9);
+	public Point mapviewSelectionMax = null;
+	public Point mapviewSelectionMin = null;
+	@XmlElementWrapper(name = "selectedZoomLevels")
+	@XmlElement(name = "zoomLevel")
+	public List<Integer> selectedZoomLevels = null;
+	private static final String ACCEPT = "text/html,image/png,image/jpeg,image/gif,image/webp,*/*; q=0.1";
+	@XmlElement(nillable = false)
+	public String mapviewMapSource;
+	public int downloadThreadCount = 2;
+	public int downloadRetryCount = 1;
+	public CoordinateStringFormat coordinateNumberFormat = CoordinateStringFormat.DEG_LOCAL;
+	@XmlElementWrapper(name = "placeBookmarks")
+	@XmlElement(name = "bookmark")
+	public List<Bookmark> placeBookmarks = new ArrayList<>();
+	/**
+	 * Connection timeout in seconds (default 10 seconds)
+	 */
+	public int httpConnectionTimeout = 10;
+	/**
+	 * Read timeout in seconds (default 10 seconds)
+	 */
+	public int httpReadTimeout = 10;
+	/**
+	 * Maximum expiration (in milliseconds) acceptable. If a server sets an
+	 * expiration time larger than this value it is truncated to this value on next
+	 * download.
+	 */
+	public long tileMaxExpirationTime = TimeUnit.DAYS.toMillis(365);
+	/**
+	 * Minimum expiration (in milliseconds) acceptable. If a server sets an
+	 * expiration time smaller than this value it is truncated to this value on next
+	 * download.
+	 */
+	public long tileMinExpirationTime = TimeUnit.DAYS.toMillis(5);
+	/**
+	 * Expiration time (in milliseconds) of a tile if the server does not provide an
+	 * expiration time
+	 */
+	public long tileDefaultExpirationTime = TimeUnit.DAYS.toMillis(28);
+	public String googleLanguage = "en";
+	public String osmHikingTicket = "";
+	/**
+	 * Development mode enabled/disabled
+	 * <p>
+	 * In development mode one additional map source is available for using MOBAC
+	 * Debug TileServer
+	 * </p>
+	 */
+	@XmlElement
+	public boolean devMode = false;
+	/**
+	 * Saves the last used directory of the GPX file chooser dialog. Used in
+	 * {@link GpxLoad}.
+	 */
+	public String gpxFileChooserDir = "";
+	@XmlElementWrapper(name = "mapSourcesDisabled")
+	@XmlElement(name = "mapSource")
+	public Vector<String> mapSourcesDisabled = new Vector<>();
+	@XmlElementWrapper(name = "mapSourcesEnabled")
+	@XmlElement(name = "mapSource")
+	public Vector<String> mapSourcesEnabled = new Vector<>();
+	public transient UnitSystem unitSystem = UnitSystem.Metric;
+	public boolean ignoreDlErrors = false;
+	public String elementName;
+	public String localeLanguage;
+	@XmlElement(defaultValue = "")
+	private String version;
+	public String localeCountry;
+	private String userAgent;
+	private boolean customTileProcessing = false;
+	private Dimension tileSize = new Dimension(256, 256);
+	private TileImageFormat tileImageFormat = TileImageFormat.PNG;
+	/**
+	 * Network settings
+	 */
+	private ProxyType proxyType = ProxyType.CUSTOM;
+	private String customProxyHost = "";
+	private String customProxyPort = "";
+	private String customProxyUserName = "";
+	private String customProxyPassword = "";
+	private long bandwidthLimit = 0;
 
-    private Settings() {
-        elementName = "Layer";// no need i18n for it
-        Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-        mainWindow.size.width = (int) (0.9f * dScreen.width);
-        mainWindow.size.height = (int) (0.9f * dScreen.height);
-        mainWindow.collapsedPanels.add(JCoordinatesPanel.NAME);
-        mainWindow.collapsedPanels.add("Gpx");
+	private Settings() {
+		elementName = "Layer";// no need i18n for it
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		mainWindow.size.width = (int) (0.9f * dScreen.width);
+		mainWindow.size.height = (int) (0.9f * dScreen.height);
+		mainWindow.collapsedPanels.add(JCoordinatesPanel.NAME);
+		mainWindow.collapsedPanels.add("Gpx");
 
-        Locale defaultLocale = Locale.getDefault();
-        if (defaultLocale.equals(new Locale("zh", "CN"))) {
-            localeLanguage = "zh";
-            localeCountry = "CN";
-        } else if (defaultLocale.equals(new Locale("zh", "TW"))) {
-            localeLanguage = "zh";
-            localeCountry = "TW";
-        } else if (defaultLocale.equals(new Locale("ja", "JP"))) {
-            localeLanguage = "ja";
-            localeCountry = "JP";
-        } else if (defaultLocale.equals(new Locale("fr", "FR"))) {
-            localeLanguage = "fr";
-            localeCountry = "FR";
-        } else {
-            localeLanguage = "en";
-            localeCountry = "";
-        }
-    }
+		Locale defaultLocale = Locale.getDefault();
+		if (defaultLocale.equals(new Locale("zh", "CN"))) {
+			localeLanguage = "zh";
+			localeCountry = "CN";
+		} else if (defaultLocale.equals(new Locale("zh", "TW"))) {
+			localeLanguage = "zh";
+			localeCountry = "TW";
+		} else if (defaultLocale.equals(new Locale("ja", "JP"))) {
+			localeLanguage = "ja";
+			localeCountry = "JP";
+		} else if (defaultLocale.equals(new Locale("fr", "FR"))) {
+			localeLanguage = "fr";
+			localeCountry = "FR";
+		} else {
+			localeLanguage = "en";
+			localeCountry = "";
+		}
+	}
 
-    public static Settings getInstance() {
-        return instance;
-    }
+	public static Settings getInstance() {
+		return instance;
+	}
 
-    private String httpAccept;
+	private String httpAccept;
 
-    public static boolean checkSettingsFileModified() {
-        if (SETTINGS_LAST_MODIFIED == 0)
-            return false;
-        // Check if the settings.xml has been modified
-        // since it has been loaded
-        long lastModified = FILE.lastModified();
-        return (SETTINGS_LAST_MODIFIED != lastModified);
-    }
+	public static boolean checkSettingsFileModified() {
+		if (SETTINGS_LAST_MODIFIED == 0)
+			return false;
+		// Check if the settings.xml has been modified
+		// since it has been loaded
+		long lastModified = FILE.lastModified();
+		return (SETTINGS_LAST_MODIFIED != lastModified);
+	}
 
-    public static void save() throws JAXBException {
-        getInstance().version = ProgramInfo.getVersion();
-        JAXBContext context = JAXBContext.newInstance(Settings.class);
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	public static void save() throws JAXBException {
+		getInstance().version = ProgramInfo.getVersion();
+		JAXBContext context = JAXBContext.newInstance(Settings.class);
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-        // First we write to a buffer and if that works be write the buffer
-        // to disk. Direct writing to file may result in an defect xml file
-        // in case of an error
-        StringWriter sw = new StringWriter(4096);
-        m.marshal(getInstance(), sw);
-        String settingsString = sw.toString();
+		// First we write to a buffer and if that works be write the buffer
+		// to disk. Direct writing to file may result in an defect xml file
+		// in case of an error
+		StringWriter sw = new StringWriter(4096);
+		m.marshal(getInstance(), sw);
+		String settingsString = sw.toString();
 
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8)) {
-            writer.write(settingsString);
-        } catch (IOException e) {
-            throw new JAXBException(e);
-        }
-        SETTINGS_LAST_MODIFIED = FILE.lastModified();
-    }
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(FILE), StandardCharsets.UTF_8)) {
+			writer.write(settingsString);
+		} catch (IOException e) {
+			throw new JAXBException(e);
+		}
+		SETTINGS_LAST_MODIFIED = FILE.lastModified();
+	}
 
-    public static void loadOrQuit() {
-        try {
-            load();
-        } catch (JAXBException e) {
-            log.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(null,
-                    I18nUtils.localizedStringForKey(I18nUtils.localizedStringForKey("msg_settings_file_can_not_parse")),
-                    I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        }
-    }
+	public static void loadOrQuit() {
+		try {
+			load();
+		} catch (JAXBException e) {
+			log.error(e.getMessage(), e);
+			JOptionPane.showMessageDialog(null,
+					I18nUtils.localizedStringForKey(I18nUtils.localizedStringForKey("msg_settings_file_can_not_parse")),
+					I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+	}
 
-    public String getUserAgent() {
-        if (userAgent != null)
-            return userAgent;
-        else
-            return ProgramInfo.getUserAgent();
-    }
+	public String getUserAgent() {
+		if (userAgent != null)
+			return userAgent;
+		else
+			return ProgramInfo.getUserAgent();
+	}
 
-    public void setUserAgent(String userAgent) {
-        if (userAgent != null) {
-            userAgent = userAgent.trim();
-            if (userAgent.length() == 0)
-                userAgent = null;
-        }
-        this.userAgent = userAgent;
-    }
+	public void setUserAgent(String userAgent) {
+		if (userAgent != null) {
+			userAgent = userAgent.trim();
+			if (userAgent.length() == 0)
+				userAgent = null;
+		}
+		this.userAgent = userAgent;
+	}
 
-    public static void load() throws JAXBException {
-        try {
-            JAXBContext context = JAXBContext.newInstance(Settings.class);
-            Unmarshaller um = context.createUnmarshaller();
-            um.setEventHandler((event) -> {
-                        log.warn("Problem on loading settings.xml: " + event.getMessage());
-                        return true;
-                    }
-            );
-            instance = (Settings) um.unmarshal(FILE);
-            instance.wgsGrid.checkValues();
-            instance.paperAtlas.checkValues();
-            SETTINGS_LAST_MODIFIED = FILE.lastModified();
+	public static void load() throws JAXBException {
+		try {
+			JAXBContext context = JAXBContext.newInstance(Settings.class);
+			Unmarshaller um = context.createUnmarshaller();
+			um.setEventHandler((event) -> {
+				log.warn("Problem on loading settings.xml: " + event.getMessage());
+				return true;
+			});
+			instance = (Settings) um.unmarshal(FILE);
+			instance.wgsGrid.checkValues();
+			instance.paperAtlas.checkValues();
+			SETTINGS_LAST_MODIFIED = FILE.lastModified();
 
-            // Settings 重新加载之后，必须更新语言资源
-            I18nUtils.updateLocalizedStringFromSettings();
+			// Settings 重新加载之后，必须更新语言资源
+			I18nUtils.updateLocalizedStringFromSettings();
 
-        } finally {
-            Settings s = getInstance();
-            s.applyProxySettings();
-        }
-    }
+		} finally {
+			Settings s = getInstance();
+			s.applyProxySettings();
+		}
+	}
 
-    public String getHttpAccept() {
-        if (httpAccept != null) {
-            return httpAccept;
-        }
-        return ACCEPT;
-    }
+	public String getHttpAccept() {
+		if (httpAccept != null) {
+			return httpAccept;
+		}
+		return ACCEPT;
+	}
 
-    public void setHttpAccept(String httpAccept) {
-        if (httpAccept != null) {
-            httpAccept = httpAccept.trim();
-            if (httpAccept.length() == 0)
-                httpAccept = null;
-        }
-        this.httpAccept = httpAccept;
-    }
+	public void setHttpAccept(String httpAccept) {
+		if (httpAccept != null) {
+			httpAccept = httpAccept.trim();
+			if (httpAccept.length() == 0)
+				httpAccept = null;
+		}
+		this.httpAccept = httpAccept;
+	}
 
-    public boolean isCustomTileSize() {
-        return customTileProcessing;
-    }
+	public boolean isCustomTileSize() {
+		return customTileProcessing;
+	}
 
-    public void setCustomTileSize(boolean customTileSize) {
-        this.customTileProcessing = customTileSize;
-    }
+	public void setCustomTileSize(boolean customTileSize) {
+		this.customTileProcessing = customTileSize;
+	}
 
-    public Dimension getTileSize() {
-        return tileSize;
-    }
+	public Dimension getTileSize() {
+		return tileSize;
+	}
 
-    public void setTileSize(Dimension tileSize) {
-        this.tileSize = tileSize;
-    }
+	public void setTileSize(Dimension tileSize) {
+		this.tileSize = tileSize;
+	}
 
-    public TileImageFormat getTileImageFormat() {
-        return tileImageFormat;
-    }
+	public TileImageFormat getTileImageFormat() {
+		return tileImageFormat;
+	}
 
-    public void setTileImageFormat(TileImageFormat tileImageFormat) {
-        this.tileImageFormat = tileImageFormat;
-    }
+	public void setTileImageFormat(TileImageFormat tileImageFormat) {
+		this.tileImageFormat = tileImageFormat;
+	}
 
-    public ProxyType getProxyType() {
-        return proxyType;
-    }
+	public ProxyType getProxyType() {
+		return proxyType;
+	}
 
-    public void setProxyType(ProxyType proxyType) {
-        this.proxyType = proxyType;
-    }
+	public void setProxyType(ProxyType proxyType) {
+		this.proxyType = proxyType;
+	}
 
-    public String getCustomProxyHost() {
-        return customProxyHost;
-    }
+	public String getCustomProxyHost() {
+		return customProxyHost;
+	}
 
-    public void setCustomProxyHost(String proxyHost) {
-        this.customProxyHost = proxyHost;
-    }
+	public void setCustomProxyHost(String proxyHost) {
+		this.customProxyHost = proxyHost;
+	}
 
-    public String getCustomProxyPort() {
-        return customProxyPort;
-    }
+	public String getCustomProxyPort() {
+		return customProxyPort;
+	}
 
-    public void setCustomProxyPort(String proxyPort) {
-        this.customProxyPort = proxyPort;
-    }
+	public void setCustomProxyPort(String proxyPort) {
+		this.customProxyPort = proxyPort;
+	}
 
-    public String getCustomProxyUserName() {
-        return customProxyUserName;
-    }
+	public String getCustomProxyUserName() {
+		return customProxyUserName;
+	}
 
-    public void setCustomProxyUserName(String customProxyUserName) {
-        this.customProxyUserName = customProxyUserName;
-    }
+	public void setCustomProxyUserName(String customProxyUserName) {
+		this.customProxyUserName = customProxyUserName;
+	}
 
-    public String getCustomProxyPassword() {
-        return customProxyPassword;
-    }
+	public String getCustomProxyPassword() {
+		return customProxyPassword;
+	}
 
-    public void setCustomProxyPassword(String customProxyPassword) {
-        this.customProxyPassword = customProxyPassword;
-    }
+	public void setCustomProxyPassword(String customProxyPassword) {
+		this.customProxyPassword = customProxyPassword;
+	}
 
-    public void applyProxySettings() {
-        boolean useSystemProxies = false;
-        String newProxyHost = null;
-        String newProxyPort = null;
-        Authenticator newAuthenticator = null;
-        switch (proxyType) {
-            case SYSTEM:
-                log.info("Applying proxy configuration: system settings");
-                useSystemProxies = true;
-                break;
-            case APP_SETTINGS:
-                newProxyHost = SYSTEM_PROXY_HOST;
-                newProxyPort = SYSTEM_PROXY_PORT;
-                log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort);
-                break;
-            case CUSTOM:
-                newProxyHost = customProxyHost;
-                newProxyPort = customProxyPort;
-                log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort);
-                break;
-            case CUSTOM_W_AUTH:
-                newProxyHost = customProxyHost;
-                newProxyPort = customProxyPort;
-                newAuthenticator = new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(customProxyUserName, customProxyPassword.toCharArray());
-                    }
-                };
-                log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort + " user="
-                        + customProxyUserName);
-                break;
-        }
-        Utilities.setHttpProxyHost(newProxyHost);
-        Utilities.setHttpProxyPort(newProxyPort);
-        Authenticator.setDefault(newAuthenticator);
-        System.setProperty("java.net.useSystemProxies", Boolean.toString(useSystemProxies));
-    }
+	public void applyProxySettings() {
+		boolean useSystemProxies = false;
+		String newProxyHost = null;
+		String newProxyPort = null;
+		Authenticator newAuthenticator = null;
+		switch (proxyType) {
+			case SYSTEM :
+				log.info("Applying proxy configuration: system settings");
+				useSystemProxies = true;
+				break;
+			case APP_SETTINGS :
+				newProxyHost = SYSTEM_PROXY_HOST;
+				newProxyPort = SYSTEM_PROXY_PORT;
+				log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort);
+				break;
+			case CUSTOM :
+				newProxyHost = customProxyHost;
+				newProxyPort = customProxyPort;
+				log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort);
+				break;
+			case CUSTOM_W_AUTH :
+				newProxyHost = customProxyHost;
+				newProxyPort = customProxyPort;
+				newAuthenticator = new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(customProxyUserName, customProxyPassword.toCharArray());
+					}
+				};
+				log.info("Applying proxy configuration: host=" + newProxyHost + " port=" + newProxyPort + " user="
+						+ customProxyUserName);
+				break;
+		}
+		Utilities.setHttpProxyHost(newProxyHost);
+		Utilities.setHttpProxyPort(newProxyPort);
+		Authenticator.setDefault(newAuthenticator);
+		System.setProperty("java.net.useSystemProxies", Boolean.toString(useSystemProxies));
+	}
 
-    public long getBandwidthLimit() {
-        return bandwidthLimit;
-    }
+	public long getBandwidthLimit() {
+		return bandwidthLimit;
+	}
 
-    public void setBandwidthLimit(long bandwidthLimit) {
-        this.bandwidthLimit = bandwidthLimit;
-        ThrottledInputStream.setBandwidth(bandwidthLimit);
-    }
+	public void setBandwidthLimit(long bandwidthLimit) {
+		this.bandwidthLimit = bandwidthLimit;
+		ThrottledInputStream.setBandwidth(bandwidthLimit);
+	}
 
-    public UnitSystem getUnitSystem() {
-        return unitSystem;
-    }
+	public UnitSystem getUnitSystem() {
+		return unitSystem;
+	}
 
-    @XmlElement
-    public void setUnitSystem(UnitSystem unitSystem) {
-        if (unitSystem == null)
-            unitSystem = UnitSystem.Metric;
-        this.unitSystem = unitSystem;
-    }
+	@XmlElement
+	public void setUnitSystem(UnitSystem unitSystem) {
+		if (unitSystem == null)
+			unitSystem = UnitSystem.Metric;
+		this.unitSystem = unitSystem;
+	}
 
-    @XmlTransient
-    public File getMapSourcesDirectory() {
-        String mapSourcesDirCfg = directories.mapSourcesDirectory;
-        File mapSourcesDir;
-        if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0)
-            mapSourcesDir = DirectoryManager.mapSourcesDir;
-        else
-            mapSourcesDir = new File(mapSourcesDirCfg);
-        return mapSourcesDir;
-    }
+	@XmlTransient
+	public File getMapSourcesDirectory() {
+		String mapSourcesDirCfg = directories.mapSourcesDirectory;
+		File mapSourcesDir;
+		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0)
+			mapSourcesDir = DirectoryManager.mapSourcesDir;
+		else
+			mapSourcesDir = new File(mapSourcesDirCfg);
+		return mapSourcesDir;
+	}
 
-    @XmlTransient
-    public File getAtlasOutputDirectory() {
-        if (directories.atlasOutputDirectory != null)
-            return new File(directories.atlasOutputDirectory);
-        return new File(DirectoryManager.currentDir, "atlases");
-    }
+	@XmlTransient
+	public File getAtlasOutputDirectory() {
+		if (directories.atlasOutputDirectory != null)
+			return new File(directories.atlasOutputDirectory);
+		return new File(DirectoryManager.currentDir, "atlases");
+	}
 
-    /**
-     * @param dir <code>null</code> or empty string resets to default directory otherwise set the new atlas output
-     *            directory.
-     */
-    public void setAtlasOutputDirectory(String dir) {
-        if (dir != null && dir.trim().length() == 0)
-            dir = null;
-        directories.atlasOutputDirectory = dir;
-    }
+	/**
+	 * @param dir
+	 *            <code>null</code> or empty string resets to default directory
+	 *            otherwise set the new atlas output directory.
+	 */
+	public void setAtlasOutputDirectory(String dir) {
+		if (dir != null && dir.trim().length() == 0)
+			dir = null;
+		directories.atlasOutputDirectory = dir;
+	}
 
-    public String getAtlasOutputDirectoryString() {
-        if (directories.atlasOutputDirectory == null)
-            return "";
-        return directories.atlasOutputDirectory;
-    }
+	public String getAtlasOutputDirectoryString() {
+		if (directories.atlasOutputDirectory == null)
+			return "";
+		return directories.atlasOutputDirectory;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public String getVersion() {
+		return version;
+	}
 
-    public static class Directories {
-        @XmlElement
-        public String tileStoreDirectory;
-        @XmlElement
-        private String atlasOutputDirectory = null;
-        @XmlElement
-        private String mapSourcesDirectory;
-    }
+	public static class Directories {
+		@XmlElement
+		public String tileStoreDirectory;
+		@XmlElement
+		private String atlasOutputDirectory = null;
+		@XmlElement
+		private String mapSourcesDirectory;
+	}
 
-    public static class AtlasFormatSpecificSettings {
+	public static class AtlasFormatSpecificSettings {
 
-        @XmlElement
-        public Integer garminCustomMaxMapCount = 100;
-    }
+		@XmlElement
+		public Integer garminCustomMaxMapCount = 100;
+	}
 
-    public static class MainWindowSettings {
-        public Dimension size = new Dimension();
-        public Point position = new Point(-1, -1);
-        public boolean maximized = true;
+	public static class MainWindowSettings {
+		public Dimension size = new Dimension();
+		public Point position = new Point(-1, -1);
+		public boolean maximized = true;
 
-        public boolean rightPanelVisible = true;
-        public boolean leftPanelVisible = true;
+		public boolean rightPanelVisible = true;
+		public boolean leftPanelVisible = true;
 
-        /**
-         * Width of the left panel. Default value it taken from MainGUI.LEFT_PANEL_MIN_SIZE
-         */
-        public int leftPanelWidth = LEFT_PANEL_MIN_SIZE;
+		/**
+		 * Width of the left panel. Default value it taken from
+		 * MainGUI.LEFT_PANEL_MIN_SIZE
+		 */
+		public int leftPanelWidth = LEFT_PANEL_MIN_SIZE;
 
-        @XmlElementWrapper(name = "collapsedPanels")
-        @XmlElement(name = "collapsedPanel")
-        public Vector<String> collapsedPanels = new Vector<>();
-    }
+		@XmlElementWrapper(name = "collapsedPanels")
+		@XmlElement(name = "collapsedPanel")
+		public Vector<String> collapsedPanels = new Vector<>();
+	}
 
-    public static class MapSourcesUpdate {
-        public String etag;
+	public static class MapSourcesUpdate {
+		public String etag;
 
-        public Date lastUpdate;
-    }
+		public Date lastUpdate;
+	}
 
 }

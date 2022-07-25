@@ -35,86 +35,89 @@ import java.util.Iterator;
 
 public class TileImageJpegDataWriter implements TileImageDataWriter {
 
-    protected static final Logger log = LoggerFactory.getLogger(TileImageJpegDataWriter.class);
-    protected final ImageWriteParam iwp;
-    protected final float jpegCompressionLevel;
-    protected ImageWriter jpegImageWriter = null;
+	protected static final Logger log = LoggerFactory.getLogger(TileImageJpegDataWriter.class);
+	protected final ImageWriteParam iwp;
+	protected final float jpegCompressionLevel;
+	protected ImageWriter jpegImageWriter = null;
 
-    public TileImageJpegDataWriter(float jpegCompressionLevel) {
-        super();
-        this.jpegCompressionLevel = jpegCompressionLevel;
-        if (log.isTraceEnabled()) {
-            String s = "Available JPEG image writers:";
-            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
-            while (writers.hasNext()) {
-                ImageWriter w = writers.next();
-                s += "\n\t" + w.getClass().getName();
-            }
-            log.trace(s);
-        }
-        jpegImageWriter = ImageIO.getImageWritersByFormatName("jpeg").next();
-        if (jpegImageWriter == null) {
-            throw new NullPointerException("Unable to create a JPEG image writer");
-        }
-        jpegImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
-        log.debug("Used JPEG image writer: " + jpegImageWriter.getClass().getName());
-        iwp = jpegImageWriter.getDefaultWriteParam();
-        iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        iwp.setCompressionQuality(jpegCompressionLevel);
-    }
+	public TileImageJpegDataWriter(float jpegCompressionLevel) {
+		super();
+		this.jpegCompressionLevel = jpegCompressionLevel;
+		if (log.isTraceEnabled()) {
+			String s = "Available JPEG image writers:";
+			Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+			while (writers.hasNext()) {
+				ImageWriter w = writers.next();
+				s += "\n\t" + w.getClass().getName();
+			}
+			log.trace(s);
+		}
+		jpegImageWriter = ImageIO.getImageWritersByFormatName("jpeg").next();
+		if (jpegImageWriter == null) {
+			throw new NullPointerException("Unable to create a JPEG image writer");
+		}
+		jpegImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
+		log.debug("Used JPEG image writer: " + jpegImageWriter.getClass().getName());
+		iwp = jpegImageWriter.getDefaultWriteParam();
+		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		iwp.setCompressionQuality(jpegCompressionLevel);
+	}
 
-    /**
-     * @param jpegCompressionLevel a float between 0 and 1; 1 specifies minimum compression and maximum quality
-     */
-    public TileImageJpegDataWriter(double jpegCompressionLevel) {
-        this((float) jpegCompressionLevel);
-    }
+	/**
+	 * @param jpegCompressionLevel
+	 *            a float between 0 and 1; 1 specifies minimum compression and
+	 *            maximum quality
+	 */
+	public TileImageJpegDataWriter(double jpegCompressionLevel) {
+		this((float) jpegCompressionLevel);
+	}
 
-    public TileImageJpegDataWriter(TileImageJpegDataWriter jpegWriter) {
-        this(jpegWriter.getJpegCompressionLevel());
-    }
+	public TileImageJpegDataWriter(TileImageJpegDataWriter jpegWriter) {
+		this(jpegWriter.getJpegCompressionLevel());
+	}
 
-    public static boolean performOpenJDKJpegTest() {
-        try {
-            TileImageJpegDataWriter writer = new TileImageJpegDataWriter(0.99d);
-            BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
-            writer.processImage(image, NullOutputStream.NULL_OUTPUT_STREAM);
-            return true;
-        } catch (Exception e) {
-            log.debug("Jpeg test failed", e);
-            return false;
-        }
-    }
+	public static boolean performOpenJDKJpegTest() {
+		try {
+			TileImageJpegDataWriter writer = new TileImageJpegDataWriter(0.99d);
+			BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+			writer.processImage(image, NullOutputStream.NULL_OUTPUT_STREAM);
+			return true;
+		} catch (Exception e) {
+			log.debug("Jpeg test failed", e);
+			return false;
+		}
+	}
 
-    public float getJpegCompressionLevel() {
-        return jpegCompressionLevel;
-    }
+	public float getJpegCompressionLevel() {
+		return jpegCompressionLevel;
+	}
 
-    public void processImage(BufferedImage image, OutputStream out) throws IOException {
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
 
-        if (image.getColorModel().hasAlpha()) {
-            // Javas JPEG writes has a bug when the image has alpha transparency
-            // see http://stackoverflow.com/questions/4386446/problem-using-imageio-write-jpg-file
+		if (image.getColorModel().hasAlpha()) {
+			// Javas JPEG writes has a bug when the image has alpha transparency
+			// see
+			// http://stackoverflow.com/questions/4386446/problem-using-imageio-write-jpg-file
 
-            BufferedImage imageRGB = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = imageRGB.createGraphics();
-            g.drawImage(image, null, 0, 0);
-            g.dispose();
-            image = imageRGB;
-        }
+			BufferedImage imageRGB = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Graphics2D g = imageRGB.createGraphics();
+			g.drawImage(image, null, 0, 0);
+			g.dispose();
+			image = imageRGB;
+		}
 
-        ImageOutputStream imageOut = ImageIO.createImageOutputStream(out);
-        jpegImageWriter.setOutput(imageOut);
-        IIOImage ioImage = new IIOImage(image, null, null);
-        jpegImageWriter.write(null, ioImage, iwp);
-    }
+		ImageOutputStream imageOut = ImageIO.createImageOutputStream(out);
+		jpegImageWriter.setOutput(imageOut);
+		IIOImage ioImage = new IIOImage(image, null, null);
+		jpegImageWriter.write(null, ioImage, iwp);
+	}
 
-    public void close() {
-        jpegImageWriter.dispose();
-        jpegImageWriter = null;
-    }
+	public void close() {
+		jpegImageWriter.dispose();
+		jpegImageWriter = null;
+	}
 
-    public TileImageType getType() {
-        return TileImageType.JPG;
-    }
+	public TileImageType getType() {
+		return TileImageType.JPG;
+	}
 }

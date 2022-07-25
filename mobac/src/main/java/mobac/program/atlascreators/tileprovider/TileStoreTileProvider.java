@@ -20,13 +20,13 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.interfaces.MapSource.LoadMethod;
 
 /**
- * A {@link TileProvider} implementation that retrieves all tiles from the tile store (if the <code>mapSource</code>
- * supports that).
+ * A {@link TileProvider} implementation that retrieves all tiles from the tile
+ * store (if the <code>mapSource</code> supports that).
  */
 public class TileStoreTileProvider extends MapSourceProvider {
 
-    public TileStoreTileProvider(MapSource mapSource, int zoom) {
-        super(mapSource, zoom, LoadMethod.CACHE);
-    }
+	public TileStoreTileProvider(MapSource mapSource, int zoom) {
+		super(mapSource, zoom, LoadMethod.CACHE);
+	}
 
 }

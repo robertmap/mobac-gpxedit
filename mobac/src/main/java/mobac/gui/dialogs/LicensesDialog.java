@@ -43,97 +43,97 @@ import java.io.IOException;
 
 public class LicensesDialog extends JFrame implements ChangeListener, ActionListener {
 
-    private final JTextArea textArea;
-    private final JTabbedPane tab;
-    private final LicenseInfo[] licenses = new LicenseInfo[]{ //
-            new LicenseInfo("<h2>Mobile Atlas Creator</h2>", "gpl.txt"),
-            new LicenseInfo("<h3>Library slf4j</h3>", "mit.txt"),
-            new LicenseInfo("<h3>Library Logback</h3>", "lgpl-2.1.txt"),
-            new LicenseInfo("<h3>Library Apache Commons Codec</h3>", "apache-2.0.txt"),
-            new LicenseInfo("<h3>Library Apache Commons IO</h3>", "apache-2.0.txt"),
-            new LicenseInfo("<h3>Library Apache Commons Text</h3>", "apache-2.0.txt"),
-            new LicenseInfo("<h3>Library Berkely-DB JavaEdition</h3>", "license-dbd-je.txt"),
-            new LicenseInfo("<h3>Library BeanShell</h3>", "lgpl-3.0.txt"),
-            new LicenseInfo("<h3>Library JavaPNG</h3>", "gpl.txt"),
-            new LicenseInfo("<h3>Library iTextPDF</h3>", "agpl.txt"),
-            new LicenseInfo("<h3>Library sqlite-jdbc</h3>", "apache-2.0.txt"),
-            new LicenseInfo("<h3>mapsforge</h3>", "lgpl-3.0.txt"),
-            new LicenseInfo("<h3>Silk Icons</h3>", "cc-attribution-2.5.txt")};
-    private String currentLicense = null;
+	private final JTextArea textArea;
+	private final JTabbedPane tab;
+	private final LicenseInfo[] licenses = new LicenseInfo[]{ //
+			new LicenseInfo("<h2>Mobile Atlas Creator</h2>", "gpl.txt"),
+			new LicenseInfo("<h3>Library slf4j</h3>", "mit.txt"),
+			new LicenseInfo("<h3>Library Logback</h3>", "lgpl-2.1.txt"),
+			new LicenseInfo("<h3>Library Apache Commons Codec</h3>", "apache-2.0.txt"),
+			new LicenseInfo("<h3>Library Apache Commons IO</h3>", "apache-2.0.txt"),
+			new LicenseInfo("<h3>Library Apache Commons Text</h3>", "apache-2.0.txt"),
+			new LicenseInfo("<h3>Library Berkely-DB JavaEdition</h3>", "license-dbd-je.txt"),
+			new LicenseInfo("<h3>Library BeanShell</h3>", "lgpl-3.0.txt"),
+			new LicenseInfo("<h3>Library JavaPNG</h3>", "gpl.txt"),
+			new LicenseInfo("<h3>Library iTextPDF</h3>", "agpl.txt"),
+			new LicenseInfo("<h3>Library sqlite-jdbc</h3>", "apache-2.0.txt"),
+			new LicenseInfo("<h3>mapsforge</h3>", "lgpl-3.0.txt"),
+			new LicenseInfo("<h3>Silk Icons</h3>", "cc-attribution-2.5.txt")};
+	private String currentLicense = null;
 
-    public LicensesDialog() {
-        super(I18nUtils.localizedStringForKey("dlg_license_title"));
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setLayout(new GridBagLayout());
-        setIconImages(MainGUI.MOBAC_ICONS);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        JButton ok = new JButton("OK");
-        textArea = new JTextArea();
-        textArea.setEditable(false);
-        textArea.setBackground(this.getBackground());
-        JScrollPane textScroller = new JScrollPane(textArea);
-        textScroller.setPreferredSize(new Dimension(700, (int) (dim.height * 0.8)));
+	public LicensesDialog() {
+		super(I18nUtils.localizedStringForKey("dlg_license_title"));
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		setLayout(new GridBagLayout());
+		setIconImages(MainGUI.MOBAC_ICONS);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		JButton ok = new JButton("OK");
+		textArea = new JTextArea();
+		textArea.setEditable(false);
+		textArea.setBackground(this.getBackground());
+		JScrollPane textScroller = new JScrollPane(textArea);
+		textScroller.setPreferredSize(new Dimension(700, (int) (dim.height * 0.8)));
 
-        tab = new JTabbedPane(JTabbedPane.LEFT, JTabbedPane.WRAP_TAB_LAYOUT);
-        Icon icon = new ImageIcon(new BufferedImage(1, 50, BufferedImage.TYPE_INT_ARGB));
+		tab = new JTabbedPane(JTabbedPane.LEFT, JTabbedPane.WRAP_TAB_LAYOUT);
+		Icon icon = new ImageIcon(new BufferedImage(1, 50, BufferedImage.TYPE_INT_ARGB));
 
-        boolean first = true;
-        for (LicenseInfo li : licenses) {
-            tab.addTab("<html>" + li.name + "</html>", icon, (first) ? textScroller : null);
-            first = false;
-        }
-        tab.addChangeListener(this);
-        stateChanged(null);
-        add(tab, GBC.eol().anchor(GBC.NORTH).fill());
+		boolean first = true;
+		for (LicenseInfo li : licenses) {
+			tab.addTab("<html>" + li.name + "</html>", icon, (first) ? textScroller : null);
+			first = false;
+		}
+		tab.addChangeListener(this);
+		stateChanged(null);
+		add(tab, GBC.eol().anchor(GBC.NORTH).fill());
 
-        // add(textScroller, GBC.eol());
-        add(ok, GBC.eol().anchor(GBC.CENTER).insets(5, 10, 10, 10));
-        ok.addActionListener(this);
-        pack();
+		// add(textScroller, GBC.eol());
+		add(ok, GBC.eol().anchor(GBC.CENTER).insets(5, 10, 10, 10));
+		ok.addActionListener(this);
+		pack();
 
-        setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
-    }
+		setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
+	}
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            ProgramInfo.initialize(); // Load revision info
-            JFrame dlg = new LicensesDialog();
-            dlg.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			ProgramInfo.initialize(); // Load revision info
+			JFrame dlg = new LicensesDialog();
+			dlg.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void stateChanged(ChangeEvent event) {
-        String license;
-        try {
-            String nextLicense = licenses[tab.getSelectedIndex()].licenseResource;
-            if (nextLicense.equals(currentLicense))
-                return;
-            license = Utilities.loadTextResource("text/" + nextLicense);
-            currentLicense = nextLicense;
-        } catch (IOException e) {
-            license = "Failed to load license: " + e.getMessage();
-        }
-        textArea.setText(license);
-        textArea.setCaretPosition(0);
+	public void stateChanged(ChangeEvent event) {
+		String license;
+		try {
+			String nextLicense = licenses[tab.getSelectedIndex()].licenseResource;
+			if (nextLicense.equals(currentLicense))
+				return;
+			license = Utilities.loadTextResource("text/" + nextLicense);
+			currentLicense = nextLicense;
+		} catch (IOException e) {
+			license = "Failed to load license: " + e.getMessage();
+		}
+		textArea.setText(license);
+		textArea.setCaretPosition(0);
 
-    }
+	}
 
-    public void actionPerformed(ActionEvent e) {
-        dispose();
-    }
+	public void actionPerformed(ActionEvent e) {
+		dispose();
+	}
 
-    private static class LicenseInfo {
-        public final String name;
-        public final String licenseResource;
+	private static class LicenseInfo {
+		public final String name;
+		public final String licenseResource;
 
-        public LicenseInfo(String name, String licenseResource) {
-            super();
-            this.name = name;
-            this.licenseResource = licenseResource;
-        }
+		public LicenseInfo(String name, String licenseResource) {
+			super();
+			this.name = name;
+			this.licenseResource = licenseResource;
+		}
 
-    }
+	}
 }

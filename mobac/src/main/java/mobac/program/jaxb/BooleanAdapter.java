@@ -20,21 +20,20 @@ import jakarta.xml.bind.UnmarshalException;
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class BooleanAdapter extends XmlAdapter<String, Boolean> {
-    @Override
-    public Boolean unmarshal(String v) throws Exception {
-        if ("true".equals(v)) {
-            return true;
-        }
-        if ("false".equals(v)) {
-            return false;
-        }
-        throw new UnmarshalException("Invalid boolean value: \"" + v +
-                "\" - allowed is \"true\" or \"false\"");
-    }
+	@Override
+	public Boolean unmarshal(String v) throws Exception {
+		if ("true".equals(v)) {
+			return true;
+		}
+		if ("false".equals(v)) {
+			return false;
+		}
+		throw new UnmarshalException("Invalid boolean value: \"" + v + "\" - allowed is \"true\" or \"false\"");
+	}
 
-    @Override
-    public String marshal(Boolean v) throws Exception {
-        return Boolean.toString(v);
-    }
+	@Override
+	public String marshal(Boolean v) throws Exception {
+		return Boolean.toString(v);
+	}
 
 }

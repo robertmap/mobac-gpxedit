@@ -23,19 +23,19 @@ import javax.imageio.ImageWriter;
 import javax.imageio.event.IIOWriteWarningListener;
 
 /**
- * Allows to capture non-fatal warnings that may occur upon writing an image. At the moment all warnings are simply
- * logged.
+ * Allows to capture non-fatal warnings that may occur upon writing an image. At
+ * the moment all warnings are simply logged.
  */
 public class ImageWriterWarningListener implements IIOWriteWarningListener {
 
-    public static final IIOWriteWarningListener INSTANCE = new ImageWriterWarningListener();
-    private static final Logger log = LoggerFactory.getLogger(ImageWriterWarningListener.class);
+	public static final IIOWriteWarningListener INSTANCE = new ImageWriterWarningListener();
+	private static final Logger log = LoggerFactory.getLogger(ImageWriterWarningListener.class);
 
-    public void warningOccurred(ImageWriter source, int imageIndex, String warning) {
-        if (log.isDebugEnabled())
-            log.warn(warning + " - caused by: " + source + " on imageIndex " + imageIndex);
-        else
-            log.warn(warning);
-    }
+	public void warningOccurred(ImageWriter source, int imageIndex, String warning) {
+		if (log.isDebugEnabled())
+			log.warn(warning + " - caused by: " + source + " on imageIndex " + imageIndex);
+		else
+			log.warn(warning);
+	}
 
 }

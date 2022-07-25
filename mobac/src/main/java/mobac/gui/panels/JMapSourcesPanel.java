@@ -29,41 +29,42 @@ import java.awt.GridBagLayout;
 
 public class JMapSourcesPanel extends JCollapsiblePanel {
 
-    // initialMapSourceLabel can't be empty to let the mapSourceLabel initialize with a proper height
-    protected static final String initialMapSourceLabel = " ";
-    private static final long serialVersionUID = 1L;
-    protected final String plainTitle;
-    protected JLabel mapSourceLabel;
+	// initialMapSourceLabel can't be empty to let the mapSourceLabel initialize
+	// with a proper height
+	protected static final String initialMapSourceLabel = " ";
+	private static final long serialVersionUID = 1L;
+	protected final String plainTitle;
+	protected JLabel mapSourceLabel;
 
-    public JMapSourcesPanel(JMapSourceTree mapSourceTree) {
-        super(I18nUtils.localizedStringForKey("lp_map_source_title"), new GridBagLayout());
-        plainTitle = getTitle();
+	public JMapSourcesPanel(JMapSourceTree mapSourceTree) {
+		super(I18nUtils.localizedStringForKey("lp_map_source_title"), new GridBagLayout());
+		plainTitle = getTitle();
 
-        JScrollPane mapSourceTreeScrollPane = new JScrollPane(mapSourceTree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane mapSourceTreeScrollPane = new JScrollPane(mapSourceTree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        mapSourceTreeScrollPane.setPreferredSize(new Dimension(100, 200));
-        mapSourceTreeScrollPane.setAutoscrolls(true);
-        addContent(mapSourceTreeScrollPane, GBC.eol().fill().insets(0, 1, 0, 0));
-    }
+		mapSourceTreeScrollPane.setPreferredSize(new Dimension(100, 200));
+		mapSourceTreeScrollPane.setAutoscrolls(true);
+		addContent(mapSourceTreeScrollPane, GBC.eol().fill().insets(0, 1, 0, 0));
+	}
 
-    @Override
-    protected void fillTitlePanel() {
-        super.fillTitlePanel();
-        mapSourceLabel = new JLabel(initialMapSourceLabel);
-        mapSourceLabel.addMouseListener(collapsingMouseListener);
-        titlePanel.add(mapSourceLabel, GBC.std());
-        titlePanel.revalidate();
-    }
+	@Override
+	protected void fillTitlePanel() {
+		super.fillTitlePanel();
+		mapSourceLabel = new JLabel(initialMapSourceLabel);
+		mapSourceLabel.addMouseListener(collapsingMouseListener);
+		titlePanel.add(mapSourceLabel, GBC.std());
+		titlePanel.revalidate();
+	}
 
-    public void setMapSourceLabel(MapSource mapSource) {
-        String mapSourceString = mapSource.toString();
-        if (mapSourceString == null) {
-            mapSourceString = "";
-        }
+	public void setMapSourceLabel(MapSource mapSource) {
+		String mapSourceString = mapSource.toString();
+		if (mapSourceString == null) {
+			mapSourceString = "";
+		}
 
-        mapSourceLabel.setText(mapSourceString);
-        mapSourceLabel.setToolTipText(JMapSourceTree.generateMapSourceTooltip(mapSource));
-        mapSourceLabel.setVisible(!mapSourceString.isEmpty());
-    }
+		mapSourceLabel.setText(mapSourceString);
+		mapSourceLabel.setToolTipText(JMapSourceTree.generateMapSourceTooltip(mapSource));
+		mapSourceLabel.setVisible(!mapSourceString.isEmpty());
+	}
 }

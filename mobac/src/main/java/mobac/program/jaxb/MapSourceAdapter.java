@@ -16,22 +16,20 @@
  ******************************************************************************/
 package mobac.program.jaxb;
 
-
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import mobac.mapsources.MapSourcesManager;
 import mobac.program.interfaces.MapSource;
 
-
 public class MapSourceAdapter extends XmlAdapter<String, MapSource> {
 
-    @Override
-    public String marshal(MapSource mapSource) throws Exception {
-        return mapSource.getName();
-    }
+	@Override
+	public String marshal(MapSource mapSource) throws Exception {
+		return mapSource.getName();
+	}
 
-    @Override
-    public MapSource unmarshal(String name) throws Exception {
-        return MapSourcesManager.getInstance().getSourceByName(name);
-    }
+	@Override
+	public MapSource unmarshal(String name) throws Exception {
+		return MapSourcesManager.getInstance().getSourceByName(name);
+	}
 
 }

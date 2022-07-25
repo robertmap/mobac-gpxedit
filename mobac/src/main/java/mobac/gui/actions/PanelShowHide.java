@@ -22,16 +22,15 @@ import java.awt.event.ActionListener;
 
 public class PanelShowHide implements ActionListener {
 
-    private final JPanel panel;
+	private final JPanel panel;
 
-    public PanelShowHide(JPanel panel) {
-        super();
-        this.panel = panel;
-    }
+	public PanelShowHide(JPanel panel) {
+		super();
+		this.panel = panel;
+	}
 
-
-    public void actionPerformed(ActionEvent e) {
-        panel.setVisible(!panel.isVisible());
-    }
+	public void actionPerformed(ActionEvent e) {
+		panel.setVisible(!panel.isVisible());
+	}
 
 }

@@ -30,40 +30,40 @@ import java.io.IOException;
 
 public class DownloadedTileProvider implements TileProvider {
 
-    public static final String TILE_FILENAME_PATTERN = "x%dy%d";
-    private static final Logger log = LoggerFactory.getLogger(DownloadedTileProvider.class);
-    protected final TarIndex tarIndex;
-    protected final MapInterface map;
-    protected final TileImageType mapTileType;
+	public static final String TILE_FILENAME_PATTERN = "x%dy%d";
+	private static final Logger log = LoggerFactory.getLogger(DownloadedTileProvider.class);
+	protected final TarIndex tarIndex;
+	protected final MapInterface map;
+	protected final TileImageType mapTileType;
 
-    public DownloadedTileProvider(TarIndex tarIndex, MapInterface map) {
-        this.tarIndex = tarIndex;
-        this.map = map;
-        this.mapTileType = map.getMapSource().getTileImageType();
-    }
+	public DownloadedTileProvider(TarIndex tarIndex, MapInterface map) {
+		this.tarIndex = tarIndex;
+		this.map = map;
+		this.mapTileType = map.getMapSource().getTileImageType();
+	}
 
-    public byte[] getTileData(int x, int y) throws IOException {
-        log.trace("Reading tile x=" + x + " y=" + y);
-        return tarIndex.getEntryContent(String.format(TILE_FILENAME_PATTERN, x, y));
-    }
+	public byte[] getTileData(int x, int y) throws IOException {
+		log.trace("Reading tile x=" + x + " y=" + y);
+		return tarIndex.getEntryContent(String.format(TILE_FILENAME_PATTERN, x, y));
+	}
 
-    public BufferedImage getTileImage(int x, int y) throws IOException {
-        byte[] unconvertedTileData = getTileData(x, y);
-        if (unconvertedTileData == null)
-            return null;
-        try {
-            return ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
-        } catch (Exception e) {
-            throw new IOException("Unable to load image x=" + x + " y=" + y + " - error: " + e);
-        }
-    }
+	public BufferedImage getTileImage(int x, int y) throws IOException {
+		byte[] unconvertedTileData = getTileData(x, y);
+		if (unconvertedTileData == null)
+			return null;
+		try {
+			return ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
+		} catch (Exception e) {
+			throw new IOException("Unable to load image x=" + x + " y=" + y + " - error: " + e);
+		}
+	}
 
-    public boolean preferTileImageUsage() {
-        return false;
-    }
+	public boolean preferTileImageUsage() {
+		return false;
+	}
 
-    public MapSource getMapSource() {
-        return map.getMapSource();
-    }
+	public MapSource getMapSource() {
+		return map.getMapSource();
+	}
 
 }

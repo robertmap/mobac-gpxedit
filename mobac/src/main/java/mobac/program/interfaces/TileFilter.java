@@ -17,21 +17,25 @@
 package mobac.program.interfaces;
 
 /**
- * Basic interface that allows to filter tiles based on their position and zoom level in the map.
+ * Basic interface that allows to filter tiles based on their position and zoom
+ * level in the map.
  */
 public interface TileFilter {
 
-    /**
-     * Tests if the tile specified by the parameters should be included or excluded
-     *
-     * @param x
-     * @param y
-     * @param zoom
-     * @param mapSource
-     * @return <ul>
-     * <li><code>true</code>: tile did pass the filter and should be included</li>
-     * <li><code>false</code>:tile did not pass the filter and should be excluded</li>
-     * </ul>
-     */
-    boolean testTile(int x, int y, int zoom, MapSource mapSource);
+	/**
+	 * Tests if the tile specified by the parameters should be included or excluded
+	 *
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @param mapSource
+	 * @return
+	 *         <ul>
+	 *         <li><code>true</code>: tile did pass the filter and should be
+	 *         included</li>
+	 *         <li><code>false</code>:tile did not pass the filter and should be
+	 *         excluded</li>
+	 *         </ul>
+	 */
+	boolean testTile(int x, int y, int zoom, MapSource mapSource);
 }

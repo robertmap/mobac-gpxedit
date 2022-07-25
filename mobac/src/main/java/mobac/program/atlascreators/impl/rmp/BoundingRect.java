@@ -29,57 +29,56 @@ package mobac.program.atlascreators.impl.rmp;
  * @author Andreas Sander
  */
 public class BoundingRect {
-    private double north;
-    private double south;
-    private double west;
-    private double east;
+	private double north;
+	private double south;
+	private double west;
+	private double east;
 
-    /**
-     * Constructor
-     */
-    public BoundingRect(double north, double south, double west, double east) {
-        this.north = north;
-        this.south = south;
-        this.west = west;
-        this.east = east;
-    }
+	/**
+	 * Constructor
+	 */
+	public BoundingRect(double north, double south, double west, double east) {
+		this.north = north;
+		this.south = south;
+		this.west = west;
+		this.east = east;
+	}
 
-    public double getNorth() {
-        return north;
-    }
+	public double getNorth() {
+		return north;
+	}
 
-    public void setNorth(double north) {
-        this.north = north;
-    }
+	public void setNorth(double north) {
+		this.north = north;
+	}
 
-    public double getSouth() {
-        return south;
-    }
+	public double getSouth() {
+		return south;
+	}
 
-    public void setSouth(double south) {
-        this.south = south;
-    }
+	public void setSouth(double south) {
+		this.south = south;
+	}
 
-    public double getWest() {
-        return west;
-    }
+	public double getWest() {
+		return west;
+	}
 
-    public void setWest(double west) {
-        this.west = west;
-    }
+	public void setWest(double west) {
+		this.west = west;
+	}
 
-    public double getEast() {
-        return east;
-    }
+	public double getEast() {
+		return east;
+	}
 
-    public void setEast(double east) {
-        this.east = east;
-    }
+	public void setEast(double east) {
+		this.east = east;
+	}
 
-    @Override
-    public String toString() {
-        return String.format("BoundingRect [N=%2.4f, S==%2.4f, W=%2.4f, E=%2.4f]", north, south,
-                west, east);
-    }
+	@Override
+	public String toString() {
+		return String.format("BoundingRect [N=%2.4f, S==%2.4f, W=%2.4f, E=%2.4f]", north, south, west, east);
+	}
 
 }

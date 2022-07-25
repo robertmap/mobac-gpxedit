@@ -36,58 +36,60 @@ import java.awt.event.ActionListener;
 
 public class AddRectangleMapAutocut implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        MainGUI mg = MainGUI.getMainGUI();
-        JAtlasTree jAtlasTree = mg.jAtlasTree;
-        final String mapNameFmt = "%s %02d";
-        AtlasInterface atlasInterface = jAtlasTree.getAtlas();
-        String name = mg.getUserText();
-        MapSource mapSource = mg.getSelectedMapSource();
-        SelectedZoomLevels sZL = mg.getSelectedZoomLevels();
-        MapSelection ms = mg.getMapSelectionCoordinates();
-        if (ms == null) {
-            JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_no_select_area"));
-            return;
-        }
-        Settings settings = Settings.getInstance();
-        // String errorText = mg.validateInput();
-        // if (errorText.length() > 0) {
-        // JOptionPane.showMessageDialog(mg, errorText, "Errors", JOptionPane.ERROR_MESSAGE);
-        // return;
-        // }
+	public void actionPerformed(ActionEvent event) {
+		MainGUI mg = MainGUI.getMainGUI();
+		JAtlasTree jAtlasTree = mg.jAtlasTree;
+		final String mapNameFmt = "%s %02d";
+		AtlasInterface atlasInterface = jAtlasTree.getAtlas();
+		String name = mg.getUserText();
+		MapSource mapSource = mg.getSelectedMapSource();
+		SelectedZoomLevels sZL = mg.getSelectedZoomLevels();
+		MapSelection ms = mg.getMapSelectionCoordinates();
+		if (ms == null) {
+			JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_no_select_area"));
+			return;
+		}
+		Settings settings = Settings.getInstance();
+		// String errorText = mg.validateInput();
+		// if (errorText.length() > 0) {
+		// JOptionPane.showMessageDialog(mg, errorText, "Errors",
+		// JOptionPane.ERROR_MESSAGE);
+		// return;
+		// }
 
-        int[] zoomLevels = sZL.getZoomLevels();
-        if (zoomLevels.length == 0) {
-            JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_no_zoom_level_selected"));
-            return;
-        }
+		int[] zoomLevels = sZL.getZoomLevels();
+		if (zoomLevels.length == 0) {
+			JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_no_zoom_level_selected"));
+			return;
+		}
 
-        String layerName = name;
-        Layer layer = null;
-        int c = 1;
-        boolean success = false;
-        do {
-            try {
-                layer = new Layer(atlasInterface, layerName);
-                success = true;
-            } catch (InvalidNameException e) {
-                layerName = name + "_" + c++;
-            }
-        } while (!success);
-        for (int zoom : zoomLevels) {
-            Point tl = ms.getTopLeftPixelCoordinate(zoom);
-            Point br = ms.getBottomRightPixelCoordinate(zoom);
-            TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
-            try {
-                String mapName = String.format(mapNameFmt, layerName, zoom);
-                layer.addMapsAutocut(mapName, mapSource, tl, br, zoom, customTileParameters, settings.maxMapSize, settings.mapOverlapTiles);
-            } catch (InvalidNameException e) {
-                Logging.LOG.error("", e);
-            }
-        }
-        atlasInterface.addLayer(layer);
-        jAtlasTree.getTreeModel().notifyNodeInsert(layer);
+		String layerName = name;
+		Layer layer = null;
+		int c = 1;
+		boolean success = false;
+		do {
+			try {
+				layer = new Layer(atlasInterface, layerName);
+				success = true;
+			} catch (InvalidNameException e) {
+				layerName = name + "_" + c++;
+			}
+		} while (!success);
+		for (int zoom : zoomLevels) {
+			Point tl = ms.getTopLeftPixelCoordinate(zoom);
+			Point br = ms.getBottomRightPixelCoordinate(zoom);
+			TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
+			try {
+				String mapName = String.format(mapNameFmt, layerName, zoom);
+				layer.addMapsAutocut(mapName, mapSource, tl, br, zoom, customTileParameters, settings.maxMapSize,
+						settings.mapOverlapTiles);
+			} catch (InvalidNameException e) {
+				Logging.LOG.error("", e);
+			}
+		}
+		atlasInterface.addLayer(layer);
+		jAtlasTree.getTreeModel().notifyNodeInsert(layer);
 
-    }
+	}
 
 }

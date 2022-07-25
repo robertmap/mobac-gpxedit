@@ -25,10 +25,10 @@ import java.awt.event.ActionListener;
 
 public class SelectionModePolygon implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
-        previewMap.setMapSelectionController(new PolygonSelectionMapController(previewMap));
+	public void actionPerformed(ActionEvent e) {
+		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+		previewMap.setMapSelectionController(new PolygonSelectionMapController(previewMap));
 
-    }
+	}
 
 }

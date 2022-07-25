@@ -20,9 +20,9 @@ import java.math.BigDecimal;
 
 public interface GpxPoint {
 
-    BigDecimal getLat();
+	BigDecimal getLat();
 
-    BigDecimal getLon();
+	BigDecimal getLon();
 
-    BigDecimal getEle();
+	BigDecimal getEle();
 }

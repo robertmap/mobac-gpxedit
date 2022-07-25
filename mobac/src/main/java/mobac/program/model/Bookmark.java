@@ -25,57 +25,57 @@ import mobac.program.interfaces.MapSource;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Bookmark extends EastNorthCoordinate {
 
-    @XmlAttribute
-    protected int zoom;
+	@XmlAttribute
+	protected int zoom;
 
-    @XmlAttribute
-    protected String name;
+	@XmlAttribute
+	protected String name;
 
-    @XmlAttribute
-    protected String mapSource;
+	@XmlAttribute
+	protected String mapSource;
 
-    /**
-     * Needed for JAXB
-     */
-    @SuppressWarnings("unused")
-    private Bookmark() {
+	/**
+	 * Needed for JAXB
+	 */
+	@SuppressWarnings("unused")
+	private Bookmark() {
 
-    }
+	}
 
-    public Bookmark(MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
-        this(null, mapSource, zoom, pixelCoordinateX, pixelCoordinateY);
-    }
+	public Bookmark(MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
+		this(null, mapSource, zoom, pixelCoordinateX, pixelCoordinateY);
+	}
 
-    public Bookmark(String name, MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
-        super(mapSource.getMapSpace(), zoom, pixelCoordinateX, pixelCoordinateY);
-        this.mapSource = mapSource.getName();
-        this.zoom = zoom;
-        this.name = name;
-    }
+	public Bookmark(String name, MapSource mapSource, int zoom, int pixelCoordinateX, int pixelCoordinateY) {
+		super(mapSource.getMapSpace(), zoom, pixelCoordinateX, pixelCoordinateY);
+		this.mapSource = mapSource.getName();
+		this.zoom = zoom;
+		this.name = name;
+	}
 
-    public MapSource getMapSource() {
-        return MapSourcesManager.getInstance().getSourceByName(mapSource);
-    }
+	public MapSource getMapSource() {
+		return MapSourcesManager.getInstance().getSourceByName(mapSource);
+	}
 
-    public int getZoom() {
-        return zoom;
-    }
+	public int getZoom() {
+		return zoom;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        if (name != null && name.trim().length() == 0)
-            name = null;
-        this.name = name;
-    }
+	public void setName(String name) {
+		if (name != null && name.trim().length() == 0)
+			name = null;
+		this.name = name;
+	}
 
-    @Override
-    public String toString() {
-        if (name != null)
-            return name;
-        return String.format("%s at lat=%.3f lon=%.3f (zoom = %d)", mapSource, lat, lon, zoom);
-    }
+	@Override
+	public String toString() {
+		if (name != null)
+			return name;
+		return String.format("%s at lat=%.3f lon=%.3f (zoom = %d)", mapSource, lat, lon, zoom);
+	}
 
 }

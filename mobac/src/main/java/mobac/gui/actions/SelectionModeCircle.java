@@ -25,10 +25,10 @@ import java.awt.event.ActionListener;
 
 public class SelectionModeCircle implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
-        previewMap.setMapSelectionController(new PolygonCircleSelectionMapController(previewMap));
+	public void actionPerformed(ActionEvent e) {
+		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+		previewMap.setMapSelectionController(new PolygonCircleSelectionMapController(previewMap));
 
-    }
+	}
 
 }

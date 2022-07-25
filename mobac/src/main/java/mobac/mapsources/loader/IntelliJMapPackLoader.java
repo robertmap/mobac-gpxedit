@@ -26,35 +26,35 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
- * For map sources debugging inside IntelliJ. Allows to load the map sources directly from program class path instead of
- * the map packs.
+ * For map sources debugging inside IntelliJ. Allows to load the map sources
+ * directly from program class path instead of the map packs.
  */
 public class IntelliJMapPackLoader {
 
-    private final Logger log = LoggerFactory.getLogger(IntelliJMapPackLoader.class);
+	private final Logger log = LoggerFactory.getLogger(IntelliJMapPackLoader.class);
 
-    private final MapSourcesManager mapSourcesManager;
+	private final MapSourcesManager mapSourcesManager;
 
-    public IntelliJMapPackLoader(MapSourcesManager mapSourcesManager) throws IOException {
-        this.mapSourcesManager = mapSourcesManager;
-    }
+	public IntelliJMapPackLoader(MapSourcesManager mapSourcesManager) throws IOException {
+		this.mapSourcesManager = mapSourcesManager;
+	}
 
-    public boolean loadMapPacks() throws IOException {
-        int mapSourceCounter = 0;
-        Iterator<MapSource> it = ServiceLoader.load(MapSource.class).iterator();
-        while (it.hasNext()) {
-            try {
-                mapSourcesManager.addMapSource(it.next());
-                mapSourceCounter++;
-            } catch (Exception e) {
-                log.error("Failed to load map source", e);
-            }
-        }
-        boolean result = mapSourceCounter > 0;
-        if (result) {
-            log.info("Loaded " + mapSourceCounter + " map sources");
-        }
-        return result;
-    }
+	public boolean loadMapPacks() throws IOException {
+		int mapSourceCounter = 0;
+		Iterator<MapSource> it = ServiceLoader.load(MapSource.class).iterator();
+		while (it.hasNext()) {
+			try {
+				mapSourcesManager.addMapSource(it.next());
+				mapSourceCounter++;
+			} catch (Exception e) {
+				log.error("Failed to load map source", e);
+			}
+		}
+		boolean result = mapSourceCounter > 0;
+		if (result) {
+			log.info("Loaded " + mapSourceCounter + " map sources");
+		}
+		return result;
+	}
 
 }

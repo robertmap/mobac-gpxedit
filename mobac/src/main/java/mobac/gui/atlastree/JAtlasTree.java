@@ -63,342 +63,348 @@ import java.awt.event.MouseEvent;
 
 public class JAtlasTree extends JTree implements Autoscroll {
 
-    private static final long serialVersionUID = 1L;
-    private static final int margin = 12;
+	private static final long serialVersionUID = 1L;
+	private static final int margin = 12;
 
-    private static final String MSG_ATLAS_VERSION_MISMATCH = I18nUtils.localizedStringForKey("msg_atlas_version_mismatch");
+	private static final String MSG_ATLAS_VERSION_MISMATCH = I18nUtils
+			.localizedStringForKey("msg_atlas_version_mismatch");
 
-    private static final String MSG_ATLAS_DATA_CHECK_FAILED = I18nUtils.localizedStringForKey("msg_atlas_data_check_failed");
+	private static final String MSG_ATLAS_DATA_CHECK_FAILED = I18nUtils
+			.localizedStringForKey("msg_atlas_data_check_failed");
 
-    private static final String MSG_ATLAS_EMPTY = I18nUtils.localizedStringForKey("msg_atlas_is_empty");
+	private static final String MSG_ATLAS_EMPTY = I18nUtils.localizedStringForKey("msg_atlas_is_empty");
 
-    private static final String ACTION_DELETE_NODE = "DELETE_NODE";
+	private static final String ACTION_DELETE_NODE = "DELETE_NODE";
 
-    private static final Logger log = LoggerFactory.getLogger(JAtlasTree.class);
-    protected NodeRenderer nodeRenderer;
-    protected String defaultToolTiptext;
-    protected KeyStroke deleteNodeKS;
-    protected DragDropController ddc;
-    protected boolean displaySelectedMapArea = false;
-    private final AtlasTreeModel treeModel;
-    private final PreviewMap mapView;
+	private static final Logger log = LoggerFactory.getLogger(JAtlasTree.class);
+	private final AtlasTreeModel treeModel;
+	private final PreviewMap mapView;
+	protected NodeRenderer nodeRenderer;
+	protected String defaultToolTiptext;
+	protected KeyStroke deleteNodeKS;
+	protected DragDropController ddc;
+	protected boolean displaySelectedMapArea = false;
 
-    public JAtlasTree(PreviewMap mapView) {
-        super(new AtlasTreeModel());
-        if (mapView == null)
-            throw new NullPointerException("MapView parameter is null");
-        this.mapView = mapView;
-        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        ddc = new DragDropController(this);
-        treeModel = (AtlasTreeModel) getModel();
-        // setRootVisible(false);
-        setShowsRootHandles(true);
-        nodeRenderer = new NodeRenderer();
-        setCellRenderer(nodeRenderer);
-        setCellEditor(new NodeEditor(this));
-        setToolTipText("");
-        defaultToolTiptext = I18nUtils.localizedStringForKey("lp_atlas_default_tip");
-        setAutoscrolls(true);
-        addMouseListener(new MouseController(this));
+	public JAtlasTree(PreviewMap mapView) {
+		super(new AtlasTreeModel());
+		if (mapView == null)
+			throw new NullPointerException("MapView parameter is null");
+		this.mapView = mapView;
+		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		ddc = new DragDropController(this);
+		treeModel = (AtlasTreeModel) getModel();
+		// setRootVisible(false);
+		setShowsRootHandles(true);
+		nodeRenderer = new NodeRenderer();
+		setCellRenderer(nodeRenderer);
+		setCellEditor(new NodeEditor(this));
+		setToolTipText("");
+		defaultToolTiptext = I18nUtils.localizedStringForKey("lp_atlas_default_tip");
+		setAutoscrolls(true);
+		addMouseListener(new MouseController(this));
 
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
+		InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = getActionMap();
 
-        // map moving
-        inputMap.put(deleteNodeKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), ACTION_DELETE_NODE);
-        actionMap.put(ACTION_DELETE_NODE, new AbstractAction(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_delete_node")) {
+		// map moving
+		inputMap.put(deleteNodeKS = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), ACTION_DELETE_NODE);
+		actionMap.put(ACTION_DELETE_NODE,
+				new AbstractAction(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_delete_node")) {
 
-            private static final long serialVersionUID = 1L;
+					private static final long serialVersionUID = 1L;
 
-            public void actionPerformed(ActionEvent e) {
-                deleteSelectedNode();
-                JAtlasTree.this.mapView.repaint();
-            }
+					public void actionPerformed(ActionEvent e) {
+						deleteSelectedNode();
+						JAtlasTree.this.mapView.repaint();
+					}
 
-        });
+				});
 
-    }
+	}
 
-    public boolean testAtlasContentValid() {
-        AtlasInterface atlas = getAtlas();
-        if (RequiresSQLite.class.isAssignableFrom(atlas.getOutputFormat().getMapCreatorClass())) {
-            if (!SQLiteLoader.loadSQLiteOrShowError())
-                return false;
-        }
-        if (atlas.calculateTilesToDownload() == 0) {
-            JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>", "Error - atlas has no content",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
-    }
+	public boolean testAtlasContentValid() {
+		AtlasInterface atlas = getAtlas();
+		if (RequiresSQLite.class.isAssignableFrom(atlas.getOutputFormat().getMapCreatorClass())) {
+			if (!SQLiteLoader.loadSQLiteOrShowError())
+				return false;
+		}
+		if (atlas.calculateTilesToDownload() == 0) {
+			JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>", "Error - atlas has no content",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public String getToolTipText(MouseEvent event) {
-        if (getRowForLocation(event.getX(), event.getY()) == -1)
-            return defaultToolTiptext;
-        TreePath curPath = getPathForLocation(event.getX(), event.getY());
-        Object o = curPath.getLastPathComponent();
-        if (o == null || !(o instanceof ToolTipProvider))
-            return null;
-        return ((ToolTipProvider) o).getToolTip();
-    }
+	@Override
+	public String getToolTipText(MouseEvent event) {
+		if (getRowForLocation(event.getX(), event.getY()) == -1)
+			return defaultToolTiptext;
+		TreePath curPath = getPathForLocation(event.getX(), event.getY());
+		Object o = curPath.getLastPathComponent();
+		if (o == null || !(o instanceof ToolTipProvider))
+			return null;
+		return ((ToolTipProvider) o).getToolTip();
+	}
 
-    @Override
-    public boolean isPathEditable(TreePath path) {
-        return super.isPathEditable(path) && (path.getLastPathComponent() instanceof AtlasObject);
-    }
+	@Override
+	public boolean isPathEditable(TreePath path) {
+		return super.isPathEditable(path) && (path.getLastPathComponent() instanceof AtlasObject);
+	}
 
-    public AtlasTreeModel getTreeModel() {
-        return treeModel;
-    }
+	public AtlasTreeModel getTreeModel() {
+		return treeModel;
+	}
 
-    public void newAtlas(String name, AtlasOutputFormat format) {
-        log.debug("Creating new atlas");
-        Atlas newAtlas = Atlas.newInstance();
-        newAtlas.setOutputFormat(format);
-        newAtlas.setName(name);
-        treeModel.setAtlas(newAtlas);
-        mapView.repaint();
-    }
+	public void newAtlas(String name, AtlasOutputFormat format) {
+		log.debug("Creating new atlas");
+		Atlas newAtlas = Atlas.newInstance();
+		newAtlas.setOutputFormat(format);
+		newAtlas.setName(name);
+		treeModel.setAtlas(newAtlas);
+		mapView.repaint();
+	}
 
-    public void newAtlas() {
-        log.debug("Resetting atlas tree model");
-        Atlas newAtlas = Atlas.newInstance();
-        newAtlas.setName(MainGUI.getMainGUI().getUserText());
-        treeModel.setAtlas(newAtlas);
-        mapView.repaint();
-    }
+	public void newAtlas() {
+		log.debug("Resetting atlas tree model");
+		Atlas newAtlas = Atlas.newInstance();
+		newAtlas.setName(MainGUI.getMainGUI().getUserText());
+		treeModel.setAtlas(newAtlas);
+		mapView.repaint();
+	}
 
-    /**
-     * Changes the atlas format
-     */
-    public void convertAtlas(AtlasOutputFormat format) {
-        log.debug("Converting the atlas format to " + format);
-        treeModel.getAtlas().setOutputFormat(format);
-    }
+	/**
+	 * Changes the atlas format
+	 */
+	public void convertAtlas(AtlasOutputFormat format) {
+		log.debug("Converting the atlas format to " + format);
+		treeModel.getAtlas().setOutputFormat(format);
+	}
 
-    public void deleteSelectedNode() {
-        TreePath path = getSelectionPath();
-        if (path == null)
-            return;
-        TreeNode selected = (TreeNode) path.getLastPathComponent();
-        int[] selectedRows = getSelectionRows();
+	public void deleteSelectedNode() {
+		TreePath path = getSelectionPath();
+		if (path == null)
+			return;
+		TreeNode selected = (TreeNode) path.getLastPathComponent();
+		int[] selectedRows = getSelectionRows();
 
-        if (!(selected instanceof CapabilityDeletable))
-            return;
-        treeModel.notifyNodeDelete(selected);
-        ((CapabilityDeletable) selected).delete();
+		if (!(selected instanceof CapabilityDeletable))
+			return;
+		treeModel.notifyNodeDelete(selected);
+		((CapabilityDeletable) selected).delete();
 
-        int selRow = Math.min(selectedRows[0], getRowCount() - 1);
-        TreePath path1 = path.getParentPath();
-        TreePath path2 = getPathForRow(selRow).getParentPath();
-        if (path1 != path2) {
-            // next row belongs to different parent node -> we select parent
-            // node instead
-            setSelectionPath(path1);
-        } else {
-            setSelectionRow(selRow);
-            scrollRowToVisible(selRow);
-        }
-    }
+		int selRow = Math.min(selectedRows[0], getRowCount() - 1);
+		TreePath path1 = path.getParentPath();
+		TreePath path2 = getPathForRow(selRow).getParentPath();
+		if (path1 != path2) {
+			// next row belongs to different parent node -> we select parent
+			// node instead
+			setSelectionPath(path1);
+		} else {
+			setSelectionRow(selRow);
+			scrollRowToVisible(selRow);
+		}
+	}
 
-    public AtlasInterface getAtlas() {
-        return treeModel.getAtlas();
-    }
+	public AtlasInterface getAtlas() {
+		return treeModel.getAtlas();
+	}
 
-    public boolean load(Profile profile) {
-        log.debug("Loading profile " + profile);
-        try {
-            treeModel.load(profile);
-            if (treeModel.getAtlas() instanceof Atlas) {
-                Atlas atlas = (Atlas) treeModel.getAtlas();
-                if (atlas.getVersion() < Atlas.CURRENT_ATLAS_VERSION) {
-                    JOptionPane.showMessageDialog(null, MSG_ATLAS_VERSION_MISMATCH, "Outdated atlas version",
-                            JOptionPane.WARNING_MESSAGE);
-                    return true;
-                }
-            }
-            boolean problemsDetected = Profile.checkAtlas(treeModel.getAtlas());
-            if (problemsDetected) {
-                JOptionPane.showMessageDialog(null, MSG_ATLAS_DATA_CHECK_FAILED, "Atlas loading problem",
-                        JOptionPane.WARNING_MESSAGE);
-            }
-            return true;
-        } catch (Exception e) {
-            GUIExceptionHandler.processException(e);
-            return false;
-        }
-    }
+	public boolean load(Profile profile) {
+		log.debug("Loading profile " + profile);
+		try {
+			treeModel.load(profile);
+			if (treeModel.getAtlas() instanceof Atlas) {
+				Atlas atlas = (Atlas) treeModel.getAtlas();
+				if (atlas.getVersion() < Atlas.CURRENT_ATLAS_VERSION) {
+					JOptionPane.showMessageDialog(null, MSG_ATLAS_VERSION_MISMATCH, "Outdated atlas version",
+							JOptionPane.WARNING_MESSAGE);
+					return true;
+				}
+			}
+			boolean problemsDetected = Profile.checkAtlas(treeModel.getAtlas());
+			if (problemsDetected) {
+				JOptionPane.showMessageDialog(null, MSG_ATLAS_DATA_CHECK_FAILED, "Atlas loading problem",
+						JOptionPane.WARNING_MESSAGE);
+			}
+			return true;
+		} catch (Exception e) {
+			GUIExceptionHandler.processException(e);
+			return false;
+		}
+	}
 
-    public boolean save(Profile profile) {
-        try {
-            treeModel.save(profile);
-            return true;
-        } catch (Exception e) {
-            GUIExceptionHandler.processException(e);
-            return false;
-        }
-    }
+	public boolean save(Profile profile) {
+		try {
+			treeModel.save(profile);
+			return true;
+		} catch (Exception e) {
+			GUIExceptionHandler.processException(e);
+			return false;
+		}
+	}
 
-    protected void showNodePopupMenu(MouseEvent event) {
-        JPopupMenu pm = new JPopupMenu();
-        final TreePath selPath = getPathForLocation(event.getX(), event.getY());
-        setSelectionPath(selPath);
-        JMenuItem mi = null;
-        if (selPath != null) {
-            // not clicked on empty area
-            final Object o = selPath.getLastPathComponent();
-            if (o == null)
-                return;
-            if (o instanceof ToolTipProvider) {
-                mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_show_detail"));
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        ToolTipProvider ttp = (ToolTipProvider) o;
-                        JOptionPane.showMessageDialog(MainGUI.getMainGUI(), ttp.getToolTip());
-                    }
-                });
-                pm.add(mi);
-            }
-            if (o instanceof AtlasObject) {
-                final JCheckBoxMenuItem cbmi = new JCheckBoxMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_display_select_area"));
-                final MapAreaHighlightingLayer msl = new MapAreaHighlightingLayer(this);
-                cbmi.setSelected(displaySelectedMapArea);
-                cbmi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (displaySelectedMapArea) {
-                            MapAreaHighlightingLayer.removeHighlightingLayers();
-                        } else {
-                            mapView.setSelectionByTileCoordinate(null, null, false);
-                            MapAreaHighlightingLayer.removeHighlightingLayers();
-                            mapView.mapLayers.add(msl);
-                        }
-                        displaySelectedMapArea = !displaySelectedMapArea;
-                        mapView.repaint();
-                    }
-                });
-                pm.add(cbmi);
-            }
-            if (o instanceof MapInterface) {
-                mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_select_map_box"));
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        MapInterface map = (MapInterface) o;
-                        mapView.setMapSource(map.getMapSource());
-                        mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
-                                .getMaxTileCoordinate(), true);
-                    }
-                });
-                pm.add(mi);
-                mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_zoom_to_map_box"));
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        MapInterface map = (MapInterface) o;
-                        MapSelection ms = new MapSelection(map);
-                        mapView.setMapSource(map.getMapSource());
-                        mapView.setSelectionAndZoomTo(ms, true);
-                        mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map
-                                .getMaxTileCoordinate(), true);
-                    }
-                });
-                pm.add(mi);
-            }
-            if (o instanceof LayerInterface) {
-                mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_zoom_to"));
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        LayerInterface layer = (LayerInterface) o;
-                        EastNorthCoordinate max = new EastNorthCoordinate(Double.NEGATIVE_INFINITY,
-                                Double.NEGATIVE_INFINITY);
-                        EastNorthCoordinate min = new EastNorthCoordinate(Double.POSITIVE_INFINITY,
-                                Double.POSITIVE_INFINITY);
-                        for (MapInterface map : layer) {
-                            MapSelection ms = new MapSelection(map);
-                            EastNorthCoordinate mapMax = ms.getMax();
-                            EastNorthCoordinate mapMin = ms.getMin();
-                            max.lat = Math.max(max.lat, mapMax.lat);
-                            max.lon = Math.max(max.lon, mapMax.lon);
-                            min.lat = Math.min(min.lat, mapMin.lat);
-                            min.lon = Math.min(min.lon, mapMin.lon);
-                        }
-                        MapSelection ms = new MapSelection(mapView.getMapSource(), max, min);
-                        mapView.zoomTo(ms);
-                    }
-                });
-                pm.add(mi);
-            }
-            if (o instanceof AtlasObject) {
-                mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_rename"));
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        JAtlasTree.this.startEditingAtPath(selPath);
-                    }
-                });
-                pm.add(mi);
-                mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_apply_tile_process"));
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        AtlasObject atlasObject = (AtlasObject) o;
-                        TileImageParameters p = MainGUI.getMainGUI().getSelectedTileImageParameters();
-                        applyTileImageParameters(atlasObject, p);
-                    }
-                });
-                pm.add(mi);
-            }
-            if (o instanceof CapabilityDeletable) {
-                pm.addSeparator();
-                mi = new JMenuItem(getActionMap().get(ACTION_DELETE_NODE));
-                mi.setAccelerator(deleteNodeKS);
-                pm.add(mi);
-            }
-        }
-        if (pm.getComponentCount() > 0)
-            pm.addSeparator();
-        mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_clear_atals"));
-        mi.addActionListener(new ActionListener() {
+	protected void showNodePopupMenu(MouseEvent event) {
+		JPopupMenu pm = new JPopupMenu();
+		final TreePath selPath = getPathForLocation(event.getX(), event.getY());
+		setSelectionPath(selPath);
+		JMenuItem mi = null;
+		if (selPath != null) {
+			// not clicked on empty area
+			final Object o = selPath.getLastPathComponent();
+			if (o == null)
+				return;
+			if (o instanceof ToolTipProvider) {
+				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_show_detail"));
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						ToolTipProvider ttp = (ToolTipProvider) o;
+						JOptionPane.showMessageDialog(MainGUI.getMainGUI(), ttp.getToolTip());
+					}
+				});
+				pm.add(mi);
+			}
+			if (o instanceof AtlasObject) {
+				final JCheckBoxMenuItem cbmi = new JCheckBoxMenuItem(
+						I18nUtils.localizedStringForKey("lp_atlas_pop_menu_display_select_area"));
+				final MapAreaHighlightingLayer msl = new MapAreaHighlightingLayer(this);
+				cbmi.setSelected(displaySelectedMapArea);
+				cbmi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (displaySelectedMapArea) {
+							MapAreaHighlightingLayer.removeHighlightingLayers();
+						} else {
+							mapView.setSelectionByTileCoordinate(null, null, false);
+							MapAreaHighlightingLayer.removeHighlightingLayers();
+							mapView.mapLayers.add(msl);
+						}
+						displaySelectedMapArea = !displaySelectedMapArea;
+						mapView.repaint();
+					}
+				});
+				pm.add(cbmi);
+			}
+			if (o instanceof MapInterface) {
+				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_select_map_box"));
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						MapInterface map = (MapInterface) o;
+						mapView.setMapSource(map.getMapSource());
+						mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(),
+								map.getMaxTileCoordinate(), true);
+					}
+				});
+				pm.add(mi);
+				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_zoom_to_map_box"));
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						MapInterface map = (MapInterface) o;
+						MapSelection ms = new MapSelection(map);
+						mapView.setMapSource(map.getMapSource());
+						mapView.setSelectionAndZoomTo(ms, true);
+						mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(),
+								map.getMaxTileCoordinate(), true);
+					}
+				});
+				pm.add(mi);
+			}
+			if (o instanceof LayerInterface) {
+				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_zoom_to"));
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						LayerInterface layer = (LayerInterface) o;
+						EastNorthCoordinate max = new EastNorthCoordinate(Double.NEGATIVE_INFINITY,
+								Double.NEGATIVE_INFINITY);
+						EastNorthCoordinate min = new EastNorthCoordinate(Double.POSITIVE_INFINITY,
+								Double.POSITIVE_INFINITY);
+						for (MapInterface map : layer) {
+							MapSelection ms = new MapSelection(map);
+							EastNorthCoordinate mapMax = ms.getMax();
+							EastNorthCoordinate mapMin = ms.getMin();
+							max.lat = Math.max(max.lat, mapMax.lat);
+							max.lon = Math.max(max.lon, mapMax.lon);
+							min.lat = Math.min(min.lat, mapMin.lat);
+							min.lon = Math.min(min.lon, mapMin.lon);
+						}
+						MapSelection ms = new MapSelection(mapView.getMapSource(), max, min);
+						mapView.zoomTo(ms);
+					}
+				});
+				pm.add(mi);
+			}
+			if (o instanceof AtlasObject) {
+				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_rename"));
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						JAtlasTree.this.startEditingAtPath(selPath);
+					}
+				});
+				pm.add(mi);
+				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_apply_tile_process"));
+				mi.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						AtlasObject atlasObject = (AtlasObject) o;
+						TileImageParameters p = MainGUI.getMainGUI().getSelectedTileImageParameters();
+						applyTileImageParameters(atlasObject, p);
+					}
+				});
+				pm.add(mi);
+			}
+			if (o instanceof CapabilityDeletable) {
+				pm.addSeparator();
+				mi = new JMenuItem(getActionMap().get(ACTION_DELETE_NODE));
+				mi.setAccelerator(deleteNodeKS);
+				pm.add(mi);
+			}
+		}
+		if (pm.getComponentCount() > 0)
+			pm.addSeparator();
+		mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_clear_atals"));
+		mi.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                newAtlas();
-            }
-        });
-        pm.add(mi);
-        pm.show(this, event.getX(), event.getY());
-    }
+			public void actionPerformed(ActionEvent e) {
+				newAtlas();
+			}
+		});
+		pm.add(mi);
+		pm.show(this, event.getX(), event.getY());
+	}
 
-    protected void applyTileImageParameters(Object o, TileImageParameters p) {
-        if (o instanceof Iterable<?>) {
-            Iterable<?> it = (Iterable<?>) o;
-            for (Object ao : it) {
-                applyTileImageParameters(ao, p);
-            }
-        } else if (o instanceof MapInterface) {
-            ((MapInterface) o).setParameters(p);
-        }
-    }
+	protected void applyTileImageParameters(Object o, TileImageParameters p) {
+		if (o instanceof Iterable<?>) {
+			Iterable<?> it = (Iterable<?>) o;
+			for (Object ao : it) {
+				applyTileImageParameters(ao, p);
+			}
+		} else if (o instanceof MapInterface) {
+			((MapInterface) o).setParameters(p);
+		}
+	}
 
-    protected void selectElementOnMap(Object o) {
-        if (o instanceof MapInterface) {
-            MapInterface map = (MapInterface) o;
-            mapView.setMapSource(map.getMapSource());
-            mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map.getMaxTileCoordinate(),
-                    true);
-        }
-    }
+	protected void selectElementOnMap(Object o) {
+		if (o instanceof MapInterface) {
+			MapInterface map = (MapInterface) o;
+			mapView.setMapSource(map.getMapSource());
+			mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(), map.getMaxTileCoordinate(),
+					true);
+		}
+	}
 
-    public void autoscroll(Point cursorLocn) {
-        int realrow = getRowForLocation(cursorLocn.x, cursorLocn.y);
-        Rectangle outer = getBounds();
-        realrow = (cursorLocn.y + outer.y <= margin ? realrow < 1 ? 0 : realrow - 1
-                : realrow < getRowCount() - 1 ? realrow + 1 : realrow);
-        scrollRowToVisible(realrow);
-    }
+	public void autoscroll(Point cursorLocn) {
+		int realrow = getRowForLocation(cursorLocn.x, cursorLocn.y);
+		Rectangle outer = getBounds();
+		realrow = (cursorLocn.y + outer.y <= margin
+				? realrow < 1 ? 0 : realrow - 1
+				: realrow < getRowCount() - 1 ? realrow + 1 : realrow);
+		scrollRowToVisible(realrow);
+	}
 
-    public Insets getAutoscrollInsets() {
-        Rectangle outer = getBounds();
-        Rectangle inner = getParent().getBounds();
-        return new Insets(inner.y - outer.y + margin, inner.x - outer.x + margin, outer.height - inner.height - inner.y
-                + outer.y + margin, outer.width - inner.width - inner.x + outer.x + margin);
-    }
+	public Insets getAutoscrollInsets() {
+		Rectangle outer = getBounds();
+		Rectangle inner = getParent().getBounds();
+		return new Insets(inner.y - outer.y + margin, inner.x - outer.x + margin,
+				outer.height - inner.height - inner.y + outer.y + margin,
+				outer.width - inner.width - inner.x + outer.x + margin);
+	}
 
 }

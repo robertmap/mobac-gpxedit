@@ -23,29 +23,29 @@ import java.lang.reflect.InvocationTargetException;
 
 public class JMenuItem2 extends JMenuItem implements ActionListener {
 
-    private final Class<? extends ActionListener> actionClass;
+	private final Class<? extends ActionListener> actionClass;
 
-    public JMenuItem2(String text, int mnemonic, Class<? extends ActionListener> actionClass) {
-        super(text, mnemonic);
-        this.actionClass = actionClass;
-        addActionListener(this);
-    }
+	public JMenuItem2(String text, int mnemonic, Class<? extends ActionListener> actionClass) {
+		super(text, mnemonic);
+		this.actionClass = actionClass;
+		addActionListener(this);
+	}
 
-    public JMenuItem2(String text, Class<? extends ActionListener> actionClass) {
-        super(text);
-        this.actionClass = actionClass;
-        addActionListener(this);
-    }
+	public JMenuItem2(String text, Class<? extends ActionListener> actionClass) {
+		super(text);
+		this.actionClass = actionClass;
+		addActionListener(this);
+	}
 
-    public void actionPerformed(ActionEvent event) {
-        ActionListener al;
-        try {
-            al = actionClass.getConstructor().newInstance();
-            al.actionPerformed(event);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public void actionPerformed(ActionEvent event) {
+		ActionListener al;
+		try {
+			al = actionClass.getConstructor().newInstance();
+			al.actionPerformed(event);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }

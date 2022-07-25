@@ -52,263 +52,259 @@ import java.util.regex.Pattern;
 @XmlRootElement(name = "localTileFiles")
 public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomLocalTileFilesMapSource.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomLocalTileFilesMapSource.class);
+	private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+	private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private MapSourceLoaderInfo loaderInfo = null;
+	private String fileSyntax = null;
 
-    private MapSourceLoaderInfo loaderInfo = null;
+	private TileImageType tileImageType = null;
 
-    private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+	@XmlElement(nillable = false, defaultValue = "CustomLocal")
+	private String name = "Custom";
 
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private int minZoom = PreviewMap.MIN_ZOOM;
 
-    private String fileSyntax = null;
+	private int maxZoom = PreviewMap.MAX_ZOOM;
 
-    private TileImageType tileImageType = null;
+	@XmlElement(required = true)
+	private File sourceFolder = null;
 
-    @XmlElement(nillable = false, defaultValue = "CustomLocal")
-    private String name = "Custom";
+	@XmlElement()
+	private CustomMapSourceType sourceType = CustomMapSourceType.DIR_ZOOM_X_Y;
 
-    private int minZoom = PreviewMap.MIN_ZOOM;
+	@XmlElement(defaultValue = "false")
+	@XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
+	private boolean invertYCoordinate = false;
 
-    private int maxZoom = PreviewMap.MAX_ZOOM;
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	private Color backgroundColor = Color.BLACK;
 
-    @XmlElement(required = true)
-    private File sourceFolder = null;
+	public CustomLocalTileFilesMapSource() {
+		super();
+	}
 
-    @XmlElement()
-    private CustomMapSourceType sourceType = CustomMapSourceType.DIR_ZOOM_X_Y;
+	public synchronized void initialize() {
+		if (initialized.get()) {
+			return;
+		}
+		reinitialize();
+	}
 
-    @XmlElement(defaultValue = "false")
-    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
-    private boolean invertYCoordinate = false;
+	public void reinitialize() {
+		try {
+			if (!sourceFolder.isDirectory()) {
+				JOptionPane.showMessageDialog(null,
+						String.format(I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder"), name,
+								sourceFolder.toString()),
+						I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_title"),
+						JOptionPane.ERROR_MESSAGE);
+				initialized.set(true);
+				return;
+			}
+			switch (sourceType) {
+				case DIR_ZOOM_X_Y :
+				case DIR_ZOOM_Y_X :
+					initializeDirType();
+					break;
+				case QUADKEY :
+					initializeQuadKeyType();
+					break;
+				default :
+					throw new RuntimeException("Invalid source type");
+			}
+		} finally {
+			initialized.set(true);
+		}
+	}
 
-    @XmlElement(defaultValue = "#000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    private Color backgroundColor = Color.BLACK;
+	private void initializeDirType() {
+		/* Update zoom levels */
+		FileFilter ff = new NumericDirFileFilter();
+		File[] zoomDirs = sourceFolder.listFiles(ff);
+		if (zoomDirs.length < 1) {
+			JOptionPane.showMessageDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_zoom"), name,
+							sourceFolder),
+					I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_title"),
+					JOptionPane.ERROR_MESSAGE);
+			initialized.set(true);
+			return;
+		}
+		int min = PreviewMap.MAX_ZOOM;
+		int max = PreviewMap.MIN_ZOOM;
+		for (File file : zoomDirs) {
+			int z = Integer.parseInt(file.getName());
+			min = Math.min(min, z);
+			max = Math.max(max, z);
+		}
+		minZoom = min;
+		maxZoom = max;
 
-    public CustomLocalTileFilesMapSource() {
-        super();
-    }
+		for (File zDir : zoomDirs) {
+			for (File xDir : zDir.listFiles(ff)) {
+				try {
+					xDir.listFiles(new FilenameFilter() {
 
-    public synchronized void initialize() {
-        if (initialized.get()) {
-            return;
-        }
-        reinitialize();
-    }
+						String syntax = "%d/%d/%d";
 
-    public void reinitialize() {
-        try {
-            if (!sourceFolder.isDirectory()) {
-                JOptionPane.showMessageDialog(null,
-                        String.format(I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder"), name,
-                                sourceFolder.toString()),
-                        I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_title"),
-                        JOptionPane.ERROR_MESSAGE);
-                initialized.set(true);
-                return;
-            }
-            switch (sourceType) {
-                case DIR_ZOOM_X_Y:
-                case DIR_ZOOM_Y_X:
-                    initializeDirType();
-                    break;
-                case QUADKEY:
-                    initializeQuadKeyType();
-                    break;
-                default:
-                    throw new RuntimeException("Invalid source type");
-            }
-        } finally {
-            initialized.set(true);
-        }
-    }
+						public boolean accept(File dir, String name) {
+							String[] parts = name.split("\\.");
+							if (parts.length < 2 || parts.length > 3) {
+								return false;
+							}
+							syntax += "." + parts[1];
+							if (parts.length == 3) {
+								syntax += "." + parts[2];
+							}
+							tileImageType = TileImageType.getTileImageType(parts[1]);
+							fileSyntax = syntax;
+							log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
+							throw new RuntimeException("break");
+						}
+					});
+				} catch (RuntimeException e) {
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
+				return;
+			}
+		}
+	}
 
-    private void initializeDirType() {
-        /* Update zoom levels */
-        FileFilter ff = new NumericDirFileFilter();
-        File[] zoomDirs = sourceFolder.listFiles(ff);
-        if (zoomDirs.length < 1) {
-            JOptionPane.showMessageDialog(null,
-                    String.format(I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_zoom"), name,
-                            sourceFolder),
-                    I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_title"),
-                    JOptionPane.ERROR_MESSAGE);
-            initialized.set(true);
-            return;
-        }
-        int min = PreviewMap.MAX_ZOOM;
-        int max = PreviewMap.MIN_ZOOM;
-        for (File file : zoomDirs) {
-            int z = Integer.parseInt(file.getName());
-            min = Math.min(min, z);
-            max = Math.max(max, z);
-        }
-        minZoom = min;
-        maxZoom = max;
+	private void initializeQuadKeyType() {
+		String[] files = sourceFolder.list();
+		Pattern p = Pattern.compile("([0123]+)\\.(png|gif|jpg)", Pattern.CASE_INSENSITIVE);
+		String fileExt = null;
+		for (String file : files) {
+			Matcher m = p.matcher(file);
+			if (!m.matches())
+				continue;
+			fileExt = m.group(2);
+			break;
+		}
+		if (fileExt == null)
+			return; // Error no suitable file found
+		fileSyntax = "%s." + fileExt;
 
-        for (File zDir : zoomDirs) {
-            for (File xDir : zDir.listFiles(ff)) {
-                try {
-                    xDir.listFiles(new FilenameFilter() {
+		tileImageType = TileImageType.getTileImageType(fileExt);
+		p = Pattern.compile("([0123]+)\\.(" + fileExt + ")", Pattern.CASE_INSENSITIVE);
 
-                        String syntax = "%d/%d/%d";
+		int min = PreviewMap.MAX_ZOOM;
+		int max = 1;
 
-                        public boolean accept(File dir, String name) {
-                            String[] parts = name.split("\\.");
-                            if (parts.length < 2 || parts.length > 3) {
-                                return false;
-                            }
-                            syntax += "." + parts[1];
-                            if (parts.length == 3) {
-                                syntax += "." + parts[2];
-                            }
-                            tileImageType = TileImageType.getTileImageType(parts[1]);
-                            fileSyntax = syntax;
-                            log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
-                            throw new RuntimeException("break");
-                        }
-                    });
-                } catch (RuntimeException e) {
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-                return;
-            }
-        }
-    }
+		for (String file : files) {
+			Matcher m = p.matcher(file);
+			if (!m.matches()) {
+				continue;
+			}
+			if (fileSyntax == null) {
+				fileSyntax = "%s." + m.group(2);
+			}
+			int z = m.group(1).length();
+			min = Math.min(min, z);
+			max = Math.max(max, z);
+		}
+		minZoom = min;
+		maxZoom = max;
+	}
 
-    private void initializeQuadKeyType() {
-        String[] files = sourceFolder.list();
-        Pattern p = Pattern.compile("([0123]+)\\.(png|gif|jpg)", Pattern.CASE_INSENSITIVE);
-        String fileExt = null;
-        for (String file : files) {
-            Matcher m = p.matcher(file);
-            if (!m.matches())
-                continue;
-            fileExt = m.group(2);
-            break;
-        }
-        if (fileExt == null)
-            return; // Error no suitable file found
-        fileSyntax = "%s." + fileExt;
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		if (!initialized.get()) {
+			initialize();
+		}
+		if (fileSyntax == null) {
+			return null;
+		}
+		if (log.isTraceEnabled()) {
+			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+		}
 
-        tileImageType = TileImageType.getTileImageType(fileExt);
-        p = Pattern.compile("([0123]+)\\.(" + fileExt + ")", Pattern.CASE_INSENSITIVE);
+		if (invertYCoordinate) {
+			y = ((1 << zoom) - y - 1);
+		}
+		String fileName;
+		switch (sourceType) {
+			case DIR_ZOOM_X_Y :
+				fileName = String.format(fileSyntax, zoom, x, y);
+				break;
+			case DIR_ZOOM_Y_X :
+				fileName = String.format(fileSyntax, zoom, y, x);
+				break;
+			case QUADKEY :
+				fileName = String.format(fileSyntax, MapSourceTools.encodeQuadTree(zoom, x, y));
+				break;
+			default :
+				throw new RuntimeException("Invalid source type");
+		}
+		File file = new File(sourceFolder, fileName);
+		try {
+			return Utilities.getFileBytes(file);
+		} catch (FileNotFoundException e) {
+			log.debug("Map tile file not found: \"" + file.getAbsolutePath() + "\"");
+			return null;
+		}
+	}
 
-        int min = PreviewMap.MAX_ZOOM;
-        int max = 1;
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		byte[] data = getTileData(zoom, x, y, loadMethod);
+		if (data == null) {
+			return null;
+		}
+		return ImageIO.read(new ByteArrayInputStream(data));
+	}
 
-        for (String file : files) {
-            Matcher m = p.matcher(file);
-            if (!m.matches()) {
-                continue;
-            }
-            if (fileSyntax == null) {
-                fileSyntax = "%s." + m.group(2);
-            }
-            int z = m.group(1).length();
-            min = Math.min(min, z);
-            max = Math.max(max, z);
-        }
-        minZoom = min;
-        maxZoom = max;
-    }
+	public TileImageType getTileImageType() {
+		return tileImageType;
+	}
 
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        if (!initialized.get()) {
-            initialize();
-        }
-        if (fileSyntax == null) {
-            return null;
-        }
-        if (log.isTraceEnabled()) {
-            log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
-        }
+	public int getMaxZoom() {
+		return maxZoom;
+	}
 
-        if (invertYCoordinate) {
-            y = ((1 << zoom) - y - 1);
-        }
-        String fileName;
-        switch (sourceType) {
-            case DIR_ZOOM_X_Y:
-                fileName = String.format(fileSyntax, zoom, x, y);
-                break;
-            case DIR_ZOOM_Y_X:
-                fileName = String.format(fileSyntax, zoom, y, x);
-                break;
-            case QUADKEY:
-                fileName = String.format(fileSyntax, MapSourceTools.encodeQuadTree(zoom, x, y));
-                break;
-            default:
-                throw new RuntimeException("Invalid source type");
-        }
-        File file = new File(sourceFolder, fileName);
-        try {
-            return Utilities.getFileBytes(file);
-        } catch (FileNotFoundException e) {
-            log.debug("Map tile file not found: \"" + file.getAbsolutePath() + "\"");
-            return null;
-        }
-    }
+	public int getMinZoom() {
+		return minZoom;
+	}
 
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        byte[] data = getTileData(zoom, x, y, loadMethod);
-        if (data == null) {
-            return null;
-        }
-        return ImageIO.read(new ByteArrayInputStream(data));
-    }
+	public String getName() {
+		return name;
+	}
 
-    public TileImageType getTileImageType() {
-        return tileImageType;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
-    public int getMaxZoom() {
-        return maxZoom;
-    }
+	public MapSpace getMapSpace() {
+		return mapSpace;
+	}
 
-    public int getMinZoom() {
-        return minZoom;
-    }
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-    public String getName() {
-        return name;
-    }
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		this.loaderInfo = loaderInfo;
+	}
 
-    public MapSpace getMapSpace() {
-        return mapSpace;
-    }
+	private static class NumericDirFileFilter implements FileFilter {
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
+		private final Pattern p = Pattern.compile("^\\d+$");
 
-    @XmlTransient
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return loaderInfo;
-    }
+		public boolean accept(File f) {
+			if (!f.isDirectory()) {
+				return false;
+			}
+			return p.matcher(f.getName()).matches();
+		}
 
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-        this.loaderInfo = loaderInfo;
-    }
-
-    private static class NumericDirFileFilter implements FileFilter {
-
-        private final Pattern p = Pattern.compile("^\\d+$");
-
-        public boolean accept(File f) {
-            if (!f.isDirectory()) {
-                return false;
-            }
-            return p.matcher(f.getName()).matches();
-        }
-
-    }
+	}
 }

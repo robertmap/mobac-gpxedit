@@ -29,43 +29,43 @@ import java.net.URISyntaxException;
 
 public class OpenInWebbrowser implements ActionListener, MouseListener {
 
-    URI uri;
+	URI uri;
 
-    public OpenInWebbrowser(URI uri) {
-        super();
-        this.uri = uri;
-    }
+	public OpenInWebbrowser(URI uri) {
+		super();
+		this.uri = uri;
+	}
 
-    public OpenInWebbrowser(String uri) throws URISyntaxException {
-        super();
-        this.uri = new URI(uri);
-    }
+	public OpenInWebbrowser(String uri) throws URISyntaxException {
+		super();
+		this.uri = new URI(uri);
+	}
 
-    public void actionPerformed(ActionEvent event) {
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            try {
-                desktop.browse(uri);
-            } catch (IOException e) {
-                Logging.LOG.error("Failed to open web browser", e);
-            }
-        }
-    }
+	public void actionPerformed(ActionEvent event) {
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.browse(uri);
+			} catch (IOException e) {
+				Logging.LOG.error("Failed to open web browser", e);
+			}
+		}
+	}
 
-    public void mouseReleased(MouseEvent e) {
-        actionPerformed(null);
-    }
+	public void mouseReleased(MouseEvent e) {
+		actionPerformed(null);
+	}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+	public void mouseClicked(MouseEvent e) {
+	}
 
-    public void mouseEntered(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+	}
 
-    public void mouseExited(MouseEvent e) {
-    }
+	public void mouseExited(MouseEvent e) {
+	}
 
-    public void mousePressed(MouseEvent e) {
-    }
+	public void mousePressed(MouseEvent e) {
+	}
 
 }

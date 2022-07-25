@@ -18,5 +18,5 @@ package mobac.program.interfaces;
 
 public interface MapSourceCallerThreadInfo {
 
-    boolean isMapPreviewThread();
+	boolean isMapPreviewThread();
 }

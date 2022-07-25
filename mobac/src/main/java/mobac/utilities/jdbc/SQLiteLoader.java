@@ -27,60 +27,61 @@ import java.sql.SQLException;
 /**
  * Dynamic loading of SqliteJDBC http://www.zentus.com/sqlitejdbc/
  * <p>
- * 2020-07-26: removed the load attempts for the old ch-werner.de JavaSQLite library which is no longer used.
+ * 2020-07-26: removed the load attempts for the old ch-werner.de JavaSQLite
+ * library which is no longer used.
  */
 public class SQLiteLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(SQLiteLoader.class);
-    private static final String SQLITE_DRIVERNAME2 = "org.sqlite.JDBC";
-    private static boolean SQLITE_LOADED = false;
+	private static final Logger log = LoggerFactory.getLogger(SQLiteLoader.class);
+	private static final String SQLITE_DRIVERNAME2 = "org.sqlite.JDBC";
+	private static boolean SQLITE_LOADED = false;
 
-    public static boolean loadSQLiteOrShowError() {
-        try {
-            SQLiteLoader.loadSQLite();
-            return true;
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, SQLiteLoader.getMsgSqliteMissing(),
-                    I18nUtils.localizedStringForKey("msg_environment_slqite_lib_missing_title"),
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
+	public static boolean loadSQLiteOrShowError() {
+		try {
+			SQLiteLoader.loadSQLite();
+			return true;
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, SQLiteLoader.getMsgSqliteMissing(),
+					I18nUtils.localizedStringForKey("msg_environment_slqite_lib_missing_title"),
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
 
-    public static String getMsgSqliteMissing() {
-        return I18nUtils.localizedStringForKey("msg_environment_slqite_lib_missing");
-    }
+	public static String getMsgSqliteMissing() {
+		return I18nUtils.localizedStringForKey("msg_environment_slqite_lib_missing");
+	}
 
-    public static synchronized void loadSQLite() throws SQLException {
-        SQLiteLoader.loadSQLite(SQLITE_DRIVERNAME2);
-    }
+	public static synchronized void loadSQLite() throws SQLException {
+		SQLiteLoader.loadSQLite(SQLITE_DRIVERNAME2);
+	}
 
-    protected static synchronized void loadSQLite(String driverClassName) throws SQLException {
-        if (SQLITE_LOADED) {
-            return;
-        }
-        try {
-            // Load the sqlite library
-            Class.forName(driverClassName);
-            SQLITE_LOADED = true;
-            log.debug("SQLite library loaded. Driver class name: {}", driverClassName);
-        } catch (Throwable t) {
-            SQLException e = new SQLException(
-                    "Loading of SQLite library failed (" + driverClassName + "): " + t.getMessage(), t);
-            log.error(e.getMessage());
-            throw e;
-        }
-    }
+	protected static synchronized void loadSQLite(String driverClassName) throws SQLException {
+		if (SQLITE_LOADED) {
+			return;
+		}
+		try {
+			// Load the sqlite library
+			Class.forName(driverClassName);
+			SQLITE_LOADED = true;
+			log.debug("SQLite library loaded. Driver class name: {}", driverClassName);
+		} catch (Throwable t) {
+			SQLException e = new SQLException(
+					"Loading of SQLite library failed (" + driverClassName + "): " + t.getMessage(), t);
+			log.error(e.getMessage());
+			throw e;
+		}
+	}
 
-    public static void closeConnection(Connection conn) {
-        if (conn == null) {
-            return;
-        }
-        try {
-            conn.close();
-        } catch (Exception e) {
-            log.error("Failed to close SQL connection: " + e.getMessage());
-        }
-    }
+	public static void closeConnection(Connection conn) {
+		if (conn == null) {
+			return;
+		}
+		try {
+			conn.close();
+		} catch (Exception e) {
+			log.error("Failed to close SQL connection: " + e.getMessage());
+		}
+	}
 
 }

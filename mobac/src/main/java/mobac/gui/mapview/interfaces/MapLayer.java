@@ -25,15 +25,20 @@ import java.awt.Graphics2D;
  */
 public interface MapLayer {
 
-    /**
-     * @param map
-     * @param g
-     * @param zoom current zoom level
-     * @param minX top left x coordinate of the visible map region
-     * @param minY left y coordinate of the visible map region
-     * @param maxX bottom right x coordinate of the visible map region
-     * @param maxY bottom right y coordinate of the visible map region
-     */
-    void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY);
+	/**
+	 * @param map
+	 * @param g
+	 * @param zoom
+	 *            current zoom level
+	 * @param minX
+	 *            top left x coordinate of the visible map region
+	 * @param minY
+	 *            left y coordinate of the visible map region
+	 * @param maxX
+	 *            bottom right x coordinate of the visible map region
+	 * @param maxY
+	 *            bottom right y coordinate of the visible map region
+	 */
+	void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY);
 
 }

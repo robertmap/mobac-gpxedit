@@ -21,14 +21,14 @@ import java.io.FileFilter;
 
 public class FileExtFilter implements FileFilter {
 
-    protected final String acceptedFileExt;
+	protected final String acceptedFileExt;
 
-    public FileExtFilter(String acceptedFileExt) {
-        this.acceptedFileExt = acceptedFileExt;
-    }
+	public FileExtFilter(String acceptedFileExt) {
+		this.acceptedFileExt = acceptedFileExt;
+	}
 
-    public boolean accept(File pathname) {
-        return pathname.getName().endsWith(acceptedFileExt);
-    }
+	public boolean accept(File pathname) {
+		return pathname.getName().endsWith(acceptedFileExt);
+	}
 
 }

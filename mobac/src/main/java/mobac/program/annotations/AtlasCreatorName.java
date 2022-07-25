@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AtlasCreatorName {
-    String value();
+	String value();
 
-    String type() default "";
+	String type() default "";
 }

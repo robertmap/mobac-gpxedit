@@ -25,44 +25,44 @@ import java.io.StringWriter;
 
 public class MapCreationException extends Exception implements ExceptionExtendedInfo {
 
-    private static final long serialVersionUID = 1L;
-    private final MapInterface map;
+	private static final long serialVersionUID = 1L;
+	private final MapInterface map;
 
-    public MapCreationException(String message, MapInterface map, Throwable cause) {
-        super(message, cause);
-        this.map = map;
-    }
+	public MapCreationException(String message, MapInterface map, Throwable cause) {
+		super(message, cause);
+		this.map = map;
+	}
 
-    public MapCreationException(String message, MapInterface map) {
-        super(message);
-        this.map = map;
-    }
+	public MapCreationException(String message, MapInterface map) {
+		super(message);
+		this.map = map;
+	}
 
-    public MapCreationException(MapInterface map, Throwable cause) {
-        super(cause);
-        this.map = map;
-    }
+	public MapCreationException(MapInterface map, Throwable cause) {
+		super(cause);
+		this.map = map;
+	}
 
-    public String getExtendedInfo() {
-        StringWriter sw = new StringWriter();
-        if (map != null) {
-            sw.append(map.getInfoText());
-            MapSource mapSource = map.getMapSource();
-            if (mapSource != null) {
-                MapSourceLoaderInfo loaderInfo = map.getMapSource().getLoaderInfo();
-                if (loaderInfo != null) {
-                    sw.append("\nMap type: " + loaderInfo.getLoaderType());
-                    if (loaderInfo.getSourceFile() != null)
-                        sw.append("\nMap implementation: " + loaderInfo.getSourceFile().getName());
-                    sw.append("\nMap revision: " + loaderInfo.getRevision());
-                }
-            }
-        }
-        return sw.toString();
-    }
+	public String getExtendedInfo() {
+		StringWriter sw = new StringWriter();
+		if (map != null) {
+			sw.append(map.getInfoText());
+			MapSource mapSource = map.getMapSource();
+			if (mapSource != null) {
+				MapSourceLoaderInfo loaderInfo = map.getMapSource().getLoaderInfo();
+				if (loaderInfo != null) {
+					sw.append("\nMap type: " + loaderInfo.getLoaderType());
+					if (loaderInfo.getSourceFile() != null)
+						sw.append("\nMap implementation: " + loaderInfo.getSourceFile().getName());
+					sw.append("\nMap revision: " + loaderInfo.getRevision());
+				}
+			}
+		}
+		return sw.toString();
+	}
 
-    public MapInterface getMap() {
-        return map;
-    }
+	public MapInterface getMap() {
+		return map;
+	}
 
 }

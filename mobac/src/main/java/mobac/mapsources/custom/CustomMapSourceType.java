@@ -17,5 +17,5 @@
 package mobac.mapsources.custom;
 
 public enum CustomMapSourceType {
-    DIR_ZOOM_X_Y, DIR_ZOOM_Y_X, QUADKEY
+	DIR_ZOOM_X_Y, DIR_ZOOM_Y_X, QUADKEY
 }

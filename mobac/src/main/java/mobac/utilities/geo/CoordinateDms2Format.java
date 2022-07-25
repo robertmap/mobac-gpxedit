@@ -29,74 +29,74 @@ import java.text.ParsePosition;
 
 public class CoordinateDms2Format extends NumberFormat {
 
-    protected static Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
+	protected static Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
 
-    NumberFormat degFmt;
-    NumberFormat minFmt;
-    NumberFormat secFmt;
-    NumberFormat secFmtParser;
+	NumberFormat degFmt;
+	NumberFormat minFmt;
+	NumberFormat secFmt;
+	NumberFormat secFmtParser;
 
-    public CoordinateDms2Format(DecimalFormatSymbols dfs) {
-        degFmt = new DecimalFormat("00°", dfs);
-        minFmt = new DecimalFormat("00''", dfs);
-        minFmt.setRoundingMode(RoundingMode.FLOOR);
-        secFmt = new DecimalFormat("00.00\"", dfs);
-        secFmt.setRoundingMode(RoundingMode.FLOOR);
-        secFmtParser = new DecimalFormat("##.##", dfs);
-    }
+	public CoordinateDms2Format(DecimalFormatSymbols dfs) {
+		degFmt = new DecimalFormat("00°", dfs);
+		minFmt = new DecimalFormat("00''", dfs);
+		minFmt.setRoundingMode(RoundingMode.FLOOR);
+		secFmt = new DecimalFormat("00.00\"", dfs);
+		secFmt.setRoundingMode(RoundingMode.FLOOR);
+		secFmtParser = new DecimalFormat("##.##", dfs);
+	}
 
-    @Override
-    public StringBuffer format(double numberOrg, StringBuffer toAppendTo, FieldPosition pos) {
-        double number = numberOrg;
-        int degrees;
-        int minutes;
-        double seconds;
-        if (number >= 0)
-            degrees = (int) Math.floor(number);
-        else
-            degrees = (int) Math.ceil(number);
-        number = Math.abs((number - degrees) * 60);
-        minutes = (int) Math.floor(number);
-        seconds = (number - minutes) * 60;
-        if (numberOrg < 0 && degrees == 0)
-            toAppendTo.append("-");
-        toAppendTo.append(degFmt.format(degrees) + " ");
-        toAppendTo.append(minFmt.format(minutes) + " ");
-        toAppendTo.append(secFmt.format(seconds));
-        return toAppendTo;
-    }
+	@Override
+	public StringBuffer format(double numberOrg, StringBuffer toAppendTo, FieldPosition pos) {
+		double number = numberOrg;
+		int degrees;
+		int minutes;
+		double seconds;
+		if (number >= 0)
+			degrees = (int) Math.floor(number);
+		else
+			degrees = (int) Math.ceil(number);
+		number = Math.abs((number - degrees) * 60);
+		minutes = (int) Math.floor(number);
+		seconds = (number - minutes) * 60;
+		if (numberOrg < 0 && degrees == 0)
+			toAppendTo.append("-");
+		toAppendTo.append(degFmt.format(degrees) + " ");
+		toAppendTo.append(minFmt.format(minutes) + " ");
+		toAppendTo.append(secFmt.format(seconds));
+		return toAppendTo;
+	}
 
-    @Override
-    public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-        throw new RuntimeException("Not implemented");
-    }
+	@Override
+	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+		throw new RuntimeException("Not implemented");
+	}
 
-    @Override
-    public Number parse(String source) throws ParseException {
-        return parse(source, new ParsePosition(0));
-    }
+	@Override
+	public Number parse(String source) throws ParseException {
+		return parse(source, new ParsePosition(0));
+	}
 
-    @Override
-    public Number parse(String source, ParsePosition parsePosition) {
-        String[] tokens = source.trim().split("[°\\'\\\"]");
-        if (tokens.length != 3)
-            return null;
-        try {
-            String degStr = tokens[0].trim();
-            int deg = Integer.parseInt(degStr);
-            int min = Integer.parseInt(tokens[1].trim());
-            double sec = secFmtParser.parse(tokens[2].trim()).doubleValue();
-            double coord;
-            if (degStr.startsWith("-"))
-                coord = deg - sec / 3600 - min / 60.0;
-            else
-                coord = deg + sec / 3600 + min / 60.0;
-            return coord;
-        } catch (Exception e) {
-            parsePosition.setErrorIndex(0);
-            log.error(e.getMessage(), e);
-            return null;
-        }
-    }
+	@Override
+	public Number parse(String source, ParsePosition parsePosition) {
+		String[] tokens = source.trim().split("[°\\'\\\"]");
+		if (tokens.length != 3)
+			return null;
+		try {
+			String degStr = tokens[0].trim();
+			int deg = Integer.parseInt(degStr);
+			int min = Integer.parseInt(tokens[1].trim());
+			double sec = secFmtParser.parse(tokens[2].trim()).doubleValue();
+			double coord;
+			if (degStr.startsWith("-"))
+				coord = deg - sec / 3600 - min / 60.0;
+			else
+				coord = deg + sec / 3600 + min / 60.0;
+			return coord;
+		} catch (Exception e) {
+			parsePosition.setErrorIndex(0);
+			log.error(e.getMessage(), e);
+			return null;
+		}
+	}
 
 }

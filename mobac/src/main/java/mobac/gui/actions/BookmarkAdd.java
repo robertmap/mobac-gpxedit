@@ -28,20 +28,21 @@ import java.awt.event.ActionListener;
 
 public class BookmarkAdd implements ActionListener {
 
-    private final PreviewMap previewMap;
+	private final PreviewMap previewMap;
 
-    public BookmarkAdd(PreviewMap previewMap) {
-        this.previewMap = previewMap;
-    }
+	public BookmarkAdd(PreviewMap previewMap) {
+		this.previewMap = previewMap;
+	}
 
-    public void actionPerformed(ActionEvent arg0) {
-        Bookmark bm = previewMap.getPositionBookmark();
-        String name = JOptionPane.showInputDialog(I18nUtils.localizedStringForKey("dlg_add_bookmark_msg"), bm.toString());
-        if (name == null)
-            return;
-        bm.setName(name);
-        Settings.getInstance().placeBookmarks.add(bm);
-        MainGUI.getMainGUI().updateBookmarksMenu();
-    }
+	public void actionPerformed(ActionEvent arg0) {
+		Bookmark bm = previewMap.getPositionBookmark();
+		String name = JOptionPane.showInputDialog(I18nUtils.localizedStringForKey("dlg_add_bookmark_msg"),
+				bm.toString());
+		if (name == null)
+			return;
+		bm.setName(name);
+		Settings.getInstance().placeBookmarks.add(bm);
+		MainGUI.getMainGUI().updateBookmarksMenu();
+	}
 
 }

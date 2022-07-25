@@ -33,249 +33,249 @@ import java.awt.Stroke;
 
 public class WgsGrid {
 
-    private static final WgsDensity[] DENSITIES = WgsDensity.values();
-    private static final Stroke BASIC_STROKE = new BasicStroke(1f);
-    private static final int LABEL_OFFSET = 2;
-    public final SettingsWgsGrid s;
-    private final StringBuilder stringBuilder = new StringBuilder(16);
-    private final Rectangle viewport = new Rectangle();
-    private final JComponent c;
-    private Placement placement = Placement.BOTTOM_RIGHT;
-    private BasicStroke stroke;
-    private int lastDegree, lastMinute;
+	private static final WgsDensity[] DENSITIES = WgsDensity.values();
+	private static final Stroke BASIC_STROKE = new BasicStroke(1f);
+	private static final int LABEL_OFFSET = 2;
+	public final SettingsWgsGrid s;
+	private final StringBuilder stringBuilder = new StringBuilder(16);
+	private final Rectangle viewport = new Rectangle();
+	private final JComponent c;
+	private Placement placement = Placement.BOTTOM_RIGHT;
+	private BasicStroke stroke;
+	private int lastDegree, lastMinute;
 
-    public WgsGrid(SettingsWgsGrid s, JComponent c) {
-        this.s = s;
-        this.c = c;
-    }
+	public WgsGrid(SettingsWgsGrid s, JComponent c) {
+		this.s = s;
+		this.c = c;
+	}
 
-    public void paintWgsGrid(Graphics2D g, MapSpace ms, Point tlc, int zoom) {
-        if (!s.enabled) {
-            return;
-        }
+	public void paintWgsGrid(Graphics2D g, MapSpace ms, Point tlc, int zoom) {
+		if (!s.enabled) {
+			return;
+		}
 
-        // Check density
-        WgsDensity density = s.density;
-        while (zoom < density.minZoom) {
-            int index = density.ordinal();
-            if (--index <= 0) {
-                return;
-            }
-            density = DENSITIES[index];
-        }
+		// Check density
+		WgsDensity density = s.density;
+		while (zoom < density.minZoom) {
+			int index = density.ordinal();
+			if (--index <= 0) {
+				return;
+			}
+			density = DENSITIES[index];
+		}
 
-        final int maxPixels = ms.getMaxPixels(zoom);
+		final int maxPixels = ms.getMaxPixels(zoom);
 
-        // Check viewport
-        viewport.width = c.getWidth();
-        viewport.height = c.getHeight();
-        if (tlc.x > maxPixels || tlc.y > maxPixels || tlc.x + viewport.width < 0 || tlc.y + viewport.width < 0) {
-            return;
-        }
-        viewport.x = c.getX();
-        viewport.y = c.getY();
+		// Check viewport
+		viewport.width = c.getWidth();
+		viewport.height = c.getHeight();
+		if (tlc.x > maxPixels || tlc.y > maxPixels || tlc.x + viewport.width < 0 || tlc.y + viewport.width < 0) {
+			return;
+		}
+		viewport.x = c.getX();
+		viewport.y = c.getY();
 
-        // Translate according to mapSpace
-        viewport.translate(tlc.x, tlc.y);
-        g = (Graphics2D) g.create();
-        g.translate(-tlc.x, -tlc.y);
+		// Translate according to mapSpace
+		viewport.translate(tlc.x, tlc.y);
+		g = (Graphics2D) g.create();
+		g.translate(-tlc.x, -tlc.y);
 
-        // Calculate viewport coordinates
-        final int x1 = Math.max(tlc.x, 0);
-        final int y1 = Math.max(tlc.y, 0);
-        final int x2 = Math.min(tlc.x + viewport.width, maxPixels);
-        final int y2 = Math.min(tlc.y + viewport.height, maxPixels);
+		// Calculate viewport coordinates
+		final int x1 = Math.max(tlc.x, 0);
+		final int y1 = Math.max(tlc.y, 0);
+		final int x2 = Math.min(tlc.x + viewport.width, maxPixels);
+		final int y2 = Math.min(tlc.y + viewport.height, maxPixels);
 
-        // Calculate line coordinates
-        final int hLineX1 = x1 + 1;
-        final int hLineX2 = x2 - 1;
-        final int vLineY1 = y1 + 1;
-        final int vLineY2 = y2 - 1;
+		// Calculate line coordinates
+		final int hLineX1 = x1 + 1;
+		final int hLineX2 = x2 - 1;
+		final int vLineY1 = y1 + 1;
+		final int vLineY2 = y2 - 1;
 
-        // Calculate line indexes
-        final int vMin = Coordinate.doubleToInt(ms.cXToLon(x1, zoom)) / density.iStep;
-        final int vMax = Coordinate.doubleToInt(ms.cXToLon(x2, zoom)) / density.iStep;
-        final int hMin = Coordinate.doubleToInt(ms.cYToLat(y2, zoom)) / density.iStep;
-        final int hMax = Coordinate.doubleToInt(ms.cYToLat(y1, zoom)) / density.iStep;
+		// Calculate line indexes
+		final int vMin = Coordinate.doubleToInt(ms.cXToLon(x1, zoom)) / density.iStep;
+		final int vMax = Coordinate.doubleToInt(ms.cXToLon(x2, zoom)) / density.iStep;
+		final int hMin = Coordinate.doubleToInt(ms.cYToLat(y2, zoom)) / density.iStep;
+		final int hMax = Coordinate.doubleToInt(ms.cYToLat(y1, zoom)) / density.iStep;
 
-        g.setBackground(Color.WHITE);
-        g.setColor(s.color);
+		g.setBackground(Color.WHITE);
+		g.setColor(s.color);
 
-        g.setStroke(checkAndGetStroke());
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setStroke(checkAndGetStroke());
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Paint vertical lines
-        for (int i = vMin; i <= vMax; i++) {
-            int iLon = i * density.iStep;
-            int x = ms.cLonToX(Coordinate.intToDouble(iLon), zoom);
-            if (x > x1 && x < x2) {
-                g.drawLine(x, vLineY1, x, vLineY2);
-            }
-        }
+		// Paint vertical lines
+		for (int i = vMin; i <= vMax; i++) {
+			int iLon = i * density.iStep;
+			int x = ms.cLonToX(Coordinate.intToDouble(iLon), zoom);
+			if (x > x1 && x < x2) {
+				g.drawLine(x, vLineY1, x, vLineY2);
+			}
+		}
 
-        // Paint horizontal lines
-        for (int i = hMin; i <= hMax; i++) {
-            int iLat = i * density.iStep;
-            int y = ms.cLatToY(Coordinate.intToDouble(iLat), zoom);
-            if (y > y1 && y < y2) {
-                g.drawLine(hLineX1, y, hLineX2, y);
-            }
-        }
+		// Paint horizontal lines
+		for (int i = hMin; i <= hMax; i++) {
+			int iLat = i * density.iStep;
+			int y = ms.cLatToY(Coordinate.intToDouble(iLat), zoom);
+			if (y > y1 && y < y2) {
+				g.drawLine(hLineX1, y, hLineX2, y);
+			}
+		}
 
-        // Set up font metrics
-        g.setStroke(BASIC_STROKE);
-        g.setFont(s.font);
-        final FontMetrics fontMetrics = g.getFontMetrics();
-        final int fontDescent = fontMetrics.getDescent();
-        final int fontHeight = fontMetrics.getHeight();
+		// Set up font metrics
+		g.setStroke(BASIC_STROKE);
+		g.setFont(s.font);
+		final FontMetrics fontMetrics = g.getFontMetrics();
+		final int fontDescent = fontMetrics.getDescent();
+		final int fontHeight = fontMetrics.getHeight();
 
-        resetLabelCompression();
+		resetLabelCompression();
 
-        // Shared Y coordinates for vertical labels
-        int labelRectX;
-        int labelRectY = y2 - LABEL_OFFSET - fontHeight;
-        int labelY = y2 - LABEL_OFFSET - fontDescent;
-        int labelX;
+		// Shared Y coordinates for vertical labels
+		int labelRectX;
+		int labelRectY = y2 - LABEL_OFFSET - fontHeight;
+		int labelY = y2 - LABEL_OFFSET - fontDescent;
+		int labelX;
 
-        // Paint vertical labels
-        for (int i = vMin; i <= vMax; i++) {
+		// Paint vertical labels
+		for (int i = vMin; i <= vMax; i++) {
 
-            // Calculate coordinates
-            int iLon = i * density.iStep;
-            int x = ms.cLonToX(Coordinate.intToDouble(iLon), zoom);
+			// Calculate coordinates
+			int iLon = i * density.iStep;
+			int x = ms.cLonToX(Coordinate.intToDouble(iLon), zoom);
 
-            // Prepare label
-            String label = getLabel(iLon, density);
-            int stringWidth = fontMetrics.stringWidth(label);
-            labelRectX = labelX = x - stringWidth / 2;
+			// Prepare label
+			String label = getLabel(iLon, density);
+			int stringWidth = fontMetrics.stringWidth(label);
+			labelRectX = labelX = x - stringWidth / 2;
 
-            // Paint label
-            if (viewport.contains(labelRectX, labelRectY, stringWidth, fontHeight)) {
-                g.clearRect(labelRectX, labelRectY, stringWidth, fontHeight);
-                g.drawRect(labelRectX, labelRectY, stringWidth, fontHeight);
-                g.drawString(label, labelX, labelY);
-            } else {
-                resetLabelCompression();
-            }
-        }
+			// Paint label
+			if (viewport.contains(labelRectX, labelRectY, stringWidth, fontHeight)) {
+				g.clearRect(labelRectX, labelRectY, stringWidth, fontHeight);
+				g.drawRect(labelRectX, labelRectY, stringWidth, fontHeight);
+				g.drawString(label, labelX, labelY);
+			} else {
+				resetLabelCompression();
+			}
+		}
 
-        resetLabelCompression();
-        viewport.height -= fontHeight + LABEL_OFFSET;
-        labelX = labelRectX = x1 + LABEL_OFFSET;
+		resetLabelCompression();
+		viewport.height -= fontHeight + LABEL_OFFSET;
+		labelX = labelRectX = x1 + LABEL_OFFSET;
 
-        // Paint horizontal labels
-        for (int i = hMin; i <= hMax; i++) {
-            int iLat = i * density.iStep;
-            int y = ms.cLatToY(Coordinate.intToDouble(iLat), zoom);
+		// Paint horizontal labels
+		for (int i = hMin; i <= hMax; i++) {
+			int iLat = i * density.iStep;
+			int y = ms.cLatToY(Coordinate.intToDouble(iLat), zoom);
 
-            // Prepare label
-            String label = getLabel(iLat, density);
-            final int stringWidth = fontMetrics.stringWidth(label);
-            if (placement == Placement.BOTTOM_RIGHT || placement == Placement.TOP_RIGHT) {
-                labelX = labelRectX = x2 - LABEL_OFFSET - stringWidth;
-            }
-            labelRectY = y - fontHeight / 2;
-            labelY = labelRectY + fontHeight - fontDescent;
+			// Prepare label
+			String label = getLabel(iLat, density);
+			final int stringWidth = fontMetrics.stringWidth(label);
+			if (placement == Placement.BOTTOM_RIGHT || placement == Placement.TOP_RIGHT) {
+				labelX = labelRectX = x2 - LABEL_OFFSET - stringWidth;
+			}
+			labelRectY = y - fontHeight / 2;
+			labelY = labelRectY + fontHeight - fontDescent;
 
-            // Paint label
-            if (viewport.contains(labelRectX, labelRectY, stringWidth, fontHeight)) {
-                g.clearRect(labelRectX, labelRectY, stringWidth, fontHeight);
-                g.drawRect(labelRectX, labelRectY, stringWidth, fontHeight);
-                g.drawString(label, labelX, labelY);
-            } else {
-                resetLabelCompression();
-            }
-        }
-        g.dispose();
-    }
+			// Paint label
+			if (viewport.contains(labelRectX, labelRectY, stringWidth, fontHeight)) {
+				g.clearRect(labelRectX, labelRectY, stringWidth, fontHeight);
+				g.drawRect(labelRectX, labelRectY, stringWidth, fontHeight);
+				g.drawString(label, labelX, labelY);
+			} else {
+				resetLabelCompression();
+			}
+		}
+		g.dispose();
+	}
 
-    public void setPosition(Placement placement) {
-        this.placement = placement != null ? placement : Placement.BOTTOM_RIGHT;
-    }
+	public void setPosition(Placement placement) {
+		this.placement = placement != null ? placement : Placement.BOTTOM_RIGHT;
+	}
 
-    private Stroke checkAndGetStroke() {
-        if (stroke == null || stroke.getLineWidth() != s.width) {
-            stroke = new BasicStroke(s.width);
-        }
-        return stroke;
-    }
+	private Stroke checkAndGetStroke() {
+		if (stroke == null || stroke.getLineWidth() != s.width) {
+			stroke = new BasicStroke(s.width);
+		}
+		return stroke;
+	}
 
-    private void resetLabelCompression() {
-        lastDegree = Integer.MAX_VALUE;
-        lastMinute = Integer.MAX_VALUE;
-    }
+	private void resetLabelCompression() {
+		lastDegree = Integer.MAX_VALUE;
+		lastMinute = Integer.MAX_VALUE;
+	}
 
-    private String getLabel(int coord, WgsDensity density) {
-        coord = Math.abs(coord);
-        int degree = Coordinate.getDegree(coord);
-        int minute = Coordinate.getMinute(coord);
-        int second = Coordinate.getSecond(coord);
-        stringBuilder.setLength(0);
-        stringBuilder.append(" ");
-        if (!s.compressLabels || lastDegree != degree || !density.compressDegree) {
-            stringBuilder.append(degree);
-            stringBuilder.append('\u00B0');
-        }
-        if (density.displayMinute && (!s.compressLabels || lastMinute != minute || !density.compressMinute)) {
-            if (minute < 10) {
-                stringBuilder.append('0');
-            }
-            stringBuilder.append(minute);
-            stringBuilder.append('\'');
-        }
-        if (density.displaySecond) {
-            if (second < 10) {
-                stringBuilder.append('0');
-            }
-            stringBuilder.append(second);
-            stringBuilder.append('\"');
-        }
-        stringBuilder.append(" ");
-        lastDegree = degree;
-        lastMinute = minute;
-        return stringBuilder.toString();
-    }
+	private String getLabel(int coord, WgsDensity density) {
+		coord = Math.abs(coord);
+		int degree = Coordinate.getDegree(coord);
+		int minute = Coordinate.getMinute(coord);
+		int second = Coordinate.getSecond(coord);
+		stringBuilder.setLength(0);
+		stringBuilder.append(" ");
+		if (!s.compressLabels || lastDegree != degree || !density.compressDegree) {
+			stringBuilder.append(degree);
+			stringBuilder.append('\u00B0');
+		}
+		if (density.displayMinute && (!s.compressLabels || lastMinute != minute || !density.compressMinute)) {
+			if (minute < 10) {
+				stringBuilder.append('0');
+			}
+			stringBuilder.append(minute);
+			stringBuilder.append('\'');
+		}
+		if (density.displaySecond) {
+			if (second < 10) {
+				stringBuilder.append('0');
+			}
+			stringBuilder.append(second);
+			stringBuilder.append('\"');
+		}
+		stringBuilder.append(" ");
+		lastDegree = degree;
+		lastMinute = minute;
+		return stringBuilder.toString();
+	}
 
-    public enum WgsDensity {
+	public enum WgsDensity {
 
-        DEGREES_90(0), DEGREES_45(1), DEGREES_30(2), DEGREES_15(3), DEGREES_10(4), DEGREES_5(5), DEGREES_2(6), DEGREE_1(
-                7), MINUTES_30(8), MINUTES_20(9), MINUTES_10(10), MINUTES_5(11), MINUTES_2(12), MINUTE_1(13), SECONDS_30(
-                15), SECONDS_20(15), SECONDS_10(16), SECONDS_5(17), SECONDS_2(18), SECOND_1(19);
+		DEGREES_90(0), DEGREES_45(1), DEGREES_30(2), DEGREES_15(3), DEGREES_10(4), DEGREES_5(5), DEGREES_2(6), DEGREE_1(
+				7), MINUTES_30(8), MINUTES_20(9), MINUTES_10(10), MINUTES_5(11), MINUTES_2(12), MINUTE_1(
+						13), SECONDS_30(15), SECONDS_20(15), SECONDS_10(16), SECONDS_5(17), SECONDS_2(18), SECOND_1(19);
 
-        public final int iStep, minZoom;
-        public final boolean compressDegree, compressMinute, displayMinute, displaySecond;
-        //private final String string;
+		public final int iStep, minZoom;
+		public final boolean compressDegree, compressMinute, displayMinute, displaySecond;
+		// private final String string;
 
-        WgsDensity(final int minZoom) {
-            this.minZoom = minZoom;
-            String[] split = name().split("_");
-            int value = Integer.parseInt(split[1]);
+		WgsDensity(final int minZoom) {
+			this.minZoom = minZoom;
+			String[] split = name().split("_");
+			int value = Integer.parseInt(split[1]);
 
-            if (split[0].startsWith("D")) {
-                iStep = value * Coordinate.DEGREE;
-                displayMinute = displaySecond = false;
-                compressDegree = compressMinute = false;
-            } else if (split[0].startsWith("M")) {
-                iStep = value * Coordinate.MINUTE;
-                compressDegree = true/* value <= 15 */;
-                displayMinute = true;
-                displaySecond = compressMinute = false;
-            } else {
-                iStep = value * Coordinate.SECOND;
-                compressDegree = displayMinute = displaySecond = true;
-                compressMinute = true/* value <= 15 */;
-            }
-        }
+			if (split[0].startsWith("D")) {
+				iStep = value * Coordinate.DEGREE;
+				displayMinute = displaySecond = false;
+				compressDegree = compressMinute = false;
+			} else if (split[0].startsWith("M")) {
+				iStep = value * Coordinate.MINUTE;
+				compressDegree = true/* value <= 15 */;
+				displayMinute = true;
+				displaySecond = compressMinute = false;
+			} else {
+				iStep = value * Coordinate.SECOND;
+				compressDegree = displayMinute = displaySecond = true;
+				compressMinute = true/* value <= 15 */;
+			}
+		}
 
-        public String toString() {
-            String[] split = name().split("_");
-            String unitKey = "map_ctrl_wgs_grid_density_" + split[0].toLowerCase();
-            return I18nUtils.localizedStringForKey("map_ctrl_wgs_grid_density_prefix") + " " + split[1] + " " +
-                    I18nUtils.localizedStringForKey(unitKey);
-        }
-    }
+		public String toString() {
+			String[] split = name().split("_");
+			String unitKey = "map_ctrl_wgs_grid_density_" + split[0].toLowerCase();
+			return I18nUtils.localizedStringForKey("map_ctrl_wgs_grid_density_prefix") + " " + split[1] + " "
+					+ I18nUtils.localizedStringForKey(unitKey);
+		}
+	}
 
-    public enum Placement {
-        BOTTOM_RIGHT, BOTTOM_LEFT, TOP_RIGHT, TOP_LEFT
-    }
+	public enum Placement {
+		BOTTOM_RIGHT, BOTTOM_LEFT, TOP_RIGHT, TOP_LEFT
+	}
 }

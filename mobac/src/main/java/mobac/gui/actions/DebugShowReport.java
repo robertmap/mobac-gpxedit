@@ -24,12 +24,12 @@ import java.awt.event.ActionListener;
 
 public class DebugShowReport implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        GUIExceptionHandler.processException(Thread.currentThread(), new SystemReport());
-        // throw new RuntimeException("Test");
-    }
+	public void actionPerformed(ActionEvent e) {
+		GUIExceptionHandler.processException(Thread.currentThread(), new SystemReport());
+		// throw new RuntimeException("Test");
+	}
 
-    private static final class SystemReport extends RuntimeException implements NotABug {
+	private static final class SystemReport extends RuntimeException implements NotABug {
 
-    }
+	}
 }

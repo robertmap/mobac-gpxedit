@@ -28,30 +28,30 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 
 public abstract class AbstractHttpMapSourceBase implements HttpMapSource {
-    protected static final SSLSocketFactory SSL_SOCKET_FACTORY = MobacSSLHelper.createSSLSocketFactory(null);
+	protected static final SSLSocketFactory SSL_SOCKET_FACTORY = MobacSSLHelper.createSSLSocketFactory(null);
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Override
-    public void prepareConnection(HttpURLConnection connection) throws ProtocolException {
-        if (connection instanceof HttpsURLConnection) {
-            ((HttpsURLConnection) connection).setSSLSocketFactory(getSslSocketFactory());
-        }
+	@Override
+	public void prepareConnection(HttpURLConnection connection) throws ProtocolException {
+		if (connection instanceof HttpsURLConnection) {
+			((HttpsURLConnection) connection).setSSLSocketFactory(getSslSocketFactory());
+		}
 
-        Settings settings = Settings.getInstance();
+		Settings settings = Settings.getInstance();
 
-        connection.setRequestMethod("GET");
+		connection.setRequestMethod("GET");
 
-        connection.setConnectTimeout(1000 * settings.httpConnectionTimeout);
-        connection.setReadTimeout(1000 * settings.httpReadTimeout);
-        if (connection.getRequestProperty("User-agent") == null) {
-            connection.setRequestProperty("User-agent", settings.getUserAgent());
-        }
-        connection.setRequestProperty("Accept", settings.getHttpAccept());
-    }
+		connection.setConnectTimeout(1000 * settings.httpConnectionTimeout);
+		connection.setReadTimeout(1000 * settings.httpReadTimeout);
+		if (connection.getRequestProperty("User-agent") == null) {
+			connection.setRequestProperty("User-agent", settings.getUserAgent());
+		}
+		connection.setRequestProperty("Accept", settings.getHttpAccept());
+	}
 
-    protected SSLSocketFactory getSslSocketFactory() {
-        return SSL_SOCKET_FACTORY;
-    }
+	protected SSLSocketFactory getSslSocketFactory() {
+		return SSL_SOCKET_FACTORY;
+	}
 
 }

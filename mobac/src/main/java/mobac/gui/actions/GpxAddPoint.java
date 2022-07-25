@@ -27,42 +27,39 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class GpxAddPoint implements ActionListener {
 
-    JGpxPanel panel;
+	JGpxPanel panel;
 
-    private GpxMapController mapController = null;
+	private GpxMapController mapController = null;
 
-    public GpxAddPoint(JGpxPanel panel) {
-        super();
-        this.panel = panel;
-    }
+	public GpxAddPoint(JGpxPanel panel) {
+		super();
+		this.panel = panel;
+	}
 
-    public synchronized void actionPerformed(ActionEvent event) {
-        GpxEntry entry = panel.getSelectedEntry();
-        if (entry == null) {
-            int answer = JOptionPane.showConfirmDialog(null,
-                    I18nUtils.localizedStringForKey("rp_gpx_msg_ask_create_new"),
-                    I18nUtils.localizedStringForKey("rp_gpx_msg_ask_create_new_title"),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (answer != JOptionPane.YES_OPTION)
-                return;
-            entry = new GpxNew(panel).newGpx();
-        }
+	public synchronized void actionPerformed(ActionEvent event) {
+		GpxEntry entry = panel.getSelectedEntry();
+		if (entry == null) {
+			int answer = JOptionPane.showConfirmDialog(null,
+					I18nUtils.localizedStringForKey("rp_gpx_msg_ask_create_new"),
+					I18nUtils.localizedStringForKey("rp_gpx_msg_ask_create_new_title"), JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if (answer != JOptionPane.YES_OPTION)
+				return;
+			entry = new GpxNew(panel).newGpx();
+		}
 
-        if (!entry.isWaypointParent()) {
-            JOptionPane.showMessageDialog(null,
-                    I18nUtils.localizedStringForKey("rp_gpx_msg_add_point_failed"),
-                    I18nUtils.localizedStringForKey("Error"),
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
+		if (!entry.isWaypointParent()) {
+			JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("rp_gpx_msg_add_point_failed"),
+					I18nUtils.localizedStringForKey("Error"), JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
 
-        PreviewMap map = MainGUI.getMainGUI().previewMap;
-        map.getMapSelectionController().disable();
-        if (mapController == null)
-            mapController = new GpxMapController(map, panel, false);
-        mapController.enable();
-    }
+		PreviewMap map = MainGUI.getMainGUI().previewMap;
+		map.getMapSelectionController().disable();
+		if (mapController == null)
+			mapController = new GpxMapController(map, panel, false);
+		mapController.enable();
+	}
 }

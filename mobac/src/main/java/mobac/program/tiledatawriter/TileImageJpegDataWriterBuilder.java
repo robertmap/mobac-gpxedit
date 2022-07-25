@@ -25,41 +25,43 @@ import javax.imageio.ImageWriter;
 
 public class TileImageJpegDataWriterBuilder implements TileImageDataWriterBuilder {
 
-    protected static final Logger log = LoggerFactory.getLogger(TileImageJpegDataWriterBuilder.class);
+	protected static final Logger log = LoggerFactory.getLogger(TileImageJpegDataWriterBuilder.class);
 
-    protected ImageWriter jpegImageWriter = null;
+	protected ImageWriter jpegImageWriter = null;
 
-    protected float jpegCompressionLevel;
+	protected float jpegCompressionLevel;
 
-    /**
-     * @param jpegCompressionLevel a float between 0 and 1; 1 specifies minimum compression and maximum quality
-     */
-    public TileImageJpegDataWriterBuilder(double jpegCompressionLevel) {
-        this((float) jpegCompressionLevel);
-    }
+	/**
+	 * @param jpegCompressionLevel
+	 *            a float between 0 and 1; 1 specifies minimum compression and
+	 *            maximum quality
+	 */
+	public TileImageJpegDataWriterBuilder(double jpegCompressionLevel) {
+		this((float) jpegCompressionLevel);
+	}
 
-    public TileImageJpegDataWriterBuilder(float jpegCompressionLevel) {
-        this.jpegCompressionLevel = jpegCompressionLevel;
-    }
+	public TileImageJpegDataWriterBuilder(float jpegCompressionLevel) {
+		this.jpegCompressionLevel = jpegCompressionLevel;
+	}
 
-    public TileImageJpegDataWriterBuilder(TileImageJpegDataWriterBuilder jpegWriter) {
-        this(jpegWriter.getJpegCompressionLevel());
-    }
+	public TileImageJpegDataWriterBuilder(TileImageJpegDataWriterBuilder jpegWriter) {
+		this(jpegWriter.getJpegCompressionLevel());
+	}
 
-    public TileImageJpegDataWriter build() {
-        return new TileImageJpegDataWriter(jpegCompressionLevel);
-    }
+	public TileImageJpegDataWriter build() {
+		return new TileImageJpegDataWriter(jpegCompressionLevel);
+	}
 
-    public float getJpegCompressionLevel() {
-        return jpegCompressionLevel;
-    }
+	public float getJpegCompressionLevel() {
+		return jpegCompressionLevel;
+	}
 
-    public void setJpegCompressionLevel(float jpegCompressionLevel) {
-        this.jpegCompressionLevel = jpegCompressionLevel;
-    }
+	public void setJpegCompressionLevel(float jpegCompressionLevel) {
+		this.jpegCompressionLevel = jpegCompressionLevel;
+	}
 
-    public TileImageType getType() {
-        return TileImageType.JPG;
-    }
+	public TileImageType getType() {
+		return TileImageType.JPG;
+	}
 
 }

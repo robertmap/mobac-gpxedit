@@ -33,36 +33,36 @@ import java.util.List;
  */
 public class PolygonSelectionLayer implements MapLayer {
 
-    private final AbstractPolygonSelectionMapController mapController;
+	private final AbstractPolygonSelectionMapController mapController;
 
-    public PolygonSelectionLayer(AbstractPolygonSelectionMapController mapController) {
-        this.mapController = mapController;
-    }
+	public PolygonSelectionLayer(AbstractPolygonSelectionMapController mapController) {
+		this.mapController = mapController;
+	}
 
-    public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-        MapSpace mapSpace = map.getMapSource().getMapSpace();
-        g.setColor(Color.RED);
-        Point lastPoint = null;
-        List<Point> pointList = mapController.getPolygonPoints();
-        if (pointList.size() == 0)
-            return;
-        AffineTransform at = g.getTransform();
-        try {
-            g.translate(-minX, -minY);
-            for (Point p : pointList) {
-                Point p1 = mapSpace.changeZoom(p, PreviewMap.MAX_ZOOM, zoom);
-                g.fillOval(p1.x - 3, p1.y - 3, 6, 6);
-                if (lastPoint != null) {
-                    g.drawLine(p1.x, p1.y, lastPoint.x, lastPoint.y);
-                }
-                lastPoint = p1;
-            }
-            // Draw line back to the starting point
-            Point p1 = mapSpace.changeZoom(pointList.get(0), PreviewMap.MAX_ZOOM, zoom);
-            g.drawLine(p1.x, p1.y, lastPoint.x, lastPoint.y);
-        } finally {
-            g.setTransform(at);
-        }
-    }
+	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
+		MapSpace mapSpace = map.getMapSource().getMapSpace();
+		g.setColor(Color.RED);
+		Point lastPoint = null;
+		List<Point> pointList = mapController.getPolygonPoints();
+		if (pointList.size() == 0)
+			return;
+		AffineTransform at = g.getTransform();
+		try {
+			g.translate(-minX, -minY);
+			for (Point p : pointList) {
+				Point p1 = mapSpace.changeZoom(p, PreviewMap.MAX_ZOOM, zoom);
+				g.fillOval(p1.x - 3, p1.y - 3, 6, 6);
+				if (lastPoint != null) {
+					g.drawLine(p1.x, p1.y, lastPoint.x, lastPoint.y);
+				}
+				lastPoint = p1;
+			}
+			// Draw line back to the starting point
+			Point p1 = mapSpace.changeZoom(pointList.get(0), PreviewMap.MAX_ZOOM, zoom);
+			g.drawLine(p1.x, p1.y, lastPoint.x, lastPoint.y);
+		} finally {
+			g.setTransform(at);
+		}
+	}
 
 }

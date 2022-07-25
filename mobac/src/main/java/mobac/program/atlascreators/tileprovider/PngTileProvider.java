@@ -25,34 +25,35 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * A tile provider for atlas formats that only allow PNG images. Each image processed is checked
+ * A tile provider for atlas formats that only allow PNG images. Each image
+ * processed is checked
  */
 public class PngTileProvider extends FilterTileProvider {
 
-    final TileImagePngDataWriter writer;
+	final TileImagePngDataWriter writer;
 
-    public PngTileProvider(TileProvider tileProvider) {
-        super(tileProvider);
-        writer = new TileImagePngDataWriter();
-    }
+	public PngTileProvider(TileProvider tileProvider) {
+		super(tileProvider);
+		writer = new TileImagePngDataWriter();
+	}
 
-    @Override
-    public byte[] getTileData(int x, int y) throws IOException {
-        if (!tileProvider.preferTileImageUsage()) {
-            byte[] data = super.getTileData(x, y);
-            if (ImageFormatDetector.getImageType(data) == TileImageType.PNG)
-                return data;
-        }
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
-        BufferedImage image = getTileImage(x, y);
-        if (image == null)
-            return null;
-        writer.processImage(image, buffer);
-        return buffer.toByteArray();
-    }
+	@Override
+	public byte[] getTileData(int x, int y) throws IOException {
+		if (!tileProvider.preferTileImageUsage()) {
+			byte[] data = super.getTileData(x, y);
+			if (ImageFormatDetector.getImageType(data) == TileImageType.PNG)
+				return data;
+		}
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
+		BufferedImage image = getTileImage(x, y);
+		if (image == null)
+			return null;
+		writer.processImage(image, buffer);
+		return buffer.toByteArray();
+	}
 
-    public boolean preferTileImageUsage() {
-        return true;
-    }
+	public boolean preferTileImageUsage() {
+		return true;
+	}
 
 }

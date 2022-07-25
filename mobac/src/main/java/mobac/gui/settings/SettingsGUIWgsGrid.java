@@ -43,115 +43,115 @@ import java.awt.event.MouseEvent;
 
 public class SettingsGUIWgsGrid extends JPanel {
 
-    private static final long serialVersionUID = -3067609813682787669L;
+	private static final long serialVersionUID = -3067609813682787669L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SettingsGUIWgsGrid.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SettingsGUIWgsGrid.class);
 
-    private final FontChooser fontChooser = new FontChooser();
+	private final FontChooser fontChooser = new FontChooser();
 
-    private final JButton jButtonFont = new JButton(FontChooser.encodeFont(FontChooser.DEFAULT));
+	private final JButton jButtonFont = new JButton(FontChooser.encodeFont(FontChooser.DEFAULT));
 
-    private final JCheckBox jCheckBoxCompressLabels = new JCheckBox();
+	private final JCheckBox jCheckBoxCompressLabels = new JCheckBox();
 
-    private final JPanel jPanelColor = new JPanel();
+	private final JPanel jPanelColor = new JPanel();
 
-    private final SpinnerNumberModel modelWidth = new SpinnerNumberModel(0.5d, 0.5d, 5.0d, 0.5d);
+	private final SpinnerNumberModel modelWidth = new SpinnerNumberModel(0.5d, 0.5d, 5.0d, 0.5d);
 
-    private final JSpinner jSpinnerWidth = new JSpinner(modelWidth);
+	private final JSpinner jSpinnerWidth = new JSpinner(modelWidth);
 
-    private final JLabel jLabelColor = new JLabel();
-    private final JLabel jLabelFont = new JLabel();
-    private final JLabel jLabelWidth = new JLabel();
+	private final JLabel jLabelColor = new JLabel();
+	private final JLabel jLabelFont = new JLabel();
+	private final JLabel jLabelWidth = new JLabel();
 
-    private String title;
+	private String title;
 
-    public SettingsGUIWgsGrid() {
-        super(new GridBagLayout());
-        LOG.debug("Preparing SettingsGUIWgsGrid");
-        i18n();
+	public SettingsGUIWgsGrid() {
+		super(new GridBagLayout());
+		LOG.debug("Preparing SettingsGUIWgsGrid");
+		i18n();
 
-        jButtonFont.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fontChooser.show();
-                if (fontChooser.wasCanceled()) {
-                    return;
-                }
-                String text = FontChooser.encodeFont(fontChooser.getFont());
-                jButtonFont.setText(text);
-            }
-        });
+		jButtonFont.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fontChooser.show();
+				if (fontChooser.wasCanceled()) {
+					return;
+				}
+				String text = FontChooser.encodeFont(fontChooser.getFont());
+				jButtonFont.setText(text);
+			}
+		});
 
-        jPanelColor.setPreferredSize(new Dimension(64, 18));
-        jPanelColor.setOpaque(true);
-        jPanelColor.setBorder(BorderFactory.createEtchedBorder());
-        jPanelColor.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                Color color = jPanelColor.getBackground();
-                color = JColorChooser.showDialog(jPanelColor, title, color);
-                if (color != null) {
-                    jPanelColor.setBackground(color);
-                }
-            }
+		jPanelColor.setPreferredSize(new Dimension(64, 18));
+		jPanelColor.setOpaque(true);
+		jPanelColor.setBorder(BorderFactory.createEtchedBorder());
+		jPanelColor.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				Color color = jPanelColor.getBackground();
+				color = JColorChooser.showDialog(jPanelColor, title, color);
+				if (color != null) {
+					jPanelColor.setBackground(color);
+				}
+			}
 
-            public void mouseEntered(MouseEvent e) {
-                jPanelColor.setBorder(BorderFactory.createRaisedBevelBorder());
-            }
+			public void mouseEntered(MouseEvent e) {
+				jPanelColor.setBorder(BorderFactory.createRaisedBevelBorder());
+			}
 
-            public void mouseExited(MouseEvent e) {
-                jPanelColor.setBorder(BorderFactory.createEtchedBorder());
-            }
-        });
+			public void mouseExited(MouseEvent e) {
+				jPanelColor.setBorder(BorderFactory.createEtchedBorder());
+			}
+		});
 
-        GBCTable gbc = new GBCTable();
-        add(jLabelColor, gbc.begin());
-        add(jLabelWidth, gbc.incY());
-        add(jPanelColor, gbc.incX());
-        add(jSpinnerWidth, gbc.incY());
-        add(jLabelFont, gbc.incX());
-        add(jCheckBoxCompressLabels, gbc.incY().gridwidth(3));
-        add(jButtonFont, gbc.incX());
-        add(Box.createHorizontalGlue(), gbc.incX().fillH());
-    }
+		GBCTable gbc = new GBCTable();
+		add(jLabelColor, gbc.begin());
+		add(jLabelWidth, gbc.incY());
+		add(jPanelColor, gbc.incX());
+		add(jSpinnerWidth, gbc.incY());
+		add(jLabelFont, gbc.incX());
+		add(jCheckBoxCompressLabels, gbc.incY().gridwidth(3));
+		add(jButtonFont, gbc.incX());
+		add(Box.createHorizontalGlue(), gbc.incX().fillH());
+	}
 
-    public void i18n() {
-        jCheckBoxCompressLabels.setText(I18nUtils.localizedStringForKey("set_display_grid_compress"));
-        jCheckBoxCompressLabels.setToolTipText(I18nUtils.localizedStringForKey("set_display_grid_compress_tips"));
-        setBorder(SettingsGUI.createSectionBorder(I18nUtils.localizedStringForKey("set_display_grid")));
-        title = I18nUtils.localizedStringForKey("set_display_grid_title");//TODO: recovery
-        jLabelWidth.setText(I18nUtils.localizedStringForKey("set_display_grid_width"));
-        String width = I18nUtils.localizedStringForKey("set_display_grid_width_tips");
-        jLabelWidth.setToolTipText(width);
-        jSpinnerWidth.setToolTipText(width);
-        jLabelColor.setText(I18nUtils.localizedStringForKey("set_display_grid_color"));
-        String color = I18nUtils.localizedStringForKey("set_display_grid_color_tips");
-        jLabelColor.setToolTipText(color);
-        jPanelColor.setToolTipText(color);
-        jLabelFont.setText(I18nUtils.localizedStringForKey("set_display_grid_font"));
-        String font = I18nUtils.localizedStringForKey("set_display_grid_font_tips");
-        jLabelFont.setToolTipText(font);
-        jButtonFont.setToolTipText(font);
-    }
+	public void i18n() {
+		jCheckBoxCompressLabels.setText(I18nUtils.localizedStringForKey("set_display_grid_compress"));
+		jCheckBoxCompressLabels.setToolTipText(I18nUtils.localizedStringForKey("set_display_grid_compress_tips"));
+		setBorder(SettingsGUI.createSectionBorder(I18nUtils.localizedStringForKey("set_display_grid")));
+		title = I18nUtils.localizedStringForKey("set_display_grid_title");// TODO: recovery
+		jLabelWidth.setText(I18nUtils.localizedStringForKey("set_display_grid_width"));
+		String width = I18nUtils.localizedStringForKey("set_display_grid_width_tips");
+		jLabelWidth.setToolTipText(width);
+		jSpinnerWidth.setToolTipText(width);
+		jLabelColor.setText(I18nUtils.localizedStringForKey("set_display_grid_color"));
+		String color = I18nUtils.localizedStringForKey("set_display_grid_color_tips");
+		jLabelColor.setToolTipText(color);
+		jPanelColor.setToolTipText(color);
+		jLabelFont.setText(I18nUtils.localizedStringForKey("set_display_grid_font"));
+		String font = I18nUtils.localizedStringForKey("set_display_grid_font_tips");
+		jLabelFont.setToolTipText(font);
+		jButtonFont.setToolTipText(font);
+	}
 
-    public void applySettings(Settings s) {
-        applySettings(s.wgsGrid);
-    }
+	public void applySettings(Settings s) {
+		applySettings(s.wgsGrid);
+	}
 
-    public void applySettings(SettingsWgsGrid s) {
-        s.compressLabels = jCheckBoxCompressLabels.isSelected();
-        s.font = fontChooser.getFont();
-        s.color = jPanelColor.getBackground();
-        s.width = modelWidth.getNumber().floatValue();
-    }
+	public void applySettings(SettingsWgsGrid s) {
+		s.compressLabels = jCheckBoxCompressLabels.isSelected();
+		s.font = fontChooser.getFont();
+		s.color = jPanelColor.getBackground();
+		s.width = modelWidth.getNumber().floatValue();
+	}
 
-    public void loadSettings(Settings s) {
-        loadSettings(s.wgsGrid);
-    }
+	public void loadSettings(Settings s) {
+		loadSettings(s.wgsGrid);
+	}
 
-    public void loadSettings(SettingsWgsGrid s) {
-        jCheckBoxCompressLabels.setSelected(s.compressLabels);
-        fontChooser.setFont(s.font);
-        jButtonFont.setText(FontChooser.encodeFont(s.font));
-        jPanelColor.setBackground(s.color);
-        modelWidth.setValue((double) s.width);
-    }
+	public void loadSettings(SettingsWgsGrid s) {
+		jCheckBoxCompressLabels.setSelected(s.compressLabels);
+		fontChooser.setFont(s.font);
+		jButtonFont.setText(FontChooser.encodeFont(s.font));
+		jPanelColor.setBackground(s.color);
+		modelWidth.setValue((double) s.width);
+	}
 }

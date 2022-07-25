@@ -38,92 +38,92 @@ import java.util.List;
 
 public class DebugShowMapSourceNames implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
-        ArrayList<MapSource> mapSources = new ArrayList<MapSource>(MapSourcesManager.getInstance()
-                .getAllAvailableMapSources());
+	public void actionPerformed(ActionEvent e) {
+		ArrayList<MapSource> mapSources = new ArrayList<MapSource>(
+				MapSourcesManager.getInstance().getAllAvailableMapSources());
 
-        Collections.sort(mapSources, new Comparator<MapSource>() {
+		Collections.sort(mapSources, new Comparator<MapSource>() {
 
-            public int compare(MapSource o1, MapSource o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
+			public int compare(MapSource o1, MapSource o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
 
-        });
-        JFrame dialog = new JFrame(I18nUtils.localizedStringForKey("dlg_show_source_title"));
-        dialog.setLocationRelativeTo(MainGUI.getMainGUI());
-        dialog.setLocation(100, 40);
-        Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
-        dScreen.height -= 200;
-        dScreen.width = Math.min(dScreen.width - 100, 700);
-        dialog.setSize(dScreen);
-        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        JTable mapSourcesTable = new JTable(new MapSourcesTableModel(mapSources));
-        JScrollPane scroller = new JScrollPane(mapSourcesTable);
+		});
+		JFrame dialog = new JFrame(I18nUtils.localizedStringForKey("dlg_show_source_title"));
+		dialog.setLocationRelativeTo(MainGUI.getMainGUI());
+		dialog.setLocation(100, 40);
+		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
+		dScreen.height -= 200;
+		dScreen.width = Math.min(dScreen.width - 100, 700);
+		dialog.setSize(dScreen);
+		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		JTable mapSourcesTable = new JTable(new MapSourcesTableModel(mapSources));
+		JScrollPane scroller = new JScrollPane(mapSourcesTable);
 
-        mapSourcesTable.getColumnModel().getColumn(2).setMaxWidth(100);
-        dialog.add(scroller);
-        dialog.setVisible(true);
-    }
+		mapSourcesTable.getColumnModel().getColumn(2).setMaxWidth(100);
+		dialog.add(scroller);
+		dialog.setVisible(true);
+	}
 
-    static class MapSourcesTableModel extends AbstractTableModel {
+	static class MapSourcesTableModel extends AbstractTableModel {
 
-        List<MapSource> mapSources;
+		List<MapSource> mapSources;
 
-        public MapSourcesTableModel(List<MapSource> mapSources) {
-            super();
-            this.mapSources = mapSources;
-        }
+		public MapSourcesTableModel(List<MapSource> mapSources) {
+			super();
+			this.mapSources = mapSources;
+		}
 
-        public int getRowCount() {
-            return mapSources.size();
-        }
+		public int getRowCount() {
+			return mapSources.size();
+		}
 
-        public int getColumnCount() {
-            return 4;
-        }
+		public int getColumnCount() {
+			return 4;
+		}
 
-        @Override
-        public String getColumnName(int column) {
-            switch (column) {
-                case 0:
-                    return I18nUtils.localizedStringForKey("dlg_show_source_column_name");
-                case 1:
-                    return I18nUtils.localizedStringForKey("dlg_show_source_column_display_text");
-                case 2:
-                    return I18nUtils.localizedStringForKey("dlg_show_source_column_rev");
-                case 3:
-                    return I18nUtils.localizedStringForKey("dlg_show_source_column_type");
-                default:
-                    return null;
-            }
-        }
+		@Override
+		public String getColumnName(int column) {
+			switch (column) {
+				case 0 :
+					return I18nUtils.localizedStringForKey("dlg_show_source_column_name");
+				case 1 :
+					return I18nUtils.localizedStringForKey("dlg_show_source_column_display_text");
+				case 2 :
+					return I18nUtils.localizedStringForKey("dlg_show_source_column_rev");
+				case 3 :
+					return I18nUtils.localizedStringForKey("dlg_show_source_column_type");
+				default :
+					return null;
+			}
+		}
 
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            MapSource ms = mapSources.get(rowIndex);
-            MapSourceLoaderInfo li;
-            switch (columnIndex) {
-                case 0:
-                    return ms.getName();
-                case 1:
-                    return ms.toString();
-                case 2:
-                    li = ms.getLoaderInfo();
-                    if (li == null)
-                        return null;
-                    return li.getRevision();
-                case 3:
-                    li = ms.getLoaderInfo();
-                    if (li == null)
-                        return null;
-                    String s = "";
-                    File f = li.getSourceFile();
-                    if (f != null)
-                        s += f.getName() + " / ";
-                    return s + li.getLoaderType();
-                default:
-                    return null;
-            }
-        }
-    }
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			MapSource ms = mapSources.get(rowIndex);
+			MapSourceLoaderInfo li;
+			switch (columnIndex) {
+				case 0 :
+					return ms.getName();
+				case 1 :
+					return ms.toString();
+				case 2 :
+					li = ms.getLoaderInfo();
+					if (li == null)
+						return null;
+					return li.getRevision();
+				case 3 :
+					li = ms.getLoaderInfo();
+					if (li == null)
+						return null;
+					String s = "";
+					File f = li.getSourceFile();
+					if (f != null)
+						s += f.getName() + " / ";
+					return s + li.getLoaderType();
+				default :
+					return null;
+			}
+		}
+	}
 
 }

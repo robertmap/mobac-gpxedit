@@ -24,9 +24,9 @@ import java.awt.event.ActionListener;
 
 public class SettingsButtonListener implements ActionListener {
 
-    @Override
-    public void actionPerformed(ActionEvent arg0) {
-        MainGUI mg = MainGUI.getMainGUI();
-        SettingsGUI.showSettingsDialog(mg);
-    }
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		MainGUI mg = MainGUI.getMainGUI();
+		SettingsGUI.showSettingsDialog(mg);
+	}
 }

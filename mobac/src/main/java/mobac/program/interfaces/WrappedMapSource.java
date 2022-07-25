@@ -20,5 +20,5 @@ import mobac.exceptions.MapSourceCreateException;
 
 public interface WrappedMapSource {
 
-    MapSource getMapSource() throws MapSourceCreateException;
+	MapSource getMapSource() throws MapSourceCreateException;
 }

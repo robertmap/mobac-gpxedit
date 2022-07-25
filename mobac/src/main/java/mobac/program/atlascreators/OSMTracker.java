@@ -36,80 +36,81 @@ import java.io.IOException;
 /**
  * Creates maps identical to the atlas format used by OSMTracker.
  * <p>
- * Please note that this atlas format ignores the defined atlas structure. It uses a separate directory for each used
- * map source and inside one directory for each zoom level.
+ * Please note that this atlas format ignores the defined atlas structure. It
+ * uses a separate directory for each used map source and inside one directory
+ * for each zoom level.
  */
 @AtlasCreatorName("OSMTracker tile storage")
 @SupportedParameters(names = {Name.format})
 public class OSMTracker extends AtlasCreator {
 
-    protected String tileFileNamePattern = "%d/%d/%d.%s";
+	protected String tileFileNamePattern = "%d/%d/%d.%s";
 
-    protected File mapDir = null;
+	protected File mapDir = null;
 
-    protected String tileType = null;
+	protected String tileType = null;
 
-    protected MapTileWriter mapTileWriter = null;
+	protected MapTileWriter mapTileWriter = null;
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-        mapDir = new File(atlasDir, map.getMapSource().getName());
-        tileType = mapSource.getTileImageType().getFileExt();
-        if (parameters != null) {
-            mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
-            tileType = parameters.getFormat().getFileExt();
-        }
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+		mapDir = new File(atlasDir, map.getMapSource().getName());
+		tileType = mapSource.getTileImageType().getFileExt();
+		if (parameters != null) {
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+			tileType = parameters.getFormat().getFileExt();
+		}
+	}
 
-    public void createMap() throws MapCreationException, InterruptedException {
-        // This means there should not be any resizing of the tiles.
-        if (mapTileWriter == null)
-            mapTileWriter = new OSMTileWriter();
-        createTiles();
-    }
+	public void createMap() throws MapCreationException, InterruptedException {
+		// This means there should not be any resizing of the tiles.
+		if (mapTileWriter == null)
+			mapTileWriter = new OSMTileWriter();
+		createTiles();
+	}
 
-    protected void createTiles() throws InterruptedException, MapCreationException {
-        atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
-        ImageIO.setUseCache(false);
+	protected void createTiles() throws InterruptedException, MapCreationException {
+		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+		ImageIO.setUseCache(false);
 
-        for (int x = xMin; x <= xMax; x++) {
-            for (int y = yMin; y <= yMax; y++) {
-                checkUserAbort();
-                atlasProgress.incMapCreationProgress();
-                try {
-                    byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-                    if (sourceTileData != null)
-                        mapTileWriter.writeTile(x, y, tileType, sourceTileData);
-                } catch (IOException e) {
-                    throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-                }
-            }
-        }
-    }
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				checkUserAbort();
+				atlasProgress.incMapCreationProgress();
+				try {
+					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
+					if (sourceTileData != null)
+						mapTileWriter.writeTile(x, y, tileType, sourceTileData);
+				} catch (IOException e) {
+					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+				}
+			}
+		}
+	}
 
-    protected class OSMTileWriter implements MapTileWriter {
+	protected class OSMTileWriter implements MapTileWriter {
 
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-            File file = new File(mapDir, String.format(tileFileNamePattern, zoom, tilex, tiley, tileType));
-            writeTile(file, tileData);
-        }
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			File file = new File(mapDir, String.format(tileFileNamePattern, zoom, tilex, tiley, tileType));
+			writeTile(file, tileData);
+		}
 
-        protected void writeTile(File file, byte[] tileData) throws IOException {
-            Utilities.mkDirs(file.getParentFile());
-            try (FileOutputStream out = new FileOutputStream(file)) {
-                out.write(tileData);
-            }
-        }
+		protected void writeTile(File file, byte[] tileData) throws IOException {
+			Utilities.mkDirs(file.getParentFile());
+			try (FileOutputStream out = new FileOutputStream(file)) {
+				out.write(tileData);
+			}
+		}
 
-        public void finalizeMap() throws IOException {
-            // Nothing to do
-        }
+		public void finalizeMap() throws IOException {
+			// Nothing to do
+		}
 
-    }
+	}
 }

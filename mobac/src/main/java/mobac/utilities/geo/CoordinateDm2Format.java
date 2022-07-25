@@ -29,64 +29,64 @@ import java.text.ParsePosition;
 
 public class CoordinateDm2Format extends NumberFormat {
 
-    protected static Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
+	protected static Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
 
-    NumberFormat degFmt;
-    NumberFormat minFmt;
-    NumberFormat minFmtParser;
+	NumberFormat degFmt;
+	NumberFormat minFmt;
+	NumberFormat minFmtParser;
 
-    public CoordinateDm2Format(DecimalFormatSymbols dfs) {
-        degFmt = new DecimalFormat("00°", dfs);
-        minFmt = new DecimalFormat("00.00''", dfs);
-        minFmt.setRoundingMode(RoundingMode.FLOOR);
-        minFmtParser = new DecimalFormat("##.##", dfs);
-    }
+	public CoordinateDm2Format(DecimalFormatSymbols dfs) {
+		degFmt = new DecimalFormat("00°", dfs);
+		minFmt = new DecimalFormat("00.00''", dfs);
+		minFmt.setRoundingMode(RoundingMode.FLOOR);
+		minFmtParser = new DecimalFormat("##.##", dfs);
+	}
 
-    @Override
-    public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
-        int degrees;
-        if (number >= 0)
-            degrees = (int) Math.floor(number);
-        else
-            degrees = (int) Math.ceil(number);
-        double minutes = Math.abs((number - degrees) * 60);
-        if (number < 0 && degrees == 0)
-            toAppendTo.append("-");
-        toAppendTo.append(degFmt.format(degrees) + " ");
-        toAppendTo.append(minFmt.format(minutes));
-        return toAppendTo;
-    }
+	@Override
+	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+		int degrees;
+		if (number >= 0)
+			degrees = (int) Math.floor(number);
+		else
+			degrees = (int) Math.ceil(number);
+		double minutes = Math.abs((number - degrees) * 60);
+		if (number < 0 && degrees == 0)
+			toAppendTo.append("-");
+		toAppendTo.append(degFmt.format(degrees) + " ");
+		toAppendTo.append(minFmt.format(minutes));
+		return toAppendTo;
+	}
 
-    @Override
-    public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-        throw new RuntimeException("Not implemented");
-    }
+	@Override
+	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+		throw new RuntimeException("Not implemented");
+	}
 
-    @Override
-    public Number parse(String source) throws ParseException {
-        return parse(source, new ParsePosition(0));
-    }
+	@Override
+	public Number parse(String source) throws ParseException {
+		return parse(source, new ParsePosition(0));
+	}
 
-    @Override
-    public Number parse(String source, ParsePosition parsePosition) {
-        String[] tokens = source.trim().split("[°\\']");
-        if (tokens.length != 2)
-            return null;
-        try {
-            String degStr = tokens[0].trim();
-            int deg = Integer.parseInt(degStr);
-            double min = minFmtParser.parse(tokens[1].trim()).doubleValue();
-            double coord;
-            if (degStr.startsWith("-"))
-                coord = deg - min / 60.0;
-            else
-                coord = deg + min / 60.0;
-            return coord;
-        } catch (Exception e) {
-            parsePosition.setErrorIndex(0);
-            log.error(e.getMessage(), e);
-            return null;
-        }
-    }
+	@Override
+	public Number parse(String source, ParsePosition parsePosition) {
+		String[] tokens = source.trim().split("[°\\']");
+		if (tokens.length != 2)
+			return null;
+		try {
+			String degStr = tokens[0].trim();
+			int deg = Integer.parseInt(degStr);
+			double min = minFmtParser.parse(tokens[1].trim()).doubleValue();
+			double coord;
+			if (degStr.startsWith("-"))
+				coord = deg - min / 60.0;
+			else
+				coord = deg + min / 60.0;
+			return coord;
+		} catch (Exception e) {
+			parsePosition.setErrorIndex(0);
+			log.error(e.getMessage(), e);
+			return null;
+		}
+	}
 
 }

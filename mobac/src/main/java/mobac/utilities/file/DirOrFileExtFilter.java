@@ -21,24 +21,24 @@ import java.io.File;
 
 /**
  * @author Maksym "elmuSSo" Kondej
- * <p>
- * This filter will pass-through every directory,
- * but all files will be filtered by a FileExtFilter.
+ *         <p>
+ *         This filter will pass-through every directory, but all files will be
+ *         filtered by a FileExtFilter.
  */
 public class DirOrFileExtFilter extends FileExtFilter {
 
-    public DirOrFileExtFilter(String acceptedFileExt) {
-        super(acceptedFileExt);
-    }
+	public DirOrFileExtFilter(String acceptedFileExt) {
+		super(acceptedFileExt);
+	}
 
-    @Override
-    public boolean accept(File pathname) {
-        if (pathname.isDirectory()) {
-            // All directories are accepted
-            return true;
-        } else {
-            // Files are passed to the accept method of FileExtFilter
-            return super.accept(pathname);
-        }
-    }
+	@Override
+	public boolean accept(File pathname) {
+		if (pathname.isDirectory()) {
+			// All directories are accepted
+			return true;
+		} else {
+			// Files are passed to the accept method of FileExtFilter
+			return super.accept(pathname);
+		}
+	}
 }

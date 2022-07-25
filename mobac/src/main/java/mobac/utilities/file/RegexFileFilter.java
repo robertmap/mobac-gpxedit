@@ -22,14 +22,14 @@ import java.util.regex.Pattern;
 
 public class RegexFileFilter implements FileFilter {
 
-    private final Pattern p;
+	private final Pattern p;
 
-    public RegexFileFilter(String regex) {
-        p = Pattern.compile(regex);
-    }
+	public RegexFileFilter(String regex) {
+		p = Pattern.compile(regex);
+	}
 
-    public boolean accept(File pathname) {
-        return p.matcher(pathname.getName()).matches();
-    }
+	public boolean accept(File pathname) {
+		return p.matcher(pathname.getName()).matches();
+	}
 
 }

@@ -38,80 +38,80 @@ import javax.swing.UIManager;
 
 public class Main {
 
-    protected CommandLineAction cmdAction = new CommandLineEmpty();
+	protected CommandLineAction cmdAction = new CommandLineEmpty();
 
-    public Main() {
-        try {
-            parseCommandLine();
-            if (cmdAction.showSplashScreen()) {
-                SplashFrame.showFrame();
-            }
+	public Main() {
+		try {
+			parseCommandLine();
+			if (cmdAction.showSplashScreen()) {
+				SplashFrame.showFrame();
+			}
 
-            DirectoryManager.initialize();
-            Logging.configureLogging();
+			DirectoryManager.initialize();
+			Logging.configureLogging();
 
-            // MySocketImplFactory.install();
-            ProgramInfo.initialize(); // Load revision info
-            Logging.logSystemInfo();
+			// MySocketImplFactory.install();
+			ProgramInfo.initialize(); // Load revision info
+			Logging.logSystemInfo();
 
-            cmdAction.afterBasicInitialization();
+			cmdAction.afterBasicInitialization();
 
-            GUIExceptionHandler.installToolkitEventQueueProxy();
-            // Logging.logSystemProperties();
-            ImageIO.setUseCache(false);
-            TileDownLoader.init();
+			GUIExceptionHandler.installToolkitEventQueueProxy();
+			// Logging.logSystemProperties();
+			ImageIO.setUseCache(false);
+			TileDownLoader.init();
 
-            EnvironmentSetup.checkFileSetup();
-            Settings.loadOrQuit();
-            EnvironmentSetup.checkMemory();
+			EnvironmentSetup.checkFileSetup();
+			Settings.loadOrQuit();
+			EnvironmentSetup.checkMemory();
 
-            EnvironmentSetup.copyMapPacks();
-            DefaultMapSourcesManager.initialize();
-            EnvironmentSetup.createDefaultAtlases();
-            TileStore.initialize();
-            EnvironmentSetup.upgrade();
-            cmdAction.runBeforeMainGUI();
-            if (cmdAction.showMainGUI()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        Logging.LOG.debug("Starting GUI");
-                        MainGUI.createMainGui();
-                        SplashFrame.hideFrame();
-                        cmdAction.runMainGUI();
-                    }
-                });
-            }
-        } catch (Throwable t) {
-            GUIExceptionHandler.processException(t);
-            System.exit(1);
-        }
-    }
+			EnvironmentSetup.copyMapPacks();
+			DefaultMapSourcesManager.initialize();
+			EnvironmentSetup.createDefaultAtlases();
+			TileStore.initialize();
+			EnvironmentSetup.upgrade();
+			cmdAction.runBeforeMainGUI();
+			if (cmdAction.showMainGUI()) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						Logging.LOG.debug("Starting GUI");
+						MainGUI.createMainGui();
+						SplashFrame.hideFrame();
+						cmdAction.runMainGUI();
+					}
+				});
+			}
+		} catch (Throwable t) {
+			GUIExceptionHandler.processException(t);
+			System.exit(1);
+		}
+	}
 
-    /**
-     * Start MOBAC without Java Runtime version check
-     */
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            new Main();
-        } catch (Throwable t) {
-            GUIExceptionHandler.processException(t);
-        }
-    }
+	/**
+	 * Start MOBAC without Java Runtime version check
+	 */
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			new Main();
+		} catch (Throwable t) {
+			GUIExceptionHandler.processException(t);
+		}
+	}
 
-    protected void parseCommandLine() {
-        String[] args = StartMOBAC.ARGS;
-        if (args.length >= 2) {
-            if (PrintPublicKeyHash.CMD_ARG.equalsIgnoreCase(args[0])) {
-                cmdAction = new PrintPublicKeyHash(args[1]);
-            } else if (CreateAtlas.CMD_ARG.equalsIgnoreCase(args[0])) {
-                if (args.length > 2) {
-                    cmdAction = new CreateAtlas(args[1], args[2]);
-                } else {
-                    cmdAction = new CreateAtlas(args[1]);
-                }
-                return;
-            }
-        }
-    }
+	protected void parseCommandLine() {
+		String[] args = StartMOBAC.ARGS;
+		if (args.length >= 2) {
+			if (PrintPublicKeyHash.CMD_ARG.equalsIgnoreCase(args[0])) {
+				cmdAction = new PrintPublicKeyHash(args[1]);
+			} else if (CreateAtlas.CMD_ARG.equalsIgnoreCase(args[0])) {
+				if (args.length > 2) {
+					cmdAction = new CreateAtlas(args[1], args[2]);
+				} else {
+					cmdAction = new CreateAtlas(args[1]);
+				}
+				return;
+			}
+		}
+	}
 }

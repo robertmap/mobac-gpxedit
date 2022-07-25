@@ -24,46 +24,46 @@ import java.util.TreeSet;
 
 public class SelectedZoomLevels {
 
-    private final TreeSet<Integer> zoomLevels = new TreeSet<>();
+	private final TreeSet<Integer> zoomLevels = new TreeSet<>();
 
-    public SelectedZoomLevels(JZoomCheckBox[] zoomCheckboxes) {
-        for (JZoomCheckBox cb : zoomCheckboxes) {
-            if (cb.isSelected())
-                setZoomLevelSelected(cb.getZoomLevel());
-        }
-    }
+	public SelectedZoomLevels(JZoomCheckBox[] zoomCheckboxes) {
+		for (JZoomCheckBox cb : zoomCheckboxes) {
+			if (cb.isSelected())
+				setZoomLevelSelected(cb.getZoomLevel());
+		}
+	}
 
-    public SelectedZoomLevels(List<Integer> zoomLevelList) {
-        zoomLevels.addAll(zoomLevelList);
-    }
+	public SelectedZoomLevels(List<Integer> zoomLevelList) {
+		zoomLevels.addAll(zoomLevelList);
+	}
 
-    protected SelectedZoomLevels() {
-    }
+	protected SelectedZoomLevels() {
+	}
 
-    public void setZoomLevelSelected(int zoomLevel) {
-        zoomLevels.add(zoomLevel);
-    }
+	public void setZoomLevelSelected(int zoomLevel) {
+		zoomLevels.add(zoomLevel);
+	}
 
-    public int[] getZoomLevels() {
-        int[] result = new int[zoomLevels.size()];
-        int i = 0;
-        for (Integer z : zoomLevels) {
-            result[i++] = z.intValue();
-        }
-        return result;
-    }
+	public int[] getZoomLevels() {
+		int[] result = new int[zoomLevels.size()];
+		int i = 0;
+		for (Integer z : zoomLevels) {
+			result[i++] = z.intValue();
+		}
+		return result;
+	}
 
-    public List<Integer> getZoomLevelList() {
-        return new ArrayList<Integer>(zoomLevels);
-    }
+	public List<Integer> getZoomLevelList() {
+		return new ArrayList<Integer>(zoomLevels);
+	}
 
-    public int getZoomLevelCount() {
-        return zoomLevels.size();
-    }
+	public int getZoomLevelCount() {
+		return zoomLevels.size();
+	}
 
-    @Override
-    public String toString() {
-        return "ZoomLevels: " + zoomLevels;
-    }
+	@Override
+	public String toString() {
+		return "ZoomLevels: " + zoomLevels;
+	}
 
 }

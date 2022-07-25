@@ -24,8 +24,8 @@ import mobac.program.interfaces.TileFilter;
  */
 public class DummyTileFilter implements TileFilter {
 
-    public boolean testTile(int x, int y, int zoom, MapSource mapSource) {
-        return true;
-    }
+	public boolean testTile(int x, int y, int zoom, MapSource mapSource) {
+		return true;
+	}
 
 }

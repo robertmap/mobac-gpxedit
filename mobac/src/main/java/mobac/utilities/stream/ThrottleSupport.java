@@ -23,97 +23,98 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides a throttle implementation based on time ticks. Clients can allocate a limited amount of bytes for each tick.
- * If all bandwidth has been allocated clients are stalled until the next tick.
+ * Provides a throttle implementation based on time ticks. Clients can allocate
+ * a limited amount of bytes for each tick. If all bandwidth has been allocated
+ * clients are stalled until the next tick.
  */
 public class ThrottleSupport {
 
-    // --- Constant(s) ---
+	// --- Constant(s) ---
 
-    /**
-     * The default length of a tick.
-     */
-    public static final long TICK_LENGTH = 512; // = 2^9
+	/**
+	 * The default length of a tick.
+	 */
+	public static final long TICK_LENGTH = 512; // = 2^9
 
-    // --- Data field(s) ---
+	// --- Data field(s) ---
 
-    private static final Logger logger = LoggerFactory.getLogger(ThrottleSupport.class);
+	private static final Logger logger = LoggerFactory.getLogger(ThrottleSupport.class);
+	protected final Object lock = new Object();
+	/**
+	 * bytes per tick
+	 */
+	protected long bandwidth = 0;
+	protected long allocated = 0;
+	protected long tick = 0;
 
-    /**
-     * bytes per tick
-     */
-    protected long bandwidth = 0;
-    protected long allocated = 0;
-    protected long tick = 0;
-    protected final Object lock = new Object();
+	// --- Constructor(s) ---
 
-    // --- Constructor(s) ---
+	public ThrottleSupport() {
+	}
 
-    public ThrottleSupport() {
-    }
+	/**
+	 * Sets the maximum bandwidth.
+	 *
+	 * @param bandwidth
+	 *            byte / s
+	 */
+	public void setBandwidth(long bandwidth) {
+		synchronized (lock) {
+			this.bandwidth = (bandwidth * TICK_LENGTH) / 1024;
+		}
+	}
 
-    /**
-     * Sets the maximum bandwidth.
-     *
-     * @param bandwidth byte / s
-     */
-    public void setBandwidth(long bandwidth) {
-        synchronized (lock) {
-            this.bandwidth = (bandwidth * TICK_LENGTH) / 1024;
-        }
-    }
+	/**
+	 * Returns the number of bytes that the calling thread is allowed to send.
+	 * Blocks until at least one byte could be allocated.
+	 *
+	 * @return -1, if interrupted;
+	 */
+	public int allocate(int bytes) {
+		if (bytes == 0) {
+			return 0;
+		}
+		synchronized (lock) {
+			while (true) {
+				if (bandwidth == 0) {
+					// no limit
+					return bytes;
+				}
+				long currentTick = System.currentTimeMillis() >> 9;
+				if (currentTick > tick) {
+					logger.debug("* new tick: {} to allocate *", bandwidth);
+					tick = currentTick;
+					allocated = 0;
+					lock.notifyAll();
+				}
+				if (bytes < bandwidth - allocated) {
+					// we still have some bandwidth left
+					allocated += bytes;
+					logger.debug("returning {} allocated now {}", bytes, allocated);
+					return bytes;
+				}
+				if (bandwidth - allocated > 0) {
+					// don't have enough, but return all we have left
+					bytes = (int) (bandwidth - allocated);
+					allocated = bandwidth;
+					logger.debug("returning {} allocated now {}", bytes, allocated);
+					return bytes;
+				}
 
-    /**
-     * Returns the number of bytes that the calling thread is allowed to send. Blocks until at least one byte could be
-     * allocated.
-     *
-     * @return -1, if interrupted;
-     */
-    public int allocate(int bytes) {
-        if (bytes == 0) {
-            return 0;
-        }
-        synchronized (lock) {
-            while (true) {
-                if (bandwidth == 0) {
-                    // no limit
-                    return bytes;
-                }
-                long currentTick = System.currentTimeMillis() >> 9;
-                if (currentTick > tick) {
-                    logger.debug("* new tick: {} to allocate *", bandwidth);
-                    tick = currentTick;
-                    allocated = 0;
-                    lock.notifyAll();
-                }
-                if (bytes < bandwidth - allocated) {
-                    // we still have some bandwidth left
-                    allocated += bytes;
-                    logger.debug("returning {} allocated now {}", bytes, allocated);
-                    return bytes;
-                }
-                if (bandwidth - allocated > 0) {
-                    // don't have enough, but return all we have left
-                    bytes = (int) (bandwidth - allocated);
-                    allocated = bandwidth;
-                    logger.debug("returning {} allocated now {}", bytes, allocated);
-                    return bytes;
-                }
+				// we could not allocate any bandwidth, wait until the next
+				// tick is started
 
-                // we could not allocate any bandwidth, wait until the next
-                // tick is started
-
-                // this is a bit too long
-                long t = TICK_LENGTH - (System.currentTimeMillis() % TICK_LENGTH);
-                if (t > 0) {
-                    try {
-                        logger.debug("waiting for {}", t);
-                        lock.wait(t);
-                    } catch (InterruptedException e) {
-                        return -1;
-                    }
-                }
-            }
-        }
-    }
+				// this is a bit too long
+				long t = TICK_LENGTH - (System.currentTimeMillis() % TICK_LENGTH);
+				if (t > 0) {
+					try {
+						logger.debug("waiting for {}", t);
+						lock.wait(t);
+					} catch (InterruptedException e) {
+						return -1;
+					}
+				}
+			}
+		}
+	}
 }

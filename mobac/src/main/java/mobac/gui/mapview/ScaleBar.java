@@ -35,60 +35,60 @@ import java.awt.Stroke;
  */
 public class ScaleBar {
 
-    private static final Stroke STROKE = new BasicStroke(1);
-    private static final Font FONT = new Font("Sans Serif", Font.PLAIN, 12);
+	private static final Stroke STROKE = new BasicStroke(1);
+	private static final Font FONT = new Font("Sans Serif", Font.PLAIN, 12);
 
-    /**
-     * Horizontal margin between scale bar and right border of the map
-     */
-    private static final int MARGIN_X = 40;
+	/**
+	 * Horizontal margin between scale bar and right border of the map
+	 */
+	private static final int MARGIN_X = 40;
 
-    /**
-     * Vertical margin between scale bar and bottom border of the map
-     */
-    private static final int MARGIN_Y = 40;
+	/**
+	 * Vertical margin between scale bar and bottom border of the map
+	 */
+	private static final int MARGIN_Y = 40;
 
-    private static final int DESIRED_SCALE_BAR_WIDTH = 150;
+	private static final int DESIRED_SCALE_BAR_WIDTH = 150;
 
-    public static void paintScaleBar(JComponent c, Graphics2D g, MapSpace mapSpace, Point tlc, int zoom) {
-        Rectangle r = c.getBounds();
-        int posX;
-        int posY = r.height - r.y;
-        posY -= MARGIN_Y;
-        posX = MARGIN_X;
+	public static void paintScaleBar(JComponent c, Graphics2D g, MapSpace mapSpace, Point tlc, int zoom) {
+		Rectangle r = c.getBounds();
+		int posX;
+		int posY = r.height - r.y;
+		posY -= MARGIN_Y;
+		posX = MARGIN_X;
 
-        // int coordX = tlc.x + posX;
-        int coordY = tlc.y + posY;
+		// int coordX = tlc.x + posX;
+		int coordY = tlc.y + posY;
 
-        int w1 = DESIRED_SCALE_BAR_WIDTH;
+		int w1 = DESIRED_SCALE_BAR_WIDTH;
 
-        UnitSystem unitSystem = Settings.getInstance().unitSystem;
+		UnitSystem unitSystem = Settings.getInstance().unitSystem;
 
-        // Calculate the angular distance of our desired scale bar
-        double ad = mapSpace.horizontalDistance(zoom, coordY, w1);
+		// Calculate the angular distance of our desired scale bar
+		double ad = mapSpace.horizontalDistance(zoom, coordY, w1);
 
-        String unit = unitSystem.unitLarge;
-        // convert angular into the selected unit system
-        double dist1 = ad * unitSystem.earthRadius;
-        // distance is smaller that one (km/mi)? the use smaller units (m/ft)
-        if (dist1 < 1.0) {
-            dist1 *= unitSystem.unitFactor;
-            unit = unitSystem.unitSmall;
-        }
-        // Round everything to a nice value
-        double dist2 = MyMath.prettyRound(dist1);
-        double factor = dist2 / dist1;
-        // apply the round factor to the width of our scale bar
-        int w2 = (int) (w1 * factor);
+		String unit = unitSystem.unitLarge;
+		// convert angular into the selected unit system
+		double dist1 = ad * unitSystem.earthRadius;
+		// distance is smaller that one (km/mi)? the use smaller units (m/ft)
+		if (dist1 < 1.0) {
+			dist1 *= unitSystem.unitFactor;
+			unit = unitSystem.unitSmall;
+		}
+		// Round everything to a nice value
+		double dist2 = MyMath.prettyRound(dist1);
+		double factor = dist2 / dist1;
+		// apply the round factor to the width of our scale bar
+		int w2 = (int) (w1 * factor);
 
-        g.setStroke(STROKE);
-        g.setColor(Color.YELLOW);
-        g.fillRect(posX, posY - 10, w2, 20);
-        g.setColor(Color.BLACK);
-        g.drawRect(posX, posY - 10, w2, 20);
-        String value = ((int) dist2) + " " + unit;
-        g.setFont(FONT);
-        g.drawString(value, posX + 10, posY + 4);
-    }
+		g.setStroke(STROKE);
+		g.setColor(Color.YELLOW);
+		g.fillRect(posX, posY - 10, w2, 20);
+		g.setColor(Color.BLACK);
+		g.drawRect(posX, posY - 10, w2, 20);
+		String value = ((int) dist2) + " " + unit;
+		g.setFont(FONT);
+		g.drawString(value, posX + 10, posY + 4);
+	}
 
 }

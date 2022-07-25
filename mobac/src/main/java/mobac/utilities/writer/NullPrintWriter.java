@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 
 public class NullPrintWriter extends PrintWriter {
 
-    public NullPrintWriter() throws FileNotFoundException {
-        super(new NullWriter());
-    }
+	public NullPrintWriter() throws FileNotFoundException {
+		super(new NullWriter());
+	}
 }

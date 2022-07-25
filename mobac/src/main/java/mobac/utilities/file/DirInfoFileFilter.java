@@ -21,29 +21,28 @@ import mobac.utilities.Utilities;
 import java.io.File;
 import java.io.FileFilter;
 
-
 public class DirInfoFileFilter implements FileFilter {
 
-    long dirSize = 0;
-    int fileCount = 0;
+	long dirSize = 0;
+	int fileCount = 0;
 
-    public DirInfoFileFilter() {
-    }
+	public DirInfoFileFilter() {
+	}
 
-    public boolean accept(File f) {
-        if (f.isDirectory())
-            return false;
-        Utilities.checkForInterruptionRt();
-        dirSize += f.length();
-        fileCount++;
-        return false;
-    }
+	public boolean accept(File f) {
+		if (f.isDirectory())
+			return false;
+		Utilities.checkForInterruptionRt();
+		dirSize += f.length();
+		fileCount++;
+		return false;
+	}
 
-    public long getDirSize() {
-        return dirSize;
-    }
+	public long getDirSize() {
+		return dirSize;
+	}
 
-    public int getFileCount() {
-        return fileCount;
-    }
+	public int getFileCount() {
+		return fileCount;
+	}
 }

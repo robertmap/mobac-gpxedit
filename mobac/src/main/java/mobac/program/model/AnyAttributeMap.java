@@ -22,40 +22,39 @@ import javax.xml.namespace.QName;
 import java.util.Comparator;
 import java.util.TreeMap;
 
-
 /**
  * A map implementation for catching all attributes via {@link XmlAnyAttribute}
  */
 public class AnyAttributeMap extends TreeMap<QName, Object> {
 
-    public AnyAttributeMap() {
-        super(new QNameComparator());
-    }
+	public AnyAttributeMap() {
+		super(new QNameComparator());
+	}
 
-    public String getAttr(String key) {
-        return (String) get(new QName(key));
-    }
+	public String getAttr(String key) {
+		return (String) get(new QName(key));
+	}
 
-    public void setAttr(String key, String value) {
-        put(new QName(key), value);
-    }
+	public void setAttr(String key, String value) {
+		put(new QName(key), value);
+	}
 
-    public int getInt(TileImageParameters.Name key) {
-        return Integer.parseInt(getAttr(key.name()));
-    }
+	public int getInt(TileImageParameters.Name key) {
+		return Integer.parseInt(getAttr(key.name()));
+	}
 
-    public int getInt(String key) {
-        return Integer.parseInt(getAttr(key));
-    }
+	public int getInt(String key) {
+		return Integer.parseInt(getAttr(key));
+	}
 
-    public void setInt(String key, int value) {
-        put(new QName(key), Integer.toString(value));
-    }
+	public void setInt(String key, int value) {
+		put(new QName(key), Integer.toString(value));
+	}
 
-    public static class QNameComparator implements Comparator<QName> {
+	public static class QNameComparator implements Comparator<QName> {
 
-        public int compare(QName o1, QName o2) {
-            return o1.getLocalPart().compareTo(o2.getLocalPart());
-        }
-    }
+		public int compare(QName o1, QName o2) {
+			return o1.getLocalPart().compareTo(o2.getLocalPart());
+		}
+	}
 }

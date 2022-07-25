@@ -16,7 +16,6 @@
  ******************************************************************************/
 package mobac.mapsources.custom.aqm;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,50 +25,50 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * Alpine Quest Map : https://alpinequest.net/
- * Developer : ph-t@users.sourceforge.net
+ * Alpine Quest Map : https://alpinequest.net/ Developer :
+ * ph-t@users.sourceforge.net
  */
 public class AqmPropertyParser {
 
-    private final HashMap<String, String> propertyMap = new HashMap<>();
+	private final HashMap<String, String> propertyMap = new HashMap<>();
 
-    public AqmPropertyParser(String properties) throws IOException {
-        parse(properties);
-    }
+	public AqmPropertyParser(String properties) throws IOException {
+		parse(properties);
+	}
 
-    private void parse(String properties) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new StringReader(properties))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().length() == 0 || line.startsWith("[")) {
-                    continue;
-                }
+	private void parse(String properties) throws IOException {
+		try (BufferedReader reader = new BufferedReader(new StringReader(properties))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				if (line.trim().length() == 0 || line.startsWith("[")) {
+					continue;
+				}
 
-                String key = line.replaceFirst("([^=]+) = (.*)", "$1");
-                String value = line.replaceFirst("([^=]+) = (.*)", "$2");
-                propertyMap.put(key, value);
-            }
-        }
-    }
+				String key = line.replaceFirst("([^=]+) = (.*)", "$1");
+				String value = line.replaceFirst("([^=]+) = (.*)", "$2");
+				propertyMap.put(key, value);
+			}
+		}
+	}
 
-    public String getStringProperty(String key) {
-        return propertyMap.get(key);
-    }
+	public String getStringProperty(String key) {
+		return propertyMap.get(key);
+	}
 
-    public int getIntProperty(String key) {
-        return Integer.parseInt(propertyMap.get(key));
-    }
+	public int getIntProperty(String key) {
+		return Integer.parseInt(propertyMap.get(key));
+	}
 
-    public double getDoubleProperty(String key) {
-        return Double.parseDouble(propertyMap.get(key));
-    }
+	public double getDoubleProperty(String key) {
+		return Double.parseDouble(propertyMap.get(key));
+	}
 
-    public Date getDateProperty(String key) {
-        try {
-            return new SimpleDateFormat("yyyy/MM/dd").parse(propertyMap.get(key));
-        } catch (ParseException e) {
-            throw new RuntimeException("Can not parse date format yyyy/MM/dd : " + propertyMap.get(key));
-        }
-    }
+	public Date getDateProperty(String key) {
+		try {
+			return new SimpleDateFormat("yyyy/MM/dd").parse(propertyMap.get(key));
+		} catch (ParseException e) {
+			throw new RuntimeException("Can not parse date format yyyy/MM/dd : " + propertyMap.get(key));
+		}
+	}
 
 }

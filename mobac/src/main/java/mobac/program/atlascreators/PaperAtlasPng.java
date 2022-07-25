@@ -29,36 +29,36 @@ import java.text.DecimalFormat;
 @AtlasCreatorName(value = "Paper Atlas (PNG)")
 public class PaperAtlasPng extends PaperAtlas {
 
-    private final DecimalFormat decimalFormat = new DecimalFormat("#000");
+	private final DecimalFormat decimalFormat = new DecimalFormat("#000");
 
-    private File mapFolder;
+	private File mapFolder;
 
-    public PaperAtlasPng() {
-        super(true);
-    }
+	public PaperAtlasPng() {
+		super(true);
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-        mapFolder = new File(getLayerFolder(), map.getName());
-        try {
-            Utilities.mkDirs(mapFolder);
-        } catch (IOException e) {
-            throw new MapCreationException(map, e);
-        }
-        super.createMap();
-        mapFolder = null;
-    }
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		mapFolder = new File(getLayerFolder(), map.getName());
+		try {
+			Utilities.mkDirs(mapFolder);
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		}
+		super.createMap();
+		mapFolder = null;
+	}
 
-    @Override
-    protected void processPage(BufferedImage image, int pageNumber) throws MapCreationException {
-        String fileName = decimalFormat.format(pageNumber) + ".png";
-        File file = new File(mapFolder, fileName);
-        try {
-            if (!ImageIO.write(image, "PNG", file)) {
-                throw new MapCreationException(String.format("Failed to write PNG for page %d", pageNumber), map);
-            }
-        } catch (IOException e) {
-            throw new MapCreationException(map, e);
-        }
-    }
+	@Override
+	protected void processPage(BufferedImage image, int pageNumber) throws MapCreationException {
+		String fileName = decimalFormat.format(pageNumber) + ".png";
+		File file = new File(mapFolder, fileName);
+		try {
+			if (!ImageIO.write(image, "PNG", file)) {
+				throw new MapCreationException(String.format("Failed to write PNG for page %d", pageNumber), map);
+			}
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		}
+	}
 }

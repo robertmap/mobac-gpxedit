@@ -27,72 +27,72 @@ import java.io.File;
 
 public class CreateAtlas implements CommandLineAction {
 
-    public static final String CMD_ARG = "create";
+	public static final String CMD_ARG = "create";
 
-    private final String profileName;
-    private final File outputDir;
+	private final String profileName;
+	private final File outputDir;
 
-    public CreateAtlas(String profileName) {
-        this(profileName, null);
-    }
+	public CreateAtlas(String profileName) {
+		this(profileName, null);
+	}
 
-    public CreateAtlas(String profileName, String outputDirectory) {
-        super();
-        this.profileName = profileName;
-        if (outputDirectory != null) {
-            File dir = new File(outputDirectory);
-            if (dir.isDirectory() || dir.exists()) {
-                System.err.println("Error: Atlas output directory \"" + outputDirectory + "\" already exists.");
-                System.exit(1);
-            }
-            outputDir = dir;
-        } else
-            outputDir = null;
-    }
+	public CreateAtlas(String profileName, String outputDirectory) {
+		super();
+		this.profileName = profileName;
+		if (outputDirectory != null) {
+			File dir = new File(outputDirectory);
+			if (dir.isDirectory() || dir.exists()) {
+				System.err.println("Error: Atlas output directory \"" + outputDirectory + "\" already exists.");
+				System.exit(1);
+			}
+			outputDir = dir;
+		} else
+			outputDir = null;
+	}
 
-    @Override
-    public void afterBasicInitialization() {
-    }
+	@Override
+	public void afterBasicInitialization() {
+	}
 
-    @Override
-    public void runBeforeMainGUI() {
-        try {
-            Profile p = new Profile(profileName);
-            if (!p.exists()) {
-                System.err.println("Profile \"" + profileName + "\" could not be loaded:");
-                System.err.println("File \"" + p.getFile().getAbsolutePath() + "\" does not exist.");
-                System.exit(1);
-            }
-            AtlasInterface atlas = null;
-            try {
-                atlas = p.load();
-            } catch (JAXBException e) {
-                System.err.println("Error loading profile \"" + profileName + "\".");
-                e.printStackTrace();
-                System.exit(1);
-            }
-            AtlasThread atlasThread = new AtlasThread(atlas);
-            if (outputDir != null)
-                atlasThread.setCustomAtlasDir(outputDir);
-            atlasThread.setQuitMobacAfterAtlasCreation(true);
-            atlasThread.start();
-        } catch (Exception e) {
-            GUIExceptionHandler.processException(e);
-        }
-    }
+	@Override
+	public void runBeforeMainGUI() {
+		try {
+			Profile p = new Profile(profileName);
+			if (!p.exists()) {
+				System.err.println("Profile \"" + profileName + "\" could not be loaded:");
+				System.err.println("File \"" + p.getFile().getAbsolutePath() + "\" does not exist.");
+				System.exit(1);
+			}
+			AtlasInterface atlas = null;
+			try {
+				atlas = p.load();
+			} catch (JAXBException e) {
+				System.err.println("Error loading profile \"" + profileName + "\".");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			AtlasThread atlasThread = new AtlasThread(atlas);
+			if (outputDir != null)
+				atlasThread.setCustomAtlasDir(outputDir);
+			atlasThread.setQuitMobacAfterAtlasCreation(true);
+			atlasThread.start();
+		} catch (Exception e) {
+			GUIExceptionHandler.processException(e);
+		}
+	}
 
-    @Override
-    public void runMainGUI() {
-    }
+	@Override
+	public void runMainGUI() {
+	}
 
-    @Override
-    public boolean showSplashScreen() {
-        return false;
-    }
+	@Override
+	public boolean showSplashScreen() {
+		return false;
+	}
 
-    @Override
-    public boolean showMainGUI() {
-        return false;
-    }
+	@Override
+	public boolean showMainGUI() {
+		return false;
+	}
 
 }

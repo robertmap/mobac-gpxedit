@@ -26,24 +26,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //import mobac.gui.panels.JGpxPanel.ListModelEntry;
 
-
 public class GpxNew implements ActionListener {
 
-    JGpxPanel panel;
+	JGpxPanel panel;
 
-    public GpxNew(JGpxPanel panel) {
-        super();
-        this.panel = panel;
-    }
+	public GpxNew(JGpxPanel panel) {
+		super();
+		this.panel = panel;
+	}
 
-    public void actionPerformed(ActionEvent event) {
-        newGpx();
-        MainGUI.getMainGUI().previewMap.repaint();
-    }
+	public void actionPerformed(ActionEvent event) {
+		newGpx();
+		MainGUI.getMainGUI().previewMap.repaint();
+	}
 
-    public GpxRootEntry newGpx() {
-        Gpx gpx = Gpx.createGpx();
-        GpxLayer gpxLayer = new GpxLayer(gpx);
-        return panel.addGpxLayer(gpxLayer);
-    }
+	public GpxRootEntry newGpx() {
+		Gpx gpx = Gpx.createGpx();
+		GpxLayer gpxLayer = new GpxLayer(gpx);
+		return panel.addGpxLayer(gpxLayer);
+	}
 }

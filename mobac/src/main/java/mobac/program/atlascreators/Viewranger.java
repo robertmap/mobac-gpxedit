@@ -36,43 +36,43 @@ import java.io.File;
 @SupportedParameters(names = {Name.format_png})
 public class Viewranger extends OSMTracker {
 
-    public Viewranger() {
-        super();
-        tileFileNamePattern = "%d/%d/%d";
-    }
+	public Viewranger() {
+		super();
+		tileFileNamePattern = "%d/%d/%d";
+	}
 
-    @Override
-    protected void testAtlas() throws AtlasTestException {
-        for (LayerInterface layer : atlas) {
-            for (MapInterface map : layer) {
-                if (map.getParameters() == null) {
-                    continue;
-                }
-                if (!TileImageType.PNG.equals(map.getParameters().getFormat().getType())) {
-                    throw new AtlasTestException("Only PNG output format allowed for Viewranger", map);
-                }
-                if (map.getZoom() > 18) {
-                    throw new AtlasTestException("Unsupported zoom level: " + map.getZoom()
-                            + "\nMaximum supported zoom level is 18", map);
-                }
-                if (map.getZoom() < 3) {
-                    throw new AtlasTestException("Unsupported zoom level: " + map.getZoom()
-                            + "\nMinimum supported zoom level is 3", map);
-                }
-            }
-        }
-    }
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				if (map.getParameters() == null) {
+					continue;
+				}
+				if (!TileImageType.PNG.equals(map.getParameters().getFormat().getType())) {
+					throw new AtlasTestException("Only PNG output format allowed for Viewranger", map);
+				}
+				if (map.getZoom() > 18) {
+					throw new AtlasTestException(
+							"Unsupported zoom level: " + map.getZoom() + "\nMaximum supported zoom level is 18", map);
+				}
+				if (map.getZoom() < 3) {
+					throw new AtlasTestException(
+							"Unsupported zoom level: " + map.getZoom() + "\nMinimum supported zoom level is 3", map);
+				}
+			}
+		}
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-        mapDir = new File(atlasDir, map.getLayer().getName());
-        tileType = "";
-        if (parameters == null) {
-            mapDlTileProvider = new PngTileProvider(mapDlTileProvider);
-        } else {
-            mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
-        }
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+		mapDir = new File(atlasDir, map.getLayer().getName());
+		tileType = "";
+		if (parameters == null) {
+			mapDlTileProvider = new PngTileProvider(mapDlTileProvider);
+		} else {
+			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+		}
+	}
 
 }

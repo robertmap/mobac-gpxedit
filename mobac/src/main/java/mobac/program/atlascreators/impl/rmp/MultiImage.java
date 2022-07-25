@@ -34,91 +34,91 @@ import java.awt.image.BufferedImage;
  */
 public class MultiImage {
 
-    private static final Logger log = LoggerFactory.getLogger(MultiImage.class);
+	private static final Logger log = LoggerFactory.getLogger(MultiImage.class);
 
-    private final MapInterface map;
-    private final MapSource mapSource;
-    private final int zoom;
-    private final TileProvider tileProvider;
-    private final SoftHashMap<TileKey, MobacTile> cache;
+	private final MapInterface map;
+	private final MapSource mapSource;
+	private final int zoom;
+	private final TileProvider tileProvider;
+	private final SoftHashMap<TileKey, MobacTile> cache;
 
-    public MultiImage(MapSource mapSource, TileProvider tileProvider, MapInterface map) {
-        this.mapSource = mapSource;
-        this.tileProvider = tileProvider;
-        this.zoom = map.getZoom();
-        this.map = map;
-        cache = new SoftHashMap<TileKey, MobacTile>(400);
-    }
+	public MultiImage(MapSource mapSource, TileProvider tileProvider, MapInterface map) {
+		this.mapSource = mapSource;
+		this.tileProvider = tileProvider;
+		this.zoom = map.getZoom();
+		this.map = map;
+		cache = new SoftHashMap<TileKey, MobacTile>(400);
+	}
 
-    public BufferedImage getSubImage(BoundingRect area, int width, int height) throws MapCreationException {
-        if (log.isTraceEnabled())
-            log.trace(String.format("getSubImage %d %d %s", width, height, area));
+	public BufferedImage getSubImage(BoundingRect area, int width, int height) throws MapCreationException {
+		if (log.isTraceEnabled())
+			log.trace(String.format("getSubImage %d %d %s", width, height, area));
 
-        MapSpace mapSpace = mapSource.getMapSpace();
-        int tilesize = mapSpace.getTileSize();
+		MapSpace mapSpace = mapSource.getMapSpace();
+		int tilesize = mapSpace.getTileSize();
 
-        int xMax = mapSource.getMapSpace().cLonToX(area.getEast(), zoom) / tilesize;
-        int xMin = mapSource.getMapSpace().cLonToX(area.getWest(), zoom) / tilesize;
-        int yMax = mapSource.getMapSpace().cLatToY(-area.getSouth(), zoom) / tilesize;
-        int yMin = mapSource.getMapSpace().cLatToY(-area.getNorth(), zoom) / tilesize;
+		int xMax = mapSource.getMapSpace().cLonToX(area.getEast(), zoom) / tilesize;
+		int xMin = mapSource.getMapSpace().cLonToX(area.getWest(), zoom) / tilesize;
+		int yMax = mapSource.getMapSpace().cLatToY(-area.getSouth(), zoom) / tilesize;
+		int yMin = mapSource.getMapSpace().cLatToY(-area.getNorth(), zoom) / tilesize;
 
-        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        Graphics2D graph = result.createGraphics();
-        try {
-            graph.setColor(Color.WHITE);
-            graph.fillRect(0, 0, width, height);
+		Graphics2D graph = result.createGraphics();
+		try {
+			graph.setColor(Color.WHITE);
+			graph.fillRect(0, 0, width, height);
 
-            for (int x = xMin; x <= xMax; x++) {
-                for (int y = yMin; y <= yMax; y++) {
-                    TileKey key = new TileKey(x, y);
-                    MobacTile image = cache.get(key);
-                    if (image == null) {
-                        image = new MobacTile(tileProvider, mapSpace, x, y, zoom);
-                        cache.put(key, image);
-                    }
-                    image.drawSubImage(area, result);
-                }
-            }
-        } catch (Throwable t) {
-            throw new MapCreationException(map, t);
-        } finally {
-            graph.dispose();
-        }
-        return result;
-    }
+			for (int x = xMin; x <= xMax; x++) {
+				for (int y = yMin; y <= yMax; y++) {
+					TileKey key = new TileKey(x, y);
+					MobacTile image = cache.get(key);
+					if (image == null) {
+						image = new MobacTile(tileProvider, mapSpace, x, y, zoom);
+						cache.put(key, image);
+					}
+					image.drawSubImage(area, result);
+				}
+			}
+		} catch (Throwable t) {
+			throw new MapCreationException(map, t);
+		} finally {
+			graph.dispose();
+		}
+		return result;
+	}
 
-    protected static class TileKey {
-        int x;
-        int y;
+	protected static class TileKey {
+		int x;
+		int y;
 
-        public TileKey(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
+		public TileKey(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
 
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + x;
-            result = prime * result + y;
-            return result;
-        }
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + x;
+			result = prime * result + y;
+			return result;
+		}
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            TileKey other = (TileKey) obj;
-            if (x != other.x)
-                return false;
-            return y == other.y;
-        }
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			TileKey other = (TileKey) obj;
+			if (x != other.x)
+				return false;
+			return y == other.y;
+		}
 
-    }
+	}
 }

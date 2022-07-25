@@ -20,8 +20,8 @@ import mobac.gui.mapview.PreviewMap;
 
 public interface RefreshableMapSource {
 
-    /**
-     * Called whenever {@link PreviewMap#refreshMap()} is executed
-     */
-    void refresh();
+	/**
+	 * Called whenever {@link PreviewMap#refreshMap()} is executed
+	 */
+	void refresh();
 }

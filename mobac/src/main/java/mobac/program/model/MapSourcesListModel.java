@@ -26,60 +26,60 @@ import java.util.Vector;
 
 public class MapSourcesListModel extends AbstractListModel<MapSource> {
 
-    ArrayList<MapSource> mapSources;
+	ArrayList<MapSource> mapSources;
 
-    public MapSourcesListModel(Vector<MapSource> source) {
-        this.mapSources = new ArrayList<MapSource>(source);
-    }
+	public MapSourcesListModel(Vector<MapSource> source) {
+		this.mapSources = new ArrayList<MapSource>(source);
+	}
 
-    public MapSource getElementAt(int index) {
-        return mapSources.get(index);
-    }
+	public MapSource getElementAt(int index) {
+		return mapSources.get(index);
+	}
 
-    public int getSize() {
-        return mapSources.size();
-    }
+	public int getSize() {
+		return mapSources.size();
+	}
 
-    public Vector<MapSource> getVector() {
-        return new Vector<MapSource>(mapSources);
-    }
+	public Vector<MapSource> getVector() {
+		return new Vector<MapSource>(mapSources);
+	}
 
-    public MapSource removeElement(int index) {
-        fireIntervalRemoved(this, index, index);
-        return mapSources.remove(index);
-    }
+	public MapSource removeElement(int index) {
+		fireIntervalRemoved(this, index, index);
+		return mapSources.remove(index);
+	}
 
-    public void addElement(MapSource element) {
-        mapSources.add(element);
-        fireIntervalAdded(this, mapSources.size(), mapSources.size());
-    }
+	public void addElement(MapSource element) {
+		mapSources.add(element);
+		fireIntervalAdded(this, mapSources.size(), mapSources.size());
+	}
 
-    public boolean moveUp(int index) {
-        if (index < 1)
-            return false;
-        MapSource ms = mapSources.remove(index - 1);
-        mapSources.add(index, ms);
-        fireContentsChanged(this, index - 1, index);
-        return true;
-    }
+	public boolean moveUp(int index) {
+		if (index < 1)
+			return false;
+		MapSource ms = mapSources.remove(index - 1);
+		mapSources.add(index, ms);
+		fireContentsChanged(this, index - 1, index);
+		return true;
+	}
 
-    public boolean moveDown(int index) {
-        if (index + 1 >= mapSources.size())
-            return false;
-        MapSource ms = mapSources.remove(index + 1);
-        mapSources.add(index, ms);
-        fireContentsChanged(this, index, index + 1);
-        return true;
-    }
+	public boolean moveDown(int index) {
+		if (index + 1 >= mapSources.size())
+			return false;
+		MapSource ms = mapSources.remove(index + 1);
+		mapSources.add(index, ms);
+		fireContentsChanged(this, index, index + 1);
+		return true;
+	}
 
-    public void sort() {
-        Collections.sort(mapSources, new Comparator<MapSource>() {
+	public void sort() {
+		Collections.sort(mapSources, new Comparator<MapSource>() {
 
-            public int compare(MapSource o1, MapSource o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
+			public int compare(MapSource o1, MapSource o2) {
+				return o1.toString().compareTo(o2.toString());
+			}
 
-        });
-        fireContentsChanged(mapSources, 0, mapSources.size());
-    }
+		});
+		fireContentsChanged(mapSources, 0, mapSources.size());
+	}
 }

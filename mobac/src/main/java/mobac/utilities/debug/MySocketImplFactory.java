@@ -43,260 +43,257 @@ import java.net.URL;
  */
 public class MySocketImplFactory implements SocketImplFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(MySocketImplFactory.class);
-    private final Constructor<?> constructor;
-    private final Method accept;
-    private final Method bind;
-    private final Method available;
-    private final Method create;
-    private final Method connect1;
-    private final Method connect2;
-    private final Method connect3;
-    private final Method close;
-    private final Method getInputStream;
-    private final Method getOutputStream;
-    private final Method sendUrgentData;
-    private final Method listen;
+	private static final Logger log = LoggerFactory.getLogger(MySocketImplFactory.class);
+	private final Constructor<?> constructor;
+	private final Method accept;
+	private final Method bind;
+	private final Method available;
+	private final Method create;
+	private final Method connect1;
+	private final Method connect2;
+	private final Method connect3;
+	private final Method close;
+	private final Method getInputStream;
+	private final Method getOutputStream;
+	private final Method sendUrgentData;
+	private final Method listen;
 
-    public MySocketImplFactory() throws ClassNotFoundException, SecurityException,
-            NoSuchMethodException {
-        super();
-        Class<?> c = Class.forName("java.net.PlainSocketImpl");
-        constructor = c.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        accept = c.getDeclaredMethod("accept", SocketImpl.class);
-        accept.setAccessible(true);
-        bind = c.getDeclaredMethod("bind", InetAddress.class, Integer.TYPE);
-        bind.setAccessible(true);
-        available = c.getDeclaredMethod("available");
-        available.setAccessible(true);
-        create = c.getDeclaredMethod("create", Boolean.TYPE);
-        create.setAccessible(true);
-        connect1 = c.getDeclaredMethod("connect", InetAddress.class, Integer.TYPE);
-        connect1.setAccessible(true);
-        connect2 = c.getDeclaredMethod("connect", SocketAddress.class, Integer.TYPE);
-        connect2.setAccessible(true);
-        connect3 = c.getDeclaredMethod("connect", String.class, Integer.TYPE);
-        connect3.setAccessible(true);
-        getInputStream = c.getDeclaredMethod("getInputStream");
-        getInputStream.setAccessible(true);
-        getOutputStream = c.getDeclaredMethod("getOutputStream");
-        getOutputStream.setAccessible(true);
-        close = c.getDeclaredMethod("close");
-        close.setAccessible(true);
-        sendUrgentData = c.getDeclaredMethod("sendUrgentData", Integer.TYPE);
-        sendUrgentData.setAccessible(true);
-        listen = c.getDeclaredMethod("listen", Integer.TYPE);
-        listen.setAccessible(true);
-    }
+	public MySocketImplFactory() throws ClassNotFoundException, SecurityException, NoSuchMethodException {
+		super();
+		Class<?> c = Class.forName("java.net.PlainSocketImpl");
+		constructor = c.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		accept = c.getDeclaredMethod("accept", SocketImpl.class);
+		accept.setAccessible(true);
+		bind = c.getDeclaredMethod("bind", InetAddress.class, Integer.TYPE);
+		bind.setAccessible(true);
+		available = c.getDeclaredMethod("available");
+		available.setAccessible(true);
+		create = c.getDeclaredMethod("create", Boolean.TYPE);
+		create.setAccessible(true);
+		connect1 = c.getDeclaredMethod("connect", InetAddress.class, Integer.TYPE);
+		connect1.setAccessible(true);
+		connect2 = c.getDeclaredMethod("connect", SocketAddress.class, Integer.TYPE);
+		connect2.setAccessible(true);
+		connect3 = c.getDeclaredMethod("connect", String.class, Integer.TYPE);
+		connect3.setAccessible(true);
+		getInputStream = c.getDeclaredMethod("getInputStream");
+		getInputStream.setAccessible(true);
+		getOutputStream = c.getDeclaredMethod("getOutputStream");
+		getOutputStream.setAccessible(true);
+		close = c.getDeclaredMethod("close");
+		close.setAccessible(true);
+		sendUrgentData = c.getDeclaredMethod("sendUrgentData", Integer.TYPE);
+		sendUrgentData.setAccessible(true);
+		listen = c.getDeclaredMethod("listen", Integer.TYPE);
+		listen.setAccessible(true);
+	}
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
 
-        try {
-            install();
-            HttpURLConnection conn = (HttpURLConnection) new URL("http://google.de")
-                    .openConnection();
-            conn.connect();
-            byte[] data = new byte[1024];
-            new DataInputStream(conn.getInputStream()).readFully(data);
-            System.out.println(new String(data));
-            Thread.sleep(1000);
-            System.gc();
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			install();
+			HttpURLConnection conn = (HttpURLConnection) new URL("http://google.de").openConnection();
+			conn.connect();
+			byte[] data = new byte[1024];
+			new DataInputStream(conn.getInputStream()).readFully(data);
+			System.out.println(new String(data));
+			Thread.sleep(1000);
+			System.gc();
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    public static void install() throws IOException {
-        try {
-            Socket.setSocketImplFactory(new MySocketImplFactory());
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException("Unable to install " + MySocketImplFactory.class.getSimpleName(),
-                    e);
-        }
-    }
+	public static void install() throws IOException {
+		try {
+			Socket.setSocketImplFactory(new MySocketImplFactory());
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Unable to install " + MySocketImplFactory.class.getSimpleName(), e);
+		}
+	}
 
-    public SocketImpl createSocketImpl() {
-        try {
-            return new MySocketImpl();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public SocketImpl createSocketImpl() {
+		try {
+			return new MySocketImpl();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    private class MySocketImpl extends SocketImpl {
+	private class MySocketImpl extends SocketImpl {
 
-        private final SocketImpl si;
+		private final SocketImpl si;
 
-        private final int socketId;
+		private final int socketId;
 
-        private MySocketImpl() throws IllegalArgumentException, InstantiationException,
-                IllegalAccessException, InvocationTargetException {
-            si = (SocketImpl) constructor.newInstance();
-            socketId = si.hashCode();
-            log.trace("[" + socketId + "] new SocketImpl created");
-        }
+		private MySocketImpl() throws IllegalArgumentException, InstantiationException, IllegalAccessException,
+				InvocationTargetException {
+			si = (SocketImpl) constructor.newInstance();
+			socketId = si.hashCode();
+			log.trace("[" + socketId + "] new SocketImpl created");
+		}
 
-        @Override
-        protected void accept(SocketImpl s) throws IOException {
-            log.trace("[" + socketId + "] accept(...)");
-            try {
-                accept.invoke(si, s);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void accept(SocketImpl s) throws IOException {
+			log.trace("[" + socketId + "] accept(...)");
+			try {
+				accept.invoke(si, s);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected int available() throws IOException {
-            // log.trace("[" + socketId + "] available()");
-            try {
-                return ((Integer) bind.invoke(si)).intValue();
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected int available() throws IOException {
+			// log.trace("[" + socketId + "] available()");
+			try {
+				return ((Integer) bind.invoke(si)).intValue();
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void bind(InetAddress host, int port) throws IOException {
-            log.trace("[" + socketId + "] bind()");
-            try {
-                bind.invoke(si, host, port);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void bind(InetAddress host, int port) throws IOException {
+			log.trace("[" + socketId + "] bind()");
+			try {
+				bind.invoke(si, host, port);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void close() throws IOException {
-            log.trace("[" + socketId + "] close()");
-            try {
-                close.invoke(si);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void close() throws IOException {
+			log.trace("[" + socketId + "] close()");
+			try {
+				close.invoke(si);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void connect(InetAddress address, int port) throws IOException {
-            log.trace("[" + socketId + "] connect1(..)");
-            try {
-                connect1.invoke(si, address, port);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void connect(InetAddress address, int port) throws IOException {
+			log.trace("[" + socketId + "] connect1(..)");
+			try {
+				connect1.invoke(si, address, port);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void connect(SocketAddress address, int timeout) throws IOException {
-            log.trace("[" + socketId + "] connect2(..)");
-            try {
-                connect2.invoke(si, address, timeout);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void connect(SocketAddress address, int timeout) throws IOException {
+			log.trace("[" + socketId + "] connect2(..)");
+			try {
+				connect2.invoke(si, address, timeout);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void connect(String host, int port) throws IOException {
-            log.trace("[" + socketId + "] connect3(..)");
-            try {
-                connect3.invoke(si, host, port);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void connect(String host, int port) throws IOException {
+			log.trace("[" + socketId + "] connect3(..)");
+			try {
+				connect3.invoke(si, host, port);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void create(boolean stream) throws IOException {
-            log.trace("[" + socketId + "] create(..)");
-            try {
-                create.invoke(si, stream);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void create(boolean stream) throws IOException {
+			log.trace("[" + socketId + "] create(..)");
+			try {
+				create.invoke(si, stream);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected InputStream getInputStream() throws IOException {
-            // log.trace("[" + socketId + "] getInputStream()");
-            try {
-                return (InputStream) getInputStream.invoke(si);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected InputStream getInputStream() throws IOException {
+			// log.trace("[" + socketId + "] getInputStream()");
+			try {
+				return (InputStream) getInputStream.invoke(si);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        public Object getOption(int optID) throws SocketException {
-            // log.trace("[" + socketId + "] getOption(..)");
-            return si.getOption(optID);
-        }
+		public Object getOption(int optID) throws SocketException {
+			// log.trace("[" + socketId + "] getOption(..)");
+			return si.getOption(optID);
+		}
 
-        @Override
-        protected OutputStream getOutputStream() throws IOException {
-            // log.trace("[" + socketId + "] getOutputStream()");
-            try {
-                return (OutputStream) getOutputStream.invoke(si);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected OutputStream getOutputStream() throws IOException {
+			// log.trace("[" + socketId + "] getOutputStream()");
+			try {
+				return (OutputStream) getOutputStream.invoke(si);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void listen(int backlog) throws IOException {
-            log.trace("[" + socketId + "] listen(..)");
-            try {
-                listen.invoke(si, backlog);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void listen(int backlog) throws IOException {
+			log.trace("[" + socketId + "] listen(..)");
+			try {
+				listen.invoke(si, backlog);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        @Override
-        protected void sendUrgentData(int data) throws IOException {
-            // log.trace("[" + socketId + "] sendUrgentData");
-            try {
-                sendUrgentData.invoke(si, data);
-            } catch (Exception e) {
-                if (e instanceof IOException)
-                    throw (IOException) e;
-                throw new RuntimeException(e);
-            }
-        }
+		@Override
+		protected void sendUrgentData(int data) throws IOException {
+			// log.trace("[" + socketId + "] sendUrgentData");
+			try {
+				sendUrgentData.invoke(si, data);
+			} catch (Exception e) {
+				if (e instanceof IOException)
+					throw (IOException) e;
+				throw new RuntimeException(e);
+			}
+		}
 
-        public void setOption(int optID, Object value) throws SocketException {
-            // log.trace("[" + socketId + "] setOption");
-            si.setOption(optID, value);
-        }
+		public void setOption(int optID, Object value) throws SocketException {
+			// log.trace("[" + socketId + "] setOption");
+			si.setOption(optID, value);
+		}
 
-    }
+	}
 }

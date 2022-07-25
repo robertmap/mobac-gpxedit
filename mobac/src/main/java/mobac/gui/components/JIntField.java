@@ -25,105 +25,102 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.Color;
 
-
 public class JIntField extends JTextField {
 
-    private static final long serialVersionUID = 1L;
-    public int min = 0;
-    public int max = 0;
-    protected Color errorColor = new Color(255, 100, 100);
-    private final String errorText;
+	private static final long serialVersionUID = 1L;
+	private final String errorText;
+	private final InputListener listener;
+	public int min = 0;
+	public int max = 0;
+	protected Color errorColor = new Color(255, 100, 100);
+	private boolean inputIsValid = true;
 
-    private final InputListener listener;
-    private boolean inputIsValid = true;
+	public JIntField(int min, int max, int columns, String errorText) {
+		super(columns);
+		this.min = min;
+		this.max = max;
+		this.errorText = errorText;
+		setDocument(new NumericDocument());
+		listener = new InputListener();
+		listener.checkInput(null);
+		setBorder(new EmptyBorder(2, 2, 2, 0));
+	}
 
-    public JIntField(int min, int max, int columns, String errorText) {
-        super(columns);
-        this.min = min;
-        this.max = max;
-        this.errorText = errorText;
-        setDocument(new NumericDocument());
-        listener = new InputListener();
-        listener.checkInput(null);
-        setBorder(new EmptyBorder(2, 2, 2, 0));
-    }
+	public void setErrorColor(Color c) {
+		errorColor = c;
+	}
 
-    public void setErrorColor(Color c) {
-        errorColor = c;
-    }
+	public int getValue() throws NumberFormatException {
+		return Integer.parseInt(getText());
+	}
 
-    public int getValue() throws NumberFormatException {
-        return Integer.parseInt(getText());
-    }
+	public void setValue(int newValue, boolean check) {
+		if (newValue <= 0)
+			super.setText("");
+		else
+			super.setText(Integer.toString(newValue));
+		if (check)
+			listener.checkInput(null);
+	}
 
-    public void setValue(int newValue, boolean check) {
-        if (newValue <= 0)
-            super.setText("");
-        else
-            super.setText(Integer.toString(newValue));
-        if (check)
-            listener.checkInput(null);
-    }
+	public void setText(String t) {
+		throw new RuntimeException("Calling setText() is not allowed!");
+	}
 
-    public void setText(String t) {
-        throw new RuntimeException("Calling setText() is not allowed!");
-    }
+	public boolean isInputValid() {
+		return testInputValid();
+	}
 
-    public boolean isInputValid() {
-        return testInputValid();
-    }
+	private boolean testInputValid() {
+		try {
+			int i = Integer.parseInt(getText());
+			return (i >= min) && (i <= max);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
 
-    private boolean testInputValid() {
-        try {
-            int i = Integer.parseInt(getText());
-            return (i >= min) && (i <= max);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
+	protected class InputListener implements DocumentListener {
 
+		private final Color defaultColor;
 
-    protected class InputListener implements DocumentListener {
+		private InputListener() {
+			defaultColor = JIntField.this.getBackground();
+			JIntField.this.getDocument().addDocumentListener(this);
+		}
 
-        private final Color defaultColor;
+		private void checkInput(DocumentEvent de) {
+			boolean valid = false;
+			try {
+				valid = testInputValid();
+			} catch (Exception e) {
+				valid = false;
+			}
+			if (valid != inputIsValid)
+				setDisplayedValidMode(valid);
+			inputIsValid = valid;
+		}
 
-        private InputListener() {
-            defaultColor = JIntField.this.getBackground();
-            JIntField.this.getDocument().addDocumentListener(this);
-        }
+		private void setDisplayedValidMode(boolean valid) {
+			Color newC = valid ? defaultColor : errorColor;
+			JIntField.this.setBackground(newC);
+			String toolTip = valid ? "" : String.format(errorText, min, max);
+			JIntField.this.setToolTipText(toolTip);
+			if (toolTip.length() > 0)
+				Utilities.showTooltipNow(JIntField.this);
+		}
 
-        private void checkInput(DocumentEvent de) {
-            boolean valid = false;
-            try {
-                valid = testInputValid();
-            } catch (Exception e) {
-                valid = false;
-            }
-            if (valid != inputIsValid)
-                setDisplayedValidMode(valid);
-            inputIsValid = valid;
-        }
+		public void changedUpdate(DocumentEvent e) {
+			checkInput(e);
+		}
 
-        private void setDisplayedValidMode(boolean valid) {
-            Color newC = valid ? defaultColor : errorColor;
-            JIntField.this.setBackground(newC);
-            String toolTip = valid ? "" : String.format(errorText, min, max);
-            JIntField.this.setToolTipText(toolTip);
-            if (toolTip.length() > 0)
-                Utilities.showTooltipNow(JIntField.this);
-        }
+		public void insertUpdate(DocumentEvent e) {
+			checkInput(e);
+		}
 
-        public void changedUpdate(DocumentEvent e) {
-            checkInput(e);
-        }
+		public void removeUpdate(DocumentEvent e) {
+			checkInput(e);
+		}
 
-        public void insertUpdate(DocumentEvent e) {
-            checkInput(e);
-        }
-
-        public void removeUpdate(DocumentEvent e) {
-            checkInput(e);
-        }
-
-    }
+	}
 }

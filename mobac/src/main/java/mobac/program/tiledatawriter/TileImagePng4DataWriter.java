@@ -27,19 +27,19 @@ import java.io.OutputStream;
 
 public class TileImagePng4DataWriter implements TileImageDataWriter {
 
-    public TileImagePng4DataWriter() {
-        super();
-    }
+	public TileImagePng4DataWriter() {
+		super();
+	}
 
-    public void processImage(BufferedImage image, OutputStream out) throws IOException {
-        BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 16);
-        Png4BitWriter.writeImage(out, image2);
-    }
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
+		BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 16);
+		Png4BitWriter.writeImage(out, image2);
+	}
 
-    public void close() {
-    }
+	public void close() {
+	}
 
-    public TileImageType getType() {
-        return TileImageType.PNG;
-    }
+	public TileImageType getType() {
+		return TileImageType.PNG;
+	}
 }

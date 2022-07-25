@@ -47,253 +47,254 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * A layer holding one or multiple maps of the same map source and the same zoom level. The number of maps depends on
- * the size of the covered area - if it is smaller than the specified <code>maxMapSize</code> then there will be only
+ * A layer holding one or multiple maps of the same map source and the same zoom
+ * level. The number of maps depends on the size of the covered area - if it is
+ * smaller than the specified <code>maxMapSize</code> then there will be only
  * one map.
  */
 @XmlRootElement
 public class Layer implements LayerInterface, TreeNode, ToolTipProvider, CapabilityDeletable {
 
-    private static final Logger log = LoggerFactory.getLogger(Layer.class);
+	private static final Logger log = LoggerFactory.getLogger(Layer.class);
 
-    @XmlTransient
-    private AtlasInterface atlasInterface;
+	@XmlTransient
+	private AtlasInterface atlasInterface;
 
-    private String name;
+	private String name;
 
-    @XmlElements({@XmlElement(name = "PolygonMap", type = MapPolygon.class),
-            @XmlElement(name = "Map", type = Map.class)})
-    private LinkedList<MapInterface> maps = new LinkedList<>();
+	@XmlElements({@XmlElement(name = "PolygonMap", type = MapPolygon.class),
+			@XmlElement(name = "Map", type = Map.class)})
+	private LinkedList<MapInterface> maps = new LinkedList<>();
 
-    protected Layer() {
-    }
+	protected Layer() {
+	}
 
-    public Layer(AtlasInterface atlasInterface, String name) throws InvalidNameException {
-        this.atlasInterface = atlasInterface;
-        setName(name);
-    }
+	public Layer(AtlasInterface atlasInterface, String name) throws InvalidNameException {
+		this.atlasInterface = atlasInterface;
+		setName(name);
+	}
 
-    public void addMapsAutocut(String mapNameBase, MapSource mapSource, EastNorthCoordinate minCoordinate,
-                               EastNorthCoordinate maxCoordinate, int zoom, TileImageParameters parameters, int maxMapSize)
-            throws InvalidNameException {
-        MapSpace mapSpace = mapSource.getMapSpace();
-        addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapSpace, zoom),
-                maxCoordinate.toTileCoordinate(mapSpace, zoom), zoom, parameters, maxMapSize, 0);
-    }
+	public void addMapsAutocut(String mapNameBase, MapSource mapSource, EastNorthCoordinate minCoordinate,
+			EastNorthCoordinate maxCoordinate, int zoom, TileImageParameters parameters, int maxMapSize)
+			throws InvalidNameException {
+		MapSpace mapSpace = mapSource.getMapSpace();
+		addMapsAutocut(mapNameBase, mapSource, minCoordinate.toTileCoordinate(mapSpace, zoom),
+				maxCoordinate.toTileCoordinate(mapSpace, zoom), zoom, parameters, maxMapSize, 0);
+	}
 
-    public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
-                               Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize, int overlapTiles)
-            throws InvalidNameException {
-        log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom + " min="
-                + minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x + "/"
-                + maxTileCoordinate.y);
+	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
+			Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize, int overlapTiles)
+			throws InvalidNameException {
+		log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom + " min="
+				+ minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x + "/"
+				+ maxTileCoordinate.y);
 
-        int tileSize = mapSource.getMapSpace().getTileSize();
+		int tileSize = mapSource.getMapSpace().getTileSize();
 
-        minTileCoordinate.x -= minTileCoordinate.x % tileSize;
-        minTileCoordinate.y -= minTileCoordinate.y % tileSize;
+		minTileCoordinate.x -= minTileCoordinate.x % tileSize;
+		minTileCoordinate.y -= minTileCoordinate.y % tileSize;
 
-        maxTileCoordinate.x += tileSize - 1 - (maxTileCoordinate.x % tileSize);
-        maxTileCoordinate.y += tileSize - 1 - (maxTileCoordinate.y % tileSize);
+		maxTileCoordinate.x += tileSize - 1 - (maxTileCoordinate.x % tileSize);
+		maxTileCoordinate.y += tileSize - 1 - (maxTileCoordinate.y % tileSize);
 
-        Dimension tileDimension;
-        if (parameters == null)
-            tileDimension = new Dimension(tileSize, tileSize);
-        else
-            tileDimension = parameters.getDimension();
-        // We adapt the max map size to the tile size so that we do
-        // not get ugly cutted/incomplete tiles at the borders
-        Dimension maxMapDimension = new Dimension(maxMapSize, maxMapSize);
-        maxMapDimension.width -= maxMapSize % tileDimension.width;
-        maxMapDimension.height -= maxMapSize % tileDimension.height;
+		Dimension tileDimension;
+		if (parameters == null)
+			tileDimension = new Dimension(tileSize, tileSize);
+		else
+			tileDimension = parameters.getDimension();
+		// We adapt the max map size to the tile size so that we do
+		// not get ugly cutted/incomplete tiles at the borders
+		Dimension maxMapDimension = new Dimension(maxMapSize, maxMapSize);
+		maxMapDimension.width -= maxMapSize % tileDimension.width;
+		maxMapDimension.height -= maxMapSize % tileDimension.height;
 
-        int mapWidth = maxTileCoordinate.x - minTileCoordinate.x;
-        int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
-        if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
-            Map s = new Map(this, mapNameBase, mapSource, zoom, minTileCoordinate, maxTileCoordinate, parameters);
-            maps.add(s);
-            return;
-        }
-        Dimension nextMapStep = new Dimension(maxMapDimension.width - (tileDimension.width * overlapTiles),
-                maxMapDimension.height - (tileDimension.height * overlapTiles));
+		int mapWidth = maxTileCoordinate.x - minTileCoordinate.x;
+		int mapHeight = maxTileCoordinate.y - minTileCoordinate.y;
+		if (mapWidth < maxMapDimension.width && mapHeight < maxMapDimension.height) {
+			Map s = new Map(this, mapNameBase, mapSource, zoom, minTileCoordinate, maxTileCoordinate, parameters);
+			maps.add(s);
+			return;
+		}
+		Dimension nextMapStep = new Dimension(maxMapDimension.width - (tileDimension.width * overlapTiles),
+				maxMapDimension.height - (tileDimension.height * overlapTiles));
 
-        int maxXCounter = MyMath.divCeil(mapWidth, nextMapStep.width);
-        int maxYCounter = MyMath.divCeil(mapHeight, nextMapStep.height);
+		int maxXCounter = MyMath.divCeil(mapWidth, nextMapStep.width);
+		int maxYCounter = MyMath.divCeil(mapHeight, nextMapStep.height);
 
-        int maxMapCounter = maxXCounter * maxYCounter;
-        int maxMapCountDigits = (int) Math.ceil(Math.log10(maxMapCounter));
-        String mapNameFormat = "%s (%0" + maxMapCountDigits + "d)";
-        int mapCounter = 0;
-        for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += nextMapStep.width) {
-            for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += nextMapStep.height) {
-                int maxX = Math.min(mapX + maxMapDimension.width, maxTileCoordinate.x);
-                int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
-                Point min = new Point(mapX, mapY);
-                Point max = new Point(maxX - 1, maxY - 1);
-                String mapName = String.format(mapNameFormat, mapNameBase, mapCounter++);
-                Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
-                maps.add(s);
-            }
-        }
-    }
+		int maxMapCounter = maxXCounter * maxYCounter;
+		int maxMapCountDigits = (int) Math.ceil(Math.log10(maxMapCounter));
+		String mapNameFormat = "%s (%0" + maxMapCountDigits + "d)";
+		int mapCounter = 0;
+		for (int mapX = minTileCoordinate.x; mapX < maxTileCoordinate.x; mapX += nextMapStep.width) {
+			for (int mapY = minTileCoordinate.y; mapY < maxTileCoordinate.y; mapY += nextMapStep.height) {
+				int maxX = Math.min(mapX + maxMapDimension.width, maxTileCoordinate.x);
+				int maxY = Math.min(mapY + maxMapDimension.height, maxTileCoordinate.y);
+				Point min = new Point(mapX, mapY);
+				Point max = new Point(maxX - 1, maxY - 1);
+				String mapName = String.format(mapNameFormat, mapNameBase, mapCounter++);
+				Map s = new Map(this, mapName, mapSource, zoom, min, max, parameters);
+				maps.add(s);
+			}
+		}
+	}
 
-    public void delete() {
-        maps.clear();
-        atlasInterface.deleteLayer(this);
-    }
+	public void delete() {
+		maps.clear();
+		atlasInterface.deleteLayer(this);
+	}
 
-    public AtlasInterface getAtlas() {
-        return atlasInterface;
-    }
+	public AtlasInterface getAtlas() {
+		return atlasInterface;
+	}
 
-    public void addMap(MapInterface map) {
-        // TODO: Add name collision check
-        maps.add(map);
-        map.setLayer(this);
-    }
+	public void addMap(MapInterface map) {
+		// TODO: Add name collision check
+		maps.add(map);
+		map.setLayer(this);
+	}
 
-    public MapInterface getMap(int index) {
-        return maps.get(index);
-    }
+	public MapInterface getMap(int index) {
+		return maps.get(index);
+	}
 
-    public int getMapCount() {
-        return maps.size();
-    }
+	public int getMapCount() {
+		return maps.size();
+	}
 
-    @XmlAttribute
-    public String getName() {
-        return name;
-    }
+	@XmlAttribute
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String newName) throws InvalidNameException {
-        newName = newName.trim();
-        if (atlasInterface != null) {
-            for (LayerInterface layer : atlasInterface) {
-                if ((layer != this) && newName.equals(layer.getName()))
-                    throw new InvalidNameException("There is already a layer named \"" + newName
-                            + "\" in this atlas.\nLayer names have to unique within an atlas.");
-            }
-        }
-        this.name = newName;
-    }
+	public void setName(String newName) throws InvalidNameException {
+		newName = newName.trim();
+		if (atlasInterface != null) {
+			for (LayerInterface layer : atlasInterface) {
+				if ((layer != this) && newName.equals(layer.getName()))
+					throw new InvalidNameException("There is already a layer named \"" + newName
+							+ "\" in this atlas.\nLayer names have to unique within an atlas.");
+			}
+		}
+		this.name = newName;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
-    public long calculateTilesToDownload() {
-        long result = 0;
-        for (MapInterface map : maps)
-            result += map.calculateTilesToDownload();
-        return result;
-    }
+	public long calculateTilesToDownload() {
+		long result = 0;
+		for (MapInterface map : maps)
+			result += map.calculateTilesToDownload();
+		return result;
+	}
 
-    public double getMinLat() {
-        double lat = 90d;
-        for (MapInterface m : maps) {
-            lat = Math.min(lat, m.getMinLat());
-        }
-        return lat;
-    }
+	public double getMinLat() {
+		double lat = 90d;
+		for (MapInterface m : maps) {
+			lat = Math.min(lat, m.getMinLat());
+		}
+		return lat;
+	}
 
-    public double getMaxLat() {
-        double lat = -90d;
-        for (MapInterface m : maps) {
-            lat = Math.max(lat, m.getMaxLat());
-        }
-        return lat;
-    }
+	public double getMaxLat() {
+		double lat = -90d;
+		for (MapInterface m : maps) {
+			lat = Math.max(lat, m.getMaxLat());
+		}
+		return lat;
+	}
 
-    public double getMinLon() {
-        double lon = 180d;
-        for (MapInterface m : maps) {
-            lon = Math.min(lon, m.getMinLon());
-        }
-        return lon;
-    }
+	public double getMinLon() {
+		double lon = 180d;
+		for (MapInterface m : maps) {
+			lon = Math.min(lon, m.getMinLon());
+		}
+		return lon;
+	}
 
-    public double getMaxLon() {
-        double lon = -180d;
-        for (MapInterface m : maps) {
-            lon = Math.max(lon, m.getMaxLon());
-        }
-        return lon;
-    }
+	public double getMaxLon() {
+		double lon = -180d;
+		for (MapInterface m : maps) {
+			lon = Math.max(lon, m.getMaxLon());
+		}
+		return lon;
+	}
 
-    public String getToolTip() {
-        StringWriter sw = new StringWriter(1024);
-        sw.write("<html>");
-        sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_layer_title"));
-        sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_layer_map_count", maps.size()));
-        sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_max_tile", calculateTilesToDownload()));
-        sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_area_start",
-                Utilities.prettyPrintLatLon(getMaxLat(), true), Utilities.prettyPrintLatLon(getMinLon(), false)));
-        sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_area_end",
-                Utilities.prettyPrintLatLon(getMinLat(), true), Utilities.prettyPrintLatLon(getMaxLon(), false)));
-        sw.write("</html>");
-        return sw.toString();
-    }
+	public String getToolTip() {
+		StringWriter sw = new StringWriter(1024);
+		sw.write("<html>");
+		sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_layer_title"));
+		sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_layer_map_count", maps.size()));
+		sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_max_tile", calculateTilesToDownload()));
+		sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_area_start",
+				Utilities.prettyPrintLatLon(getMaxLat(), true), Utilities.prettyPrintLatLon(getMinLon(), false)));
+		sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_area_end",
+				Utilities.prettyPrintLatLon(getMinLat(), true), Utilities.prettyPrintLatLon(getMaxLon(), false)));
+		sw.write("</html>");
+		return sw.toString();
+	}
 
-    public Iterator<MapInterface> iterator() {
-        return maps.iterator();
-    }
+	public Iterator<MapInterface> iterator() {
+		return maps.iterator();
+	}
 
-    public Enumeration<? extends TreeNode> children() {
-        return Collections.enumeration(maps);
-    }
+	public Enumeration<? extends TreeNode> children() {
+		return Collections.enumeration(maps);
+	}
 
-    public boolean getAllowsChildren() {
-        return true;
-    }
+	public boolean getAllowsChildren() {
+		return true;
+	}
 
-    public TreeNode getChildAt(int childIndex) {
-        return maps.get(childIndex);
-    }
+	public TreeNode getChildAt(int childIndex) {
+		return maps.get(childIndex);
+	}
 
-    public int getChildCount() {
-        return maps.size();
-    }
+	public int getChildCount() {
+		return maps.size();
+	}
 
-    public int getIndex(TreeNode node) {
-        return maps.indexOf(node);
-    }
+	public int getIndex(TreeNode node) {
+		return maps.indexOf(node);
+	}
 
-    public TreeNode getParent() {
-        return (TreeNode) atlasInterface;
-    }
+	public TreeNode getParent() {
+		return (TreeNode) atlasInterface;
+	}
 
-    public boolean isLeaf() {
-        return false;
-    }
+	public boolean isLeaf() {
+		return false;
+	}
 
-    public void afterUnmarshal(Unmarshaller u, Object parent) {
-        this.atlasInterface = (Atlas) parent;
-    }
+	public void afterUnmarshal(Unmarshaller u, Object parent) {
+		this.atlasInterface = (Atlas) parent;
+	}
 
-    public boolean checkData() {
-        if (atlasInterface == null)
-            return true;
-        if (name == null)
-            return true;
-        // Check for duplicate map names
-        HashSet<String> names = new HashSet<String>(maps.size());
-        for (MapInterface map : maps)
-            names.add(map.getName());
-        return names.size() < maps.size(); // at least one duplicate name found
-    }
+	public boolean checkData() {
+		if (atlasInterface == null)
+			return true;
+		if (name == null)
+			return true;
+		// Check for duplicate map names
+		HashSet<String> names = new HashSet<String>(maps.size());
+		for (MapInterface map : maps)
+			names.add(map.getName());
+		return names.size() < maps.size(); // at least one duplicate name found
+	}
 
-    public void deleteMap(Map map) {
-        maps.remove(map);
-    }
+	public void deleteMap(Map map) {
+		maps.remove(map);
+	}
 
-    public LayerInterface deepClone(AtlasInterface atlas) {
-        Layer layer = new Layer();
-        layer.atlasInterface = atlas;
-        layer.name = name;
-        for (MapInterface map : maps)
-            layer.maps.add(map.deepClone(layer));
-        return layer;
-    }
+	public LayerInterface deepClone(AtlasInterface atlas) {
+		Layer layer = new Layer();
+		layer.atlasInterface = atlas;
+		layer.name = name;
+		for (MapInterface map : maps)
+			layer.maps.add(map.deepClone(layer));
+		return layer;
+	}
 
 }

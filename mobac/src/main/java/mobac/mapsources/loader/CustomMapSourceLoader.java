@@ -56,250 +56,250 @@ import java.util.Set;
 
 public class CustomMapSourceLoader {
 
-    private static final String MOBAC_IGNORE_TAG = "mobac-ignore:";
-    private final Logger log = LoggerFactory.getLogger(MapPackManager.class);
-    private final MapSourcesManager mapSourcesManager;
-    private final File mapSourcesDir;
+	private static final String MOBAC_IGNORE_TAG = "mobac-ignore:";
+	private final Logger log = LoggerFactory.getLogger(MapPackManager.class);
+	private final MapSourcesManager mapSourcesManager;
+	private final File mapSourcesDir;
 
-    private final DocumentBuilderFactory dbFactory;
-    private final DocumentBuilder dBuilder;
-    private final JAXBContext context;
+	private final DocumentBuilderFactory dbFactory;
+	private final DocumentBuilder dBuilder;
+	private final JAXBContext context;
 
-    public CustomMapSourceLoader(MapSourcesManager mapSourceManager, File mapSourcesDir) {
-        this.mapSourcesManager = mapSourceManager;
-        this.mapSourcesDir = mapSourcesDir;
-        dbFactory = DocumentBuilderFactory.newInstance();
-        try {
-            dBuilder = dbFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            Class<?>[] customMapClasses = new Class[]{ //
-                    //
-                    CustomMapSource.class, //
-                    CustomWmsMapSource.class, //
-                    CustomMultiLayerMapSource.class, //
-                    // CustomCombinedMapSource.class, //
-                    CustomMapsforge.class, //
-                    CustomLocalTileFilesMapSource.class, //
-                    CustomLocalTileZipMapSource.class, //
-                    CustomLocalTileSQliteMapSource.class, //
+	public CustomMapSourceLoader(MapSourcesManager mapSourceManager, File mapSourcesDir) {
+		this.mapSourcesManager = mapSourceManager;
+		this.mapSourcesDir = mapSourcesDir;
+		dbFactory = DocumentBuilderFactory.newInstance();
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+		try {
+			Class<?>[] customMapClasses = new Class[]{ //
+					//
+					CustomMapSource.class, //
+					CustomWmsMapSource.class, //
+					CustomMultiLayerMapSource.class, //
+					// CustomCombinedMapSource.class, //
+					CustomMapsforge.class, //
+					CustomLocalTileFilesMapSource.class, //
+					CustomLocalTileZipMapSource.class, //
+					CustomLocalTileSQliteMapSource.class, //
 
-                    CustomLocalAqmMapSource.class};
-            context = JAXBContext.newInstance(customMapClasses);
-        } catch (JAXBException e) {
-            throw new RuntimeException("Unable to create JAXB context for custom map sources", e);
-        }
-    }
+					CustomLocalAqmMapSource.class};
+			context = JAXBContext.newInstance(customMapClasses);
+		} catch (JAXBException e) {
+			throw new RuntimeException("Unable to create JAXB context for custom map sources", e);
+		}
+	}
 
-    public List<File> getMapSourceFiles() {
-        List<File> customMapSourceFiles = Utilities.traverseFolder(mapSourcesDir, new DirOrFileExtFilter(".xml"));
-        /*
-         * It is important to sort the files to be loaded, otherwise the order would be random which makes it difficult
-         * to reference custom map sources in a multi-layer map source if the referenced map source has not been loaded
-         * before.
-         *
-         * See https://sourceforge.net/p/mobac/bugs/294/
-         */
-        Collections.sort(customMapSourceFiles, new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
-        return customMapSourceFiles;
-    }
+	public List<File> getMapSourceFiles() {
+		List<File> customMapSourceFiles = Utilities.traverseFolder(mapSourcesDir, new DirOrFileExtFilter(".xml"));
+		/*
+		 * It is important to sort the files to be loaded, otherwise the order would be
+		 * random which makes it difficult to reference custom map sources in a
+		 * multi-layer map source if the referenced map source has not been loaded
+		 * before.
+		 *
+		 * See https://sourceforge.net/p/mobac/bugs/294/
+		 */
+		Collections.sort(customMapSourceFiles, new Comparator<File>() {
+			@Override
+			public int compare(File f1, File f2) {
+				return f1.getName().compareTo(f2.getName());
+			}
+		});
+		return customMapSourceFiles;
+	}
 
-    public void loadCustomMapSources() {
+	public void loadCustomMapSources() {
 
-        for (File f : getMapSourceFiles()) {
-            try {
-                MapSource customMapSource = loadCustomMapSource(f);
-                if (customMapSource == null) {
-                    log.info("Ignoring xml file \"" + f.getName() + "\" - not a custom MOBAC XML map file");
-                    continue; // an element to be ignored
-                }
-                if (!(customMapSource instanceof FileBasedMapSource) && customMapSource.getTileImageType() == null) {
-                    log.warn("A problem occurred while loading \"" + f.getName()
-                            + "\": tileType is null - some atlas formats will produce an error!");
-                }
-                mapSourcesManager.addMapSource(customMapSource);
-            } catch (Exception e) {
-                log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
-            }
-        }
-    }
+		for (File f : getMapSourceFiles()) {
+			try {
+				MapSource customMapSource = loadCustomMapSource(f);
+				if (customMapSource == null) {
+					log.info("Ignoring xml file \"" + f.getName() + "\" - not a custom MOBAC XML map file");
+					continue; // an element to be ignored
+				}
+				if (!(customMapSource instanceof FileBasedMapSource) && customMapSource.getTileImageType() == null) {
+					log.warn("A problem occurred while loading \"" + f.getName()
+							+ "\": tileType is null - some atlas formats will produce an error!");
+				}
+				mapSourcesManager.addMapSource(customMapSource);
+			} catch (Exception e) {
+				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
+			}
+		}
+	}
 
-    public MapSource loadCustomMapSource(File mapSourceFile)
-            throws MapSourceCreateException, JAXBException, IOException, SAXException {
+	public MapSource loadCustomMapSource(File mapSourceFile)
+			throws MapSourceCreateException, JAXBException, IOException, SAXException {
 
-        List<String> elementFilter = new LinkedList<>();
-        try {
-            Document doc = dBuilder.parse(mapSourceFile);
-            Element rootElem = doc.getDocumentElement();
-            if ("rendertheme".equals(rootElem.getTagName())) {
-                // This is a Mapsforge render theme xml file, not a MOBAC custom map file
-                return null;
-            }
+		List<String> elementFilter = new LinkedList<>();
+		try {
+			Document doc = dBuilder.parse(mapSourceFile);
+			Element rootElem = doc.getDocumentElement();
+			if ("rendertheme".equals(rootElem.getTagName())) {
+				// This is a Mapsforge render theme xml file, not a MOBAC custom map file
+				return null;
+			}
 
-            // Check of the MOBAC_IGNORE_TAG in all comments on root level
-            NodeList children = doc.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                Node n = children.item(i);
-                if (n instanceof Comment) {
-                    String comment = n.getNodeValue().trim();
-                    if (comment.startsWith(MOBAC_IGNORE_TAG)) {
-                        comment = comment.substring(MOBAC_IGNORE_TAG.length()).trim();
-                        Collections.addAll(elementFilter, comment.split("[,;\\s]+"));
-                    }
-                }
+			// Check of the MOBAC_IGNORE_TAG in all comments on root level
+			NodeList children = doc.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node n = children.item(i);
+				if (n instanceof Comment) {
+					String comment = n.getNodeValue().trim();
+					if (comment.startsWith(MOBAC_IGNORE_TAG)) {
+						comment = comment.substring(MOBAC_IGNORE_TAG.length()).trim();
+						Collections.addAll(elementFilter, comment.split("[,;\\s]+"));
+					}
+				}
 
-            }
-        } catch (Exception e) {
-            log.error("Failed to load custom map source file \"" + mapSourceFile + "\": " + e);
-        }
-        try (InputStream in = new FileInputStream(mapSourceFile)) {
-            return internalLoadMapSource(in, mapSourceFile, elementFilter);
-        }
-    }
+			}
+		} catch (Exception e) {
+			log.error("Failed to load custom map source file \"" + mapSourceFile + "\": " + e);
+		}
+		try (InputStream in = new FileInputStream(mapSourceFile)) {
+			return internalLoadMapSource(in, mapSourceFile, elementFilter);
+		}
+	}
 
-    public MapSource loadCustomMapSource(InputStream in)
-            throws MapSourceCreateException, SAXException, IOException, JAXBException {
-        return internalLoadMapSource(in, null, null);
-    }
+	public MapSource loadCustomMapSource(InputStream in)
+			throws MapSourceCreateException, SAXException, IOException, JAXBException {
+		return internalLoadMapSource(in, null, null);
+	}
 
-    /**
-     * Load custom map source from XML document DOM
-     *
-     * @param in
-     * @param loaderInfoFile
-     * @param elementFilter
-     * @return
-     * @throws MapSourceCreateException
-     * @throws JAXBException
-     */
-    protected MapSource internalLoadMapSource(InputStream in, final File loaderInfoFile, Collection<String> elementFilter)
-            throws MapSourceCreateException, JAXBException {
-        MapSource customMapSource;
+	/**
+	 * Load custom map source from XML document DOM
+	 *
+	 * @param in
+	 * @param loaderInfoFile
+	 * @param elementFilter
+	 * @return
+	 * @throws MapSourceCreateException
+	 * @throws JAXBException
+	 */
+	protected MapSource internalLoadMapSource(InputStream in, final File loaderInfoFile,
+			Collection<String> elementFilter) throws MapSourceCreateException, JAXBException {
+		MapSource customMapSource;
 
-        Unmarshaller unmarshaller = context.createUnmarshaller();
+		Unmarshaller unmarshaller = context.createUnmarshaller();
 
-        unmarshaller.setEventHandler(event -> {
-                    ValidationEventLocator loc = event.getLocator();
-                    String file = "";
-                    String dir = null;
-                    if (loaderInfoFile != null) {
-                        file = loaderInfoFile.getName();
-                        dir = loaderInfoFile.getParent();
-                    }
-                    int lastSlash = file.lastIndexOf('/');
-                    if (lastSlash > 0) {
-                        file = file.substring(lastSlash + 1);
-                    }
+		unmarshaller.setEventHandler(event -> {
+			ValidationEventLocator loc = event.getLocator();
+			String file = "";
+			String dir = null;
+			if (loaderInfoFile != null) {
+				file = loaderInfoFile.getName();
+				dir = loaderInfoFile.getParent();
+			}
+			int lastSlash = file.lastIndexOf('/');
+			if (lastSlash > 0) {
+				file = file.substring(lastSlash + 1);
+			}
 
-                    String errorMsg = event.getMessage();
-                    if (errorMsg == null) {
-                        Throwable t = event.getLinkedException();
-                        while (t != null && errorMsg == null) {
-                            errorMsg = t.getMessage();
-                            t = t.getCause();
-                        }
-                    }
+			String errorMsg = event.getMessage();
+			if (errorMsg == null) {
+				Throwable t = event.getLinkedException();
+				while (t != null && errorMsg == null) {
+					errorMsg = t.getMessage();
+					t = t.getCause();
+				}
+			}
 
-                    String message = "<html><h3>Failed to load a custom map</h3><p><i>" + errorMsg + "</i></p><br><p>";
-                    if (dir != null) {
-                        message += "directory: \"<b>" + StringEscapeUtils.escapeHtml4(dir) + "</b>\"<br>";
-                    }
-                    message += "file: \"<b>" + StringEscapeUtils.escapeHtml4(file) + "</b>\"<br>" +
-                            "line/column: <i>" + loc.getLineNumber() + "/"
-                            + loc.getColumnNumber() + "</i></p>";
+			String message = "<html><h3>Failed to load a custom map</h3><p><i>" + errorMsg + "</i></p><br><p>";
+			if (dir != null) {
+				message += "directory: \"<b>" + StringEscapeUtils.escapeHtml4(dir) + "</b>\"<br>";
+			}
+			message += "file: \"<b>" + StringEscapeUtils.escapeHtml4(file) + "</b>\"<br>" + "line/column: <i>"
+					+ loc.getLineNumber() + "/" + loc.getColumnNumber() + "</i></p>";
 
-                    JOptionPane.showMessageDialog(null, message, "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
-                    log.error(event.toString());
-                    return false;
-                }
-        );
-        Object o;
-        if (elementFilter != null && !elementFilter.isEmpty()) {
-            XMLInputFactory factory = XMLInputFactory.newFactory();
-            try {
-                XMLStreamReader streamReader = factory.createXMLStreamReader(in);
-                XMLStreamReader filteredStreamReader = factory.createFilteredReader(streamReader, new XmlFilter(elementFilter));
-                o = unmarshaller.unmarshal(filteredStreamReader);
-            } catch (XMLStreamException e) {
-                throw new JAXBException(e);
-            }
-        } else {
-            o = unmarshaller.unmarshal(in);
-        }
-        if (o instanceof WrappedMapSource) {
-            customMapSource = ((WrappedMapSource) o).getMapSource();
-        } else {
-            customMapSource = (MapSource) o;
-        }
-        customMapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, loaderInfoFile));
-        if (loaderInfoFile != null) {
-            log.trace("Custom map source loaded: " + customMapSource + " from file \"" +
-                    loaderInfoFile.getName() + "\"");
-        } else {
-            log.trace("Custom map source loaded: " + customMapSource);
-        }
-        return customMapSource;
-    }
+			JOptionPane.showMessageDialog(null, message, "Error: custom map loading failed", JOptionPane.ERROR_MESSAGE);
+			log.error(event.toString());
+			return false;
+		});
+		Object o;
+		if (elementFilter != null && !elementFilter.isEmpty()) {
+			XMLInputFactory factory = XMLInputFactory.newFactory();
+			try {
+				XMLStreamReader streamReader = factory.createXMLStreamReader(in);
+				XMLStreamReader filteredStreamReader = factory.createFilteredReader(streamReader,
+						new XmlFilter(elementFilter));
+				o = unmarshaller.unmarshal(filteredStreamReader);
+			} catch (XMLStreamException e) {
+				throw new JAXBException(e);
+			}
+		} else {
+			o = unmarshaller.unmarshal(in);
+		}
+		if (o instanceof WrappedMapSource) {
+			customMapSource = ((WrappedMapSource) o).getMapSource();
+		} else {
+			customMapSource = (MapSource) o;
+		}
+		customMapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, loaderInfoFile));
+		if (loaderInfoFile != null) {
+			log.trace(
+					"Custom map source loaded: " + customMapSource + " from file \"" + loaderInfoFile.getName() + "\"");
+		} else {
+			log.trace("Custom map source loaded: " + customMapSource);
+		}
+		return customMapSource;
+	}
 
-    @SuppressWarnings("unchecked")
-    public boolean reloadCustomMapSource(MapSource mapSource) throws MapSourceCreateException, JAXBException,
-            IOException, SAXException, MapSourceInitializationException {
-        MapSourceLoaderInfo loaderInfo = mapSource.getLoaderInfo();
-        if ((loaderInfo == null) || (loaderInfo.getLoaderType() != LoaderType.XML)) {
-            return false;
-        }
-        if (!(mapSource instanceof ReloadableMapSource)) {
-            return false;
-        }
-        if (!loaderInfo.checkSourcesfileChanged()) {
-            return false; // file has not changed
-        }
+	@SuppressWarnings("unchecked")
+	public boolean reloadCustomMapSource(MapSource mapSource) throws MapSourceCreateException, JAXBException,
+			IOException, SAXException, MapSourceInitializationException {
+		MapSourceLoaderInfo loaderInfo = mapSource.getLoaderInfo();
+		if ((loaderInfo == null) || (loaderInfo.getLoaderType() != LoaderType.XML)) {
+			return false;
+		}
+		if (!(mapSource instanceof ReloadableMapSource)) {
+			return false;
+		}
+		if (!loaderInfo.checkSourcesfileChanged()) {
+			return false; // file has not changed
+		}
 
-        MapSource updatedMapSource = loadCustomMapSource(loaderInfo.getSourceFile());
+		MapSource updatedMapSource = loadCustomMapSource(loaderInfo.getSourceFile());
 
-        if (!mapSource.getClass().getName().equals(updatedMapSource.getClass().getName())) {
-            throw new RuntimeException(
-                    "Reloading failed: The map source type has changed in file \"" + loaderInfo.getSourceFile() + "\"");
-        }
+		if (!mapSource.getClass().getName().equals(updatedMapSource.getClass().getName())) {
+			throw new RuntimeException(
+					"Reloading failed: The map source type has changed in file \"" + loaderInfo.getSourceFile() + "\"");
+		}
 
-        if (!mapSource.getName().equals(updatedMapSource.getName())) {
-            throw new RuntimeException(
-                    "Reloading failed: The map source name has changed in file \"" + loaderInfo.getSourceFile() + "\"");
-        }
+		if (!mapSource.getName().equals(updatedMapSource.getName())) {
+			throw new RuntimeException(
+					"Reloading failed: The map source name has changed in file \"" + loaderInfo.getSourceFile() + "\"");
+		}
 
-        ((ReloadableMapSource<MapSource>) mapSource).applyChangesFrom(updatedMapSource);
-        log.debug("Map source reloaded: \"" + loaderInfo.getSourceFile() + "\"");
+		((ReloadableMapSource<MapSource>) mapSource).applyChangesFrom(updatedMapSource);
+		log.debug("Map source reloaded: \"" + loaderInfo.getSourceFile() + "\"");
 
-        return true;
-    }
+		return true;
+	}
 
-    private static class XmlFilter implements StreamFilter {
+	private static class XmlFilter implements StreamFilter {
 
-        private final Set<String> filterOut;
-        private int level = 0;
+		private final Set<String> filterOut;
+		private int level = 0;
 
-        private XmlFilter(Collection<String> filterOut) {
-            this.filterOut = new HashSet<>(filterOut);
-        }
+		private XmlFilter(Collection<String> filterOut) {
+			this.filterOut = new HashSet<>(filterOut);
+		}
 
-        @Override
-        public boolean accept(XMLStreamReader reader) {
-            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                if (level == 1 && filterOut.contains(reader.getName().getLocalPart())) {
-                    return false;
-                }
-                level++;
-            } else if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
-                level--;
-            }
-            return true;
-        }
-    }
+		@Override
+		public boolean accept(XMLStreamReader reader) {
+			if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+				if (level == 1 && filterOut.contains(reader.getName().getLocalPart())) {
+					return false;
+				}
+				level++;
+			} else if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
+				level--;
+			}
+			return true;
+		}
+	}
 }

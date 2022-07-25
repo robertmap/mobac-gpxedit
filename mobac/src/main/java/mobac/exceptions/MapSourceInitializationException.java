@@ -18,19 +18,19 @@ package mobac.exceptions;
 
 public class MapSourceInitializationException extends Exception {
 
-    public MapSourceInitializationException() {
-    }
+	public MapSourceInitializationException() {
+	}
 
-    public MapSourceInitializationException(String message) {
-        super(message);
-    }
+	public MapSourceInitializationException(String message) {
+		super(message);
+	}
 
-    public MapSourceInitializationException(Throwable cause) {
-        super(cause);
-    }
+	public MapSourceInitializationException(Throwable cause) {
+		super(cause);
+	}
 
-    public MapSourceInitializationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public MapSourceInitializationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }

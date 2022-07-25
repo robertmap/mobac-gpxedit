@@ -36,62 +36,63 @@ import java.awt.event.MouseListener;
  */
 public class GpxTreeListener implements MouseListener {
 
-    public void actionPerformed(ActionEvent e) {
-    }
+	public void actionPerformed(ActionEvent e) {
+	}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+	public void mouseClicked(MouseEvent e) {
+	}
 
-    public void mouseEntered(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+	}
 
-    public void mouseExited(MouseEvent e) {
-    }
+	public void mouseExited(MouseEvent e) {
+	}
 
-    public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            showPopup(e);
-        }
-    }
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			showPopup(e);
+		}
+	}
 
-    public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            showPopup(e);
-        }
-    }
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			showPopup(e);
+		}
+	}
 
-    /**
-     * Popup for all elements in the gpx tree. TODO separate for waypoints, files, tracks and routes
-     *
-     * @param e
-     */
-    private void showPopup(MouseEvent e) {
-        JTree tree = (JTree) e.getSource();
-        TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-        tree.setSelectionPath(selPath);
-        if (selPath == null)
-            return;
+	/**
+	 * Popup for all elements in the gpx tree. TODO separate for waypoints, files,
+	 * tracks and routes
+	 *
+	 * @param e
+	 */
+	private void showPopup(MouseEvent e) {
+		JTree tree = (JTree) e.getSource();
+		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+		tree.setSelectionPath(selPath);
+		if (selPath == null)
+			return;
 
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
 
-        GpxEntry gpxEntry = null;
-        try {
-            gpxEntry = (GpxEntry) node.getUserObject();
-            gpxEntry.setNode(node);
-        } catch (ClassCastException exc) {
-        }
+		GpxEntry gpxEntry = null;
+		try {
+			gpxEntry = (GpxEntry) node.getUserObject();
+			gpxEntry.setNode(node);
+		} catch (ClassCastException exc) {
+		}
 
-        JPopupMenu popup = new JPopupMenu();
-        JMenuItem delete = new JMenuItem(I18nUtils.localizedStringForKey("rp_gpx_pop_menu_delete_element"));
-        delete.setName(GpxElementListener.MENU_NAME_DELETE);
-        GpxElementListener listener = new GpxElementListener(gpxEntry);
-        delete.addMouseListener(listener);
-        popup.add(delete);
-        JMenuItem rename = new JMenuItem(I18nUtils.localizedStringForKey("rp_gpx_pop_menu_rename_element"));
-        rename.setName(GpxElementListener.MENU_NAME_RENAME);
-        rename.addMouseListener(listener);
-        popup.add(rename);
+		JPopupMenu popup = new JPopupMenu();
+		JMenuItem delete = new JMenuItem(I18nUtils.localizedStringForKey("rp_gpx_pop_menu_delete_element"));
+		delete.setName(GpxElementListener.MENU_NAME_DELETE);
+		GpxElementListener listener = new GpxElementListener(gpxEntry);
+		delete.addMouseListener(listener);
+		popup.add(delete);
+		JMenuItem rename = new JMenuItem(I18nUtils.localizedStringForKey("rp_gpx_pop_menu_rename_element"));
+		rename.setName(GpxElementListener.MENU_NAME_RENAME);
+		rename.addMouseListener(listener);
+		popup.add(rename);
 
-        popup.show((Component) e.getSource(), e.getX(), e.getY());
-    }
+		popup.show((Component) e.getSource(), e.getX(), e.getY());
+	}
 }

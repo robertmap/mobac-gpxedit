@@ -18,5 +18,5 @@ package mobac.program.interfaces;
 
 public interface ToolTipProvider {
 
-    String getToolTip();
+	String getToolTip();
 }

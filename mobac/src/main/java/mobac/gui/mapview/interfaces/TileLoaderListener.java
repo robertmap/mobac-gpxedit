@@ -23,13 +23,13 @@ import mobac.gui.mapview.Tile;
 
 public interface TileLoaderListener {
 
-    /**
-     * Will be called if a new {@link Tile} has been loaded successfully.
-     * Loaded can mean downloaded or loaded from file cache.
-     *
-     * @param tile
-     */
-    void tileLoadingFinished(Tile tile, boolean success);
+	/**
+	 * Will be called if a new {@link Tile} has been loaded successfully. Loaded can
+	 * mean downloaded or loaded from file cache.
+	 *
+	 * @param tile
+	 */
+	void tileLoadingFinished(Tile tile, boolean success);
 
-    MemoryTileCache getTileImageCache();
+	MemoryTileCache getTileImageCache();
 }

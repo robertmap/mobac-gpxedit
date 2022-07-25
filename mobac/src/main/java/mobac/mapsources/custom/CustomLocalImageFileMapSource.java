@@ -47,248 +47,252 @@ import java.io.IOException;
 
 @XmlRootElement(name = "localImageFile")
 public class CustomLocalImageFileMapSource
-        implements FileBasedMapSource, ReloadableMapSource<CustomLocalImageFileMapSource> {
+		implements
+			FileBasedMapSource,
+			ReloadableMapSource<CustomLocalImageFileMapSource> {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomLocalImageFileMapSource.class);
-    BufferedImage fullImage = null;
-    private MapSourceLoaderInfo loaderInfo = null;
-    @XmlElement(required = true, nillable = false)
-    private double boxNorth = 90.0;
-    @XmlElement(required = true, nillable = false)
-    private double boxSouth = -90.0;
-    @XmlElement(required = true, nillable = false)
-    private double boxEast = 180.0;
-    @XmlElement(required = true, nillable = false)
-    private double boxWest = -180.0;
-    private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
-    private boolean initialized = false;
-    private TileImageType tileImageType = null;
+	private static final Logger log = LoggerFactory.getLogger(CustomLocalImageFileMapSource.class);
+	BufferedImage fullImage = null;
+	private MapSourceLoaderInfo loaderInfo = null;
+	@XmlElement(required = true, nillable = false)
+	private double boxNorth = 90.0;
+	@XmlElement(required = true, nillable = false)
+	private double boxSouth = -90.0;
+	@XmlElement(required = true, nillable = false)
+	private double boxEast = 180.0;
+	@XmlElement(required = true, nillable = false)
+	private double boxWest = -180.0;
+	private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+	private boolean initialized = false;
+	private TileImageType tileImageType = null;
 
-    @XmlElement(nillable = false, defaultValue = "CustomImage")
-    private String name = "Custom";
+	@XmlElement(nillable = false, defaultValue = "CustomImage")
+	private String name = "Custom";
 
-    @XmlElement(nillable = false, defaultValue = "0")
-    private int minZoom = PreviewMap.MIN_ZOOM;
+	@XmlElement(nillable = false, defaultValue = "0")
+	private int minZoom = PreviewMap.MIN_ZOOM;
 
-    @XmlElement(nillable = false, defaultValue = "20")
-    private int maxZoom = PreviewMap.MAX_ZOOM;
+	@XmlElement(nillable = false, defaultValue = "20")
+	private int maxZoom = PreviewMap.MAX_ZOOM;
 
-    @XmlElement(required = true)
-    private File imageFile = null;
+	@XmlElement(required = true)
+	private File imageFile = null;
 
-    @XmlElement(nillable = false, defaultValue = "false")
-    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
-    private boolean retinaDisplay = false;
+	@XmlElement(nillable = false, defaultValue = "false")
+	@XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
+	private boolean retinaDisplay = false;
 
-    @XmlElement(defaultValue = "false")
-    @XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
-    private boolean invertYCoordinate = false;
+	@XmlElement(defaultValue = "false")
+	@XmlJavaTypeAdapter(value = BooleanAdapter.class, type = boolean.class)
+	private boolean invertYCoordinate = false;
 
-    @XmlElement(defaultValue = "#00000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    private Color backgroundColor = Color.BLACK;
+	@XmlElement(defaultValue = "#00000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	private Color backgroundColor = Color.BLACK;
 
-    public CustomLocalImageFileMapSource() {
-        super();
-    }
+	public CustomLocalImageFileMapSource() {
+		super();
+	}
 
-    @Override
-    public void applyChangesFrom(CustomLocalImageFileMapSource reloadedMapSource)
-            throws MapSourceInitializationException {
-        if (!name.equals(reloadedMapSource.getName())) {
-            throw new MapSourceInitializationException("The map name has changed");
-        }
-        boxNorth = reloadedMapSource.boxNorth;
-        boxSouth = reloadedMapSource.boxSouth;
-        boxEast = reloadedMapSource.boxEast;
-        boxWest = reloadedMapSource.boxWest;
-        minZoom = reloadedMapSource.minZoom;
-        maxZoom = reloadedMapSource.maxZoom;
-        imageFile = reloadedMapSource.imageFile;
-        retinaDisplay = reloadedMapSource.retinaDisplay;
-        invertYCoordinate = reloadedMapSource.invertYCoordinate;
-        backgroundColor = reloadedMapSource.backgroundColor;
-        loaderInfo = reloadedMapSource.loaderInfo;
-        reinitialize();
-    }
+	@Override
+	public void applyChangesFrom(CustomLocalImageFileMapSource reloadedMapSource)
+			throws MapSourceInitializationException {
+		if (!name.equals(reloadedMapSource.getName())) {
+			throw new MapSourceInitializationException("The map name has changed");
+		}
+		boxNorth = reloadedMapSource.boxNorth;
+		boxSouth = reloadedMapSource.boxSouth;
+		boxEast = reloadedMapSource.boxEast;
+		boxWest = reloadedMapSource.boxWest;
+		minZoom = reloadedMapSource.minZoom;
+		maxZoom = reloadedMapSource.maxZoom;
+		imageFile = reloadedMapSource.imageFile;
+		retinaDisplay = reloadedMapSource.retinaDisplay;
+		invertYCoordinate = reloadedMapSource.invertYCoordinate;
+		backgroundColor = reloadedMapSource.backgroundColor;
+		loaderInfo = reloadedMapSource.loaderInfo;
+		reinitialize();
+	}
 
-    public synchronized void initialize() {
-        if (initialized) {
-            return;
-        }
-        reinitialize();
-    }
+	public synchronized void initialize() {
+		if (initialized) {
+			return;
+		}
+		reinitialize();
+	}
 
-    public void reinitialize() {
-        try {
-            if (!imageFile.isFile()) {
-                JOptionPane.showMessageDialog(null,
-                        String.format(I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder"), name,
-                                imageFile.toString()),
-                        I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_title"),
-                        JOptionPane.ERROR_MESSAGE);
-                initialized = true;
-                return;
-            }
-            String[] parts = imageFile.getName().split("\\.");
-            if (parts.length >= 2) {
-                tileImageType = TileImageType.getTileImageType(parts[parts.length - 1]);
-            } else {
-                tileImageType = TileImageType.PNG;
-            }
+	public void reinitialize() {
+		try {
+			if (!imageFile.isFile()) {
+				JOptionPane.showMessageDialog(null,
+						String.format(I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder"), name,
+								imageFile.toString()),
+						I18nUtils.localizedStringForKey("msg_environment_invalid_source_folder_title"),
+						JOptionPane.ERROR_MESSAGE);
+				initialized = true;
+				return;
+			}
+			String[] parts = imageFile.getName().split("\\.");
+			if (parts.length >= 2) {
+				tileImageType = TileImageType.getTileImageType(parts[parts.length - 1]);
+			} else {
+				tileImageType = TileImageType.PNG;
+			}
 
-            boxWest = Math.min(boxEast, boxWest);
-            boxEast = Math.max(boxEast, boxWest);
-            boxSouth = Math.min(boxNorth, boxSouth);
-            boxNorth = Math.max(boxNorth, boxSouth);
+			boxWest = Math.min(boxEast, boxWest);
+			boxEast = Math.max(boxEast, boxWest);
+			boxSouth = Math.min(boxNorth, boxSouth);
+			boxNorth = Math.max(boxNorth, boxSouth);
 
-        } finally {
-            initialized = true;
-        }
-    }
+		} finally {
+			initialized = true;
+		}
+	}
 
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-        BufferedImage image = getTileImage(zoom, x, y, loadMethod);
-        if (image == null) {
-            return null;
-        }
-        if (!ImageIO.write(image, tileImageType.getFileExt(), buf)) {
-            throw new IOException(String.format("Failed to write image %d/%d/z%d type %s", x, y, zoom,
-                    tileImageType.getFileExt()));
-        }
-        return buf.toByteArray();
-    }
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
+		BufferedImage image = getTileImage(zoom, x, y, loadMethod);
+		if (image == null) {
+			return null;
+		}
+		if (!ImageIO.write(image, tileImageType.getFileExt(), buf)) {
+			throw new IOException(
+					String.format("Failed to write image %d/%d/z%d type %s", x, y, zoom, tileImageType.getFileExt()));
+		}
+		return buf.toByteArray();
+	}
 
-    // integer nearest to zero
-    private int absFloor(double value) {
-        return value > 0 ? (int) Math.floor(value) : (int) Math.ceil(value);
-    }
+	// integer nearest to zero
+	private int absFloor(double value) {
+		return value > 0 ? (int) Math.floor(value) : (int) Math.ceil(value);
+	}
 
-    // integer farest from zero
-    private int absCeil(double value) {
-        return value > 0 ? (int) Math.ceil(value) : (int) Math.floor(value);
-    }
+	// integer farest from zero
+	private int absCeil(double value) {
+		return value > 0 ? (int) Math.ceil(value) : (int) Math.floor(value);
+	}
 
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        if (!initialized)
-            initialize();
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		if (!initialized)
+			initialize();
 
-        if (log.isTraceEnabled())
-            log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+		if (log.isTraceEnabled())
+			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
 
-        BufferedImage image = null;
-        Graphics2D g2 = null;
+		BufferedImage image = null;
+		Graphics2D g2 = null;
 
-        try {
-            if (fullImage == null) {
-                fullImage = ImageIO.read(imageFile);
-            }
-            int imageWidth = fullImage.getWidth();
-            int imageHeight = fullImage.getHeight();
-            int tileSize = mapSpace.getTileSize();
-            double tileWest = mapSpace.cXToLon(x * tileSize, zoom);
-            double tileNorth = mapSpace.cYToLat(y * tileSize, zoom);
-            double tileEast = mapSpace.cXToLon((x + 1) * tileSize, zoom);
-            double tileSouth = mapSpace.cYToLat((y + 1) * tileSize, zoom);
-            double tileWidth = tileEast - tileWest;
-            double tileHeight = tileNorth - tileSouth;
+		try {
+			if (fullImage == null) {
+				fullImage = ImageIO.read(imageFile);
+			}
+			int imageWidth = fullImage.getWidth();
+			int imageHeight = fullImage.getHeight();
+			int tileSize = mapSpace.getTileSize();
+			double tileWest = mapSpace.cXToLon(x * tileSize, zoom);
+			double tileNorth = mapSpace.cYToLat(y * tileSize, zoom);
+			double tileEast = mapSpace.cXToLon((x + 1) * tileSize, zoom);
+			double tileSouth = mapSpace.cYToLat((y + 1) * tileSize, zoom);
+			double tileWidth = tileEast - tileWest;
+			double tileHeight = tileNorth - tileSouth;
 
-            // intersects coordinate region
-            double intersectWest = Math.max(tileWest, boxWest);
-            double intersectEast = Math.min(tileEast, boxEast);
-            double intersectNorth = Math.min(tileNorth, boxNorth);
-            double intersectSouth = Math.max(tileSouth, boxSouth);
-            double intersectWidth = intersectEast - intersectWest;
-            double intersectHeight = intersectNorth - intersectSouth;
+			// intersects coordinate region
+			double intersectWest = Math.max(tileWest, boxWest);
+			double intersectEast = Math.min(tileEast, boxEast);
+			double intersectNorth = Math.min(tileNorth, boxNorth);
+			double intersectSouth = Math.max(tileSouth, boxSouth);
+			double intersectWidth = intersectEast - intersectWest;
+			double intersectHeight = intersectNorth - intersectSouth;
 
-            // intersects
-            if (intersectWidth > 0 && intersectHeight > 0) {
-                int graphContextSize = tileSize * (retinaDisplay ? 2 : 1);
-                image = new BufferedImage(graphContextSize, graphContextSize, BufferedImage.TYPE_4BYTE_ABGR);
-                g2 = image.createGraphics();
-                g2.setColor(getBackgroundColor());
-                g2.fillRect(0, 0, graphContextSize, graphContextSize);
+			// intersects
+			if (intersectWidth > 0 && intersectHeight > 0) {
+				int graphContextSize = tileSize * (retinaDisplay ? 2 : 1);
+				image = new BufferedImage(graphContextSize, graphContextSize, BufferedImage.TYPE_4BYTE_ABGR);
+				g2 = image.createGraphics();
+				g2.setColor(getBackgroundColor());
+				g2.fillRect(0, 0, graphContextSize, graphContextSize);
 
-                double boxWidth = (boxEast - boxWest);
-                double boxHeight = (boxNorth - boxSouth);
+				double boxWidth = (boxEast - boxWest);
+				double boxHeight = (boxNorth - boxSouth);
 
-                // crop parameters
-                double cropWScale = (boxWidth <= 0) ? 0 : (imageWidth / boxWidth);
-                double cropHScale = (boxHeight <= 0) ? 0 : (imageHeight / boxHeight);
-                int cropW = absCeil(intersectWidth * cropWScale);
-                int cropH = absCeil(intersectHeight * cropHScale);
-                int cropX = absFloor((intersectWest - boxWest) * cropWScale);
-                // int cropY = imageHeight - absCeil((boxNorth - intersectNorth) * cropHScale) - cropH;
-                int cropY = absFloor((boxNorth - intersectNorth) * cropHScale);
-                // skip when no valid crop
-                if (cropX < imageWidth && cropY < imageHeight && (cropX + cropW) > 0 && (cropY + cropH) > 0) {
-                    // draw rect
-                    double drawrectWScale = (tileWidth <= 0) ? 0 : (graphContextSize / tileWidth);
-                    double drawrectHScale = (tileHeight <= 0) ? 0 : (graphContextSize / tileHeight);
-                    int drawrectW = absCeil(intersectWidth * drawrectWScale);
-                    int drawrectH = absCeil(intersectHeight * drawrectHScale);
-                    int drawrectX = absFloor((intersectWest - tileWest) * drawrectWScale);
-                    // int drawrectY = tileSize - absCeil((tileNorth - intersectNorth) * drawrectHScale) - drawrectH;
-                    int drawrectY = absFloor((tileNorth - intersectNorth) * drawrectHScale);
+				// crop parameters
+				double cropWScale = (boxWidth <= 0) ? 0 : (imageWidth / boxWidth);
+				double cropHScale = (boxHeight <= 0) ? 0 : (imageHeight / boxHeight);
+				int cropW = absCeil(intersectWidth * cropWScale);
+				int cropH = absCeil(intersectHeight * cropHScale);
+				int cropX = absFloor((intersectWest - boxWest) * cropWScale);
+				// int cropY = imageHeight - absCeil((boxNorth - intersectNorth) * cropHScale) -
+				// cropH;
+				int cropY = absFloor((boxNorth - intersectNorth) * cropHScale);
+				// skip when no valid crop
+				if (cropX < imageWidth && cropY < imageHeight && (cropX + cropW) > 0 && (cropY + cropH) > 0) {
+					// draw rect
+					double drawrectWScale = (tileWidth <= 0) ? 0 : (graphContextSize / tileWidth);
+					double drawrectHScale = (tileHeight <= 0) ? 0 : (graphContextSize / tileHeight);
+					int drawrectW = absCeil(intersectWidth * drawrectWScale);
+					int drawrectH = absCeil(intersectHeight * drawrectHScale);
+					int drawrectX = absFloor((intersectWest - tileWest) * drawrectWScale);
+					// int drawrectY = tileSize - absCeil((tileNorth - intersectNorth) *
+					// drawrectHScale) - drawrectH;
+					int drawrectY = absFloor((tileNorth - intersectNorth) * drawrectHScale);
 
-                    // skip when draw rectangle totally draw out of image
-                    if (drawrectX < graphContextSize && drawrectY < graphContextSize && (drawrectX + drawrectW) > 1
-                            && (drawrectY + drawrectH) > 1) {
-                        g2.drawImage(fullImage, drawrectX, drawrectY, drawrectX + drawrectW, drawrectY + drawrectH,
-                                cropX, cropY, cropX + cropW, cropY + cropH, null);
-                    }
-                }
+					// skip when draw rectangle totally draw out of image
+					if (drawrectX < graphContextSize && drawrectY < graphContextSize && (drawrectX + drawrectW) > 1
+							&& (drawrectY + drawrectH) > 1) {
+						g2.drawImage(fullImage, drawrectX, drawrectY, drawrectX + drawrectW, drawrectY + drawrectH,
+								cropX, cropY, cropX + cropW, cropY + cropH, null);
+					}
+				}
 
-            }
-        } catch (FileNotFoundException e) {
-            log.debug("Map image file not found: " + imageFile.getAbsolutePath());
-        } finally {
-            if (g2 != null) {
-                g2.dispose();
-            }
-        }
-        return image;
-    }
+			}
+		} catch (FileNotFoundException e) {
+			log.debug("Map image file not found: " + imageFile.getAbsolutePath());
+		} finally {
+			if (g2 != null) {
+				g2.dispose();
+			}
+		}
+		return image;
+	}
 
-    public TileImageType getTileImageType() {
-        return tileImageType;
-    }
+	public TileImageType getTileImageType() {
+		return tileImageType;
+	}
 
-    public int getMaxZoom() {
-        return maxZoom;
-    }
+	public int getMaxZoom() {
+		return maxZoom;
+	}
 
-    public int getMinZoom() {
-        return minZoom;
-    }
+	public int getMinZoom() {
+		return minZoom;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
-    public MapSpace getMapSpace() {
-        return mapSpace;
-    }
+	public MapSpace getMapSpace() {
+		return mapSpace;
+	}
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-    @XmlTransient
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return loaderInfo;
-    }
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
 
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-        this.loaderInfo = loaderInfo;
-    }
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		this.loaderInfo = loaderInfo;
+	}
 
 }

@@ -23,17 +23,17 @@ import java.io.IOException;
 
 public interface TileProvider {
 
-    byte[] getTileData(int x, int y) throws IOException;
+	byte[] getTileData(int x, int y) throws IOException;
 
-    BufferedImage getTileImage(int x, int y) throws IOException;
+	BufferedImage getTileImage(int x, int y) throws IOException;
 
-    MapSource getMapSource();
+	MapSource getMapSource();
 
-    /**
-     * Indicates if subsequent filter in the filter-chain should prefer the {@link #getTileImage(int, int)} or
-     * {@link #getTileData(int, int)} method.
-     *
-     * @return
-     */
-    boolean preferTileImageUsage();
+	/**
+	 * Indicates if subsequent filter in the filter-chain should prefer the
+	 * {@link #getTileImage(int, int)} or {@link #getTileData(int, int)} method.
+	 *
+	 * @return
+	 */
+	boolean preferTileImageUsage();
 }

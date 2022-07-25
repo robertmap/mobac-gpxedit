@@ -42,168 +42,168 @@ import java.util.Locale;
 @AtlasCreatorName(value = "MBTiles SQLite")
 public class MBTiles extends RMapsSQLite {
 
-    private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (tile_column,tile_row,zoom_level,tile_data) VALUES (?,?,?,?)";
-    private static final String TABLE_TILES = "CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);";
-    private static final String INDEX_TILES = "CREATE INDEX IF NOT EXISTS tiles_idx on tiles (zoom_level, tile_column, tile_row)";
-    private static final String TABLE_METADATA = "CREATE TABLE IF NOT EXISTS metadata (name text, value text);";
-    private static final String INSERT_METADATA = "INSERT INTO metadata (name,value) VALUES (?,?);";
-    private static final String INDEX_METADATA = "CREATE UNIQUE INDEX IF NOT EXISTS metadata_idx  ON metadata (name);";
+	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (tile_column,tile_row,zoom_level,tile_data) VALUES (?,?,?,?)";
+	private static final String TABLE_TILES = "CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);";
+	private static final String INDEX_TILES = "CREATE INDEX IF NOT EXISTS tiles_idx on tiles (zoom_level, tile_column, tile_row)";
+	private static final String TABLE_METADATA = "CREATE TABLE IF NOT EXISTS metadata (name text, value text);";
+	private static final String INSERT_METADATA = "INSERT INTO metadata (name,value) VALUES (?,?);";
+	private static final String INDEX_METADATA = "CREATE UNIQUE INDEX IF NOT EXISTS metadata_idx  ON metadata (name);";
 
-    private boolean initialized = false;
+	private boolean initialized = false;
 
-    private double boundsLatMin;
-    private double boundsLatMax;
-    private double boundsLonMin;
-    private double boundsLonMax;
+	private double boundsLatMin;
+	private double boundsLatMax;
+	private double boundsLonMin;
+	private double boundsLonMax;
 
-    private int minZoom;
+	private int minZoom;
 
-    private int maxZoom;
+	private int maxZoom;
 
-    private TileImageType atlasTileImageType;
+	private TileImageType atlasTileImageType;
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
+	}
 
-    @Override
-    protected void testAtlas() throws AtlasTestException {
-        EnumSet<TileImageType> allowed = EnumSet.of(TileImageType.JPG, TileImageType.PNG);
-        // Test of output format - only jpg xor png is allowed
-        TileImageType tit = null;
-        for (LayerInterface layer : atlas) {
-            for (MapInterface map : layer) {
-                TileImageParameters parameters = map.getParameters();
-                TileImageType currentTit;
-                if (parameters == null) {
-                    currentTit = map.getMapSource().getTileImageType();
-                    if (!allowed.contains(currentTit))
-                        throw new AtlasTestException(
-                                "Map source format incompatible - tile format conversion to PNG or JPG is required for this map.",
-                                map);
-                } else {
-                    currentTit = parameters.getFormat().getType();
-                    if (!allowed.contains(currentTit))
-                        throw new AtlasTestException(
-                                "Selected custom tile format not supported - only JPG and PNG formats are supported.",
-                                map);
-                }
-                if (tit != null && !currentTit.equals(tit)) {
-                    throw new AtlasTestException("All maps within one atlas must use the same format (PNG or JPG). "
-                            + "Use tile format conversion converting maps with a different format.", map);
-                }
-                tit = currentTit;
-            }
-        }
-        atlasTileImageType = tit;
-    }
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		EnumSet<TileImageType> allowed = EnumSet.of(TileImageType.JPG, TileImageType.PNG);
+		// Test of output format - only jpg xor png is allowed
+		TileImageType tit = null;
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				TileImageParameters parameters = map.getParameters();
+				TileImageType currentTit;
+				if (parameters == null) {
+					currentTit = map.getMapSource().getTileImageType();
+					if (!allowed.contains(currentTit))
+						throw new AtlasTestException(
+								"Map source format incompatible - tile format conversion to PNG or JPG is required for this map.",
+								map);
+				} else {
+					currentTit = parameters.getFormat().getType();
+					if (!allowed.contains(currentTit))
+						throw new AtlasTestException(
+								"Selected custom tile format not supported - only JPG and PNG formats are supported.",
+								map);
+				}
+				if (tit != null && !currentTit.equals(tit)) {
+					throw new AtlasTestException("All maps within one atlas must use the same format (PNG or JPG). "
+							+ "Use tile format conversion converting maps with a different format.", map);
+				}
+				tit = currentTit;
+			}
+		}
+		atlasTileImageType = tit;
+	}
 
-    @Override
-    protected void openConnection() throws SQLException, IOException {
-        if (databaseFile.isFile()) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-            databaseFile = new File(atlasDir, atlas.getName() + "_" + sdf.format(new Date()) + ".mbtiles");
-        }
-        super.openConnection();
-    }
+	@Override
+	protected void openConnection() throws SQLException, IOException {
+		if (databaseFile.isFile()) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+			databaseFile = new File(atlasDir, atlas.getName() + "_" + sdf.format(new Date()) + ".mbtiles");
+		}
+		super.openConnection();
+	}
 
-    @Override
-    protected void initializeDB() throws SQLException {
-        if (initialized) {
-            return;
-        }
-        initialized = true;
-        try (Statement stat = conn.createStatement()) {
-            stat.executeUpdate(TABLE_TILES);
-            stat.executeUpdate(INDEX_TILES);
-            stat.executeUpdate(TABLE_METADATA);
-            stat.executeUpdate(INDEX_METADATA);
-        }
-        boundsLatMin = Double.POSITIVE_INFINITY;
-        boundsLatMax = Double.NEGATIVE_INFINITY;
-        boundsLonMin = Double.POSITIVE_INFINITY;
-        boundsLonMax = Double.NEGATIVE_INFINITY;
-        minZoom = Integer.MAX_VALUE;
-        maxZoom = 0;
-    }
+	@Override
+	protected void initializeDB() throws SQLException {
+		if (initialized) {
+			return;
+		}
+		initialized = true;
+		try (Statement stat = conn.createStatement()) {
+			stat.executeUpdate(TABLE_TILES);
+			stat.executeUpdate(INDEX_TILES);
+			stat.executeUpdate(TABLE_METADATA);
+			stat.executeUpdate(INDEX_METADATA);
+		}
+		boundsLatMin = Double.POSITIVE_INFINITY;
+		boundsLatMax = Double.NEGATIVE_INFINITY;
+		boundsLonMin = Double.POSITIVE_INFINITY;
+		boundsLonMax = Double.NEGATIVE_INFINITY;
+		minZoom = Integer.MAX_VALUE;
+		maxZoom = 0;
+	}
 
-    @Override
-    protected void updateTileMetaInfo() throws SQLException {
-        MapSpace ms = map.getMapSource().getMapSpace();
-        double lon1 = ms.cXToLon(map.getMinTileCoordinate().x, zoom);
-        double lon2 = ms.cXToLon(map.getMaxTileCoordinate().x, zoom);
-        double lat1 = ms.cYToLat(map.getMinTileCoordinate().y, zoom);
-        double lat2 = ms.cYToLat(map.getMaxTileCoordinate().y, zoom);
+	@Override
+	protected void updateTileMetaInfo() throws SQLException {
+		MapSpace ms = map.getMapSource().getMapSpace();
+		double lon1 = ms.cXToLon(map.getMinTileCoordinate().x, zoom);
+		double lon2 = ms.cXToLon(map.getMaxTileCoordinate().x, zoom);
+		double lat1 = ms.cYToLat(map.getMinTileCoordinate().y, zoom);
+		double lat2 = ms.cYToLat(map.getMaxTileCoordinate().y, zoom);
 
-        boundsLatMin = Math.min(boundsLatMin, Math.min(lat1, lat2));
-        boundsLatMax = Math.max(boundsLatMax, Math.max(lat1, lat2));
-        boundsLonMin = Math.min(boundsLonMin, Math.min(lon1, lon2));
-        boundsLonMax = Math.max(boundsLonMax, Math.max(lon1, lon2));
+		boundsLatMin = Math.min(boundsLatMin, Math.min(lat1, lat2));
+		boundsLatMax = Math.max(boundsLatMax, Math.max(lat1, lat2));
+		boundsLonMin = Math.min(boundsLonMin, Math.min(lon1, lon2));
+		boundsLonMax = Math.max(boundsLonMax, Math.max(lon1, lon2));
 
-        minZoom = Math.min(minZoom, map.getZoom());
-        maxZoom = Math.max(maxZoom, map.getZoom());
-    }
+		minZoom = Math.min(minZoom, map.getZoom());
+		maxZoom = Math.max(maxZoom, map.getZoom());
+	}
 
-    @Override
-    public void finishAtlasCreation() throws IOException, InterruptedException {
-        try (PreparedStatement st = conn.prepareStatement(INSERT_METADATA)) {
-            st.setString(1, "bounds");
-            st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLonMin, boundsLatMin,
-                    boundsLonMax, boundsLatMax));
-            st.execute();
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		try (PreparedStatement st = conn.prepareStatement(INSERT_METADATA)) {
+			st.setString(1, "bounds");
+			st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLonMin, boundsLatMin,
+					boundsLonMax, boundsLatMax));
+			st.execute();
 
-            st.setString(1, "maxzoom");
-            st.setString(2, Integer.toString(maxZoom));
-            st.execute();
+			st.setString(1, "maxzoom");
+			st.setString(2, Integer.toString(maxZoom));
+			st.execute();
 
-            st.setString(1, "minzoom");
-            st.setString(2, Integer.toString(minZoom));
-            st.execute();
+			st.setString(1, "minzoom");
+			st.setString(2, Integer.toString(minZoom));
+			st.execute();
 
-            st.setString(1, "name");
-            st.setString(2, atlas.getName());
-            st.execute();
+			st.setString(1, "name");
+			st.setString(2, atlas.getName());
+			st.execute();
 
-            st.setString(1, "type");
-            st.setString(2, "baselayer");
-            st.execute();
+			st.setString(1, "type");
+			st.setString(2, "baselayer");
+			st.execute();
 
-            st.setString(1, "version");
-            st.setString(2, "1.3");
-            st.execute();
+			st.setString(1, "version");
+			st.setString(2, "1.3");
+			st.execute();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            st.setString(1, "description");
-            st.setString(2, atlas.getName() + " created on " + sdf.format(new Date()) + " by MOBAC");
-            st.execute();
-            st.setString(1, "format");
-            st.setString(2, atlasTileImageType.getFileExt());
-            st.execute();
-            conn.commit();
-        } catch (SQLException e) {
-            throw new IOException(e);
-        }
-        super.finishAtlasCreation();
-    }
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			st.setString(1, "description");
+			st.setString(2, atlas.getName() + " created on " + sdf.format(new Date()) + " by MOBAC");
+			st.execute();
+			st.setString(1, "format");
+			st.setString(2, atlasTileImageType.getFileExt());
+			st.execute();
+			conn.commit();
+		} catch (SQLException e) {
+			throw new IOException(e);
+		}
+		super.finishAtlasCreation();
+	}
 
-    @Override
-    protected String getTileInsertSQL() {
-        return INSERT_SQL;
-    }
+	@Override
+	protected String getTileInsertSQL() {
+		return INSERT_SQL;
+	}
 
-    @Override
-    protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
-        y = (1 << z) - y - 1;
-        prepStmt.setInt(1, x);
-        prepStmt.setInt(2, y);
-        prepStmt.setInt(3, z);
-        prepStmt.setBytes(4, tileData);
-        prepStmt.addBatch();
-    }
+	@Override
+	protected void writeTile(int x, int y, int z, byte[] tileData) throws SQLException, IOException {
+		y = (1 << z) - y - 1;
+		prepStmt.setInt(1, x);
+		prepStmt.setInt(2, y);
+		prepStmt.setInt(3, z);
+		prepStmt.setBytes(4, tileData);
+		prepStmt.addBatch();
+	}
 
-    protected String getDatabaseFileName() {
-        return atlas.getName() + ".mbtiles";
-    }
+	protected String getDatabaseFileName() {
+		return atlas.getName() + ".mbtiles";
+	}
 
 }

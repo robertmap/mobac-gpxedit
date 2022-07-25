@@ -44,241 +44,244 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-public class BeanShellHttpMapSource extends AbstractHttpMapSource implements ReloadableMapSource<BeanShellHttpMapSource> {
+public class BeanShellHttpMapSource extends AbstractHttpMapSource
+		implements
+			ReloadableMapSource<BeanShellHttpMapSource> {
 
-    private static final String AH_ERROR = "Sourced file: inline evaluation of: "
-            + "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
+	private static final String AH_ERROR = "Sourced file: inline evaluation of: "
+			+ "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
 
-    private static int NUM = 0;
+	private static int NUM = 0;
 
-    private final String bshMapName;
+	private final String bshMapName;
 
-    private String code;
+	private String code;
 
-    private Interpreter interpreter;
+	private Interpreter interpreter;
 
-    private boolean hasAddHeadersMethod;
+	private boolean hasAddHeadersMethod;
 
-    private Color backgroundColor = Color.BLACK;
+	private Color backgroundColor = Color.BLACK;
 
-    private boolean ignoreError = false;
+	private boolean ignoreError = false;
 
-    private String displayName = null;
+	private String displayName = null;
 
-    private SSLSocketFactory sslSocketFactory = AbstractHttpMapSource.SSL_SOCKET_FACTORY;
+	private SSLSocketFactory sslSocketFactory = AbstractHttpMapSource.SSL_SOCKET_FACTORY;
 
-    public BeanShellHttpMapSource(String code, String bshMapName) throws EvalError {
-        super("", 0, 0, TileImageType.PNG, TileUpdate.None);
-        this.bshMapName = bshMapName;
-        this.code = code;
-        name = "BeanShell map source " + NUM++;
-        prepareInterpreter(code);
-    }
+	public BeanShellHttpMapSource(String code, String bshMapName) throws EvalError {
+		super("", 0, 0, TileImageType.PNG, TileUpdate.None);
+		this.bshMapName = bshMapName;
+		this.code = code;
+		name = "BeanShell map source " + NUM++;
+		prepareInterpreter(code);
+	}
 
-    public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
-        return new BeanShellHttpMapSource(FileUtils.readFileToString(f, StandardCharsets.UTF_8), f.getName());
-    }
+	public static BeanShellHttpMapSource load(File f) throws EvalError, IOException {
+		return new BeanShellHttpMapSource(FileUtils.readFileToString(f, StandardCharsets.UTF_8), f.getName());
+	}
 
-    protected void prepareInterpreter(String code) throws EvalError {
-        interpreter = new Interpreter();
+	protected void prepareInterpreter(String code) throws EvalError {
+		interpreter = new Interpreter();
 
-        interpreter.eval("import mobac.program.interfaces.HttpMapSource.TileUpdate;");
-        interpreter.eval("import java.net.HttpURLConnection;");
-        interpreter.eval("import mobac.utilities.beanshell.*;");
-        interpreter.eval(code);
-        Object o = interpreter.get("name");
-        if (o != null) {
-            name = (String) o;
-        }
-        o = interpreter.get("displayName");
-        if (o != null) {
-            displayName = (String) o;
-        }
+		interpreter.eval("import mobac.program.interfaces.HttpMapSource.TileUpdate;");
+		interpreter.eval("import java.net.HttpURLConnection;");
+		interpreter.eval("import mobac.utilities.beanshell.*;");
+		interpreter.eval(code);
+		Object o = interpreter.get("name");
+		if (o != null) {
+			name = (String) o;
+		}
+		o = interpreter.get("displayName");
+		if (o != null) {
+			displayName = (String) o;
+		}
 
-        o = interpreter.get("tileSize");
-        if (o != null) {
-            int tileSize = ((Integer) o).intValue();
-            mapSpace = MapSpaceFactory.getInstance(tileSize, true);
-        } else {
-            mapSpace = MercatorPower2MapSpace.INSTANCE_256;
-        }
+		o = interpreter.get("tileSize");
+		if (o != null) {
+			int tileSize = ((Integer) o).intValue();
+			mapSpace = MapSpaceFactory.getInstance(tileSize, true);
+		} else {
+			mapSpace = MercatorPower2MapSpace.INSTANCE_256;
+		}
 
-        o = interpreter.get("minZoom");
-        if (o != null)
-            minZoom = ((Integer) o).intValue();
-        else
-            minZoom = 0;
+		o = interpreter.get("minZoom");
+		if (o != null)
+			minZoom = ((Integer) o).intValue();
+		else
+			minZoom = 0;
 
-        o = interpreter.get("maxZoom");
-        if (o != null)
-            maxZoom = ((Integer) o).intValue();
-        else
-            maxZoom = PreviewMap.MAX_ZOOM;
+		o = interpreter.get("maxZoom");
+		if (o != null)
+			maxZoom = ((Integer) o).intValue();
+		else
+			maxZoom = PreviewMap.MAX_ZOOM;
 
-        o = interpreter.get("tileType");
-        if (o != null)
-            tileType = TileImageType.getTileImageType((String) o);
-        else
-            throw new EvalError("tileType definition missing", null, null);
+		o = interpreter.get("tileType");
+		if (o != null)
+			tileType = TileImageType.getTileImageType((String) o);
+		else
+			throw new EvalError("tileType definition missing", null, null);
 
-        o = interpreter.get("tileUpdate");
-        if (o != null)
-            tileUpdate = (TileUpdate) o;
+		o = interpreter.get("tileUpdate");
+		if (o != null)
+			tileUpdate = (TileUpdate) o;
 
-        o = interpreter.get("ignoreError");
-        if (o != null) {
-            if (o instanceof String) {
-                ignoreError = Boolean.parseBoolean((String) o);
-            } else if (o instanceof Boolean) {
-                ignoreError = ((Boolean) o).booleanValue();
-            } else
-                throw new EvalError("Invalid type for \"ignoreError\": " + o.getClass(), null, null);
-        }
+		o = interpreter.get("ignoreError");
+		if (o != null) {
+			if (o instanceof String) {
+				ignoreError = Boolean.parseBoolean((String) o);
+			} else if (o instanceof Boolean) {
+				ignoreError = ((Boolean) o).booleanValue();
+			} else
+				throw new EvalError("Invalid type for \"ignoreError\": " + o.getClass(), null, null);
+		}
 
-        o = interpreter.get("backgroundColor");
-        if (o != null) {
-            try {
-                backgroundColor = ColorAdapter.parseColor((String) o);
-            } catch (UnmarshalException e) {
-                throw new EvalError(e.getMessage(), null, null);
-            }
-        }
+		o = interpreter.get("backgroundColor");
+		if (o != null) {
+			try {
+				backgroundColor = ColorAdapter.parseColor((String) o);
+			} catch (UnmarshalException e) {
+				throw new EvalError(e.getMessage(), null, null);
+			}
+		}
 
-        o = interpreter.get("trustedPublicKeyHash");
-        if (o != null) {
-            TreeSet<String> publicKeyHashes = new TreeSet<>();
-            publicKeyHashes.add(((String) o).toLowerCase());
-            this.sslSocketFactory = MobacSSLHelper.createSSLSocketFactory(publicKeyHashes);
-        }
+		o = interpreter.get("trustedPublicKeyHash");
+		if (o != null) {
+			TreeSet<String> publicKeyHashes = new TreeSet<>();
+			publicKeyHashes.add(((String) o).toLowerCase());
+			this.sslSocketFactory = MobacSSLHelper.createSSLSocketFactory(publicKeyHashes);
+		}
 
-        List<String> methodNames = Arrays.asList(interpreter.getNameSpace().getMethodNames());
-        hasAddHeadersMethod = methodNames.contains("addHeaders");
-        if (!hasAddHeadersMethod) {
-            log.warn("Beanshell \"" + bshMapName + "\" (" + name
-                    + ") has no addHeaders method - addHeaders will not be called!");
-        }
-    }
+		List<String> methodNames = Arrays.asList(interpreter.getNameSpace().getMethodNames());
+		hasAddHeadersMethod = methodNames.contains("addHeaders");
+		if (!hasAddHeadersMethod) {
+			log.warn("Beanshell \"" + bshMapName + "\" (" + name
+					+ ") has no addHeaders method - addHeaders will not be called!");
+		}
+	}
 
-    @Override
-    public synchronized HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
-        HttpURLConnection conn = null;
-        try {
-            String url = getTileUrl(zoom, tilex, tiley);
-            conn = (HttpURLConnection) new URL(url).openConnection();
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("", e);
-            throw new IOException(e);
-        }
-        if (hasAddHeadersMethod) {
-            try {
-                interpreter.set("conn", conn);
-                interpreter.eval("addHeaders(conn);");
-            } catch (EvalError e) {
-                String msg = e.getMessage();
-                if (!AH_ERROR.equals(msg)) {
-                    log.error(e.getClass() + ": " + e.getMessage(), e);
-                    throw new IOException(e);
-                }
-            }
-        }
-        return conn;
-    }
+	@Override
+	public synchronized HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
+		HttpURLConnection conn = null;
+		try {
+			String url = getTileUrl(zoom, tilex, tiley);
+			conn = (HttpURLConnection) new URL(url).openConnection();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("", e);
+			throw new IOException(e);
+		}
+		if (hasAddHeadersMethod) {
+			try {
+				interpreter.set("conn", conn);
+				interpreter.eval("addHeaders(conn);");
+			} catch (EvalError e) {
+				String msg = e.getMessage();
+				if (!AH_ERROR.equals(msg)) {
+					log.error(e.getClass() + ": " + e.getMessage(), e);
+					throw new IOException(e);
+				}
+			}
+		}
+		return conn;
+	}
 
-    @Override
-    protected SSLSocketFactory getSslSocketFactory() {
-        return this.sslSocketFactory;
-    }
+	@Override
+	protected SSLSocketFactory getSslSocketFactory() {
+		return this.sslSocketFactory;
+	}
 
-    @Override
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException, InterruptedException {
-        try {
-            return super.getTileImage(zoom, x, y, loadMethod);
-        } catch (Exception e) {
-            if (ignoreError) {
-                log.error("Ignored error: " + e);
-                return null;
-            }
-            throw e;
-        }
-    }
+	@Override
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		try {
+			return super.getTileImage(zoom, x, y, loadMethod);
+		} catch (Exception e) {
+			if (ignoreError) {
+				log.error("Ignored error: " + e);
+				return null;
+			}
+			throw e;
+		}
+	}
 
-    @Override
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException, InterruptedException {
-        try {
-            return super.getTileData(zoom, x, y, loadMethod);
-        } catch (Exception e) {
-            if (ignoreError) {
-                log.error("Ignored error: " + e);
-                return null;
-            }
-            throw e;
-        }
-    }
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		try {
+			return super.getTileData(zoom, x, y, loadMethod);
+		} catch (Exception e) {
+			if (ignoreError) {
+				log.error("Ignored error: " + e);
+				return null;
+			}
+			throw e;
+		}
+	}
 
-    public boolean testCode() throws IOException {
-        return (getTileUrlConnection(minZoom, 0, 0) != null);
-    }
+	public boolean testCode() throws IOException {
+		return (getTileUrlConnection(minZoom, 0, 0) != null);
+	}
 
-    public String getTileUrl(int zoom, int tilex, int tiley) {
-        try {
-            return (String) interpreter.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
-        } catch (EvalError e) {
-            log.error(e.getClass() + ": " + e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-    }
+	public String getTileUrl(int zoom, int tilex, int tiley) {
+		try {
+			return (String) interpreter.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
+		} catch (EvalError e) {
+			log.error(e.getClass() + ": " + e.getMessage(), e);
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Override
-    public void applyChangesFrom(BeanShellHttpMapSource reloadedMapSource) throws MapSourceInitializationException {
-        if (!name.equals(reloadedMapSource.getName())) {
-            throw new MapSourceInitializationException("The map name has changed");
-        }
-        this.code = reloadedMapSource.code;
-        try {
-            prepareInterpreter(code);
-        } catch (EvalError e) {
-            throw new MapSourceInitializationException(e);
-        }
-    }
+	@Override
+	public void applyChangesFrom(BeanShellHttpMapSource reloadedMapSource) throws MapSourceInitializationException {
+		if (!name.equals(reloadedMapSource.getName())) {
+			throw new MapSourceInitializationException("The map name has changed");
+		}
+		this.code = reloadedMapSource.code;
+		try {
+			prepareInterpreter(code);
+		} catch (EvalError e) {
+			throw new MapSourceInitializationException(e);
+		}
+	}
 
-    @Override
-    public MapSpace getMapSpace() {
-        return mapSpace;
-    }
+	@Override
+	public MapSpace getMapSpace() {
+		return mapSpace;
+	}
 
-    @Override
-    public int getMaxZoom() {
-        return maxZoom;
-    }
+	@Override
+	public int getMaxZoom() {
+		return maxZoom;
+	}
 
-    @Override
-    public int getMinZoom() {
-        return minZoom;
-    }
+	@Override
+	public int getMinZoom() {
+		return minZoom;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        if (displayName != null) {
-            return displayName;
-        }
-        return name;
-    }
+	@Override
+	public String toString() {
+		if (displayName != null) {
+			return displayName;
+		}
+		return name;
+	}
 
-    @Override
-    public TileUpdate getTileUpdate() {
-        return tileUpdate;
-    }
+	@Override
+	public TileUpdate getTileUpdate() {
+		return tileUpdate;
+	}
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
-
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
 }

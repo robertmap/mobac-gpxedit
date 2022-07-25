@@ -18,44 +18,47 @@ package mobac.program.tilestore;
 
 public interface TileStoreEntry {
 
-    int getX();
+	int getX();
 
-    int getY();
+	int getY();
 
-    int getZoom();
+	int getZoom();
 
-    /**
-     * This function does never return a <code>null</code> value!
-     *
-     * @return tile data
-     */
-    byte[] getData();
+	/**
+	 * This function does never return a <code>null</code> value!
+	 *
+	 * @return tile data
+	 */
+	byte[] getData();
 
-    /**
-     * The time and date in milliseconds (since midnight, January 1, 1970 UTC) when this map tile has been downloaded
-     * respectively has been checked the last time via HTTP If-None-Match, If-Modified-Since or a HTTP HEAD request.
-     *
-     * @return Time in milliseconds
-     */
-    long getTimeDownloaded();
+	/**
+	 * The time and date in milliseconds (since midnight, January 1, 1970 UTC) when
+	 * this map tile has been downloaded respectively has been checked the last time
+	 * via HTTP If-None-Match, If-Modified-Since or a HTTP HEAD request.
+	 *
+	 * @return Time in milliseconds
+	 */
+	long getTimeDownloaded();
 
-    void update(long timeExpires);
+	void update(long timeExpires);
 
-    /**
-     * @return Last modification time in UTC or <code>0</code> if not supported by the server
-     */
-    long getTimeLastModified();
+	/**
+	 * @return Last modification time in UTC or <code>0</code> if not supported by
+	 *         the server
+	 */
+	long getTimeLastModified();
 
-    /**
-     * @return Expiration time in UTC or <code>0</code> if not supported by the server
-     */
-    long getTimeExpires();
+	/**
+	 * @return Expiration time in UTC or <code>0</code> if not supported by the
+	 *         server
+	 */
+	long getTimeExpires();
 
-    /**
-     * The eTag contained in the HTTP answer on the last download/check request.
-     *
-     * @return eTag or <code>null</code> if not supported by the server
-     */
-    String geteTag();
+	/**
+	 * The eTag contained in the HTTP answer on the last download/check request.
+	 *
+	 * @return eTag or <code>null</code> if not supported by the server
+	 */
+	String geteTag();
 
 }

@@ -39,119 +39,119 @@ import java.util.ArrayList;
 @XmlRootElement(name = "combined")
 public class CustomCombinedMapSource implements InitializableMapSource {
 
-    @XmlElementWrapper(name = "regionalMapSource")
-    @XmlElements({@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
-            @XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
-            @XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
-            @XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
-            @XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
-    protected ArrayList<MapSource> regionalMapSource = new ArrayList<MapSource>();
+	@XmlElementWrapper(name = "regionalMapSource")
+	@XmlElements({@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
+			@XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
+			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
+			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
+			@XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
+	protected ArrayList<MapSource> regionalMapSource = new ArrayList<MapSource>();
 
-    @XmlElementWrapper(name = "baseMapSource")
-    @XmlElements({@XmlElement(name = "customMapSource", type = CustomMapSource.class),
-            @XmlElement(name = "customWmsMapSource", type = CustomWmsMapSource.class),
-            @XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
-            @XmlElement(name = "mapsforge", type = CustomMapsforge.class),
-            @XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
-            @XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
-            @XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
-            @XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
-    protected ArrayList<MapSource> baseMapSource = new ArrayList<MapSource>();
+	@XmlElementWrapper(name = "baseMapSource")
+	@XmlElements({@XmlElement(name = "customMapSource", type = CustomMapSource.class),
+			@XmlElement(name = "customWmsMapSource", type = CustomWmsMapSource.class),
+			@XmlElement(name = "mapSource", type = StandardMapSourceLayer.class),
+			@XmlElement(name = "mapsforge", type = CustomMapsforge.class),
+			@XmlElement(name = "localTileSQLite", type = CustomLocalTileSQliteMapSource.class),
+			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
+			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
+			@XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
+	protected ArrayList<MapSource> baseMapSource = new ArrayList<MapSource>();
 
-    @XmlElement
-    protected String name;
+	@XmlElement
+	protected String name;
 
-    @XmlElement(defaultValue = "#000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    protected Color backgroundColor = Color.BLACK;
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	protected Color backgroundColor = Color.BLACK;
 
-    @XmlElement
-    protected TileImageType tileType = TileImageType.PNG;
+	@XmlElement
+	protected TileImageType tileType = TileImageType.PNG;
 
-    public CustomCombinedMapSource() {
-    }
+	public CustomCombinedMapSource() {
+	}
 
-    @Override
-    public void initialize() throws MapSourceInitializationException {
-        if (regionalMapSource.size() == 0)
-            throw new MapSourceInitializationException("Regional map missing");
-        if (baseMapSource.size() == 0)
-            throw new MapSourceInitializationException("Base map missing");
-        if ((regionalMapSource.size() > 1) || baseMapSource.size() > 1)
-            throw new MapSourceInitializationException(
-                    "Invalid map source definition: multiple regional or base maps defined.");
-        if (!(regionalMapSource instanceof FileBasedMapSource))
-            throw new MapSourceInitializationException(
-                    "Invalid regional map file format. Only file based local maps are supported!");
-        ((InitializableMapSource) regionalMapSource).initialize();
-        if (baseMapSource instanceof InitializableMapSource) {
-            ((InitializableMapSource) baseMapSource).initialize();
-        }
-    }
+	@Override
+	public void initialize() throws MapSourceInitializationException {
+		if (regionalMapSource.size() == 0)
+			throw new MapSourceInitializationException("Regional map missing");
+		if (baseMapSource.size() == 0)
+			throw new MapSourceInitializationException("Base map missing");
+		if ((regionalMapSource.size() > 1) || baseMapSource.size() > 1)
+			throw new MapSourceInitializationException(
+					"Invalid map source definition: multiple regional or base maps defined.");
+		if (!(regionalMapSource instanceof FileBasedMapSource))
+			throw new MapSourceInitializationException(
+					"Invalid regional map file format. Only file based local maps are supported!");
+		((InitializableMapSource) regionalMapSource).initialize();
+		if (baseMapSource instanceof InitializableMapSource) {
+			((InitializableMapSource) baseMapSource).initialize();
+		}
+	}
 
-    @Override
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
-            InterruptedException {
-        try {
-            byte[] data = regionalMapSource.get(0).getTileData(zoom, x, y, loadMethod);
-            if (data != null)
-                return data;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return baseMapSource.get(0).getTileData(zoom, x, y, loadMethod);
-    }
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		try {
+			byte[] data = regionalMapSource.get(0).getTileData(zoom, x, y, loadMethod);
+			if (data != null)
+				return data;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return baseMapSource.get(0).getTileData(zoom, x, y, loadMethod);
+	}
 
-    @Override
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        try {
-            BufferedImage image = regionalMapSource.get(0).getTileImage(zoom, x, y, loadMethod);
-            if (image != null)
-                return image;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return baseMapSource.get(0).getTileImage(zoom, x, y, loadMethod);
-    }
+	@Override
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		try {
+			BufferedImage image = regionalMapSource.get(0).getTileImage(zoom, x, y, loadMethod);
+			if (image != null)
+				return image;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return baseMapSource.get(0).getTileImage(zoom, x, y, loadMethod);
+	}
 
-    @Override
-    public TileImageType getTileImageType() {
-        return tileType;
-    }
+	@Override
+	public TileImageType getTileImageType() {
+		return tileType;
+	}
 
-    @Override
-    public int getMaxZoom() {
-        return baseMapSource.get(0).getMaxZoom();
-    }
+	@Override
+	public int getMaxZoom() {
+		return baseMapSource.get(0).getMaxZoom();
+	}
 
-    @Override
-    public int getMinZoom() {
-        return baseMapSource.get(0).getMinZoom();
-    }
+	@Override
+	public int getMinZoom() {
+		return baseMapSource.get(0).getMinZoom();
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public MapSpace getMapSpace() {
-        return baseMapSource.get(0).getMapSpace();
-    }
+	@Override
+	public MapSpace getMapSpace() {
+		return baseMapSource.get(0).getMapSpace();
+	}
 
-    @Override
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
+	@Override
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-    @Override
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return null;
-    }
+	@Override
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return null;
+	}
 
-    @Override
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-    }
+	@Override
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+	}
 
 }

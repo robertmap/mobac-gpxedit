@@ -55,248 +55,246 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @XmlRootElement(name = "localTileSQLite")
 public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomLocalTileSQliteMapSource.class);
-    private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+	private static final Logger log = LoggerFactory.getLogger(CustomLocalTileSQliteMapSource.class);
+	private final MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
+	private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private MapSourceLoaderInfo loaderInfo = null;
+	@XmlElement(required = false)
+	private TileImageType tileImageType = null;
 
-    private MapSourceLoaderInfo loaderInfo = null;
+	@XmlElement(nillable = false, defaultValue = "CustomLocalSQLite")
+	private String name = "CustomLocalSQLite";
 
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private int minZoom = PreviewMap.MIN_ZOOM;
 
-    @XmlElement(required = false)
-    private TileImageType tileImageType = null;
+	private int maxZoom = PreviewMap.MAX_ZOOM;
 
-    @XmlElement(nillable = false, defaultValue = "CustomLocalSQLite")
-    private String name = "CustomLocalSQLite";
+	@XmlElement(required = true)
+	private File sourceFile = null;
 
-    private int minZoom = PreviewMap.MIN_ZOOM;
+	@XmlElement(required = true)
+	private SQLiteAtlasType atlasType = null;
 
-    private int maxZoom = PreviewMap.MAX_ZOOM;
+	@XmlElement(defaultValue = "#000000")
+	@XmlJavaTypeAdapter(ColorAdapter.class)
+	private Color backgroundColor = Color.BLACK;
 
-    @XmlElement(required = true)
-    private File sourceFile = null;
+	private String sqlMaxZoomStatement;
+	private String sqlMinZoomStatement;
+	private String sqlTileStatement;
+	private String sqlTileImageTypeStatement;
 
-    @XmlElement(required = true)
-    private SQLiteAtlasType atlasType = null;
+	/**
+	 * SQLite connection with database file
+	 */
+	private Connection conn = null;
 
-    @XmlElement(defaultValue = "#000000")
-    @XmlJavaTypeAdapter(ColorAdapter.class)
-    private Color backgroundColor = Color.BLACK;
+	public CustomLocalTileSQliteMapSource() {
+		super();
+	}
 
-    private String sqlMaxZoomStatement;
-    private String sqlMinZoomStatement;
-    private String sqlTileStatement;
-    private String sqlTileImageTypeStatement;
+	protected void updateZoomLevelInfo() {
+		try (Statement statement = conn.createStatement()) {
+			if (statement.execute(sqlMaxZoomStatement)) {
+				try (ResultSet rs = statement.getResultSet()) {
+					if (rs.next()) {
+						maxZoom = rs.getInt(1);
+					}
+				}
+			}
+			if (statement.execute(sqlMinZoomStatement)) {
+				try (ResultSet rs = statement.getResultSet()) {
+					if (rs.next()) {
+						minZoom = rs.getInt(1);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			log.error("", e);
+		}
+	}
 
-    /**
-     * SQLite connection with database file
-     */
-    private Connection conn = null;
+	public synchronized void initialize() {
+		if (initialized.get())
+			return;
+		reinitialize();
+	}
 
-    public CustomLocalTileSQliteMapSource() {
-        super();
-    }
+	public void reinitialize() {
+		if (atlasType == null) {
+			JOptionPane.showMessageDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file"), name,
+							sourceFile),
+					I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
+					JOptionPane.ERROR_MESSAGE);
+			initialized.set(true);
+			return;
+		}
+		if (!sourceFile.isFile()) {
+			JOptionPane.showMessageDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_sqlitedb"), name,
+							sourceFile),
+					I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
+					JOptionPane.ERROR_MESSAGE);
+			initialized.set(true);
+			return;
+		}
+		if (!SQLiteLoader.loadSQLiteOrShowError()) {
+			initialized.set(true);
+			return;
+		}
+		log.debug("Loading SQLite database " + sourceFile);
+		String url = "jdbc:sqlite:" + this.sourceFile;
+		try {
+			conn = DriverManager.getConnection(url);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_custom_map_source_failed_load_sqlitedb"), name,
+							sourceFile, e.getMessage()),
+					I18nUtils.localizedStringForKey("msg_custom_map_source_failed_load_sqlitedb_title"),
+					JOptionPane.ERROR_MESSAGE);
+			initialized.set(true);
+			return;
+		}
+		switch (atlasType) {
+			case MBTiles :
+				// DISTINCT works much faster than min(zoom_level) or max(zoom_level) - uses
+				// index?
+				sqlMaxZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level DESC LIMIT 1;";
+				sqlMinZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level ASC LIMIT 1;";
+				sqlTileStatement = "SELECT tile_data from tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?;";
+				sqlTileImageTypeStatement = "SELECT tile_data from tiles LIMIT 1;";
+				break;
+			case RMaps :
+			case BigPlanetTracks :
+			case Galileo :
+			case OSMAND :
+				sqlMaxZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom DESC LIMIT 1;";
+				sqlMinZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom ASC LIMIT 1;";
+				sqlTileStatement = "SELECT image from tiles WHERE z=(17 - ?) AND x=? AND y=?;";
+				sqlTileImageTypeStatement = "SELECT image from tiles LIMIT 1;";
+				break;
+			case NaviComputer :
+				sqlMaxZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom DESC LIMIT 1;";
+				sqlMinZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom ASC LIMIT 1;";
+				sqlTileStatement = "SELECT Tile FROM Tiles LEFT JOIN Tilesdata ON Tiles.id=Tilesdata.id WHERE Zoom=? AND X=? AND Y=?;";
+				sqlTileImageTypeStatement = "SELECT Tile from Tilesdata LIMIT 1;";
+				break;
+		}
+		updateZoomLevelInfo();
+		detectTileImageType();
+		initialized.set(true);
+	}
 
-    protected void updateZoomLevelInfo() {
-        try (Statement statement = conn.createStatement()) {
-            if (statement.execute(sqlMaxZoomStatement)) {
-                try (ResultSet rs = statement.getResultSet()) {
-                    if (rs.next()) {
-                        maxZoom = rs.getInt(1);
-                    }
-                }
-            }
-            if (statement.execute(sqlMinZoomStatement)) {
-                try (ResultSet rs = statement.getResultSet()) {
-                    if (rs.next()) {
-                        minZoom = rs.getInt(1);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            log.error("", e);
-        }
-    }
+	protected void detectTileImageType() {
+		if (tileImageType != null)
+			return; // Already specified manually by user
+		try (Statement statement = conn.createStatement()) {
+			if (statement.execute(sqlTileImageTypeStatement)) {
+				try (ResultSet rs = statement.getResultSet()) {
+					if (rs.next()) {
+						tileImageType = ImageFormatDetector.getImageType(rs.getBytes(1));
+					}
+				}
+			}
+		} catch (SQLException e) {
+			log.error("", e);
+		}
+		if (tileImageType == null)
+			throw new RuntimeException("Unable to detect image type of " + sourceFile + ".\n"
+					+ "Please specify it manually using <tileImageType> entry in map source definition.");
 
-    public synchronized void initialize() {
-        if (initialized.get())
-            return;
-        reinitialize();
-    }
+	}
 
-    public void reinitialize() {
-        if (atlasType == null) {
-            JOptionPane.showMessageDialog(null,
-                    String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file"), name,
-                            sourceFile),
-                    I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
-                    JOptionPane.ERROR_MESSAGE);
-            initialized.set(true);
-            return;
-        }
-        if (!sourceFile.isFile()) {
-            JOptionPane.showMessageDialog(null,
-                    String.format(I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_sqlitedb"), name,
-                            sourceFile),
-                    I18nUtils.localizedStringForKey("msg_custom_map_invalid_source_file_title"),
-                    JOptionPane.ERROR_MESSAGE);
-            initialized.set(true);
-            return;
-        }
-        if (!SQLiteLoader.loadSQLiteOrShowError()) {
-            initialized.set(true);
-            return;
-        }
-        log.debug("Loading SQLite database " + sourceFile);
-        String url = "jdbc:sqlite:" + this.sourceFile;
-        try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,
-                    String.format(I18nUtils.localizedStringForKey("msg_custom_map_source_failed_load_sqlitedb"), name,
-                            sourceFile, e.getMessage()),
-                    I18nUtils.localizedStringForKey("msg_custom_map_source_failed_load_sqlitedb_title"),
-                    JOptionPane.ERROR_MESSAGE);
-            initialized.set(true);
-            return;
-        }
-        switch (atlasType) {
-            case MBTiles:
-                // DISTINCT works much faster than min(zoom_level) or max(zoom_level) - uses index?
-                sqlMaxZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level DESC LIMIT 1;";
-                sqlMinZoomStatement = "SELECT DISTINCT zoom_level FROM tiles ORDER BY zoom_level ASC LIMIT 1;";
-                sqlTileStatement = "SELECT tile_data from tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?;";
-                sqlTileImageTypeStatement = "SELECT tile_data from tiles LIMIT 1;";
-                break;
-            case RMaps:
-            case BigPlanetTracks:
-            case Galileo:
-            case OSMAND:
-                sqlMaxZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom DESC LIMIT 1;";
-                sqlMinZoomStatement = "SELECT DISTINCT (17 - z) as zoom FROM tiles ORDER BY zoom ASC LIMIT 1;";
-                sqlTileStatement = "SELECT image from tiles WHERE z=(17 - ?) AND x=? AND y=?;";
-                sqlTileImageTypeStatement = "SELECT image from tiles LIMIT 1;";
-                break;
-            case NaviComputer:
-                sqlMaxZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom DESC LIMIT 1;";
-                sqlMinZoomStatement = "SELECT DISTINCT zoom FROM Tiles ORDER BY zoom ASC LIMIT 1;";
-                sqlTileStatement = "SELECT Tile FROM Tiles LEFT JOIN Tilesdata ON Tiles.id=Tilesdata.id WHERE Zoom=? AND X=? AND Y=?;";
-                sqlTileImageTypeStatement = "SELECT Tile from Tilesdata LIMIT 1;";
-                break;
-        }
-        updateZoomLevelInfo();
-        detectTileImageType();
-        initialized.set(true);
-    }
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		if (!initialized.get())
+			initialize();
+		switch (atlasType) {
+			case MBTiles :
+				y = (1 << zoom) - y - 1;
+				break;
+			default :
+		}
+		try (PreparedStatement statement = conn.prepareStatement(sqlTileStatement)) {
+			statement.setInt(1, zoom);
+			statement.setInt(2, x);
+			statement.setInt(3, y);
+			if (log.isTraceEnabled()) {
+				log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+			}
+			if (statement.execute()) {
+				try (ResultSet rs = statement.getResultSet()) {
+					if (!rs.next()) {
+						if (log.isDebugEnabled())
+							log.debug(String.format("Tile in database not found: z=%d x=%d y=%d", zoom, x, y));
+						return null;
+					}
+					return rs.getBytes(1);
+				}
+			}
+		} catch (SQLException e) {
+			log.error("", e);
+		}
+		return null;
+	}
 
-    protected void detectTileImageType() {
-        if (tileImageType != null)
-            return; // Already specified manually by user
-        try (Statement statement = conn.createStatement()) {
-            if (statement.execute(sqlTileImageTypeStatement)) {
-                try (ResultSet rs = statement.getResultSet()) {
-                    if (rs.next()) {
-                        tileImageType = ImageFormatDetector.getImageType(rs.getBytes(1));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            log.error("", e);
-        }
-        if (tileImageType == null)
-            throw new RuntimeException("Unable to detect image type of " + sourceFile + ".\n"
-                    + "Please specify it manually using <tileImageType> entry in map source definition.");
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		byte[] data = getTileData(zoom, x, y, loadMethod);
+		if (data == null)
+			return null;
+		return ImageIO.read(new ByteArrayInputStream(data));
+	}
 
-    }
+	public TileImageType getTileImageType() {
+		return tileImageType;
+	}
 
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        if (!initialized.get())
-            initialize();
-        switch (atlasType) {
-            case MBTiles:
-                y = (1 << zoom) - y - 1;
-                break;
-            default:
-        }
-        try (PreparedStatement statement = conn.prepareStatement(sqlTileStatement)) {
-            statement.setInt(1, zoom);
-            statement.setInt(2, x);
-            statement.setInt(3, y);
-            if (log.isTraceEnabled()) {
-                log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
-            }
-            if (statement.execute()) {
-                try (ResultSet rs = statement.getResultSet()) {
-                    if (!rs.next()) {
-                        if (log.isDebugEnabled())
-                            log.debug(String.format("Tile in database not found: z=%d x=%d y=%d", zoom, x, y));
-                        return null;
-                    }
-                    return rs.getBytes(1);
-                }
-            }
-        } catch (SQLException e) {
-            log.error("", e);
-        }
-        return null;
-    }
+	public int getMaxZoom() {
+		return maxZoom;
+	}
 
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        byte[] data = getTileData(zoom, x, y, loadMethod);
-        if (data == null)
-            return null;
-        return ImageIO.read(new ByteArrayInputStream(data));
-    }
+	public int getMinZoom() {
+		return minZoom;
+	}
 
-    public TileImageType getTileImageType() {
-        return tileImageType;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public int getMaxZoom() {
-        return maxZoom;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 
-    public int getMinZoom() {
-        return minZoom;
-    }
+	public MapSpace getMapSpace() {
+		return mapSpace;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@XmlTransient
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return loaderInfo;
+	}
 
-    public MapSpace getMapSpace() {
-        return mapSpace;
-    }
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+		this.loaderInfo = loaderInfo;
+	}
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
+	protected void closeConnection() {
+		try {
+			if (conn != null)
+				conn.close();
+		} catch (SQLException e) {
+		}
+		conn = null;
+	}
 
-    @XmlTransient
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return loaderInfo;
-    }
-
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-        this.loaderInfo = loaderInfo;
-    }
-
-    protected void closeConnection() {
-        try {
-            if (conn != null)
-                conn.close();
-        } catch (SQLException e) {
-        }
-        conn = null;
-    }
-
-    private enum SQLiteAtlasType {
-        RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer, OSMAND
-    }
+	private enum SQLiteAtlasType {
+		RMaps, MBTiles, BigPlanetTracks, Galileo, NaviComputer, OSMAND
+	}
 }

@@ -20,40 +20,40 @@ import mobac.program.download.MobacTrustManager;
 
 public class PrintPublicKeyHash extends CommandLineEmpty {
 
-    public static final String CMD_ARG = "keyhash";
+	public static final String CMD_ARG = "keyhash";
 
-    private String serverUrl;
+	private String serverUrl;
 
-    public PrintPublicKeyHash(String serverUrl) {
-        super();
-        this.serverUrl = serverUrl;
-    }
+	public PrintPublicKeyHash(String serverUrl) {
+		super();
+		this.serverUrl = serverUrl;
+	}
 
-    @Override
-    public boolean showSplashScreen() {
-        return false;
-    }
+	@Override
+	public boolean showSplashScreen() {
+		return false;
+	}
 
-    @Override
-    public boolean showMainGUI() {
-        return false;
-    }
+	@Override
+	public boolean showMainGUI() {
+		return false;
+	}
 
-    @Override
-    public void afterBasicInitialization() {
-        serverUrl = serverUrl.toLowerCase();
-        if (!serverUrl.startsWith("https://")) {
-            serverUrl = "https://" + serverUrl;
-        }
-        String hash;
-        try {
-            hash = MobacTrustManager.getServerPublicKeyHash(serverUrl);
-            System.out.println("Server:          " + serverUrl);
-            System.out.println("Public Key Hash: " + hash);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
-    }
+	@Override
+	public void afterBasicInitialization() {
+		serverUrl = serverUrl.toLowerCase();
+		if (!serverUrl.startsWith("https://")) {
+			serverUrl = "https://" + serverUrl;
+		}
+		String hash;
+		try {
+			hash = MobacTrustManager.getServerPublicKeyHash(serverUrl);
+			System.out.println("Server:          " + serverUrl);
+			System.out.println("Public Key Hash: " + hash);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.exit(0);
+	}
 
 }

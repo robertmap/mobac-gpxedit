@@ -31,43 +31,43 @@ import java.io.FileFilter;
  */
 public class DeleteFileFilter implements FileFilter {
 
-    int countSuccess = 0;
-    int countFailed = 0;
-    int countError = 0;
+	int countSuccess = 0;
+	int countFailed = 0;
+	int countError = 0;
 
-    public boolean accept(File file) {
-        try {
-            if (file.isDirectory())
-                // We only delete files
-                return false;
-            boolean success = file.delete();
-            if (success)
-                countSuccess++;
-            else
-                countFailed++;
-        } catch (Exception e) {
-            countError++;
-        }
-        // We don't care about the filter result
-        return false;
-    }
+	public boolean accept(File file) {
+		try {
+			if (file.isDirectory())
+				// We only delete files
+				return false;
+			boolean success = file.delete();
+			if (success)
+				countSuccess++;
+			else
+				countFailed++;
+		} catch (Exception e) {
+			countError++;
+		}
+		// We don't care about the filter result
+		return false;
+	}
 
-    public int getCountSuccess() {
-        return countSuccess;
-    }
+	public int getCountSuccess() {
+		return countSuccess;
+	}
 
-    public int getCountFailed() {
-        return countFailed;
-    }
+	public int getCountFailed() {
+		return countFailed;
+	}
 
-    public int getCountError() {
-        return countError;
-    }
+	public int getCountError() {
+		return countError;
+	}
 
-    @Override
-    public String toString() {
-        return "Delete file filter status (success, failed, error): " + countSuccess + " / "
-                + countFailed + " / " + countError + " files";
-    }
+	@Override
+	public String toString() {
+		return "Delete file filter status (success, failed, error): " + countSuccess + " / " + countFailed + " / "
+				+ countError + " files";
+	}
 
 }

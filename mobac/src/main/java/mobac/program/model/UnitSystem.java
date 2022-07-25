@@ -20,70 +20,70 @@ import mobac.utilities.I18nUtils;
 
 public enum UnitSystem {
 
-    Metric(6367.5d, 1000, 2.54d, "km", "m", "cm"), //
-    Imperial(3963.192d, 5280, 1d, "mi", "ft", "in");
+	Metric(6367.5d, 1000, 2.54d, "km", "m", "cm"), //
+	Imperial(3963.192d, 5280, 1d, "mi", "ft", "in");
 
-    /**
-     * Points per inch, default value for PDF format.
-     */
-    public static final double PPI = 72d;
-    public final double earthRadius;
-    public final String unitLarge;
-    public final String unitSmall;
-    public final String unitTiny;
-    public final int unitFactor;
-    public final double inchFactor;
-    public final double maxAngularDistSmall;
+	/**
+	 * Points per inch, default value for PDF format.
+	 */
+	public static final double PPI = 72d;
+	public final double earthRadius;
+	public final String unitLarge;
+	public final String unitSmall;
+	public final String unitTiny;
+	public final int unitFactor;
+	public final double inchFactor;
+	public final double maxAngularDistSmall;
 
-    UnitSystem(double earthRadius, int unitFactor, double inchFactor, String unitLarge, String unitSmall,
-               String unitTiny) {
-        this.earthRadius = earthRadius;
-        this.unitFactor = unitFactor;
-        this.inchFactor = inchFactor;
-        this.unitLarge = unitLarge;
-        this.unitSmall = unitSmall;
-        this.unitTiny = unitTiny;
-        this.maxAngularDistSmall = 1d / (earthRadius * unitFactor);
-    }
+	UnitSystem(double earthRadius, int unitFactor, double inchFactor, String unitLarge, String unitSmall,
+			String unitTiny) {
+		this.earthRadius = earthRadius;
+		this.unitFactor = unitFactor;
+		this.inchFactor = inchFactor;
+		this.unitLarge = unitLarge;
+		this.unitSmall = unitSmall;
+		this.unitTiny = unitTiny;
+		this.maxAngularDistSmall = 1d / (earthRadius * unitFactor);
+	}
 
-    public static double pointsToPixels(double points, int dpi) {
-        return points / PPI * dpi;
-    }
+	public static double pointsToPixels(double points, int dpi) {
+		return points / PPI * dpi;
+	}
 
-    public static double pixelsToPoints(double pixels, int dpi) {
-        return pixels / dpi * PPI;
-    }
+	public static double pixelsToPoints(double pixels, int dpi) {
+		return pixels / dpi * PPI;
+	}
 
-    private double unitsToInches(double units) {
-        return units / inchFactor;
-    }
+	private double unitsToInches(double units) {
+		return units / inchFactor;
+	}
 
-    private double inchesToUnits(double inches) {
-        return inches * inchFactor;
-    }
+	private double inchesToUnits(double inches) {
+		return inches * inchFactor;
+	}
 
-    public double unitsToPoints(double units) {
-        return unitsToInches(units) * PPI;
-    }
+	public double unitsToPoints(double units) {
+		return unitsToInches(units) * PPI;
+	}
 
-    public double pointsToUnits(double points) {
-        return inchesToUnits(points / PPI);
-    }
+	public double pointsToUnits(double points) {
+		return inchesToUnits(points / PPI);
+	}
 
-    public double unitsToPixels(double units, int dpi) {
-        return unitsToInches(units) * dpi;
-    }
+	public double unitsToPixels(double units, int dpi) {
+		return unitsToInches(units) * dpi;
+	}
 
-    public double pixelsToUnits(double pixels, int dpi) {
-        return inchesToUnits(pixels / dpi);
-    }
+	public double pixelsToUnits(double pixels, int dpi) {
+		return inchesToUnits(pixels / dpi);
+	}
 
-    public String toString() {
-        if (Metric.equals(this)) {
-            return I18nUtils.localizedStringForKey("set_display_unit_system_metric");
-        } else {
-            return I18nUtils.localizedStringForKey("set_display_unit_system_imperial");
-        }
-    }
+	public String toString() {
+		if (Metric.equals(this)) {
+			return I18nUtils.localizedStringForKey("set_display_unit_system_metric");
+		} else {
+			return I18nUtils.localizedStringForKey("set_display_unit_system_imperial");
+		}
+	}
 
 }

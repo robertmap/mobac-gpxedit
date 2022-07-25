@@ -20,29 +20,29 @@ import java.util.Hashtable;
 
 public class TarIndexTable {
 
-    /**
-     * Maps tile name to TAR block index (each block has 512 bytes).
-     */
-    private final Hashtable<String, Long> hashTable;
+	/**
+	 * Maps tile name to TAR block index (each block has 512 bytes).
+	 */
+	private final Hashtable<String, Long> hashTable;
 
-    public TarIndexTable(int initialCapacity) {
-        hashTable = new Hashtable<>(initialCapacity);
-    }
+	public TarIndexTable(int initialCapacity) {
+		hashTable = new Hashtable<>(initialCapacity);
+	}
 
-    public void addTarEntry(String filename, long streamPos) {
-        assert ((streamPos & 0x1F) == 0);
-        hashTable.put(filename, streamPos);
-    }
+	public void addTarEntry(String filename, long streamPos) {
+		assert ((streamPos & 0x1F) == 0);
+		hashTable.put(filename, streamPos);
+	}
 
-    public long getEntryOffset(String filename) {
-        Long tarBlockIndex = hashTable.get(filename);
-        if (tarBlockIndex == null) {
-            return -1;
-        }
-        return tarBlockIndex;
-    }
+	public long getEntryOffset(String filename) {
+		Long tarBlockIndex = hashTable.get(filename);
+		if (tarBlockIndex == null) {
+			return -1;
+		}
+		return tarBlockIndex;
+	}
 
-    public int size() {
-        return hashTable.size();
-    }
+	public int size() {
+		return hashTable.size();
+	}
 }

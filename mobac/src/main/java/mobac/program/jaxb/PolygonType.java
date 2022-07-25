@@ -24,16 +24,16 @@ import java.util.Vector;
 
 public class PolygonType {
 
-    @XmlElement(name = "point")
-    @XmlJavaTypeAdapter(PointAdapter.class)
-    public Vector<Point> points;
+	@XmlElement(name = "point")
+	@XmlJavaTypeAdapter(PointAdapter.class)
+	public Vector<Point> points;
 
-    protected PolygonType() {
-        points = new Vector<Point>(20);
-    }
+	protected PolygonType() {
+		points = new Vector<Point>(20);
+	}
 
-    public PolygonType(Vector<Point> points) {
-        this.points = points;
-    }
+	public PolygonType(Vector<Point> points) {
+		this.points = points;
+	}
 
 }

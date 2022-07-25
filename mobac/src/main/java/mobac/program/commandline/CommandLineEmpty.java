@@ -20,26 +20,26 @@ import mobac.program.interfaces.CommandLineAction;
 
 public class CommandLineEmpty implements CommandLineAction {
 
-    @Override
-    public void afterBasicInitialization() {
-    }
+	@Override
+	public void afterBasicInitialization() {
+	}
 
-    @Override
-    public void runBeforeMainGUI() {
-    }
+	@Override
+	public void runBeforeMainGUI() {
+	}
 
-    @Override
-    public void runMainGUI() {
-    }
+	@Override
+	public void runMainGUI() {
+	}
 
-    @Override
-    public boolean showSplashScreen() {
-        return true;
-    }
+	@Override
+	public boolean showSplashScreen() {
+		return true;
+	}
 
-    @Override
-    public boolean showMainGUI() {
-        return true;
-    }
+	@Override
+	public boolean showMainGUI() {
+		return true;
+	}
 
 }

@@ -34,59 +34,61 @@ import java.io.IOException;
 @SupportedParameters(names = {Name.format_jpg})
 public class GarminCustom extends GoogleEarthOverlay {
 
-    /**
-     * Each jpeg should be less than 3MB. https://forums.garmin.com/showthread.php?t=2646
-     */
-    private static final int MAX_FILE_SIZE = 3 * 1024 * 1024;
+	/**
+	 * Each jpeg should be less than 3MB.
+	 * https://forums.garmin.com/showthread.php?t=2646
+	 */
+	private static final int MAX_FILE_SIZE = 3 * 1024 * 1024;
 
-    @Override
-    protected void testAtlas() throws AtlasTestException {
-        int maxMap = Settings.getInstance().atlasFormatSpecificSettings.garminCustomMaxMapCount;
-        for (LayerInterface layer : atlas) {
-            if (layer.getMapCount() > maxMap) {
-                throw new AtlasTestException("Layer exceeds in settings.xml specified maximum map count of " + maxMap, layer);
-            }
-        }
-    }
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		int maxMap = Settings.getInstance().atlasFormatSpecificSettings.garminCustomMaxMapCount;
+		for (LayerInterface layer : atlas) {
+			if (layer.getMapCount() > maxMap) {
+				throw new AtlasTestException("Layer exceeds in settings.xml specified maximum map count of " + maxMap,
+						layer);
+			}
+		}
+	}
 
-    @Override
-    protected void writeTileImage(BufferedImage tileImage) throws MapCreationException {
-        try {
-            TileImageJpegDataWriterBuilder builder;
-            if (parameters != null) {
-                builder = (TileImageJpegDataWriterBuilder) parameters.getFormat().getDataWriterBuilder();
-            } else
-                builder = new TileImageJpegDataWriterBuilder(0.9);
+	@Override
+	protected void writeTileImage(BufferedImage tileImage) throws MapCreationException {
+		try {
+			TileImageJpegDataWriterBuilder builder;
+			if (parameters != null) {
+				builder = (TileImageJpegDataWriterBuilder) parameters.getFormat().getDataWriterBuilder();
+			} else
+				builder = new TileImageJpegDataWriterBuilder(0.9);
 
-            // The maximum file size for the jpg image is 3 MB
-            // This OutputStream will fail if the resulting image is larger than
-            // 3 MB - then we retry using a higher JPEG compression level
-            ArrayOutputStream buf = new ArrayOutputStream(MAX_FILE_SIZE);
-            byte[] data = null;
-            for (int c = 99; c > 50; c -= 5) {
-                buf.reset();
-                try (TileImageJpegDataWriter writer = builder.build()) {
-                    writer.processImage(tileImage, buf);
-                    data = buf.toByteArray();
-                    break;
-                } catch (IOException e) {
-                    log.trace("Image size too large, increasing compression to " + c);
-                }
-                builder.setJpegCompressionLevel(c / 100f);
-            }
-            if (data == null) {
-                throw new MapCreationException("Unable to create an image with less than 3 MB!", map);
-            }
-            String imageFileName = "files/" + cleanedMapName + "." + builder.getType();
-            kmzOutputStream.writeStoredEntry(imageFileName, data);
-            addMapToKmz(imageFileName);
-        } catch (Exception e) {
-            throw new MapCreationException(map, e);
-        }
-    }
+			// The maximum file size for the jpg image is 3 MB
+			// This OutputStream will fail if the resulting image is larger than
+			// 3 MB - then we retry using a higher JPEG compression level
+			ArrayOutputStream buf = new ArrayOutputStream(MAX_FILE_SIZE);
+			byte[] data = null;
+			for (int c = 99; c > 50; c -= 5) {
+				buf.reset();
+				try (TileImageJpegDataWriter writer = builder.build()) {
+					writer.processImage(tileImage, buf);
+					data = buf.toByteArray();
+					break;
+				} catch (IOException e) {
+					log.trace("Image size too large, increasing compression to " + c);
+				}
+				builder.setJpegCompressionLevel(c / 100f);
+			}
+			if (data == null) {
+				throw new MapCreationException("Unable to create an image with less than 3 MB!", map);
+			}
+			String imageFileName = "files/" + cleanedMapName + "." + builder.getType();
+			kmzOutputStream.writeStoredEntry(imageFileName, data);
+			addMapToKmz(imageFileName);
+		} catch (Exception e) {
+			throw new MapCreationException(map, e);
+		}
+	}
 
-    @Override
-    protected int getMaxImageSize() {
-        return 1024;
-    }
+	@Override
+	protected int getMaxImageSize() {
+		return 1024;
+	}
 }

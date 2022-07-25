@@ -22,32 +22,32 @@ import mobac.program.model.MercatorPixelCoordinate;
 
 public interface MapEventListener {
 
-    /**
-     * the selection changed
-     */
-    void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
+	/**
+	 * the selection changed
+	 */
+	void selectionChanged(MercatorPixelCoordinate max, MercatorPixelCoordinate min);
 
-    /**
-     * the zoom changed
-     */
-    void zoomChanged(int newZoomLevel);
+	/**
+	 * the zoom changed
+	 */
+	void zoomChanged(int newZoomLevel);
 
-    /**
-     * the grid zoom changed
-     */
-    void gridZoomChanged(int newGridZoomLevel);
+	/**
+	 * the grid zoom changed
+	 */
+	void gridZoomChanged(int newGridZoomLevel);
 
-    /**
-     * select the next map source from the map list
-     */
-    void selectNextMapSource();
+	/**
+	 * select the next map source from the map list
+	 */
+	void selectNextMapSource();
 
-    /**
-     * select the previous map source from the map list
-     */
-    void selectPreviousMapSource();
+	/**
+	 * select the previous map source from the map list
+	 */
+	void selectPreviousMapSource();
 
-    void mapSourceChanged(MapSource newMapSource);
+	void mapSourceChanged(MapSource newMapSource);
 
-    void mapSelectionControllerChanged(JMapController newMapController);
+	void mapSelectionControllerChanged(JMapController newMapController);
 }

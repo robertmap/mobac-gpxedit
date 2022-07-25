@@ -41,123 +41,122 @@ import java.awt.event.MouseListener;
  */
 public class GpxElementListener implements MouseListener {
 
-    public static final String MENU_NAME_RENAME = I18nUtils.localizedStringForKey("rp_gpx_menu_rename");
-    public static final String MENU_NAME_DELETE = I18nUtils.localizedStringForKey("rp_gpx_menu_delete");
+	public static final String MENU_NAME_RENAME = I18nUtils.localizedStringForKey("rp_gpx_menu_rename");
+	public static final String MENU_NAME_DELETE = I18nUtils.localizedStringForKey("rp_gpx_menu_delete");
 
-    private final GpxEntry gpxEntry;
+	private final GpxEntry gpxEntry;
+	private final GpxEditor editor = GpxEditor.getInstance();
+	private GpxMapController mapController = null;
 
-    private GpxMapController mapController = null;
-    private final GpxEditor editor = GpxEditor.getInstance();
+	public GpxElementListener(GpxEntry gpxEntry) {
+		this.gpxEntry = gpxEntry;
+	}
 
-    public GpxElementListener(GpxEntry gpxEntry) {
-        this.gpxEntry = gpxEntry;
-    }
+	public void mouseClicked(MouseEvent e) {
+	}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+	}
 
-    public void mouseEntered(MouseEvent e) {
-    }
+	public void mouseExited(MouseEvent e) {
+	}
 
-    public void mouseExited(MouseEvent e) {
-    }
+	public void mousePressed(MouseEvent e) {
+		handleClick(e);
+	}
 
-    public void mousePressed(MouseEvent e) {
-        handleClick(e);
-    }
+	public void mouseReleased(MouseEvent e) {
+		handleClick(e);
+	}
 
-    public void mouseReleased(MouseEvent e) {
-        handleClick(e);
-    }
+	private void handleClick(MouseEvent e) {
+		JMenuItem item = (JMenuItem) e.getSource();
+		if (item == null)
+			return;
+		if (MENU_NAME_RENAME.equals(item.getName())) {
+			renameEntry();
+		} else if (MENU_NAME_DELETE.equals(item.getName())) {
+			removeEntry();
+		}
+	}
 
-    private void handleClick(MouseEvent e) {
-        JMenuItem item = (JMenuItem) e.getSource();
-        if (item == null)
-            return;
-        if (MENU_NAME_RENAME.equals(item.getName())) {
-            renameEntry();
-        } else if (MENU_NAME_DELETE.equals(item.getName())) {
-            removeEntry();
-        }
-    }
+	/**
+	 * Removes an entry (wpt, trk, trkseg, rte) from a gpx file (and the displayed
+	 * layer) Currently only works for waypoints.
+	 */
+	private void removeEntry() {
+		int answer = JOptionPane.showConfirmDialog(null, I18nUtils.localizedStringForKey("rp_gpx_msg_confim_delete"),
+				I18nUtils.localizedStringForKey("rp_gpx_msg_confim_delete_title"), JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE);
+		if (answer == JOptionPane.YES_OPTION) {
+			PreviewMap map = MainGUI.getMainGUI().previewMap;
+			map.getMapSelectionController().disable();
+			if (mapController == null)
+				mapController = new GpxMapController(map, gpxEntry.getLayer().getPanel(), false);
+			mapController.enable();
 
-    /**
-     * Removes an entry (wpt, trk, trkseg, rte) from a gpx file (and the displayed layer) Currently only works for
-     * waypoints.
-     */
-    private void removeEntry() {
-        int answer = JOptionPane.showConfirmDialog(null,
-                I18nUtils.localizedStringForKey("rp_gpx_msg_confim_delete"),
-                I18nUtils.localizedStringForKey("rp_gpx_msg_confim_delete_title"),
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (answer == JOptionPane.YES_OPTION) {
-            PreviewMap map = MainGUI.getMainGUI().previewMap;
-            map.getMapSelectionController().disable();
-            if (mapController == null)
-                mapController = new GpxMapController(map, gpxEntry.getLayer().getPanel(), false);
-            mapController.enable();
+			if (gpxEntry.getClass().equals(RteEntry.class)) {
+				// RteEntry rte = (RteEntry) gpxEntry;
 
-            if (gpxEntry.getClass().equals(RteEntry.class)) {
-                // RteEntry rte = (RteEntry) gpxEntry;
+			} else if (gpxEntry.getClass().equals(TrkEntry.class)) {
+				// TrkEntry trk = (TrkEntry) gpxEntry;
 
-            } else if (gpxEntry.getClass().equals(TrkEntry.class)) {
-                // TrkEntry trk = (TrkEntry) gpxEntry;
+			} else if (gpxEntry.getClass().equals(WptEntry.class)) {
+				WptEntry wptEntry = (WptEntry) gpxEntry;
+				WptType wpt = wptEntry.getWpt();
+				editor.findWptAndDelete(wpt, gpxEntry);
+				wptEntry.getLayer().getPanel().removeWpt(wptEntry);
+				mapController.repaint();
+			} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
+				// GpxRootEntry root = (GpxRootEntry) gpxEntry;
 
-            } else if (gpxEntry.getClass().equals(WptEntry.class)) {
-                WptEntry wptEntry = (WptEntry) gpxEntry;
-                WptType wpt = wptEntry.getWpt();
-                editor.findWptAndDelete(wpt, gpxEntry);
-                wptEntry.getLayer().getPanel().removeWpt(wptEntry);
-                mapController.repaint();
-            } else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
-                // GpxRootEntry root = (GpxRootEntry) gpxEntry;
+			}
+		}
+	}
 
-            }
-        }
-    }
+	/**
+	 * Renames (if possible) the entry according to user input.
+	 */
+	private void renameEntry() {
+		if (gpxEntry.getClass().equals(TrksegEntry.class)) {
+			JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("rp_gpx_msg_can_not_rename_track"),
+					I18nUtils.localizedStringForKey("Error"), JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		if (gpxEntry.getClass().equals(RteEntry.class)) {
+			RteEntry rte = (RteEntry) gpxEntry;
+			String name = JOptionPane.showInputDialog(null,
+					I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), rte.getRte().getName());
+			if (name == null) {
+				return;
+			}
+			rte.getRte().setName(name);
+		} else if (gpxEntry.getClass().equals(TrkEntry.class)) {
+			TrkEntry trk = (TrkEntry) gpxEntry;
+			String name = JOptionPane.showInputDialog(null,
+					I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), trk.getTrk().getName());
+			if (name == null) {
+				return;
+			}
+			trk.getTrk().setName(name);
+		} else if (gpxEntry.getClass().equals(WptEntry.class)) {
+			WptEntry wpt = (WptEntry) gpxEntry;
+			String name = JOptionPane.showInputDialog(null,
+					I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), wpt.getWpt().getName());
+			if (name == null) {
+				return;
+			}
+			wpt.getWpt().setName(name);
+		} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
+			GpxRootEntry root = (GpxRootEntry) gpxEntry;
+			String initialValue = root.getMetaDataName();
+			String name = JOptionPane.showInputDialog(null,
+					I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), initialValue);
+			if (name == null) {
+				return;
+			}
+			root.setMetaDataName(name);
+		}
 
-    /**
-     * Renames (if possible) the entry according to user input.
-     */
-    private void renameEntry() {
-        if (gpxEntry.getClass().equals(TrksegEntry.class)) {
-            JOptionPane.showMessageDialog(null,
-                    I18nUtils.localizedStringForKey("rp_gpx_msg_can_not_rename_track"),
-                    I18nUtils.localizedStringForKey("Error"),
-                    JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        if (gpxEntry.getClass().equals(RteEntry.class)) {
-            RteEntry rte = (RteEntry) gpxEntry;
-            String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"),
-                    rte.getRte().getName());
-            if (name == null) {
-                return;
-            }
-            rte.getRte().setName(name);
-        } else if (gpxEntry.getClass().equals(TrkEntry.class)) {
-            TrkEntry trk = (TrkEntry) gpxEntry;
-            String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), trk.getTrk().getName());
-            if (name == null) {
-                return;
-            }
-            trk.getTrk().setName(name);
-        } else if (gpxEntry.getClass().equals(WptEntry.class)) {
-            WptEntry wpt = (WptEntry) gpxEntry;
-            String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), wpt.getWpt().getName());
-            if (name == null) {
-                return;
-            }
-            wpt.getWpt().setName(name);
-        } else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
-            GpxRootEntry root = (GpxRootEntry) gpxEntry;
-            String initialValue = root.getMetaDataName();
-            String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("rp_gpx_rename_element_title"), initialValue);
-            if (name == null) {
-                return;
-            }
-            root.setMetaDataName(name);
-        }
-
-    }
+	}
 }

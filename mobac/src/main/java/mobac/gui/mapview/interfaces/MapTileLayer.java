@@ -22,19 +22,19 @@ import java.awt.Graphics;
 
 public interface MapTileLayer {
 
-    void startPainting(MapSource mapSource);
+	void startPainting(MapSource mapSource);
 
-    /**
-     * Paints the tile identified by <code>tilex</code>/<code>tiley</code>/
-     * <code>zoom</code> onto the {@link Graphics} <code>g</code> with it's
-     * upper left corner at <code>gx</code>/<code>gy</code>. The size of each
-     * tile has to be 256 pixel x 256 pixel.
-     *
-     * @param g
-     * @param gx
-     * @param gy
-     * @param tilex
-     * @param tiley
-     */
-    void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom);
+	/**
+	 * Paints the tile identified by <code>tilex</code>/<code>tiley</code>/
+	 * <code>zoom</code> onto the {@link Graphics} <code>g</code> with it's upper
+	 * left corner at <code>gx</code>/<code>gy</code>. The size of each tile has to
+	 * be 256 pixel x 256 pixel.
+	 *
+	 * @param g
+	 * @param gx
+	 * @param gy
+	 * @param tilex
+	 * @param tiley
+	 */
+	void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom);
 }

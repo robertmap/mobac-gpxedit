@@ -26,100 +26,102 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 /**
- * Implements the GUI logic for the preview map panel that manages the map selection and actions triggered by key
- * strokes.
+ * Implements the GUI logic for the preview map panel that manages the map
+ * selection and actions triggered by key strokes.
  */
 public class RectangleSelectionMapController extends JMapController implements MouseMotionListener, MouseListener {
 
-    protected RectangleSelectionLayer mapLayer;
-    /**
-     * start point of selection rectangle in absolute tile coordinated regarding {@link JMapViewer#MAX_ZOOM}
-     */
-    private Point iStartSelectionPoint;
-    /**
-     * end point of selection rectangle in absolute tile coordinated regarding {@link JMapViewer#MAX_ZOOM}
-     */
-    private Point iEndSelectionPoint;
+	protected RectangleSelectionLayer mapLayer;
+	/**
+	 * start point of selection rectangle in absolute tile coordinated regarding
+	 * {@link JMapViewer#MAX_ZOOM}
+	 */
+	private Point iStartSelectionPoint;
+	/**
+	 * end point of selection rectangle in absolute tile coordinated regarding
+	 * {@link JMapViewer#MAX_ZOOM}
+	 */
+	private Point iEndSelectionPoint;
 
-    public RectangleSelectionMapController(PreviewMap map) {
-        super(map, false);
-        mapLayer = new RectangleSelectionLayer(this);
-    }
+	public RectangleSelectionMapController(PreviewMap map) {
+		super(map, false);
+		mapLayer = new RectangleSelectionLayer(this);
+	}
 
-    @Override
-    public void enable() {
-        super.enable();
-        // map.mapLayers.add(mapLayer);
-    }
+	@Override
+	public void enable() {
+		super.enable();
+		// map.mapLayers.add(mapLayer);
+	}
 
-    @Override
-    public void disable() {
-        map.mapLayers.remove(mapLayer);
-        map.setSelectionByTileCoordinate(null, null, true);
-        super.disable();
-    }
+	@Override
+	public void disable() {
+		map.mapLayers.remove(mapLayer);
+		map.setSelectionByTileCoordinate(null, null, true);
+		super.disable();
+	}
 
-    /**
-     * Start drawing the selection rectangle if it was the 1st button (left button)
-     */
-    public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            iStartSelectionPoint = convertToAbsolutePoint(e.getPoint());
-            iEndSelectionPoint = convertToAbsolutePoint(e.getPoint());
-        }
-        map.grabFocus();
-    }
+	/**
+	 * Start drawing the selection rectangle if it was the 1st button (left button)
+	 */
+	public void mousePressed(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			iStartSelectionPoint = convertToAbsolutePoint(e.getPoint());
+			iEndSelectionPoint = convertToAbsolutePoint(e.getPoint());
+		}
+		map.grabFocus();
+	}
 
-    public void mouseDragged(MouseEvent e) {
-        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
-            if (iStartSelectionPoint != null) {
-                iEndSelectionPoint = convertToAbsolutePoint(e.getPoint());
-                map.setSelectionByTileCoordinate(PreviewMap.MAX_ZOOM, iStartSelectionPoint, iEndSelectionPoint, true);
-            }
-        }
-    }
+	public void mouseDragged(MouseEvent e) {
+		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
+			if (iStartSelectionPoint != null) {
+				iEndSelectionPoint = convertToAbsolutePoint(e.getPoint());
+				map.setSelectionByTileCoordinate(PreviewMap.MAX_ZOOM, iStartSelectionPoint, iEndSelectionPoint, true);
+			}
+		}
+	}
 
-    /**
-     * When dragging the map change the cursor back to it's pre-move cursor. If a double-click occurs center and zoom
-     * the map on the clicked location.
-     */
-    public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            if (e.getClickCount() == 1) {
-                map.setSelectionByTileCoordinate(PreviewMap.MAX_ZOOM, iStartSelectionPoint,
-                        convertToAbsolutePoint(e.getPoint()), true);
-            }
-        }
-        map.grabFocus();
-    }
+	/**
+	 * When dragging the map change the cursor back to it's pre-move cursor. If a
+	 * double-click occurs center and zoom the map on the clicked location.
+	 */
+	public void mouseReleased(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getClickCount() == 1) {
+				map.setSelectionByTileCoordinate(PreviewMap.MAX_ZOOM, iStartSelectionPoint,
+						convertToAbsolutePoint(e.getPoint()), true);
+			}
+		}
+		map.grabFocus();
+	}
 
-    public void mouseMoved(MouseEvent e) {
-    }
+	public void mouseMoved(MouseEvent e) {
+	}
 
-    public void mouseClicked(MouseEvent e) {
-        map.grabFocus();
-    }
+	public void mouseClicked(MouseEvent e) {
+		map.grabFocus();
+	}
 
-    public void mouseEntered(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+	}
 
-    public void mouseExited(MouseEvent e) {
-    }
+	public void mouseExited(MouseEvent e) {
+	}
 
-    public Point getiStartSelectionPoint() {
-        return iStartSelectionPoint;
-    }
+	public Point getiStartSelectionPoint() {
+		return iStartSelectionPoint;
+	}
 
-    public Point getiEndSelectionPoint() {
-        return iEndSelectionPoint;
-    }
+	public Point getiEndSelectionPoint() {
+		return iEndSelectionPoint;
+	}
 
-    public RectangleSelectionLayer getMapLayer() {
-        return mapLayer;
-    }
+	public RectangleSelectionLayer getMapLayer() {
+		return mapLayer;
+	}
 
-    public PreviewMap getMap() {
-        return map;
-    }
+	public PreviewMap getMap() {
+		return map;
+	}
 
 }

@@ -27,33 +27,34 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipStoreOutputStream extends ZipOutputStream {
 
-    private final CRC32 crc = new CRC32();
+	private final CRC32 crc = new CRC32();
 
-    public ZipStoreOutputStream(OutputStream out) {
-        super(out);
-    }
+	public ZipStoreOutputStream(OutputStream out) {
+		super(out);
+	}
 
-    public ZipStoreOutputStream(File f) throws FileNotFoundException {
-        super(new FileOutputStream(f));
-    }
+	public ZipStoreOutputStream(File f) throws FileNotFoundException {
+		super(new FileOutputStream(f));
+	}
 
-    /**
-     * Warning this method is not thread safe!
-     *
-     * @param name file name including path in the zip
-     * @param data
-     * @throws IOException
-     */
-    public void writeStoredEntry(String name, byte[] data) throws IOException {
-        ZipEntry ze = new ZipEntry(name);
-        ze.setMethod(ZipEntry.STORED);
-        ze.setCompressedSize(data.length);
-        ze.setSize(data.length);
-        crc.reset();
-        crc.update(data);
-        ze.setCrc(crc.getValue());
-        putNextEntry(ze);
-        write(data);
-        closeEntry();
-    }
+	/**
+	 * Warning this method is not thread safe!
+	 *
+	 * @param name
+	 *            file name including path in the zip
+	 * @param data
+	 * @throws IOException
+	 */
+	public void writeStoredEntry(String name, byte[] data) throws IOException {
+		ZipEntry ze = new ZipEntry(name);
+		ze.setMethod(ZipEntry.STORED);
+		ze.setCompressedSize(data.length);
+		ze.setSize(data.length);
+		crc.reset();
+		crc.update(data);
+		ze.setCrc(crc.getValue());
+		putNextEntry(ze);
+		write(data);
+		closeEntry();
+	}
 }

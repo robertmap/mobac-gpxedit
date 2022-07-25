@@ -29,27 +29,26 @@ import java.awt.geom.AffineTransform;
  */
 public class ShapeLayer implements MapLayer {
 
-    private final Color color = new Color(0f, 1f, 0f, 0.5f);
+	private final Color color = new Color(0f, 1f, 0f, 0.5f);
+	private final Shape shape;
+	private int calculationZoom;
 
-    private int calculationZoom;
-    private final Shape shape;
+	public ShapeLayer(Shape shape, int zoom) {
+		this.shape = shape;
+	}
 
-    public ShapeLayer(Shape shape, int zoom) {
-        this.shape = shape;
-    }
-
-    public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-        AffineTransform af = g.getTransform();
-        g.translate(-minX, -minY);
-        double scale;
-        if (zoom < calculationZoom)
-            scale = 1d / (1 << (calculationZoom - zoom));
-        else
-            scale = 1 << (zoom - calculationZoom);
-        g.scale(scale, scale);
-        g.setColor(color);
-        g.fill(shape);
-        g.setTransform(af);
-    }
+	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
+		AffineTransform af = g.getTransform();
+		g.translate(-minX, -minY);
+		double scale;
+		if (zoom < calculationZoom)
+			scale = 1d / (1 << (calculationZoom - zoom));
+		else
+			scale = 1 << (zoom - calculationZoom);
+		g.scale(scale, scale);
+		g.setColor(color);
+		g.fill(shape);
+		g.setTransform(af);
+	}
 
 }

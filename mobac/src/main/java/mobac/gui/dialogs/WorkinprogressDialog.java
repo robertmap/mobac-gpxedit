@@ -39,134 +39,134 @@ import java.util.concurrent.ThreadFactory;
 
 public class WorkinprogressDialog extends JDialog implements WindowListener {
 
-    private static final Logger log = LoggerFactory.getLogger(WorkinprogressDialog.class);
+	private static final Logger log = LoggerFactory.getLogger(WorkinprogressDialog.class);
 
-    private final ThreadFactory threadFactory;
-    private Thread workerThread;
+	private final ThreadFactory threadFactory;
+	private Thread workerThread;
 
-    public WorkinprogressDialog(Frame owner, String title) {
-        this(owner, title, Executors.defaultThreadFactory());
-    }
+	public WorkinprogressDialog(Frame owner, String title) {
+		this(owner, title, Executors.defaultThreadFactory());
+	}
 
-    public WorkinprogressDialog(Frame owner, String title, ThreadFactory threadFactory) {
-        super(owner, title, true);
-        this.threadFactory = threadFactory;
-        setLayout(new FlowLayout());
-        add(new JLabel(new ImageIcon(Utilities.getResourceImageUrl("ajax-loader.gif"))));
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(owner);
-        addWindowListener(this);
-        JButton abort = new JButton(I18nUtils.localizedStringForKey("Abort"));
-        abort.addActionListener(new ActionListener() {
+	public WorkinprogressDialog(Frame owner, String title, ThreadFactory threadFactory) {
+		super(owner, title, true);
+		this.threadFactory = threadFactory;
+		setLayout(new FlowLayout());
+		add(new JLabel(new ImageIcon(Utilities.getResourceImageUrl("ajax-loader.gif"))));
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(owner);
+		addWindowListener(this);
+		JButton abort = new JButton(I18nUtils.localizedStringForKey("Abort"));
+		abort.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                log.debug("User interrupted process");
-                WorkinprogressDialog.this.close();
-            }
-        });
-        add(abort);
-        pack();
-    }
+			public void actionPerformed(ActionEvent e) {
+				log.debug("User interrupted process");
+				WorkinprogressDialog.this.close();
+			}
+		});
+		add(abort);
+		pack();
+	}
 
-    public static void main(String[] args) {
-        JFrame parentFrame = new JFrame();
-        parentFrame.setSize(500, 150);
-        final JLabel jl = new JLabel();
-        jl.setText(I18nUtils.localizedStringForKey("dlg_progress_count"));
+	public static void main(String[] args) {
+		JFrame parentFrame = new JFrame();
+		parentFrame.setSize(500, 150);
+		final JLabel jl = new JLabel();
+		jl.setText(I18nUtils.localizedStringForKey("dlg_progress_count"));
 
-        parentFrame.add(BorderLayout.CENTER, jl);
-        parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		parentFrame.add(BorderLayout.CENTER, jl);
+		parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        parentFrame.setVisible(true);
+		parentFrame.setVisible(true);
 
-        final WorkinprogressDialog dlg = new WorkinprogressDialog(parentFrame, I18nUtils.localizedStringForKey("dlg_progress_title"),
-                DelayedInterruptThread.createThreadFactory());
+		final WorkinprogressDialog dlg = new WorkinprogressDialog(parentFrame,
+				I18nUtils.localizedStringForKey("dlg_progress_title"), DelayedInterruptThread.createThreadFactory());
 
-        final Thread t = new Thread() {
+		final Thread t = new Thread() {
 
-            @Override
-            public void run() {
-                try {
-                    for (int i = 0; i <= 500; i++) {
-                        jl.setText(String.format(I18nUtils.localizedStringForKey("dlg_progress_count_i"), i));
-                        if (Thread.currentThread().isInterrupted()) {
-                            System.out.println("Aborted");
-                            return;
-                        }
-                        Thread.sleep(25);
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println("Aborted");
-                } finally {
-                    dlg.setVisible(false);
-                }
-            }
+			@Override
+			public void run() {
+				try {
+					for (int i = 0; i <= 500; i++) {
+						jl.setText(String.format(I18nUtils.localizedStringForKey("dlg_progress_count_i"), i));
+						if (Thread.currentThread().isInterrupted()) {
+							System.out.println("Aborted");
+							return;
+						}
+						Thread.sleep(25);
+					}
+				} catch (InterruptedException e) {
+					System.out.println("Aborted");
+				} finally {
+					dlg.setVisible(false);
+				}
+			}
 
-        };
-        dlg.startWork(t);
-    }
+		};
+		dlg.startWork(t);
+	}
 
-    public void startWork(final Runnable r) {
-        workerThread = threadFactory.newThread(new Runnable() {
+	public void startWork(final Runnable r) {
+		workerThread = threadFactory.newThread(new Runnable() {
 
-            public void run() {
-                try {
-                    r.run();
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                } finally {
-                    WorkinprogressDialog.this.close();
-                    log.debug("Worker thread finished");
-                }
-            }
+			public void run() {
+				try {
+					r.run();
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
+				} finally {
+					WorkinprogressDialog.this.close();
+					log.debug("Worker thread finished");
+				}
+			}
 
-        });
-        Thread t1 = new Thread() {
-            @Override
-            public void run() {
-                setVisible(true);
-            }
-        };
-        t1.start();
-    }
+		});
+		Thread t1 = new Thread() {
+			@Override
+			public void run() {
+				setVisible(true);
+			}
+		};
+		t1.start();
+	}
 
-    protected synchronized void abortWorking() {
-        try {
-            if (workerThread != null && !workerThread.isInterrupted()) {
-                log.debug("User aborted process - interrupting worker thread");
-                workerThread.interrupt();
-                workerThread = null;
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
+	protected synchronized void abortWorking() {
+		try {
+			if (workerThread != null && !workerThread.isInterrupted()) {
+				log.debug("User aborted process - interrupting worker thread");
+				workerThread.interrupt();
+				workerThread = null;
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
 
-    public void close() {
-        abortWorking();
-        setVisible(false);
-    }
+	public void close() {
+		abortWorking();
+		setVisible(false);
+	}
 
-    public void windowActivated(WindowEvent event) {
-    }
+	public void windowActivated(WindowEvent event) {
+	}
 
-    public void windowOpened(WindowEvent event) {
-        workerThread.start();
-    }
+	public void windowOpened(WindowEvent event) {
+		workerThread.start();
+	}
 
-    public void windowClosed(WindowEvent event) {
-        abortWorking();
-    }
+	public void windowClosed(WindowEvent event) {
+		abortWorking();
+	}
 
-    public void windowClosing(WindowEvent event) {
-    }
+	public void windowClosing(WindowEvent event) {
+	}
 
-    public void windowDeactivated(WindowEvent event) {
-    }
+	public void windowDeactivated(WindowEvent event) {
+	}
 
-    public void windowDeiconified(WindowEvent event) {
-    }
+	public void windowDeiconified(WindowEvent event) {
+	}
 
-    public void windowIconified(WindowEvent event) {
-    }
+	public void windowIconified(WindowEvent event) {
+	}
 }

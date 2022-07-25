@@ -39,106 +39,106 @@ import java.security.SecureRandom;
  */
 public class DebugRandomMapSource implements MapSource {
 
-    BufferedImage image = null;
-    byte[] imageData = null;
+	BufferedImage image = null;
+	byte[] imageData = null;
 
-    public Color getBackgroundColor() {
-        return Color.BLACK;
-    }
+	public Color getBackgroundColor() {
+		return Color.BLACK;
+	}
 
-    public MapSpace getMapSpace() {
-        return MercatorPower2MapSpace.INSTANCE_256;
-    }
+	public MapSpace getMapSpace() {
+		return MercatorPower2MapSpace.INSTANCE_256;
+	}
 
-    public int getMaxZoom() {
-        return PreviewMap.MAX_ZOOM;
-    }
+	public int getMaxZoom() {
+		return PreviewMap.MAX_ZOOM;
+	}
 
-    public int getMinZoom() {
-        return 0;
-    }
+	public int getMinZoom() {
+		return 0;
+	}
 
-    @Override
-    public TileImageType getTileImageType() {
-        return TileImageType.PNG;
-    }
+	@Override
+	public TileImageType getTileImageType() {
+		return TileImageType.PNG;
+	}
 
-    public void initialize() {
-    }
+	public void initialize() {
+	}
 
-    public void reinitialize() {
-    }
+	public void reinitialize() {
+	}
 
-    @Override
-    public String getName() {
-        return "DebugRandom";
-    }
+	@Override
+	public String getName() {
+		return "DebugRandom";
+	}
 
-    @Override
-    public String toString() {
-        return "Debug Random";
-    }
+	@Override
+	public String toString() {
+		return "Debug Random";
+	}
 
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-            UnrecoverableDownloadException, InterruptedException {
-        if (imageData != null) {
-            return imageData;
-        }
-        synchronized (this) {
-            if (imageData != null) {
-                return imageData;
-            }
-            ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
-            BufferedImage image = getTileImage(zoom, x, y, loadMethod);
-            if (image == null) {
-                return null;
-            }
-            if (!ImageIO.write(image, "png", buf)) {
-                throw new IOException(String.format("Failed to write PNG image %d/%d/z%d", x, y, zoom));
-            }
-            imageData = buf.toByteArray();
-            return imageData;
-        }
-    }
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, UnrecoverableDownloadException, InterruptedException {
+		if (imageData != null) {
+			return imageData;
+		}
+		synchronized (this) {
+			if (imageData != null) {
+				return imageData;
+			}
+			ByteArrayOutputStream buf = new ByteArrayOutputStream(16000);
+			BufferedImage image = getTileImage(zoom, x, y, loadMethod);
+			if (image == null) {
+				return null;
+			}
+			if (!ImageIO.write(image, "png", buf)) {
+				throw new IOException(String.format("Failed to write PNG image %d/%d/z%d", x, y, zoom));
+			}
+			imageData = buf.toByteArray();
+			return imageData;
+		}
+	}
 
-    public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-            UnrecoverableDownloadException, InterruptedException {
-        if (image != null) {
-            return image;
-        }
-        synchronized (this) {
-            if (image != null) {
-                return image;
-            }
-            BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = image.createGraphics();
-            SecureRandom rnd = Tools.RND;
-            try {
-                g2.setColor(Color.WHITE);
-                g2.fillRect(0, 0, 255, 255);
-                for (int i = 0; i < 100; i++) {
-                    g2.setColor(new Color(rnd.nextInt()));
-                    int x1 = rnd.nextInt(256);
-                    int y1 = rnd.nextInt(256);
-                    int x2 = rnd.nextInt(256);
-                    int y2 = rnd.nextInt(256);
-                    g2.drawLine(x1, y1, x2, y2);
-                }
-                g2.setColor(Color.RED);
-                this.image = image;
-                return image;
-            } finally {
-                g2.dispose();
-            }
-        }
-    }
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, UnrecoverableDownloadException, InterruptedException {
+		if (image != null) {
+			return image;
+		}
+		synchronized (this) {
+			if (image != null) {
+				return image;
+			}
+			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2 = image.createGraphics();
+			SecureRandom rnd = Tools.RND;
+			try {
+				g2.setColor(Color.WHITE);
+				g2.fillRect(0, 0, 255, 255);
+				for (int i = 0; i < 100; i++) {
+					g2.setColor(new Color(rnd.nextInt()));
+					int x1 = rnd.nextInt(256);
+					int y1 = rnd.nextInt(256);
+					int x2 = rnd.nextInt(256);
+					int y2 = rnd.nextInt(256);
+					g2.drawLine(x1, y1, x2, y2);
+				}
+				g2.setColor(Color.RED);
+				this.image = image;
+				return image;
+			} finally {
+				g2.dispose();
+			}
+		}
+	}
 
-    @Override
-    public MapSourceLoaderInfo getLoaderInfo() {
-        return null;
-    }
+	@Override
+	public MapSourceLoaderInfo getLoaderInfo() {
+		return null;
+	}
 
-    @Override
-    public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-    }
+	@Override
+	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
+	}
 }

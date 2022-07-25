@@ -27,183 +27,184 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Controls the worker threads that are downloading the map tiles in parallel. Additionally, the job queue containing the
- * unprocessed tile download jobs can be accessed via this class.
+ * Controls the worker threads that are downloading the map tiles in parallel.
+ * Additionally, the job queue containing the unprocessed tile download jobs can
+ * be accessed via this class.
  */
 public class JobDispatcher {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobDispatcher.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JobDispatcher.class);
 
-    protected final AtlasThread atlasThread;
-    protected final PauseResumeHandler pauseResumeHandler;
-    protected final MapSourceListener mapSourceListener;
-    protected final WorkerThread[] workers;
-    protected final BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<>();
-    protected int maxJobsInQueue = 100;
-    protected int minJobsInQueue = 50;
+	protected final AtlasThread atlasThread;
+	protected final PauseResumeHandler pauseResumeHandler;
+	protected final MapSourceListener mapSourceListener;
+	protected final WorkerThread[] workers;
+	protected final BlockingQueue<Job> jobQueue = new LinkedBlockingQueue<>();
+	protected int maxJobsInQueue = 100;
+	protected int minJobsInQueue = 50;
 
-    public JobDispatcher(AtlasThread atlasThread, int threadCount, PauseResumeHandler pauseResumeHandler,
-                         MapSourceListener mapSourceListener) {
-        this.atlasThread = atlasThread;
-        this.pauseResumeHandler = pauseResumeHandler;
-        this.mapSourceListener = mapSourceListener;
-        workers = new WorkerThread[threadCount];
-        for (int i = 0; i < threadCount; i++) {
-            workers[i] = new WorkerThread(i);
-        }
-    }
+	public JobDispatcher(AtlasThread atlasThread, int threadCount, PauseResumeHandler pauseResumeHandler,
+			MapSourceListener mapSourceListener) {
+		this.atlasThread = atlasThread;
+		this.pauseResumeHandler = pauseResumeHandler;
+		this.mapSourceListener = mapSourceListener;
+		workers = new WorkerThread[threadCount];
+		for (int i = 0; i < threadCount; i++) {
+			workers[i] = new WorkerThread(i);
+		}
+	}
 
-    @Override
-    @SuppressWarnings("deprecation")
-    protected void finalize() throws Throwable {
-        terminateAllWorkerThreads();
-        super.finalize();
-    }
+	@Override
+	@SuppressWarnings("deprecation")
+	protected void finalize() throws Throwable {
+		terminateAllWorkerThreads();
+		super.finalize();
+	}
 
-    public void terminateAllWorkerThreads() {
-        cancelOutstandingJobs();
-        LOG.trace("Killing all worker threads");
-        for (int i = 0; i < workers.length; i++) {
-            try {
-                WorkerThread w = workers[i];
-                if (w != null) {
-                    w.interrupt();
-                }
-                workers[i] = null;
-            } catch (Exception e) {
-                // We don't care about exception here
-            }
-        }
-    }
+	public void terminateAllWorkerThreads() {
+		cancelOutstandingJobs();
+		LOG.trace("Killing all worker threads");
+		for (int i = 0; i < workers.length; i++) {
+			try {
+				WorkerThread w = workers[i];
+				if (w != null) {
+					w.interrupt();
+				}
+				workers[i] = null;
+			} catch (Exception e) {
+				// We don't care about exception here
+			}
+		}
+	}
 
-    public void cancelOutstandingJobs() {
-        jobQueue.clear();
-    }
+	public void cancelOutstandingJobs() {
+		jobQueue.clear();
+	}
 
-    /**
-     * Blocks if more than 100 jobs are already scheduled.
-     *
-     * @param job
-     * @throws InterruptedException
-     */
-    public void addJob(Job job) throws InterruptedException {
-        while (jobQueue.size() > maxJobsInQueue) {
-            Thread.sleep(200);
-            if ((jobQueue.size() < minJobsInQueue) && (maxJobsInQueue < 2000)) {
-                // System and download connection is very fast - we have to
-                // increase the maximum job count in the queue
-                maxJobsInQueue *= 2;
-                minJobsInQueue *= 2;
-            }
-        }
-        jobQueue.put(job);
-    }
+	/**
+	 * Blocks if more than 100 jobs are already scheduled.
+	 *
+	 * @param job
+	 * @throws InterruptedException
+	 */
+	public void addJob(Job job) throws InterruptedException {
+		while (jobQueue.size() > maxJobsInQueue) {
+			Thread.sleep(200);
+			if ((jobQueue.size() < minJobsInQueue) && (maxJobsInQueue < 2000)) {
+				// System and download connection is very fast - we have to
+				// increase the maximum job count in the queue
+				maxJobsInQueue *= 2;
+				minJobsInQueue *= 2;
+			}
+		}
+		jobQueue.put(job);
+	}
 
-    /**
-     * Adds the job to the job-queue and returns. This method will never block!
-     *
-     * @param job
-     */
-    public void addErrorJob(Job job) {
-        try {
-            jobQueue.put(job);
-        } catch (InterruptedException e) {
-            // Can never happen with LinkedBlockingQueue
-        }
-    }
+	/**
+	 * Adds the job to the job-queue and returns. This method will never block!
+	 *
+	 * @param job
+	 */
+	public void addErrorJob(Job job) {
+		try {
+			jobQueue.put(job);
+		} catch (InterruptedException e) {
+			// Can never happen with LinkedBlockingQueue
+		}
+	}
 
-    public int getWaitingJobCount() {
-        return jobQueue.size();
-    }
+	public int getWaitingJobCount() {
+		return jobQueue.size();
+	}
 
-    public boolean isAtLeastOneWorkerActive() {
-        for (int i = 0; i < workers.length; i++) {
-            WorkerThread w = workers[i];
-            if (w != null) {
-                if ((!w.idle) && (w.getState() != Thread.State.WAITING)) {
-                    return true;
-                }
-            }
-        }
-        LOG.debug("All worker threads are idle");
-        return false;
-    }
+	public boolean isAtLeastOneWorkerActive() {
+		for (int i = 0; i < workers.length; i++) {
+			WorkerThread w = workers[i];
+			if (w != null) {
+				if ((!w.idle) && (w.getState() != Thread.State.WAITING)) {
+					return true;
+				}
+			}
+		}
+		LOG.debug("All worker threads are idle");
+		return false;
+	}
 
-    public interface Job {
-        void run(JobDispatcher dispatcher) throws Exception;
-    }
+	public interface Job {
+		void run(JobDispatcher dispatcher) throws Exception;
+	}
 
-    /**
-     * Each worker thread takes the first job from the job queue and executes it. If the queue is empty the worker
-     * blocks, waiting for the next job.
-     */
-    public class WorkerThread extends DelayedInterruptThread implements MapSourceListener {
+	/**
+	 * Each worker thread takes the first job from the job queue and executes it. If
+	 * the queue is empty the worker blocks, waiting for the next job.
+	 */
+	public class WorkerThread extends DelayedInterruptThread implements MapSourceListener {
 
-        Job job = null;
+		Job job = null;
 
-        boolean idle = true;
+		boolean idle = true;
 
-        private final Logger log = LoggerFactory.getLogger(WorkerThread.class);
+		private final Logger log = LoggerFactory.getLogger(WorkerThread.class);
 
-        public WorkerThread(int threadNum) {
-            super(String.format("WorkerThread %02d", threadNum));
-            setDaemon(true);
-            start();
-        }
+		public WorkerThread(int threadNum) {
+			super(String.format("WorkerThread %02d", threadNum));
+			setDaemon(true);
+			start();
+		}
 
-        @Override
-        public void run() {
-            try {
-                executeJobs();
-            } catch (InterruptedException e) {
-            }
-            log.trace("Thread is terminating");
-        }
+		@Override
+		public void run() {
+			try {
+				executeJobs();
+			} catch (InterruptedException e) {
+			}
+			log.trace("Thread is terminating");
+		}
 
-        protected void executeJobs() throws InterruptedException {
-            while (!isInterrupted()) {
-                try {
-                    pauseResumeHandler.pauseWait();
-                    idle = true;
-                    job = jobQueue.take();
-                    idle = false;
-                } catch (InterruptedException e) {
-                    return;
-                }
-                if (job == null)
-                    return;
-                try {
-                    job.run(JobDispatcher.this);
-                    job = null;
-                } catch (InterruptedException e) {
-                } catch (StopAllDownloadsException e) {
-                    JobDispatcher.this.terminateAllWorkerThreads();
-                    JobDispatcher.this.cancelOutstandingJobs();
-                    log.warn("All downloads has been stoppened: {}", e.getMessage());
-                    return;
-                } catch (FileNotFoundException e) {
-                    log.error("Download failed: {}", e.getMessage());
-                } catch (Exception e) {
-                    log.error("Unknown error occurred while executing the job: ", e);
-                } catch (OutOfMemoryError e) {
-                    log.error("", e);
-                    Thread.sleep(5000);
-                    System.gc();
-                }
-            }
-        }
+		protected void executeJobs() throws InterruptedException {
+			while (!isInterrupted()) {
+				try {
+					pauseResumeHandler.pauseWait();
+					idle = true;
+					job = jobQueue.take();
+					idle = false;
+				} catch (InterruptedException e) {
+					return;
+				}
+				if (job == null)
+					return;
+				try {
+					job.run(JobDispatcher.this);
+					job = null;
+				} catch (InterruptedException e) {
+				} catch (StopAllDownloadsException e) {
+					JobDispatcher.this.terminateAllWorkerThreads();
+					JobDispatcher.this.cancelOutstandingJobs();
+					log.warn("All downloads has been stoppened: {}", e.getMessage());
+					return;
+				} catch (FileNotFoundException e) {
+					log.error("Download failed: {}", e.getMessage());
+				} catch (Exception e) {
+					log.error("Unknown error occurred while executing the job: ", e);
+				} catch (OutOfMemoryError e) {
+					log.error("", e);
+					Thread.sleep(5000);
+					System.gc();
+				}
+			}
+		}
 
-        public void tileDownloaded(int size) {
-            mapSourceListener.tileDownloaded(size);
-        }
+		public void tileDownloaded(int size) {
+			mapSourceListener.tileDownloaded(size);
+		}
 
-        public void tileLoadedFromCache(int size) {
-            mapSourceListener.tileLoadedFromCache(size);
-        }
+		public void tileLoadedFromCache(int size) {
+			mapSourceListener.tileLoadedFromCache(size);
+		}
 
-        public AtlasThread getAtlasThread() {
-            return JobDispatcher.this.atlasThread;
-        }
-    }
+		public AtlasThread getAtlasThread() {
+			return JobDispatcher.this.atlasThread;
+		}
+	}
 
 }

@@ -20,28 +20,29 @@ import mobac.program.model.AtlasOutputFormat;
 
 public interface AtlasInterface extends AtlasObject, Iterable<LayerInterface> {
 
-    /**
-     * @return Number of layers in this atlas
-     */
-    int getLayerCount();
+	/**
+	 * @return Number of layers in this atlas
+	 */
+	int getLayerCount();
 
-    /**
-     * @param index 0 - ({@link #getLayerCount()}-1)
-     * @return
-     */
-    LayerInterface getLayer(int index);
+	/**
+	 * @param index
+	 *            0 - ({@link #getLayerCount()}-1)
+	 * @return
+	 */
+	LayerInterface getLayer(int index);
 
-    void addLayer(LayerInterface l);
+	void addLayer(LayerInterface l);
 
-    void deleteLayer(LayerInterface l);
+	void deleteLayer(LayerInterface l);
 
-    AtlasOutputFormat getOutputFormat();
+	AtlasOutputFormat getOutputFormat();
 
-    void setOutputFormat(AtlasOutputFormat atlasOutputFormat);
+	void setOutputFormat(AtlasOutputFormat atlasOutputFormat);
 
-    long calculateTilesToDownload();
+	long calculateTilesToDownload();
 
-    int getVersion();
+	int getVersion();
 
-    AtlasInterface deepClone();
+	AtlasInterface deepClone();
 }

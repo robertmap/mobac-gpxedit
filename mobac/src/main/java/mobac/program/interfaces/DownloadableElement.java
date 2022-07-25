@@ -21,7 +21,6 @@ import mobac.utilities.tar.TarIndexedArchive;
 
 import java.util.Enumeration;
 
-
 /**
  * Classes that implement this interface identify themselves as responsible for
  * specifying what tiles should be downloaded.
@@ -31,14 +30,13 @@ import java.util.Enumeration;
  */
 public interface DownloadableElement {
 
-    /**
-     * @param tileArchive
-     * @param listener
-     * @return An enumeration that returns {@link Job} objects. Each job should
-     * download one map tile from the providing web server (or from the
-     * tile cache).
-     */
-    Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive,
-                                     DownloadJobListener listener);
+	/**
+	 * @param tileArchive
+	 * @param listener
+	 * @return An enumeration that returns {@link Job} objects. Each job should
+	 *         download one map tile from the providing web server (or from the tile
+	 *         cache).
+	 */
+	Enumeration<Job> getDownloadJobs(TarIndexedArchive tileArchive, DownloadJobListener listener);
 
 }

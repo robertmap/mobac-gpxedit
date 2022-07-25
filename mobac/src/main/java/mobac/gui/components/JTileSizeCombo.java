@@ -24,41 +24,41 @@ import java.util.Vector;
 
 public class JTileSizeCombo extends JIntCombo {
 
-    public static final int MIN = 50;
-    public static final int MAX = 8192;
-    private static final long serialVersionUID = 1L;
-    static Vector<Integer> TILE_SIZE_VALUES;
+	public static final int MIN = 50;
+	public static final int MAX = 8192;
+	private static final long serialVersionUID = 1L;
+	static Vector<Integer> TILE_SIZE_VALUES;
 
-    static Integer DEFAULT;
+	static Integer DEFAULT;
 
-    static Logger log = LoggerFactory.getLogger(JTileSizeCombo.class);
+	static Logger log = LoggerFactory.getLogger(JTileSizeCombo.class);
 
-    static {
-        DEFAULT = 256;
-        TILE_SIZE_VALUES = new Vector<Integer>();
-        TILE_SIZE_VALUES.addElement(64);
-        TILE_SIZE_VALUES.addElement(128);
-        TILE_SIZE_VALUES.addElement(DEFAULT);
-        TILE_SIZE_VALUES.addElement(512);
-        TILE_SIZE_VALUES.addElement(768);
-        TILE_SIZE_VALUES.addElement(1024);
-        TILE_SIZE_VALUES.addElement(1536);
-        for (int i = 2048; i <= MAX; i += 1024) {
-            TILE_SIZE_VALUES.addElement(i);
-        }
-    }
+	static {
+		DEFAULT = 256;
+		TILE_SIZE_VALUES = new Vector<Integer>();
+		TILE_SIZE_VALUES.addElement(64);
+		TILE_SIZE_VALUES.addElement(128);
+		TILE_SIZE_VALUES.addElement(DEFAULT);
+		TILE_SIZE_VALUES.addElement(512);
+		TILE_SIZE_VALUES.addElement(768);
+		TILE_SIZE_VALUES.addElement(1024);
+		TILE_SIZE_VALUES.addElement(1536);
+		for (int i = 2048; i <= MAX; i += 1024) {
+			TILE_SIZE_VALUES.addElement(i);
+		}
+	}
 
-    public JTileSizeCombo() {
-        super(TILE_SIZE_VALUES, DEFAULT);
-        setEditable(true);
-        setEditor(new Editor());
-        setMaximumRowCount(TILE_SIZE_VALUES.size());
-        setSelectedItem(DEFAULT);
-    }
+	public JTileSizeCombo() {
+		super(TILE_SIZE_VALUES, DEFAULT);
+		setEditable(true);
+		setEditor(new Editor());
+		setMaximumRowCount(TILE_SIZE_VALUES.size());
+		setSelectedItem(DEFAULT);
+	}
 
-    @Override
-    protected void createEditorComponent() {
-        editorComponent = new JIntField(MIN, MAX, 4, I18nUtils.localizedStringForKey("msg_invalid_tile_size"));
-    }
+	@Override
+	protected void createEditorComponent() {
+		editorComponent = new JIntField(MIN, MAX, 4, I18nUtils.localizedStringForKey("msg_invalid_tile_size"));
+	}
 
 }

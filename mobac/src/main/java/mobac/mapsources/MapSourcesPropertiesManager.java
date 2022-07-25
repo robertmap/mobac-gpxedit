@@ -28,42 +28,42 @@ import java.util.Properties;
 
 public class MapSourcesPropertiesManager {
 
-    public static final Properties PROPERTIES = new Properties();
-    private static final Logger log = LoggerFactory.getLogger(MapSourcesPropertiesManager.class);
-    private static final String FILENAME = "mapsources.properties";
-    private static boolean SHUTDOWN_HOOK_REGISTERED = false;
+	public static final Properties PROPERTIES = new Properties();
+	private static final Logger log = LoggerFactory.getLogger(MapSourcesPropertiesManager.class);
+	private static final String FILENAME = "mapsources.properties";
+	private static boolean SHUTDOWN_HOOK_REGISTERED = false;
 
-    public static void load() {
-        File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
-        File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
-        if (!mapSourcesProperties.isFile())
-            return;
-        try (FileInputStream in = new FileInputStream(mapSourcesProperties)) {
-            PROPERTIES.load(in);
-        } catch (IOException e) {
-            log.error("Failed to load mapsources.properties", e);
-        }
-        if (!SHUTDOWN_HOOK_REGISTERED) {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
+	public static void load() {
+		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+		File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
+		if (!mapSourcesProperties.isFile())
+			return;
+		try (FileInputStream in = new FileInputStream(mapSourcesProperties)) {
+			PROPERTIES.load(in);
+		} catch (IOException e) {
+			log.error("Failed to load mapsources.properties", e);
+		}
+		if (!SHUTDOWN_HOOK_REGISTERED) {
+			Runtime.getRuntime().addShutdownHook(new Thread() {
 
-                @Override
-                public void run() {
-                    save();
-                }
+				@Override
+				public void run() {
+					save();
+				}
 
-            });
-        }
-    }
+			});
+		}
+	}
 
-    public static void save() {
-        if (PROPERTIES.size() == 0)
-            return;
-        File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
-        File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
-        try (FileOutputStream out = new FileOutputStream(mapSourcesProperties)) {
-            PROPERTIES.store(out, "");
-        } catch (IOException e) {
-            log.error("", e);
-        }
-    }
+	public static void save() {
+		if (PROPERTIES.size() == 0)
+			return;
+		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
+		File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
+		try (FileOutputStream out = new FileOutputStream(mapSourcesProperties)) {
+			PROPERTIES.store(out, "");
+		} catch (IOException e) {
+			log.error("", e);
+		}
+	}
 }

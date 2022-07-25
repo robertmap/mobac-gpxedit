@@ -24,45 +24,45 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class PauseResumeHandler {
 
-    protected final AtomicBoolean paused = new AtomicBoolean(false);
+	protected final AtomicBoolean paused = new AtomicBoolean(false);
 
-    public boolean isPaused() {
-        return paused.get();
-    }
+	public boolean isPaused() {
+		return paused.get();
+	}
 
-    /**
-     * Enters the pause state.
-     */
-    public void pause() {
-        paused.set(true);
-    }
+	/**
+	 * Enters the pause state.
+	 */
+	public void pause() {
+		paused.set(true);
+	}
 
-    /**
-     * End the pause state and resumes all waiting threads.
-     */
-    public void resume() {
-        paused.set(false);
-        synchronized (this) {
-            this.notifyAll();
-        }
-    }
+	/**
+	 * End the pause state and resumes all waiting threads.
+	 */
+	public void resume() {
+		paused.set(false);
+		synchronized (this) {
+			this.notifyAll();
+		}
+	}
 
-    /**
-     * If {@link #isPaused()}== <code>true</code> this method will not return
-     * until {@link #resume()} has been called. Otherwise this method returns
-     * immediately.
-     *
-     * @throws InterruptedException Thrown if the calling {@link Thread} is interrupted while
-     *                              waiting for resume
-     */
-    public void pauseWait() throws InterruptedException {
-        if (paused.get()) {
-            synchronized (this) {
-                if (paused.get()) {
-                    this.wait();
-                }
-            }
-        }
-    }
+	/**
+	 * If {@link #isPaused()}== <code>true</code> this method will not return until
+	 * {@link #resume()} has been called. Otherwise this method returns immediately.
+	 *
+	 * @throws InterruptedException
+	 *             Thrown if the calling {@link Thread} is interrupted while waiting
+	 *             for resume
+	 */
+	public void pauseWait() throws InterruptedException {
+		if (paused.get()) {
+			synchronized (this) {
+				if (paused.get()) {
+					this.wait();
+				}
+			}
+		}
+	}
 
 }

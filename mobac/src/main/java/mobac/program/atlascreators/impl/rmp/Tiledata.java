@@ -35,38 +35,39 @@ import java.io.OutputStream;
  */
 public class Tiledata {
 
-    private final TileImageDataWriter writer;
+	private final TileImageDataWriter writer;
 
-    public int posx;
-    public int posy;
-    public int totalOffset;
-    public MultiImage si;
+	public int posx;
+	public int posy;
+	public int totalOffset;
+	public MultiImage si;
 
-    public BoundingRect rect;
+	public BoundingRect rect;
 
-    private int dataSize = 0;
+	private int dataSize = 0;
 
-    public Tiledata(TileImageDataWriter writer) {
-        this.writer = writer;
-    }
+	public Tiledata(TileImageDataWriter writer) {
+		this.writer = writer;
+	}
 
-    public int getTileDataSize() {
-        return dataSize;
-    }
+	public int getTileDataSize() {
+		return dataSize;
+	}
 
-    public void writeTileData(OutputStream out) throws IOException {
-        try {
-            BufferedImage image = si.getSubImage(rect, 256, 256);
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(16384);
-            writer.processImage(image, bout);
-            byte[] data = bout.toByteArray();
-            dataSize = data.length;
-            // Utilities.saveBytes(String.format("D:/jpg/mobac-%04d-%04d.jpg", posx, posy), data);
-            RmpTools.writeValue(out, dataSize, 4);
-            out.write(data);
-        } catch (MapCreationException e) {
-            throw new IOException(e.getCause());
-        }
-    }
+	public void writeTileData(OutputStream out) throws IOException {
+		try {
+			BufferedImage image = si.getSubImage(rect, 256, 256);
+			ByteArrayOutputStream bout = new ByteArrayOutputStream(16384);
+			writer.processImage(image, bout);
+			byte[] data = bout.toByteArray();
+			dataSize = data.length;
+			// Utilities.saveBytes(String.format("D:/jpg/mobac-%04d-%04d.jpg", posx, posy),
+			// data);
+			RmpTools.writeValue(out, dataSize, 4);
+			out.write(data);
+		} catch (MapCreationException e) {
+			throw new IOException(e.getCause());
+		}
+	}
 
 }

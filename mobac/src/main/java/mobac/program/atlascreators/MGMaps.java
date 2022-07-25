@@ -51,12 +51,15 @@ import java.io.RandomAccessFile;
  *
  * <h3>Format</h3>
  * <ul>
- * <li>2 bytes: number of tiles in this file for each tile (even for tiles that are not used, in which case the data is
- * left null)</li>
- * <li>1 byte: tile x within this file; add tileX * tilesPerFileX to get global tile number</li>
- * <li>1 byte: tile y within this file; add tileY * tilesPerFileY to get global tile number</li>
- * <li>4 bytes: offset of the end of the tile data within this file (to get the offset for the start of the tile data,
- * subtract the value for the previous tile, or 2 + 6 * tilesPerFile tile data 1 tile data 2 ...</li>
+ * <li>2 bytes: number of tiles in this file for each tile (even for tiles that
+ * are not used, in which case the data is left null)</li>
+ * <li>1 byte: tile x within this file; add tileX * tilesPerFileX to get global
+ * tile number</li>
+ * <li>1 byte: tile y within this file; add tileY * tilesPerFileY to get global
+ * tile number</li>
+ * <li>4 bytes: offset of the end of the tile data within this file (to get the
+ * offset for the start of the tile data, subtract the value for the previous
+ * tile, or 2 + 6 * tilesPerFile tile data 1 tile data 2 ...</li>
  * </ul>
  *
  * @author paour
@@ -65,221 +68,221 @@ import java.io.RandomAccessFile;
 @SupportedParameters(names = {Name.format})
 public class MGMaps extends AtlasCreator {
 
-    private static final int TILES_PER_FILE_X = 8;
-    private static final int TILES_PER_FILE_Y = 8;
-    private static final int TILES_PER_FILE = TILES_PER_FILE_X * TILES_PER_FILE_Y;
+	private static final int TILES_PER_FILE_X = 8;
+	private static final int TILES_PER_FILE_Y = 8;
+	private static final int TILES_PER_FILE = TILES_PER_FILE_X * TILES_PER_FILE_Y;
 
-    private double xResizeRatio = 1.0;
-    private double yResizeRatio = 1.0;
+	private double xResizeRatio = 1.0;
+	private double yResizeRatio = 1.0;
 
-    @Override
-    public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
-            throws AtlasTestException, IOException, InterruptedException {
-        super.startAtlasCreation(atlas, customAtlasDir);
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
+			throws AtlasTestException, IOException, InterruptedException {
+		super.startAtlasCreation(atlas, customAtlasDir);
 
-        File cache_conf = new File(atlasDir, "cache.conf");
-        PrintWriter pw = new PrintWriter(new FileWriter(cache_conf));
-        try {
-            pw.println("version=3");
-            pw.println("tiles_per_file=" + TILES_PER_FILE);
-            pw.println("hash_size=1");
-        } finally {
-            pw.close();
-        }
-    }
+		File cache_conf = new File(atlasDir, "cache.conf");
+		PrintWriter pw = new PrintWriter(new FileWriter(cache_conf));
+		try {
+			pw.println("version=3");
+			pw.println("tiles_per_file=" + TILES_PER_FILE);
+			pw.println("hash_size=1");
+		} finally {
+			pw.close();
+		}
+	}
 
-    @Override
-    public void initializeMap(final MapInterface map, final TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
+	@Override
+	public void initializeMap(final MapInterface map, final TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 
-        xResizeRatio = 1.0;
-        yResizeRatio = 1.0;
+		xResizeRatio = 1.0;
+		yResizeRatio = 1.0;
 
-        if (parameters != null) {
-            int mapTileSize = map.getMapSource().getMapSpace().getTileSize();
-            if ((parameters.getWidth() != mapTileSize) || (parameters.getHeight() != mapTileSize)) {
-                // handle image re-sampling + image re-sizing
-                xResizeRatio = (double) parameters.getWidth() / (double) mapTileSize;
-                yResizeRatio = (double) parameters.getHeight() / (double) mapTileSize;
-            } else {
-                // handle only image re-sampling
-                mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
-            }
-        }
-    }
+		if (parameters != null) {
+			int mapTileSize = map.getMapSource().getMapSpace().getTileSize();
+			if ((parameters.getWidth() != mapTileSize) || (parameters.getHeight() != mapTileSize)) {
+				// handle image re-sampling + image re-sizing
+				xResizeRatio = (double) parameters.getWidth() / (double) mapTileSize;
+				yResizeRatio = (double) parameters.getHeight() / (double) mapTileSize;
+			} else {
+				// handle only image re-sampling
+				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+			}
+		}
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-        MGMTileWriter mgmTileWriter = null;
-        try {
-            if ((xResizeRatio != 1.0) || (yResizeRatio != 1.0))
-                mgmTileWriter = new MGMResizeTileWriter();
-            else
-                mgmTileWriter = new MGMTileWriter();
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		MGMTileWriter mgmTileWriter = null;
+		try {
+			if ((xResizeRatio != 1.0) || (yResizeRatio != 1.0))
+				mgmTileWriter = new MGMResizeTileWriter();
+			else
+				mgmTileWriter = new MGMTileWriter();
 
-            String name = map.getLayer().getName();
+			String name = map.getLayer().getName();
 
-            // safe naming: replace all non-word characters: [^a-zA-Z_0-9]
-            name = name.replaceAll("[^a-zA-Z_0-9]", "_");
+			// safe naming: replace all non-word characters: [^a-zA-Z_0-9]
+			name = name.replaceAll("[^a-zA-Z_0-9]", "_");
 
-            // crate directory if necessary
-            File folder = new File(atlasDir, name + "_" + map.getZoom());
-            Utilities.mkDirs(folder);
+			// crate directory if necessary
+			File folder = new File(atlasDir, name + "_" + map.getZoom());
+			Utilities.mkDirs(folder);
 
-            atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
+			atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
-            ImageIO.setUseCache(false);
+			ImageIO.setUseCache(false);
 
-            int pxMin = xMin / TILES_PER_FILE_X;
-            int pxMax = xMax / TILES_PER_FILE_X;
-            int pyMin = yMin / TILES_PER_FILE_Y;
-            int pyMax = yMax / TILES_PER_FILE_Y;
+			int pxMin = xMin / TILES_PER_FILE_X;
+			int pxMax = xMax / TILES_PER_FILE_X;
+			int pyMin = yMin / TILES_PER_FILE_Y;
+			int pyMax = yMax / TILES_PER_FILE_Y;
 
-            for (int px = pxMin; px <= pxMax; px++) {
-                for (int py = pyMin; py <= pyMax; py++) {
-                    int count = 0;
-                    int pos = 2 + TILES_PER_FILE * 6;
-                    File pack = new File(folder, px + "_" + py + ".mgm");
-                    RandomAccessFile raf = null;
+			for (int px = pxMin; px <= pxMax; px++) {
+				for (int py = pyMin; py <= pyMax; py++) {
+					int count = 0;
+					int pos = 2 + TILES_PER_FILE * 6;
+					File pack = new File(folder, px + "_" + py + ".mgm");
+					RandomAccessFile raf = null;
 
-                    try {
-                        for (int i = 0; i < TILES_PER_FILE_X; i++) {
-                            int x = px * TILES_PER_FILE_X + i;
-                            if (x < xMin || x > xMax) {
-                                continue;
-                            }
+					try {
+						for (int i = 0; i < TILES_PER_FILE_X; i++) {
+							int x = px * TILES_PER_FILE_X + i;
+							if (x < xMin || x > xMax) {
+								continue;
+							}
 
-                            for (int j = 0; j < TILES_PER_FILE_Y; j++) {
-                                int y = py * TILES_PER_FILE_Y + j;
-                                if (y < yMin || y > yMax) {
-                                    continue;
-                                }
+							for (int j = 0; j < TILES_PER_FILE_Y; j++) {
+								int y = py * TILES_PER_FILE_Y + j;
+								if (y < yMin || y > yMax) {
+									continue;
+								}
 
-                                if (raf == null)
-                                    // Only create a file when needed
-                                    raf = new RandomAccessFile(pack, "rw");
+								if (raf == null)
+									// Only create a file when needed
+									raf = new RandomAccessFile(pack, "rw");
 
-                                checkUserAbort();
-                                atlasProgress.incMapCreationProgress();
-                                int res = mgmTileWriter.writeTile(x, y, i, j, raf, pos, count);
-                                if (res >= 0) {
-                                    pos = res;
-                                    count++;
-                                }
-                            }
-                        }
+								checkUserAbort();
+								atlasProgress.incMapCreationProgress();
+								int res = mgmTileWriter.writeTile(x, y, i, j, raf, pos, count);
+								if (res >= 0) {
+									pos = res;
+									count++;
+								}
+							}
+						}
 
-                        if (raf != null) {
-                            // POSITION 0: number of tiles
-                            raf.seek(0);
-                            raf.writeChar(count);
-                        }
-                    } finally {
-                        Utilities.closeQuietly(raf);
-                    }
-                    if (count == 0) {
-                        // the file doesn't contain any tiles
-                        if (pack.exists())
-                            Utilities.deleteFile(pack);
-                    }
-                }
-            }
+						if (raf != null) {
+							// POSITION 0: number of tiles
+							raf.seek(0);
+							raf.writeChar(count);
+						}
+					} finally {
+						Utilities.closeQuietly(raf);
+					}
+					if (count == 0) {
+						// the file doesn't contain any tiles
+						if (pack.exists())
+							Utilities.deleteFile(pack);
+					}
+				}
+			}
 
-        } catch (Exception e) {
-            throw new MapCreationException(map, e);
-        } finally {
-            if (mgmTileWriter != null)
-                mgmTileWriter.dispose();
-        }
-    }
+		} catch (Exception e) {
+			throw new MapCreationException(map, e);
+		} finally {
+			if (mgmTileWriter != null)
+				mgmTileWriter.dispose();
+		}
+	}
 
-    @Override
-    public boolean testMapSource(final MapSource mapSource) {
-        MapSpace mapSpace = mapSource.getMapSpace();
-        return (mapSpace instanceof MercatorPower2MapSpace)
-                && (ProjectionCategory.SPHERE.equals(mapSource.getMapSpace().getProjectionCategory())
-                || ProjectionCategory.ELLIPSOID.equals(mapSource.getMapSpace().getProjectionCategory()));
-    }
+	@Override
+	public boolean testMapSource(final MapSource mapSource) {
+		MapSpace mapSpace = mapSource.getMapSpace();
+		return (mapSpace instanceof MercatorPower2MapSpace)
+				&& (ProjectionCategory.SPHERE.equals(mapSource.getMapSpace().getProjectionCategory())
+						|| ProjectionCategory.ELLIPSOID.equals(mapSource.getMapSpace().getProjectionCategory()));
+	}
 
-    /**
-     * Simply writes the tile to the file without resizing
-     */
-    private class MGMTileWriter {
+	/**
+	 * Simply writes the tile to the file without resizing
+	 */
+	private class MGMTileWriter {
 
-        protected byte[] getSourceTileData(int x, int y) throws IOException {
-            return mapDlTileProvider.getTileData(x, y);
-        }
+		protected byte[] getSourceTileData(int x, int y) throws IOException {
+			return mapDlTileProvider.getTileData(x, y);
+		}
 
-        public int writeTile(int x, int y, int i, int j, RandomAccessFile raf, int startPos, int count)
-                throws MapCreationException {
-            try {
-                byte[] sourceTileData = getSourceTileData(x, y);
-                if (sourceTileData == null)
-                    return -1;
-                raf.seek(startPos);
-                raf.write(sourceTileData);
+		public int writeTile(int x, int y, int i, int j, RandomAccessFile raf, int startPos, int count)
+				throws MapCreationException {
+			try {
+				byte[] sourceTileData = getSourceTileData(x, y);
+				if (sourceTileData == null)
+					return -1;
+				raf.seek(startPos);
+				raf.write(sourceTileData);
 
-                // write the tile index
-                raf.seek(2 + count * 6);
-                raf.writeByte(i);
-                raf.writeByte(j);
-                int pos = startPos + sourceTileData.length;
-                raf.writeInt(pos);
-                return pos;
-            } catch (IOException e) {
-                throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-            }
-        }
+				// write the tile index
+				raf.seek(2 + count * 6);
+				raf.writeByte(i);
+				raf.writeByte(j);
+				int pos = startPos + sourceTileData.length;
+				raf.writeInt(pos);
+				return pos;
+			} catch (IOException e) {
+				throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
+			}
+		}
 
-        public void dispose() {
-            // Nothing to do
-        }
-    }
+		public void dispose() {
+			// Nothing to do
+		}
+	}
 
-    /**
-     * Resizes the tile and saves it to the file
-     */
-    private class MGMResizeTileWriter extends MGMTileWriter {
+	/**
+	 * Resizes the tile and saves it to the file
+	 */
+	private class MGMResizeTileWriter extends MGMTileWriter {
 
-        private final BufferedImage tileImage;
-        private final Graphics2D graphics;
-        private final TileImageDataWriter writer;
-        private final ArrayOutputStream buffer;
+		private final BufferedImage tileImage;
+		private final Graphics2D graphics;
+		private final TileImageDataWriter writer;
+		private final ArrayOutputStream buffer;
 
-        public MGMResizeTileWriter() {
-            // resize image
-            tileImage = new BufferedImage(parameters.getWidth(), parameters.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		public MGMResizeTileWriter() {
+			// resize image
+			tileImage = new BufferedImage(parameters.getWidth(), parameters.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 
-            // associated graphics with affine transform
-            graphics = tileImage.createGraphics();
-            graphics.setTransform(AffineTransform.getScaleInstance(xResizeRatio, yResizeRatio));
-            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			// associated graphics with affine transform
+			graphics = tileImage.createGraphics();
+			graphics.setTransform(AffineTransform.getScaleInstance(xResizeRatio, yResizeRatio));
+			graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-            // image compression writer
-            writer = parameters.getFormat().getDataWriterBuilder().build();
+			// image compression writer
+			writer = parameters.getFormat().getDataWriterBuilder().build();
 
-            // buffer to store compressed image
-            buffer = new ArrayOutputStream(3 * parameters.getWidth() * parameters.getHeight());
-        }
+			// buffer to store compressed image
+			buffer = new ArrayOutputStream(3 * parameters.getWidth() * parameters.getHeight());
+		}
 
-        @Override
-        protected byte[] getSourceTileData(int x, int y) throws IOException {
-            // need to resize the tile
-            final BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
-            graphics.drawImage(tile, 0, 0, null);
-            buffer.reset();
-            writer.processImage(tileImage, buffer);
+		@Override
+		protected byte[] getSourceTileData(int x, int y) throws IOException {
+			// need to resize the tile
+			final BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
+			graphics.drawImage(tile, 0, 0, null);
+			buffer.reset();
+			writer.processImage(tileImage, buffer);
 
-            byte[] processedTileData = buffer.toByteArray();
-            buffer.reset();
-            return processedTileData;
-        }
+			byte[] processedTileData = buffer.toByteArray();
+			buffer.reset();
+			return processedTileData;
+		}
 
-        @Override
-        public void dispose() {
-            buffer.reset();
-            graphics.dispose();
-        }
+		@Override
+		public void dispose() {
+			buffer.reset();
+			graphics.dispose();
+		}
 
-    }
+	}
 }

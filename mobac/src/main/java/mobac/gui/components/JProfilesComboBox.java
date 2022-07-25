@@ -29,46 +29,47 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
  */
 public class JProfilesComboBox extends JComboBox<Profile> {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public JProfilesComboBox() {
-        super();
-        setEditable(true);
-        setEditor(new ProfilesComboBoxEditor());
-    }
+	public JProfilesComboBox() {
+		super();
+		setEditable(true);
+		setEditor(new ProfilesComboBoxEditor());
+	}
 
-    public void loadProfilesList() {
-        setModel(new DefaultComboBoxModel<Profile>(Profile.getProfiles()));
-        setSelectedIndex(-1);
-    }
+	public void loadProfilesList() {
+		setModel(new DefaultComboBoxModel<Profile>(Profile.getProfiles()));
+		setSelectedIndex(-1);
+	}
 
-    public boolean deleteSelectedProfile() {
-        Profile profile = (Profile) getSelectedItem();
-        if (profile == null)
-            return false;
-        profile.delete();
-        setSelectedIndex(-1);
-        removeItem(profile);
-        return true;
-    }
+	public boolean deleteSelectedProfile() {
+		Profile profile = (Profile) getSelectedItem();
+		if (profile == null)
+			return false;
+		profile.delete();
+		setSelectedIndex(-1);
+		removeItem(profile);
+		return true;
+	}
 
-    /**
-     * @return the selected profile or <code>null</code> if no profile is selected or a new unsaved profile is selected
-     */
-    public Profile getSelectedProfile() {
-        Object selItem = getSelectedItem();
-        if (selItem instanceof Profile)
-            return (Profile) selItem;
-        else
-            return null;
-    }
+	/**
+	 * @return the selected profile or <code>null</code> if no profile is selected
+	 *         or a new unsaved profile is selected
+	 */
+	public Profile getSelectedProfile() {
+		Object selItem = getSelectedItem();
+		if (selItem instanceof Profile)
+			return (Profile) selItem;
+		else
+			return null;
+	}
 
-    protected static class ProfilesComboBoxEditor extends BasicComboBoxEditor {
-        @Override
-        protected JTextField createEditorComponent() {
-            JAtlasNameField field = new JAtlasNameField();
-            field.setBorder(new EmptyBorder(2, 2, 2, 0));
-            return field;
-        }
-    }
+	protected static class ProfilesComboBoxEditor extends BasicComboBoxEditor {
+		@Override
+		protected JTextField createEditorComponent() {
+			JAtlasNameField field = new JAtlasNameField();
+			field.setBorder(new EmptyBorder(2, 2, 2, 0));
+			return field;
+		}
+	}
 }

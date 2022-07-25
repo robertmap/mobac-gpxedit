@@ -20,28 +20,28 @@ import mobac.utilities.Utilities;
 
 public class MOBACOutOfMemoryException extends RuntimeException {
 
-    long requiredMemory;
-    long heapAvailable;
+	long requiredMemory;
+	long heapAvailable;
 
-    public MOBACOutOfMemoryException(long requiredMemory, String message) {
-        super(message);
-        Runtime r = Runtime.getRuntime();
-        heapAvailable = r.maxMemory() - r.totalMemory() + r.freeMemory();
-        this.requiredMemory = requiredMemory;
-    }
+	public MOBACOutOfMemoryException(long requiredMemory, String message) {
+		super(message);
+		Runtime r = Runtime.getRuntime();
+		heapAvailable = r.maxMemory() - r.totalMemory() + r.freeMemory();
+		this.requiredMemory = requiredMemory;
+	}
 
-    @Override
-    public String getMessage() {
-        return super.getMessage() + "\nRequired memory: " + getFormattedRequiredMemory() + "\nAvailable free memory: "
-                + Utilities.formatBytes(heapAvailable);
-    }
+	@Override
+	public String getMessage() {
+		return super.getMessage() + "\nRequired memory: " + getFormattedRequiredMemory() + "\nAvailable free memory: "
+				+ Utilities.formatBytes(heapAvailable);
+	}
 
-    public long getRequiredMemory() {
-        return requiredMemory;
-    }
+	public long getRequiredMemory() {
+		return requiredMemory;
+	}
 
-    public String getFormattedRequiredMemory() {
-        return Utilities.formatBytes(requiredMemory);
-    }
+	public String getFormattedRequiredMemory() {
+		return Utilities.formatBytes(requiredMemory);
+	}
 
 }

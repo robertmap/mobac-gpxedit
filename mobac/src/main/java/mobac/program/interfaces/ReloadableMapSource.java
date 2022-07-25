@@ -19,9 +19,10 @@ package mobac.program.interfaces;
 import mobac.exceptions.MapSourceInitializationException;
 
 /**
- * Marks {@link MapSource} implementations that can be reloaded (e.g. a custom XML based map source)
+ * Marks {@link MapSource} implementations that can be reloaded (e.g. a custom
+ * XML based map source)
  */
 public interface ReloadableMapSource<MapSourceType extends MapSource> {
 
-    void applyChangesFrom(MapSourceType reloadedMapSource) throws MapSourceInitializationException;
+	void applyChangesFrom(MapSourceType reloadedMapSource) throws MapSourceInitializationException;
 }

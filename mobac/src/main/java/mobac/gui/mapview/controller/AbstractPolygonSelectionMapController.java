@@ -28,41 +28,42 @@ import java.util.ArrayList;
  */
 public abstract class AbstractPolygonSelectionMapController extends JMapController {
 
-    protected boolean finished = false;
-    protected ArrayList<Point> polygonPoints = new ArrayList<Point>();
-    protected PolygonSelectionLayer mapLayer = null;
+	protected boolean finished = false;
+	protected ArrayList<Point> polygonPoints = new ArrayList<Point>();
+	protected PolygonSelectionLayer mapLayer = null;
 
-    public AbstractPolygonSelectionMapController(PreviewMap map) {
-        super(map, false);
-        mapLayer = new PolygonSelectionLayer(this);
-    }
+	public AbstractPolygonSelectionMapController(PreviewMap map) {
+		super(map, false);
+		mapLayer = new PolygonSelectionLayer(this);
+	}
 
-    public void reset() {
-        polygonPoints = new ArrayList<Point>();
-        finished = false;
-    }
+	public void reset() {
+		polygonPoints = new ArrayList<Point>();
+		finished = false;
+	}
 
-    public void finishPolygon() {
-        finished = true;
-    }
+	public void finishPolygon() {
+		finished = true;
+	}
 
-    @Override
-    public void enable() {
-        map.mapLayers.add(mapLayer);
-        super.enable();
-    }
+	@Override
+	public void enable() {
+		map.mapLayers.add(mapLayer);
+		super.enable();
+	}
 
-    @Override
-    public void disable() {
-        map.mapLayers.remove(mapLayer);
-        super.disable();
-    }
+	@Override
+	public void disable() {
+		map.mapLayers.remove(mapLayer);
+		super.disable();
+	}
 
-    /**
-     * @return List of absolute tile coordinate points regarding {@link JMapViewer#MAX_ZOOM}
-     */
-    public ArrayList<Point> getPolygonPoints() {
-        return polygonPoints;
-    }
+	/**
+	 * @return List of absolute tile coordinate points regarding
+	 *         {@link JMapViewer#MAX_ZOOM}
+	 */
+	public ArrayList<Point> getPolygonPoints() {
+		return polygonPoints;
+	}
 
 }

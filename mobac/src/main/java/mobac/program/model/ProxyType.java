@@ -19,30 +19,30 @@ package mobac.program.model;
 import mobac.utilities.I18nUtils;
 
 public enum ProxyType {
-    SYSTEM, //
-    APP_SETTINGS, //
-    CUSTOM, //
-    CUSTOM_W_AUTH;
+	SYSTEM, //
+	APP_SETTINGS, //
+	CUSTOM, //
+	CUSTOM_W_AUTH;
 
-    //private String text;
+	// private String text;
 
-//	private ProxyType(String text) {
-//		this.text = text;
-//	}
+	// private ProxyType(String text) {
+	// this.text = text;
+	// }
 
-    @Override
-    public String toString() {
-        switch (this) {
-            case SYSTEM:
-                return I18nUtils.localizedStringForKey("set_net_proxy_settings_java");
-            case APP_SETTINGS:
-                return I18nUtils.localizedStringForKey("set_net_proxy_settings_application");
-            case CUSTOM:
-                return I18nUtils.localizedStringForKey("set_net_proxy_settings_custom");
-            case CUSTOM_W_AUTH:
-                return I18nUtils.localizedStringForKey("set_net_proxy_settings_custom_auth");
-        }
-        return I18nUtils.localizedStringForKey("Undefined");
-    }
+	@Override
+	public String toString() {
+		switch (this) {
+			case SYSTEM :
+				return I18nUtils.localizedStringForKey("set_net_proxy_settings_java");
+			case APP_SETTINGS :
+				return I18nUtils.localizedStringForKey("set_net_proxy_settings_application");
+			case CUSTOM :
+				return I18nUtils.localizedStringForKey("set_net_proxy_settings_custom");
+			case CUSTOM_W_AUTH :
+				return I18nUtils.localizedStringForKey("set_net_proxy_settings_custom_auth");
+		}
+		return I18nUtils.localizedStringForKey("Undefined");
+	}
 
 }

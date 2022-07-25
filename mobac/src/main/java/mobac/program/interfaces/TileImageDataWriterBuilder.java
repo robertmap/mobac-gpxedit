@@ -20,8 +20,8 @@ import mobac.program.model.TileImageType;
 
 public interface TileImageDataWriterBuilder {
 
-    TileImageDataWriter build();
+	TileImageDataWriter build();
 
-    TileImageType getType();
+	TileImageType getType();
 
 }

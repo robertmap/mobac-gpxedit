@@ -21,33 +21,33 @@ import mobac.gui.mapview.layer.GpxLayer;
 import mobac.utilities.I18nUtils;
 
 public class RteEntry extends GpxEntry {
-    private RteType rte;
+	private RteType rte;
 
-    public RteEntry(RteType rte, GpxLayer layer) {
-        this.setRte(rte);
-        this.setLayer(layer);
-        this.setWaypointParent(true);
-    }
+	public RteEntry(RteType rte, GpxLayer layer) {
+		this.setRte(rte);
+		this.setLayer(layer);
+		this.setWaypointParent(true);
+	}
 
-    public String toString() {
-        String name = "";
-        try {
-            name = getRte().getName();
-        } catch (NullPointerException e) {
-            // no name set
-        }
-        if (name != null && !name.equals("")) {
-            return name;
-        } else {
-            return I18nUtils.localizedStringForKey("rp_gpx_unname_route_name");
-        }
-    }
+	public String toString() {
+		String name = "";
+		try {
+			name = getRte().getName();
+		} catch (NullPointerException e) {
+			// no name set
+		}
+		if (name != null && !name.equals("")) {
+			return name;
+		} else {
+			return I18nUtils.localizedStringForKey("rp_gpx_unname_route_name");
+		}
+	}
 
-    public RteType getRte() {
-        return rte;
-    }
+	public RteType getRte() {
+		return rte;
+	}
 
-    private void setRte(RteType rte) {
-        this.rte = rte;
-    }
+	private void setRte(RteType rte) {
+		this.rte = rte;
+	}
 }

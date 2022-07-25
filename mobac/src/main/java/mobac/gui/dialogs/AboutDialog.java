@@ -37,72 +37,72 @@ import java.awt.event.MouseListener;
 
 public class AboutDialog extends JDialog implements MouseListener {
 
-    public AboutDialog() throws HeadlessException {
-        super(MainGUI.getMainGUI(), I18nUtils.localizedStringForKey("dlg_about_title"));
-        setIconImages(MainGUI.MOBAC_ICONS);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setResizable(false);
+	public AboutDialog() throws HeadlessException {
+		super(MainGUI.getMainGUI(), I18nUtils.localizedStringForKey("dlg_about_title"));
+		setIconImages(MainGUI.MOBAC_ICONS);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setResizable(false);
 
-        JPanel panel = new JPanel(null);
-        panel.setBackground(Color.WHITE);
-        GBC std = GBC.std();
-        GBC eol = GBC.eol();
-        std.insets(3, 3, 3, 3);
-        eol.insets(3, 3, 3, 3);
-        ImageIcon splash = Utilities.loadResourceImageIcon("Splash.jpg");
-        Dimension size = new Dimension(splash.getIconWidth(), splash.getIconHeight());
-        panel.setPreferredSize(size);
-        panel.setMinimumSize(size);
-        panel.setMaximumSize(size);
-        panel.setSize(size);
+		JPanel panel = new JPanel(null);
+		panel.setBackground(Color.WHITE);
+		GBC std = GBC.std();
+		GBC eol = GBC.eol();
+		std.insets(3, 3, 3, 3);
+		eol.insets(3, 3, 3, 3);
+		ImageIcon splash = Utilities.loadResourceImageIcon("Splash.jpg");
+		Dimension size = new Dimension(splash.getIconWidth(), splash.getIconHeight());
+		panel.setPreferredSize(size);
+		panel.setMinimumSize(size);
+		panel.setMaximumSize(size);
+		panel.setSize(size);
 
-        JLabel splashLabel = new JLabel(splash);
-        JPanel infoPanel = new JPanel(new GridBagLayout());
-        infoPanel.setBackground(Color.WHITE);
-        infoPanel.setOpaque(false);
-        infoPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_about_version")), std);
-        infoPanel.add(new JLabel(ProgramInfo.getVersion()), eol);
-        infoPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_about_program_version")), std);
-        infoPanel.add(new JLabel(ProgramInfo.getRevisionStr()), eol);
+		JLabel splashLabel = new JLabel(splash);
+		JPanel infoPanel = new JPanel(new GridBagLayout());
+		infoPanel.setBackground(Color.WHITE);
+		infoPanel.setOpaque(false);
+		infoPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_about_version")), std);
+		infoPanel.add(new JLabel(ProgramInfo.getVersion()), eol);
+		infoPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_about_program_version")), std);
+		infoPanel.add(new JLabel(ProgramInfo.getRevisionStr()), eol);
 
-        panel.add(infoPanel);
-        panel.add(splashLabel);
+		panel.add(infoPanel);
+		panel.add(splashLabel);
 
-        infoPanel.setBounds(200, 155, 320, 200);
-        splashLabel.setBounds(0, 0, splash.getIconWidth(), splash.getIconHeight());
+		infoPanel.setBounds(200, 155, 320, 200);
+		splashLabel.setBounds(0, 0, splash.getIconWidth(), splash.getIconHeight());
 
-        add(panel);
-        pack();
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
+		add(panel);
+		pack();
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
 
-        addMouseListener(this);
-    }
+		addMouseListener(this);
+	}
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            ProgramInfo.initialize(); // Load revision info
-            JDialog dlg = new AboutDialog();
-            dlg.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			ProgramInfo.initialize(); // Load revision info
+			JDialog dlg = new AboutDialog();
+			dlg.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void mouseClicked(MouseEvent e) {
-        setVisible(false);
-    }
+	public void mouseClicked(MouseEvent e) {
+		setVisible(false);
+	}
 
-    public void mousePressed(MouseEvent e) {
-    }
+	public void mousePressed(MouseEvent e) {
+	}
 
-    public void mouseReleased(MouseEvent e) {
-    }
+	public void mouseReleased(MouseEvent e) {
+	}
 
-    public void mouseEntered(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+	}
 
-    public void mouseExited(MouseEvent e) {
-    }
+	public void mouseExited(MouseEvent e) {
+	}
 }

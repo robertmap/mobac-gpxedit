@@ -24,7 +24,7 @@ import java.io.FileFilter;
  */
 public class DirectoryFileFilter implements FileFilter {
 
-    public boolean accept(File f) {
-        return f.isDirectory();
-    }
+	public boolean accept(File f) {
+		return f.isDirectory();
+	}
 }

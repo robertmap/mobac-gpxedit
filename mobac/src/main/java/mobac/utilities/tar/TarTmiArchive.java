@@ -27,47 +27,47 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
- * Extended version of {@link TarArchive} that automatically creates the TrekBuddy tmi-file while writing the archive
- * entries.
+ * Extended version of {@link TarArchive} that automatically creates the
+ * TrekBuddy tmi-file while writing the archive entries.
  *
  * @author r_x
- * @see <a href="http://www.linuxtechs.net/kruch/tb/forum/viewtopic.php?t=897"> TrekBuddy tmi map tar index file
- * description< /a>
+ * @see <a href="http://www.linuxtechs.net/kruch/tb/forum/viewtopic.php?t=897">
+ *      TrekBuddy tmi map tar index file description< /a>
  */
 public class TarTmiArchive extends TarArchive {
 
-    Writer tmiWriter;
+	Writer tmiWriter;
 
-    public TarTmiArchive(File tarFile, File baseDir) throws IOException {
-        super(tarFile, baseDir);
-        String tmiFilename = tarFile.getAbsolutePath();
-        if (tmiFilename.toLowerCase().endsWith(".tar")) {
-            tmiFilename = tmiFilename.substring(0, tmiFilename.length() - 4);
-        }
-        tmiFilename = tmiFilename + ".tmi";
-        tmiWriter = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(tmiFilename), AtlasCreator.TEXT_FILE_CHARSET));
-    }
+	public TarTmiArchive(File tarFile, File baseDir) throws IOException {
+		super(tarFile, baseDir);
+		String tmiFilename = tarFile.getAbsolutePath();
+		if (tmiFilename.toLowerCase().endsWith(".tar")) {
+			tmiFilename = tmiFilename.substring(0, tmiFilename.length() - 4);
+		}
+		tmiFilename = tmiFilename + ".tmi";
+		tmiWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(tmiFilename), AtlasCreator.TEXT_FILE_CHARSET));
+	}
 
-    @Override
-    public void writeEndofArchive() throws IOException {
-        super.writeEndofArchive();
-        tmiWriter.flush();
-    }
+	@Override
+	public void writeEndofArchive() throws IOException {
+		super.writeEndofArchive();
+		tmiWriter.flush();
+	}
 
-    @Override
-    public void close() throws IOException {
-        Utilities.closeQuietly(tmiWriter);
-        super.close();
-    }
+	@Override
+	public void close() throws IOException {
+		Utilities.closeQuietly(tmiWriter);
+		super.close();
+	}
 
-    @Override
-    protected void writeTarHeader(TarHeader th) throws IOException {
-        long streamPos = getTarFilePos();
-        int block = (int) (streamPos >> 9);
-        String line = String.format("block %10d: %s\n", block, th.getFileName());
-        tmiWriter.write(line);
-        super.writeTarHeader(th);
-    }
+	@Override
+	protected void writeTarHeader(TarHeader th) throws IOException {
+		long streamPos = getTarFilePos();
+		int block = (int) (streamPos >> 9);
+		String line = String.format("block %10d: %s\n", block, th.getFileName());
+		tmiWriter.write(line);
+		super.writeTarHeader(th);
+	}
 
 }

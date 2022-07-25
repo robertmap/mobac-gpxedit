@@ -24,14 +24,14 @@ import java.io.OutputStream;
 
 public class TileImagePng8DataWriter extends TileImagePngDataWriter {
 
-    public TileImagePng8DataWriter() {
-        super();
-    }
+	public TileImagePng8DataWriter() {
+		super();
+	}
 
-    @Override
-    public void processImage(BufferedImage image, OutputStream out) throws IOException {
-        BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 256);
-        super.processImage(image2, out);
-    }
+	@Override
+	public void processImage(BufferedImage image, OutputStream out) throws IOException {
+		BufferedImage image2 = JavaAdvancedImaging.colorReduceMedianCut(image, 256);
+		super.processImage(image2, out);
+	}
 
 }

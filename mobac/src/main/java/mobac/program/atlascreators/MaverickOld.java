@@ -19,17 +19,18 @@ package mobac.program.atlascreators;
 import mobac.program.annotations.AtlasCreatorName;
 
 /**
- * Creates maps using the <a href="http://www.codesector.com/maverick.php">Maverick</a> atlas format (Android
- * application).
+ * Creates maps using the
+ * <a href="http://www.codesector.com/maverick.php">Maverick</a> atlas format
+ * (Android application).
  * <p>
  * Map/Atlas format see http://help.codesector.com/MapsCache
  */
 @AtlasCreatorName("Maverick simple tiles atlas format")
 public class MaverickOld extends OSMTracker {
 
-    public MaverickOld() {
-        super();
-        tileFileNamePattern = "%d/%d/%d.jpg.tile";
-    }
+	public MaverickOld() {
+		super();
+		tileFileNamePattern = "%d/%d/%d.jpg.tile";
+	}
 
 }

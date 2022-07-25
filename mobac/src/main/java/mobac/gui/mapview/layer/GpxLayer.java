@@ -32,146 +32,144 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.io.File;
 
-
 /**
- * A {@link MapLayer} displaying the content of a loaded GPX file in a {@link JMapViewer} instance.
+ * A {@link MapLayer} displaying the content of a loaded GPX file in a
+ * {@link JMapViewer} instance.
  */
 public class GpxLayer implements MapLayer {
 
-    private static final int POINT_RADIUS = 4;
-    private static final int POINT_DIAMETER = 2 * POINT_RADIUS;
-    /**
-     * the associated gpx object
-     */
-    private final Gpx gpx;
-    private final Color wptPointColor = new Color(0, 0, 200);
-    private final Color trkPointColor = Color.RED;
-    private final Color rtePointColor = new Color(0, 200, 0);
-    private final Stroke outlineStroke = new BasicStroke(1);
+	private static final int POINT_RADIUS = 4;
+	private static final int POINT_DIAMETER = 2 * POINT_RADIUS;
+	/**
+	 * the associated gpx object
+	 */
+	private final Gpx gpx;
+	private final Color wptPointColor = new Color(0, 0, 200);
+	private final Color trkPointColor = Color.RED;
+	private final Color rtePointColor = new Color(0, 200, 0);
+	private final Stroke outlineStroke = new BasicStroke(1);
 
-    // private Logger log = LoggerFactory.getLogger(GpxLayer.class);
-    private final Stroke lineStroke = new BasicStroke(2.0f);
-    /**
-     * the associated gpx file handle
-     */
-    private File file;
-    /**
-     * the associated panel that displays the nodes of the gpx file
-     */
-    private JGpxPanel panel;
+	// private Logger log = LoggerFactory.getLogger(GpxLayer.class);
+	private final Stroke lineStroke = new BasicStroke(2.0f);
+	private final boolean showWaypoints = true;
+	private final boolean showWaypointName = true;
+	private final boolean showTracks = true;
+	private final boolean showRoutes = true;
+	/**
+	 * the associated gpx file handle
+	 */
+	private File file;
+	/**
+	 * the associated panel that displays the nodes of the gpx file
+	 */
+	private JGpxPanel panel;
+	private int lastTrackPointX = Integer.MIN_VALUE;
+	private int lastTrackPointY = Integer.MIN_VALUE;
 
-    private final boolean showWaypoints = true;
-    private final boolean showWaypointName = true;
-    private final boolean showTracks = true;
-    private final boolean showRoutes = true;
+	public GpxLayer(Gpx gpx) {
+		this.gpx = gpx;
+	}
 
-    private int lastTrackPointX = Integer.MIN_VALUE;
-    private int lastTrackPointY = Integer.MIN_VALUE;
+	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
+		g.setColor(wptPointColor);
+		final MapSpace mapSpace = map.getMapSource().getMapSpace();
+		if (showWaypoints) {
+			for (WptType pt : gpx.getWpt()) {
+				paintPoint(pt, wptPointColor, g, showWaypointName, mapSpace, zoom, minX, minY, maxX, maxY);
+			}
+		}
+		if (showTracks) {
+			for (TrkType trk : gpx.getTrk()) {
+				for (TrksegType seg : trk.getTrkseg()) {
+					lastTrackPointX = Integer.MIN_VALUE;
+					lastTrackPointY = Integer.MIN_VALUE;
+					for (WptType pt : seg.getTrkpt()) {
+						paintTrack(pt, trkPointColor, g, mapSpace, zoom, minX, minY, maxX, maxY);
+					}
+				}
+			}
+		}
+		if (showRoutes) {
+			for (RteType rte : gpx.getRte()) {
+				lastTrackPointX = Integer.MIN_VALUE;
+				lastTrackPointY = Integer.MIN_VALUE;
+				for (WptType pt : rte.getRtept()) {
+					paintTrack(pt, rtePointColor, g, mapSpace, zoom, minX, minY, maxX, maxY);
+				}
+			}
+		}
+	}
 
-    public GpxLayer(Gpx gpx) {
-        this.gpx = gpx;
-    }
+	private boolean paintPoint(final WptType point, Color color, final Graphics2D g, boolean paintPointName,
+			MapSpace mapSpace, int zoom, int minX, int minY, int maxX, int maxY) {
+		int x = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
+		if (x < minX || x > maxX) {
+			return false; // Point outside of visible region
+		}
+		int y = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
+		if (y < minY || y > maxY) {
+			return false; // Point outside of visible region
+		}
+		x -= minX;
+		y -= minY;
+		g.setColor(color);
+		g.fillOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
+		g.setColor(Color.BLACK);
+		g.setStroke(outlineStroke);
+		g.drawOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
+		if (paintPointName && point.getName() != null) {
+			g.drawString(point.getName(), x + POINT_RADIUS + 5, y - POINT_RADIUS);
+		}
 
-    public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-        g.setColor(wptPointColor);
-        final MapSpace mapSpace = map.getMapSource().getMapSpace();
-        if (showWaypoints) {
-            for (WptType pt : gpx.getWpt()) {
-                paintPoint(pt, wptPointColor, g, showWaypointName, mapSpace, zoom, minX, minY, maxX, maxY);
-            }
-        }
-        if (showTracks) {
-            for (TrkType trk : gpx.getTrk()) {
-                for (TrksegType seg : trk.getTrkseg()) {
-                    lastTrackPointX = Integer.MIN_VALUE;
-                    lastTrackPointY = Integer.MIN_VALUE;
-                    for (WptType pt : seg.getTrkpt()) {
-                        paintTrack(pt, trkPointColor, g, mapSpace, zoom, minX, minY, maxX, maxY);
-                    }
-                }
-            }
-        }
-        if (showRoutes) {
-            for (RteType rte : gpx.getRte()) {
-                lastTrackPointX = Integer.MIN_VALUE;
-                lastTrackPointY = Integer.MIN_VALUE;
-                for (WptType pt : rte.getRtept()) {
-                    paintTrack(pt, rtePointColor, g, mapSpace, zoom, minX, minY, maxX, maxY);
-                }
-            }
-        }
-    }
+		return true;
+	}
 
-    private boolean paintPoint(final WptType point, Color color, final Graphics2D g, boolean paintPointName,
-                               MapSpace mapSpace, int zoom, int minX, int minY, int maxX, int maxY) {
-        int x = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
-        if (x < minX || x > maxX) {
-            return false; // Point outside of visible region
-        }
-        int y = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
-        if (y < minY || y > maxY) {
-            return false; // Point outside of visible region
-        }
-        x -= minX;
-        y -= minY;
-        g.setColor(color);
-        g.fillOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
-        g.setColor(Color.BLACK);
-        g.setStroke(outlineStroke);
-        g.drawOval(x - POINT_RADIUS, y - POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
-        if (paintPointName && point.getName() != null) {
-            g.drawString(point.getName(), x + POINT_RADIUS + 5, y - POINT_RADIUS);
-        }
+	private boolean paintTrack(final WptType point, Color color, final Graphics2D g, MapSpace mapSpace, int zoom,
+			int minX, int minY, int maxX, int maxY) {
+		// Absolute map space coordinates
+		int xAbs = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
+		int yAbs = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
+		// Relative coordinates regarding the top left point on map
+		int x = xAbs - minX;
+		int y = yAbs - minY;
+		g.setColor(color);
+		if (lastTrackPointX != Integer.MIN_VALUE && lastTrackPointY != Integer.MIN_VALUE) {
+			g.setStroke(lineStroke);
+			g.drawLine(lastTrackPointX, lastTrackPointY, x, y);
+		}
+		lastTrackPointX = x;
+		lastTrackPointY = y;
+		return true;
+	}
 
-        return true;
-    }
+	/**
+	 * The associated gpx object
+	 *
+	 * @return
+	 */
+	public Gpx getGpx() {
+		return gpx;
+	}
 
-    private boolean paintTrack(final WptType point, Color color, final Graphics2D g, MapSpace mapSpace, int zoom,
-                               int minX, int minY, int maxX, int maxY) {
-        // Absolute map space coordinates
-        int xAbs = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
-        int yAbs = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
-        // Relative coordinates regarding the top left point on map
-        int x = xAbs - minX;
-        int y = yAbs - minY;
-        g.setColor(color);
-        if (lastTrackPointX != Integer.MIN_VALUE && lastTrackPointY != Integer.MIN_VALUE) {
-            g.setStroke(lineStroke);
-            g.drawLine(lastTrackPointX, lastTrackPointY, x, y);
-        }
-        lastTrackPointX = x;
-        lastTrackPointY = y;
-        return true;
-    }
+	public JGpxPanel getPanel() {
+		return panel;
+	}
 
-    /**
-     * The associated gpx object
-     *
-     * @return
-     */
-    public Gpx getGpx() {
-        return gpx;
-    }
+	public void setPanel(JGpxPanel panel) {
+		this.panel = panel;
+	}
 
-    public JGpxPanel getPanel() {
-        return panel;
-    }
+	/**
+	 * The associated gpx file handle
+	 *
+	 * @return
+	 */
+	public File getFile() {
+		return file;
+	}
 
-    public void setPanel(JGpxPanel panel) {
-        this.panel = panel;
-    }
-
-    /**
-     * The associated gpx file handle
-     *
-     * @return
-     */
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
+	public void setFile(File file) {
+		this.file = file;
+	}
 
 }

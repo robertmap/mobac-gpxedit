@@ -20,16 +20,15 @@ import mobac.program.model.Profile;
 
 import javax.swing.JTextField;
 
-
 /**
  * A {@link JTextField} that only accepts ASCII characters, numbers and spaces.
  */
 public class JAtlasNameField extends JRegexTextField {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public JAtlasNameField() {
-        super(Profile.PROFILE_NAME_REGEX, 40);
-    }
+	public JAtlasNameField() {
+		super(Profile.PROFILE_NAME_REGEX, 40);
+	}
 
 }

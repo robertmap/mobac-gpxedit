@@ -33,41 +33,42 @@ import java.awt.event.ActionListener;
 
 public class AtlasConvert implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        MainGUI mg = MainGUI.getMainGUI();
-        JPanel panel = new JPanel();
-        BorderLayout layout = new BorderLayout();
-        layout.setVgap(4);
-        panel.setLayout(layout);
+	public void actionPerformed(ActionEvent event) {
+		MainGUI mg = MainGUI.getMainGUI();
+		JPanel panel = new JPanel();
+		BorderLayout layout = new BorderLayout();
+		layout.setVgap(4);
+		panel.setLayout(layout);
 
-        JPanel formatPanel = new JPanel(new BorderLayout());
+		JPanel formatPanel = new JPanel(new BorderLayout());
 
-        formatPanel.setPreferredSize(new Dimension(250, 300));
+		formatPanel.setPreferredSize(new Dimension(250, 300));
 
-        formatPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_new_atlas_select_format_title")), BorderLayout.NORTH);
-        JList<AtlasOutputFormat> atlasFormatList = new JList<>(AtlasOutputFormat.getFormatsAsVector());
-        atlasFormatList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scroller = new JScrollPane(atlasFormatList);
-        scroller.setPreferredSize(new Dimension(100, 200));
-        formatPanel.add(scroller, BorderLayout.CENTER);
+		formatPanel.add(new JLabel(I18nUtils.localizedStringForKey("dlg_new_atlas_select_format_title")),
+				BorderLayout.NORTH);
+		JList<AtlasOutputFormat> atlasFormatList = new JList<>(AtlasOutputFormat.getFormatsAsVector());
+		atlasFormatList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scroller = new JScrollPane(atlasFormatList);
+		scroller.setPreferredSize(new Dimension(100, 200));
+		formatPanel.add(scroller, BorderLayout.CENTER);
 
-        panel.add(formatPanel, BorderLayout.CENTER);
-        AtlasOutputFormat currentAOF = null;
-        try {
-            currentAOF = mg.getAtlas().getOutputFormat();
-        } catch (Exception e) {
-        }
-        if (currentAOF != null)
-            atlasFormatList.setSelectedValue(currentAOF, true);
-        else
-            atlasFormatList.setSelectedIndex(1);
-        int result = JOptionPane.showConfirmDialog(MainGUI.getMainGUI(), panel, I18nUtils.localizedStringForKey("msg_convert_atlas_format"),
-                JOptionPane.OK_CANCEL_OPTION);
-        if (result != JOptionPane.OK_OPTION)
-            return;
+		panel.add(formatPanel, BorderLayout.CENTER);
+		AtlasOutputFormat currentAOF = null;
+		try {
+			currentAOF = mg.getAtlas().getOutputFormat();
+		} catch (Exception e) {
+		}
+		if (currentAOF != null)
+			atlasFormatList.setSelectedValue(currentAOF, true);
+		else
+			atlasFormatList.setSelectedIndex(1);
+		int result = JOptionPane.showConfirmDialog(MainGUI.getMainGUI(), panel,
+				I18nUtils.localizedStringForKey("msg_convert_atlas_format"), JOptionPane.OK_CANCEL_OPTION);
+		if (result != JOptionPane.OK_OPTION)
+			return;
 
-        AtlasOutputFormat format = atlasFormatList.getSelectedValue();
-        mg.jAtlasTree.convertAtlas(format);
-        mg.getParametersPanel().atlasFormatChanged(format);
-    }
+		AtlasOutputFormat format = atlasFormatList.getSelectedValue();
+		mg.jAtlasTree.convertAtlas(format);
+		mg.getParametersPanel().atlasFormatChanged(format);
+	}
 }

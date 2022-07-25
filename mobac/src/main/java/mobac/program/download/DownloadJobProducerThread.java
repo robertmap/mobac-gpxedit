@@ -26,44 +26,43 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Enumeration;
 
-
 /**
  * Creates the jobs for downloading tiles. If the job queue is full it will
  * block on {@link JobDispatcher#addJob(Job)}
  */
 public class DownloadJobProducerThread extends Thread {
 
-    final JobDispatcher downloadJobDispatcher;
-    final Enumeration<Job> jobEnumerator;
-    private final Logger log = LoggerFactory.getLogger(DownloadJobProducerThread.class);
+	final JobDispatcher downloadJobDispatcher;
+	final Enumeration<Job> jobEnumerator;
+	private final Logger log = LoggerFactory.getLogger(DownloadJobProducerThread.class);
 
-    public DownloadJobProducerThread(AtlasThread atlasThread, JobDispatcher downloadJobDispatcher,
-                                     TarIndexedArchive tileArchive, DownloadableElement de) {
-        this.downloadJobDispatcher = downloadJobDispatcher;
-        jobEnumerator = de.getDownloadJobs(tileArchive, atlasThread);
-        start();
-    }
+	public DownloadJobProducerThread(AtlasThread atlasThread, JobDispatcher downloadJobDispatcher,
+			TarIndexedArchive tileArchive, DownloadableElement de) {
+		this.downloadJobDispatcher = downloadJobDispatcher;
+		jobEnumerator = de.getDownloadJobs(tileArchive, atlasThread);
+		start();
+	}
 
-    @Override
-    public void run() {
-        try {
-            while (jobEnumerator.hasMoreElements()) {
-                Job job = jobEnumerator.nextElement();
-                downloadJobDispatcher.addJob(job);
-                log.trace("Job added: " + job);
-            }
-            log.debug("All download jobs has been generated");
-        } catch (InterruptedException e) {
-            downloadJobDispatcher.cancelOutstandingJobs();
-            log.error("Download job generation interrupted");
-        }
-    }
+	@Override
+	public void run() {
+		try {
+			while (jobEnumerator.hasMoreElements()) {
+				Job job = jobEnumerator.nextElement();
+				downloadJobDispatcher.addJob(job);
+				log.trace("Job added: " + job);
+			}
+			log.debug("All download jobs has been generated");
+		} catch (InterruptedException e) {
+			downloadJobDispatcher.cancelOutstandingJobs();
+			log.error("Download job generation interrupted");
+		}
+	}
 
-    public void cancel() {
-        try {
-            interrupt();
-        } catch (Exception e) {
-        }
-    }
+	public void cancel() {
+		try {
+			interrupt();
+		} catch (Exception e) {
+		}
+	}
 
 }

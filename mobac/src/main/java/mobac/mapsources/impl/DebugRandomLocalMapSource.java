@@ -23,15 +23,14 @@ import mobac.program.interfaces.FileBasedMapSource;
  */
 public class DebugRandomLocalMapSource extends DebugRandomMapSource implements FileBasedMapSource {
 
+	@Override
+	public String getName() {
+		return "DebugRandomLocal";
+	}
 
-    @Override
-    public String getName() {
-        return "DebugRandomLocal";
-    }
-
-    @Override
-    public String toString() {
-        return "Debug Random (local)";
-    }
+	@Override
+	public String toString() {
+		return "Debug Random (local)";
+	}
 
 }

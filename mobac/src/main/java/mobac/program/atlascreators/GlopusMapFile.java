@@ -58,164 +58,164 @@ import java.util.LinkedList;
 @AtlasCreatorName(value = "Glopus Map File (GMF)", type = "Gmf")
 public class GlopusMapFile extends TrekBuddy {
 
-    @Override
-    public void initLayerCreation(LayerInterface layer) throws IOException {
-        super.initLayerCreation(layer);
-        mapTileWriter = new GlopusTileWriter(layer);
-    }
+	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
+		mapTileWriter = new GlopusTileWriter(layer);
+	}
 
-    @Override
-    public void finishLayerCreation() throws IOException {
-        mapTileWriter.finalizeMap();
-        mapTileWriter = null;
-        super.finishLayerCreation();
-    }
+	@Override
+	public void finishLayerCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
+		super.finishLayerCreation();
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-        try {
-            ((GlopusTileWriter) mapTileWriter).initMap();
-            // Select the tile creator instance based on whether tile image
-            // parameters has been set or not
-            if (parameters != null)
-                createCustomTiles();
-            else
-                createTiles();
-        } catch (MapCreationException e) {
-            throw e;
-        } catch (InterruptedException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new MapCreationException(map, e);
-        }
-    }
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+		try {
+			((GlopusTileWriter) mapTileWriter).initMap();
+			// Select the tile creator instance based on whether tile image
+			// parameters has been set or not
+			if (parameters != null)
+				createCustomTiles();
+			else
+				createTiles();
+		} catch (MapCreationException e) {
+			throw e;
+		} catch (InterruptedException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new MapCreationException(map, e);
+		}
+	}
 
-    @Override
-    public void createAtlasTbaFile(String name) {
-    }
+	@Override
+	public void createAtlasTbaFile(String name) {
+	}
 
-    @Override
-    public void abortAtlasCreation() throws IOException {
-        mapTileWriter = null;
-        super.abortAtlasCreation();
-    }
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		mapTileWriter = null;
+		super.abortAtlasCreation();
+	}
 
-    private static class GlopusTile {
-        byte[] data;
-        double calNLat;
-        double calWLon;
-        double calSLat;
-        double calELon;
+	private static class GlopusTile {
+		byte[] data;
+		double calNLat;
+		double calWLon;
+		double calSLat;
+		double calELon;
 
-        public GlopusTile(byte[] data, double calNLat, double calWLon, double calSLat, double calELon) {
-            super();
-            this.data = data;
-            this.calNLat = calNLat;
-            this.calWLon = calWLon;
-            this.calSLat = calSLat;
-            this.calELon = calELon;
-        }
+		public GlopusTile(byte[] data, double calNLat, double calWLon, double calSLat, double calELon) {
+			super();
+			this.data = data;
+			this.calNLat = calNLat;
+			this.calWLon = calWLon;
+			this.calSLat = calSLat;
+			this.calELon = calELon;
+		}
 
-    }
+	}
 
-    private class GlopusTileWriter implements MapTileWriter {
+	private class GlopusTileWriter implements MapTileWriter {
 
-        final LayerInterface layer;
-        LinkedList<GlopusTile> tiles;
-        int xCoordStart;
-        int yCoordStart;
-        int tileHeight = 256;
-        int tileWidth = 256;
-        int zoom;
-        MapSpace mapSpace;
-        String tileType;
+		final LayerInterface layer;
+		LinkedList<GlopusTile> tiles;
+		int xCoordStart;
+		int yCoordStart;
+		int tileHeight = 256;
+		int tileWidth = 256;
+		int zoom;
+		MapSpace mapSpace;
+		String tileType;
 
-        public GlopusTileWriter(LayerInterface layer) {
-            super();
-            this.layer = layer;
-            tiles = new LinkedList<GlopusTile>();
-        }
+		public GlopusTileWriter(LayerInterface layer) {
+			super();
+			this.layer = layer;
+			tiles = new LinkedList<GlopusTile>();
+		}
 
-        public void initMap() {
-            if (parameters != null) {
-                tileHeight = parameters.getHeight();
-                tileWidth = parameters.getWidth();
-            }
-            zoom = map.getZoom();
-            mapSpace = mapSource.getMapSpace();
-            xCoordStart = GlopusMapFile.this.xMin * mapSpace.getTileSize();
-            yCoordStart = GlopusMapFile.this.yMin * mapSpace.getTileSize();
-        }
+		public void initMap() {
+			if (parameters != null) {
+				tileHeight = parameters.getHeight();
+				tileWidth = parameters.getWidth();
+			}
+			zoom = map.getZoom();
+			mapSpace = mapSource.getMapSpace();
+			xCoordStart = GlopusMapFile.this.xMin * mapSpace.getTileSize();
+			yCoordStart = GlopusMapFile.this.yMin * mapSpace.getTileSize();
+		}
 
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-            this.tileType = tileType;
-            int xCooord = xCoordStart + tilex * tileWidth;
-            int yCooord = yCoordStart + tiley * tileHeight;
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			this.tileType = tileType;
+			int xCooord = xCoordStart + tilex * tileWidth;
+			int yCooord = yCoordStart + tiley * tileHeight;
 
-            double calWLon = mapSpace.cXToLon(xCooord, zoom);
-            double calNLat = mapSpace.cYToLat(yCooord, zoom);
-            double calELon = mapSpace.cXToLon(xCooord + tileWidth, zoom);
-            double calSLat = mapSpace.cYToLat(yCooord + tileHeight, zoom);
-            GlopusTile gt = new GlopusTile(tileData, calNLat, calWLon, calSLat, calELon);
-            tiles.add(gt);
-        }
+			double calWLon = mapSpace.cXToLon(xCooord, zoom);
+			double calNLat = mapSpace.cYToLat(yCooord, zoom);
+			double calELon = mapSpace.cXToLon(xCooord + tileWidth, zoom);
+			double calSLat = mapSpace.cYToLat(yCooord + tileHeight, zoom);
+			GlopusTile gt = new GlopusTile(tileData, calNLat, calWLon, calSLat, calELon);
+			tiles.add(gt);
+		}
 
-        public void finalizeMap() {
+		public void finalizeMap() {
 
-            File gmfFile = new File(atlasDir, layer.getName() + ".gmf");
-            try (FileOutputStream fout = new FileOutputStream(gmfFile)) {
-                int count = tiles.size();
-                int offset = 8 + count * ( //
-                        20 // nameLength, offset and calibration point count,
-                                // tile height & width
-                                + (12 * 2) // name bytes
-                                + (4 * 24) // four calibration points
-                );
-                try (LittleEndianOutputStream out = new LittleEndianOutputStream(
-                        new BufferedOutputStream(fout, 16384))) {
-                    out.writeInt(0xff000002);
-                    out.writeInt(count);
-                    int mapNumber = 0;
-                    for (GlopusTile gt : tiles) {
-                        String mapName = String.format("%08d.%s", mapNumber++, tileType);
-                        byte[] nameBytes = mapName.getBytes(StandardCharsets.UTF_16LE);
-                        out.writeInt(mapName.length());// Name length
-                        out.write(nameBytes);
-                        out.writeInt(offset);
-                        out.writeInt(tileWidth);
-                        out.writeInt(tileHeight);
-                        out.writeInt(4); // number of calibration points
-                        out.writeInt(0);
-                        out.writeInt(0);
-                        out.writeDouble(gt.calWLon);
-                        out.writeDouble(gt.calNLat);
-                        out.writeInt(tileHeight);
-                        out.writeInt(tileWidth);
-                        out.writeDouble(gt.calELon);
-                        out.writeDouble(gt.calSLat);
-                        out.writeInt(tileHeight);
-                        out.writeInt(0);
-                        out.writeDouble(gt.calELon);
-                        out.writeDouble(gt.calNLat);
-                        out.writeInt(0);
-                        out.writeInt(tileWidth);
-                        out.writeDouble(gt.calWLon);
-                        out.writeDouble(gt.calSLat);
-                        if (log.isTraceEnabled())
-                            log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calWLon, gt.calNLat,
-                                    gt.calELon, gt.calELon, mapName, offset));
-                        offset += gt.data.length;
-                    }
-                    out.flush();
-                }
-                for (GlopusTile gt : tiles) {
-                    fout.write(gt.data);
-                }
-                fout.flush();
-            } catch (IOException e) {
-                GUIExceptionHandler.showExceptionDialog(e);
-            }
-        }
+			File gmfFile = new File(atlasDir, layer.getName() + ".gmf");
+			try (FileOutputStream fout = new FileOutputStream(gmfFile)) {
+				int count = tiles.size();
+				int offset = 8 + count * ( //
+				20 // nameLength, offset and calibration point count,
+					// tile height & width
+						+ (12 * 2) // name bytes
+						+ (4 * 24) // four calibration points
+				);
+				try (LittleEndianOutputStream out = new LittleEndianOutputStream(
+						new BufferedOutputStream(fout, 16384))) {
+					out.writeInt(0xff000002);
+					out.writeInt(count);
+					int mapNumber = 0;
+					for (GlopusTile gt : tiles) {
+						String mapName = String.format("%08d.%s", mapNumber++, tileType);
+						byte[] nameBytes = mapName.getBytes(StandardCharsets.UTF_16LE);
+						out.writeInt(mapName.length());// Name length
+						out.write(nameBytes);
+						out.writeInt(offset);
+						out.writeInt(tileWidth);
+						out.writeInt(tileHeight);
+						out.writeInt(4); // number of calibration points
+						out.writeInt(0);
+						out.writeInt(0);
+						out.writeDouble(gt.calWLon);
+						out.writeDouble(gt.calNLat);
+						out.writeInt(tileHeight);
+						out.writeInt(tileWidth);
+						out.writeDouble(gt.calELon);
+						out.writeDouble(gt.calSLat);
+						out.writeInt(tileHeight);
+						out.writeInt(0);
+						out.writeDouble(gt.calELon);
+						out.writeDouble(gt.calNLat);
+						out.writeInt(0);
+						out.writeInt(tileWidth);
+						out.writeDouble(gt.calWLon);
+						out.writeDouble(gt.calSLat);
+						if (log.isTraceEnabled())
+							log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calWLon, gt.calNLat,
+									gt.calELon, gt.calELon, mapName, offset));
+						offset += gt.data.length;
+					}
+					out.flush();
+				}
+				for (GlopusTile gt : tiles) {
+					fout.write(gt.data);
+				}
+				fout.flush();
+			} catch (IOException e) {
+				GUIExceptionHandler.showExceptionDialog(e);
+			}
+		}
 
-    }
+	}
 }

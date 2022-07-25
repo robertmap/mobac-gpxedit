@@ -32,33 +32,33 @@ import java.awt.geom.AffineTransform;
  */
 public class RectangleSelectionLayer implements MapLayer {
 
-    private final RectangleSelectionMapController mapController;
+	private final RectangleSelectionMapController mapController;
 
-    public RectangleSelectionLayer(RectangleSelectionMapController rectangleSelectionMapController) {
-        this.mapController = rectangleSelectionMapController;
-    }
+	public RectangleSelectionLayer(RectangleSelectionMapController rectangleSelectionMapController) {
+		this.mapController = rectangleSelectionMapController;
+	}
 
-    public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-        MapSpace mapSpace = map.getMapSource().getMapSpace();
-        g.setColor(Color.BLUE);
-        Point p1 = mapController.getiStartSelectionPoint();
-        Point p2 = mapController.getiEndSelectionPoint();
-        if (p1 == null || p2 == null)
-            return;
-        p1 = mapSpace.changeZoom(p1, PreviewMap.MAX_ZOOM, zoom);
-        p2 = mapSpace.changeZoom(p2, PreviewMap.MAX_ZOOM, zoom);
+	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
+		MapSpace mapSpace = map.getMapSource().getMapSpace();
+		g.setColor(Color.BLUE);
+		Point p1 = mapController.getiStartSelectionPoint();
+		Point p2 = mapController.getiEndSelectionPoint();
+		if (p1 == null || p2 == null)
+			return;
+		p1 = mapSpace.changeZoom(p1, PreviewMap.MAX_ZOOM, zoom);
+		p2 = mapSpace.changeZoom(p2, PreviewMap.MAX_ZOOM, zoom);
 
-        int x = Math.min(p1.x, p2.x);
-        int y = Math.min(p1.y, p2.y);
-        int w = Math.abs(p1.x - p2.x);
-        int h = Math.abs(p1.y - p2.y);
+		int x = Math.min(p1.x, p2.x);
+		int y = Math.min(p1.y, p2.y);
+		int w = Math.abs(p1.x - p2.x);
+		int h = Math.abs(p1.y - p2.y);
 
-        AffineTransform at = g.getTransform();
-        try {
-            g.translate(-minX, -minY);
-            g.drawRect(x, y, w, h);
-        } finally {
-            g.setTransform(at);
-        }
-    }
+		AffineTransform at = g.getTransform();
+		try {
+			g.translate(-minX, -minY);
+			g.drawRect(x, y, w, h);
+		} finally {
+			g.setTransform(at);
+		}
+	}
 }

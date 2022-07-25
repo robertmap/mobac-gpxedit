@@ -33,149 +33,150 @@ import java.text.ParsePosition;
 
 public class JCoordinateField extends JTextField {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static final Color ERROR_COLOR = new Color(255, 100, 100);
+	private static final Color ERROR_COLOR = new Color(255, 100, 100);
 
-    private static final String INVALID_TEXT = I18nUtils.localizedStringForKey("lp_coords_invalid_text");
-    private final double min;
-    private final double max;
-    private final JCoordinateListener coordinateListener;
-    private boolean inputIsValid = true;
-    private NumberFormat numberFormat;
+	private static final String INVALID_TEXT = I18nUtils.localizedStringForKey("lp_coords_invalid_text");
+	private final double min;
+	private final double max;
+	private final JCoordinateListener coordinateListener;
+	private boolean inputIsValid = true;
+	private NumberFormat numberFormat;
 
-    public JCoordinateField(double min, double max) {
-        super(10);
-        this.min = min;
-        this.max = max;
-        numberFormat = new CoordinateDms2Format(new DecimalFormatSymbols());
-        coordinateListener = new JCoordinateListener();
-        coordinateListener.checkCoordinate(null);
-    }
+	public JCoordinateField(double min, double max) {
+		super(10);
+		this.min = min;
+		this.max = max;
+		numberFormat = new CoordinateDms2Format(new DecimalFormatSymbols());
+		coordinateListener = new JCoordinateListener();
+		coordinateListener.checkCoordinate(null);
+	}
 
-    @Override
-    public Point getToolTipLocation(MouseEvent event) {
-        if (getToolTipText().length() > 0)
-            return super.getToolTipLocation(event);
-        else
-            // We don't want a tool tip but Java does not allow to disable it?
-            // -> show it at a point where no user will ever see it
-            return new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
-    }
+	@Override
+	public Point getToolTipLocation(MouseEvent event) {
+		if (getToolTipText().length() > 0)
+			return super.getToolTipLocation(event);
+		else
+			// We don't want a tool tip but Java does not allow to disable it?
+			// -> show it at a point where no user will ever see it
+			return new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+	}
 
-    public double getCoordinate() throws ParseException {
-        ParsePosition pos = new ParsePosition(0);
-        String text = JCoordinateField.this.getText();
-        Number num = numberFormat.parse(text, pos);
-        if (num == null || pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue()))
-            throw new ParseException(text, pos.getErrorIndex());
-        return num.doubleValue();
-    }
+	public double getCoordinate() throws ParseException {
+		ParsePosition pos = new ParsePosition(0);
+		String text = JCoordinateField.this.getText();
+		Number num = numberFormat.parse(text, pos);
+		if (num == null || pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue()))
+			throw new ParseException(text, pos.getErrorIndex());
+		return num.doubleValue();
+	}
 
-    public void setCoordinate(double value) {
-        try {
-            // We know that the number is valid, therefore we can skip the check
-            // -> saves CPU power while selecting via preview map
-            boolean newValid = true;
-            coordinateListener.setEnabled(false);
-            if (Double.isNaN(value)) {
-                super.setText("");
-                newValid = false;
-            } else {
-                super.setText(numberFormat.format(value));
-            }
-            if (newValid != inputIsValid)
-                coordinateListener.changeValidMode(true);
-        } finally {
-            coordinateListener.setEnabled(true);
-        }
-    }
+	public void setCoordinate(double value) {
+		try {
+			// We know that the number is valid, therefore we can skip the check
+			// -> saves CPU power while selecting via preview map
+			boolean newValid = true;
+			coordinateListener.setEnabled(false);
+			if (Double.isNaN(value)) {
+				super.setText("");
+				newValid = false;
+			} else {
+				super.setText(numberFormat.format(value));
+			}
+			if (newValid != inputIsValid)
+				coordinateListener.changeValidMode(true);
+		} finally {
+			coordinateListener.setEnabled(true);
+		}
+	}
 
-    public double getCoordinateOrNaN() {
-        ParsePosition pos = new ParsePosition(0);
-        String text = JCoordinateField.this.getText();
-        Number num = numberFormat.parse(text, pos);
-        if (num == null || pos.getErrorIndex() >= 0)
-            return Double.NaN;
-        return num.doubleValue();
-    }
+	public double getCoordinateOrNaN() {
+		ParsePosition pos = new ParsePosition(0);
+		String text = JCoordinateField.this.getText();
+		Number num = numberFormat.parse(text, pos);
+		if (num == null || pos.getErrorIndex() >= 0)
+			return Double.NaN;
+		return num.doubleValue();
+	}
 
-    public boolean isInputValid() {
-        return inputIsValid;
-    }
+	public boolean isInputValid() {
+		return inputIsValid;
+	}
 
-    public NumberFormat getNumberFormat() {
-        return numberFormat;
-    }
+	public NumberFormat getNumberFormat() {
+		return numberFormat;
+	}
 
-    public void setNumberFormat(NumberFormat numberFormat) {
-        double coord = getCoordinateOrNaN();
-        this.numberFormat = numberFormat;
-        setCoordinate(coord);
-    }
+	public void setNumberFormat(NumberFormat numberFormat) {
+		double coord = getCoordinateOrNaN();
+		this.numberFormat = numberFormat;
+		setCoordinate(coord);
+	}
 
-    protected class JCoordinateListener implements DocumentListener {
+	protected class JCoordinateListener implements DocumentListener {
 
-        private final Color defaultColor;
+		private final Color defaultColor;
 
-        private boolean enabled;
+		private boolean enabled;
 
-        private JCoordinateListener() {
-            enabled = true;
-            defaultColor = JCoordinateField.this.getBackground();
-            JCoordinateField.this.getDocument().addDocumentListener(this);
-        }
+		private JCoordinateListener() {
+			enabled = true;
+			defaultColor = JCoordinateField.this.getBackground();
+			JCoordinateField.this.getDocument().addDocumentListener(this);
+		}
 
-        private void checkCoordinate(DocumentEvent de) {
-            if (!enabled)
-                return;
-            boolean valid = false;
-            try {
-                ParsePosition pos = new ParsePosition(0);
-                String text = JCoordinateField.this.getText();
-                Number num = numberFormat.parse(text, pos);
-                if (num == null) {
-                    valid = false;
-                    return;
-                }
-                double d = num.doubleValue();
-                valid = (!Double.isNaN(d)) && (d >= min) && (d <= max);
-            } catch (Exception e) {
-                valid = false;
-            }
-            if (valid != inputIsValid)
-                changeValidMode(valid);
-        }
+		private void checkCoordinate(DocumentEvent de) {
+			if (!enabled)
+				return;
+			boolean valid = false;
+			try {
+				ParsePosition pos = new ParsePosition(0);
+				String text = JCoordinateField.this.getText();
+				Number num = numberFormat.parse(text, pos);
+				if (num == null) {
+					valid = false;
+					return;
+				}
+				double d = num.doubleValue();
+				valid = (!Double.isNaN(d)) && (d >= min) && (d <= max);
+			} catch (Exception e) {
+				valid = false;
+			}
+			if (valid != inputIsValid)
+				changeValidMode(valid);
+		}
 
-        private void changeValidMode(boolean valid) {
-            Color newC = valid ? defaultColor : ERROR_COLOR;
-            JCoordinateField.this.setBackground(newC);
-            String toolTip = valid ? "" : String.format(INVALID_TEXT, numberFormat.format(min),
-                    numberFormat.format(max));
-            JCoordinateField.this.setToolTipText(toolTip);
-            if (toolTip.length() > 0)
-                Utilities.showTooltipNow(JCoordinateField.this);
-            inputIsValid = valid;
-        }
+		private void changeValidMode(boolean valid) {
+			Color newC = valid ? defaultColor : ERROR_COLOR;
+			JCoordinateField.this.setBackground(newC);
+			String toolTip = valid
+					? ""
+					: String.format(INVALID_TEXT, numberFormat.format(min), numberFormat.format(max));
+			JCoordinateField.this.setToolTipText(toolTip);
+			if (toolTip.length() > 0)
+				Utilities.showTooltipNow(JCoordinateField.this);
+			inputIsValid = valid;
+		}
 
-        public void changedUpdate(DocumentEvent e) {
-            checkCoordinate(e);
-        }
+		public void changedUpdate(DocumentEvent e) {
+			checkCoordinate(e);
+		}
 
-        public void insertUpdate(DocumentEvent e) {
-            checkCoordinate(e);
-        }
+		public void insertUpdate(DocumentEvent e) {
+			checkCoordinate(e);
+		}
 
-        public void removeUpdate(DocumentEvent e) {
-            checkCoordinate(e);
-        }
+		public void removeUpdate(DocumentEvent e) {
+			checkCoordinate(e);
+		}
 
-        public boolean isEnabled() {
-            return enabled;
-        }
+		public boolean isEnabled() {
+			return enabled;
+		}
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+	}
 }

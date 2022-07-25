@@ -21,14 +21,14 @@ import mobac.program.model.TileImageType;
 
 public class TileImageTypeAdapter extends XmlAdapter<String, TileImageType> {
 
-    @Override
-    public TileImageType unmarshal(String v) throws Exception {
-        return TileImageType.getTileImageType(v);
-    }
+	@Override
+	public TileImageType unmarshal(String v) throws Exception {
+		return TileImageType.getTileImageType(v);
+	}
 
-    @Override
-    public String marshal(TileImageType v) throws Exception {
-        return v.name();
-    }
+	@Override
+	public String marshal(TileImageType v) throws Exception {
+		return v.name();
+	}
 
 }

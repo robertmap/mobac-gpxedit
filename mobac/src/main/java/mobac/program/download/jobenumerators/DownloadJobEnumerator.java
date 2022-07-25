@@ -28,79 +28,80 @@ import java.awt.Point;
 import java.util.Enumeration;
 
 /**
- * Enumerates / creates the download jobs for a regular rectangle single layer map.
+ * Enumerates / creates the download jobs for a regular rectangle single layer
+ * map.
  */
 public class DownloadJobEnumerator implements Enumeration<Job> {
 
-    final protected TileFilter tileFilter;
-    final protected DownloadJobListener listener;
-    final protected int xMin;
-    final protected int xMax;
-    final protected int yMax;
-    final protected int zoom;
-    final protected MapSource mapSource;
-    final protected TarIndexedArchive tileArchive;
+	final protected TileFilter tileFilter;
+	final protected DownloadJobListener listener;
+	final protected int xMin;
+	final protected int xMax;
+	final protected int yMax;
+	final protected int zoom;
+	final protected MapSource mapSource;
+	final protected TarIndexedArchive tileArchive;
 
-    protected int x, y;
-    protected Job nextJob;
+	protected int x, y;
+	protected Job nextJob;
 
-    /**
-     * This enumerator is the unfolded version for two encapsulated loops:
-     *
-     * <pre>
-     * for (int y = yMin; y &lt;= yMax; y++) {
-     * 	for (int x = xMin; x &lt;= xMax; x++) {
-     * 		DownloadJob job = new DownloadJob(downloadDestinationDir, tileSource, x, y, zoom, AtlasThread.this);
-     *    }
-     * }
-     * </pre>
-     *
-     * @param map
-     * @param tileArchive
-     * @param listener
-     */
-    public DownloadJobEnumerator(Map map, MapSource mapSource, TarIndexedArchive tileArchive,
-                                 DownloadJobListener listener) {
-        this.tileFilter = map.getTileFilter();
-        this.listener = listener;
-        Point minCoord = map.getMinTileCoordinate();
-        Point maxCoord = map.getMaxTileCoordinate();
-        int tileSize = map.getMapSource().getMapSpace().getTileSize();
-        this.xMin = minCoord.x / tileSize;
-        this.xMax = maxCoord.x / tileSize;
-        int yMin = minCoord.y / tileSize;
-        this.yMax = maxCoord.y / tileSize;
-        this.zoom = map.getZoom();
-        this.tileArchive = tileArchive;
-        this.mapSource = mapSource;
-        y = yMin;
-        x = xMin;
+	/**
+	 * This enumerator is the unfolded version for two encapsulated loops:
+	 *
+	 * <pre>
+	 * for (int y = yMin; y &lt;= yMax; y++) {
+	 * 	for (int x = xMin; x &lt;= xMax; x++) {
+	 * 		DownloadJob job = new DownloadJob(downloadDestinationDir, tileSource, x, y, zoom, AtlasThread.this);
+	 * 	}
+	 * }
+	 * </pre>
+	 *
+	 * @param map
+	 * @param tileArchive
+	 * @param listener
+	 */
+	public DownloadJobEnumerator(Map map, MapSource mapSource, TarIndexedArchive tileArchive,
+			DownloadJobListener listener) {
+		this.tileFilter = map.getTileFilter();
+		this.listener = listener;
+		Point minCoord = map.getMinTileCoordinate();
+		Point maxCoord = map.getMaxTileCoordinate();
+		int tileSize = map.getMapSource().getMapSpace().getTileSize();
+		this.xMin = minCoord.x / tileSize;
+		this.xMax = maxCoord.x / tileSize;
+		int yMin = minCoord.y / tileSize;
+		this.yMax = maxCoord.y / tileSize;
+		this.zoom = map.getZoom();
+		this.tileArchive = tileArchive;
+		this.mapSource = mapSource;
+		y = yMin;
+		x = xMin;
 
-        nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
-        if (!tileFilter.testTile(x, y, zoom, mapSource))
-            nextElement();
-    }
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
+		if (!tileFilter.testTile(x, y, zoom, mapSource))
+			nextElement();
+	}
 
-    public boolean hasMoreElements() {
-        return (nextJob != null);
-    }
+	public boolean hasMoreElements() {
+		return (nextJob != null);
+	}
 
-    public Job nextElement() {
-        Job job = nextJob;
-        boolean filter = false;
-        do {
-            x++;
-            if (x > xMax) {
-                y++;
-                x = xMin;
-                if (y > yMax) {
-                    nextJob = null;
-                    return job;
-                }
-            }
-            filter = tileFilter.testTile(x, y, zoom, mapSource);
-        } while (!filter);
-        nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
-        return job;
-    }
+	public Job nextElement() {
+		Job job = nextJob;
+		boolean filter = false;
+		do {
+			x++;
+			if (x > xMax) {
+				y++;
+				x = xMin;
+				if (y > yMax) {
+					nextJob = null;
+					return job;
+				}
+			}
+			filter = tileFilter.testTile(x, y, zoom, mapSource);
+		} while (!filter);
+		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
+		return job;
+	}
 }

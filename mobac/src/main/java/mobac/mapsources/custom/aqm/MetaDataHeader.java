@@ -34,71 +34,72 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class MetaDataHeader {
-    public static final byte[] FLAT_PACK_HEADER = "FLATPACK1".getBytes();
-    private static final Logger log = LoggerFactory.getLogger(MetaDataHeader.class);
-    private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
-    private static final String FLAT_PACK_SEPARATOR = "\0";
-    private static final byte FLAT_PACK_BSEPARATOR = 0;
+	public static final byte[] FLAT_PACK_HEADER = "FLATPACK1".getBytes();
+	private static final Logger log = LoggerFactory.getLogger(MetaDataHeader.class);
+	private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
+	private static final String FLAT_PACK_SEPARATOR = "\0";
+	private static final byte FLAT_PACK_BSEPARATOR = 0;
 
-    private final byte[] headerBytes;
-    private final int headerSize;
+	private final byte[] headerBytes;
+	private final int headerSize;
 
-    public MetaDataHeader(File fileAQMmap) throws IOException {
-        try (CountingInputStream in = new CountingInputStream(new BufferedInputStream(new FileInputStream(fileAQMmap)))) {
-            byte[] header = in.readNBytes(FLAT_PACK_HEADER.length);
-            if (!Arrays.equals(header, FLAT_PACK_HEADER)) {
-                throw new IOException("File does not start with " + new String(FLAT_PACK_HEADER));
-            }
-            int len = readZeroTerminatedIntegerString(in);
-            headerBytes = in.readNBytes(len);
-            headerSize = in.getCount();
-        }
-    }
+	public MetaDataHeader(File fileAQMmap) throws IOException {
+		try (CountingInputStream in = new CountingInputStream(
+				new BufferedInputStream(new FileInputStream(fileAQMmap)))) {
+			byte[] header = in.readNBytes(FLAT_PACK_HEADER.length);
+			if (!Arrays.equals(header, FLAT_PACK_HEADER)) {
+				throw new IOException("File does not start with " + new String(FLAT_PACK_HEADER));
+			}
+			int len = readZeroTerminatedIntegerString(in);
+			headerBytes = in.readNBytes(len);
+			headerSize = in.getCount();
+		}
+	}
 
-    public static int readZeroTerminatedIntegerString(InputStream in) throws IOException {
-        String s = readZeroTerminatedString(in);
-        try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            String msg = "Can not parseInt for string: \"" + s + "\"";
-            if (in instanceof CountingInputStream) {
-                CountingInputStream cin = (CountingInputStream) in;
-                msg += " string end at " + cin.getByteCount();
-            }
-            throw new IOException(msg);
-        }
-    }
+	public static int readZeroTerminatedIntegerString(InputStream in) throws IOException {
+		String s = readZeroTerminatedString(in);
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			String msg = "Can not parseInt for string: \"" + s + "\"";
+			if (in instanceof CountingInputStream) {
+				CountingInputStream cin = (CountingInputStream) in;
+				msg += " string end at " + cin.getByteCount();
+			}
+			throw new IOException(msg);
+		}
+	}
 
-    public static String readZeroTerminatedString(InputStream in) throws IOException {
-        return new String(readZeroTerminatedStringBytes(in), ISO_8859_1);
-    }
+	public static String readZeroTerminatedString(InputStream in) throws IOException {
+		return new String(readZeroTerminatedStringBytes(in), ISO_8859_1);
+	}
 
-    public static byte[] readZeroTerminatedStringBytes(InputStream in) throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        while (true) {
-            int b = in.read();
-            if (b == -1) {
-                throw new EOFException();
-            }
-            if (b == FLAT_PACK_BSEPARATOR) {
-                return bout.toByteArray();
-            }
-            bout.write(b);
-        }
-    }
+	public static byte[] readZeroTerminatedStringBytes(InputStream in) throws IOException {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		while (true) {
+			int b = in.read();
+			if (b == -1) {
+				throw new EOFException();
+			}
+			if (b == FLAT_PACK_BSEPARATOR) {
+				return bout.toByteArray();
+			}
+			bout.write(b);
+		}
+	}
 
-    public List<String> getTokenizedHeader() {
-        String metaDataHeader = new String(headerBytes, ISO_8859_1);
-        Pattern pattern = Pattern.compile(FLAT_PACK_SEPARATOR, Pattern.LITERAL);
-        String[] parts = pattern.split(metaDataHeader, -1);
-        return List.of(parts);
-    }
+	public List<String> getTokenizedHeader() {
+		String metaDataHeader = new String(headerBytes, ISO_8859_1);
+		Pattern pattern = Pattern.compile(FLAT_PACK_SEPARATOR, Pattern.LITERAL);
+		String[] parts = pattern.split(metaDataHeader, -1);
+		return List.of(parts);
+	}
 
-    public byte[] getHeaderBytes() {
-        return headerBytes;
-    }
+	public byte[] getHeaderBytes() {
+		return headerBytes;
+	}
 
-    public int getHeaderSize() {
-        return headerSize;
-    }
+	public int getHeaderSize() {
+		return headerSize;
+	}
 }

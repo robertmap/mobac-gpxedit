@@ -28,61 +28,62 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Creates a tile cache structure as used by <a href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile,
- * Symbian, Palm)
+ * Creates a tile cache structure as used by
+ * <a href="http://www.pathaway.com/">PathAway</a> (for WindowsMobile, Symbian,
+ * Palm)
  */
 @AtlasCreatorName("PathAway tile cache")
 public class PathAway extends OSMTracker {
 
-    public PathAway() {
-        super();
-        tileFileNamePattern = "%02X/%04X/%04X.%s";
-    }
+	public PathAway() {
+		super();
+		tileFileNamePattern = "%02X/%04X/%04X.%s";
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
 
-        MapSource mapSource = map.getMapSource();
-        String shortMapDir = null;
-        if (mapSource.getName().equals("Google Maps"))
-            shortMapDir = "G1";
-        else if (mapSource.getName().equals("Google Earth"))
-            shortMapDir = "G2";
-        else if (mapSource.getName().equals("Google Terrain"))
-            shortMapDir = "G3";
-        else if (mapSource.getName().equals("Mapnik"))
-            shortMapDir = "OSM1";
-        else if (mapSource.getName().equals("OSM Cycle Map"))
-            shortMapDir = "OCM1";
-        if (shortMapDir != null)
-            mapDir = new File(atlasDir, shortMapDir);
-    }
+		MapSource mapSource = map.getMapSource();
+		String shortMapDir = null;
+		if (mapSource.getName().equals("Google Maps"))
+			shortMapDir = "G1";
+		else if (mapSource.getName().equals("Google Earth"))
+			shortMapDir = "G2";
+		else if (mapSource.getName().equals("Google Terrain"))
+			shortMapDir = "G3";
+		else if (mapSource.getName().equals("Mapnik"))
+			shortMapDir = "OSM1";
+		else if (mapSource.getName().equals("OSM Cycle Map"))
+			shortMapDir = "OCM1";
+		if (shortMapDir != null)
+			mapDir = new File(atlasDir, shortMapDir);
+	}
 
-    public void createMap() throws MapCreationException, InterruptedException {
-        // This means there should not be any resizing of the tiles.
-        if (mapTileWriter == null)
-            mapTileWriter = new PathAwayTileWriter();
-        createTiles();
-    }
+	public void createMap() throws MapCreationException, InterruptedException {
+		// This means there should not be any resizing of the tiles.
+		if (mapTileWriter == null)
+			mapTileWriter = new PathAwayTileWriter();
+		createTiles();
+	}
 
-    @Override
-    protected void testAtlas() throws AtlasTestException {
-        for (LayerInterface layer : atlas) {
-            for (MapInterface map : layer) {
-                if (map.getZoom() > 17)
-                    throw new AtlasTestException("resolution too high - " + "highest possible zoom level is 17");
-            }
-        }
-    }
+	@Override
+	protected void testAtlas() throws AtlasTestException {
+		for (LayerInterface layer : atlas) {
+			for (MapInterface map : layer) {
+				if (map.getZoom() > 17)
+					throw new AtlasTestException("resolution too high - " + "highest possible zoom level is 17");
+			}
+		}
+	}
 
-    protected class PathAwayTileWriter extends OSMTileWriter {
+	protected class PathAwayTileWriter extends OSMTileWriter {
 
-        @Override
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-            File file = new File(mapDir, String.format(tileFileNamePattern, 17 - zoom, tilex, tiley, tileType));
-            writeTile(file, tileData);
-        }
+		@Override
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			File file = new File(mapDir, String.format(tileFileNamePattern, 17 - zoom, tilex, tiley, tileType));
+			writeTile(file, tileData);
+		}
 
-    }
+	}
 }

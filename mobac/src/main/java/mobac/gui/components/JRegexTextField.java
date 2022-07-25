@@ -25,46 +25,45 @@ import java.util.regex.Pattern;
 
 public class JRegexTextField extends JTextField {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public JRegexTextField(String regex, int maxLength) {
-        super();
-        setDocument(new AtlasNameDocument(regex, maxLength));
-    }
+	public JRegexTextField(String regex, int maxLength) {
+		super();
+		setDocument(new AtlasNameDocument(regex, maxLength));
+	}
 
-    public class AtlasNameDocument extends PlainDocument {
+	public class AtlasNameDocument extends PlainDocument {
 
-        private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
-        public Pattern pattern;
-        public int maxLength;
+		public Pattern pattern;
+		public int maxLength;
 
-        public AtlasNameDocument(String regex, int maxLength) {
-            super();
-            pattern = Pattern.compile(regex);
-            this.maxLength = maxLength;
-        }
+		public AtlasNameDocument(String regex, int maxLength) {
+			super();
+			pattern = Pattern.compile(regex);
+			this.maxLength = maxLength;
+		}
 
-        public void insertString(int offset, String str, AttributeSet attr)
-                throws BadLocationException {
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 
-            if (str == null)
-                return;
+			if (str == null)
+				return;
 
-            if (!pattern.matcher(str).matches()) {
-                Toolkit.getDefaultToolkit().beep();
-                return;
-            }
+			if (!pattern.matcher(str).matches()) {
+				Toolkit.getDefaultToolkit().beep();
+				return;
+			}
 
-            String oldText = JRegexTextField.this.getText();
+			String oldText = JRegexTextField.this.getText();
 
-            super.insertString(offset, str, attr);
+			super.insertString(offset, str, attr);
 
-            // Maximum length exceeded?
-            if (JRegexTextField.this.getText().length() > maxLength) {
-                JRegexTextField.this.setText(oldText);
-                Toolkit.getDefaultToolkit().beep();
-            }
-        }
-    }
+			// Maximum length exceeded?
+			if (JRegexTextField.this.getText().length() > maxLength) {
+				JRegexTextField.this.setText(oldText);
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
+	}
 }

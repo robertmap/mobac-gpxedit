@@ -37,73 +37,78 @@ import java.io.IOException;
 @XmlJavaTypeAdapter(MapSourceAdapter.class)
 public interface MapSource {
 
-    /**
-     * Specifies the maximum zoom value. The number of zoom levels is [0.. {@link #getMaxZoom()}].
-     *
-     * @return maximum zoom value that has to be smaller or equal to {@link JMapViewer#MAX_ZOOM}
-     */
-    int getMaxZoom();
+	/**
+	 * Specifies the maximum zoom value. The number of zoom levels is [0..
+	 * {@link #getMaxZoom()}].
+	 *
+	 * @return maximum zoom value that has to be smaller or equal to
+	 *         {@link JMapViewer#MAX_ZOOM}
+	 */
+	int getMaxZoom();
 
-    /**
-     * Specifies the minimum zoom value. This value is usually 0. Only for maps that cover a certain region up to a
-     * limited zoom level this method should return a value different than 0.
-     *
-     * @return minimum zoom value - usually 0
-     */
-    int getMinZoom();
+	/**
+	 * Specifies the minimum zoom value. This value is usually 0. Only for maps that
+	 * cover a certain region up to a limited zoom level this method should return a
+	 * value different than 0.
+	 *
+	 * @return minimum zoom value - usually 0
+	 */
+	int getMinZoom();
 
-    /**
-     * A tile layer name has to be unique and has to consist only of characters valid for filenames.
-     *
-     * @return Name of the tile layer
-     */
-    String getName();
+	/**
+	 * A tile layer name has to be unique and has to consist only of characters
+	 * valid for filenames.
+	 *
+	 * @return Name of the tile layer
+	 */
+	String getName();
 
-    /**
-     * @param zoom
-     * @param x
-     * @param y
-     * @param loadMethod TODO
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws UnrecoverableDownloadException
-     */
-    byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
-            InterruptedException;
+	/**
+	 * @param zoom
+	 * @param x
+	 * @param y
+	 * @param loadMethod
+	 *            TODO
+	 * @return
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws UnrecoverableDownloadException
+	 */
+	byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException;
 
-    /**
-     * @param zoom
-     * @param x
-     * @param y
-     * @param loadMethod
-     * @return
-     * @throws IOException
-     * @throws UnrecoverableDownloadException
-     * @throws InterruptedException
-     */
-    BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException, TileException,
-            InterruptedException;
+	/**
+	 * @param zoom
+	 * @param x
+	 * @param y
+	 * @param loadMethod
+	 * @return
+	 * @throws IOException
+	 * @throws UnrecoverableDownloadException
+	 * @throws InterruptedException
+	 */
+	BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException;
 
-    /**
-     * Specifies the tile image type. For tiles rendered by Mapnik or Osmarenderer this is usually
-     * {@link TileImageType#PNG}.
-     *
-     * @return file extension of the tile image type
-     */
-    TileImageType getTileImageType();
+	/**
+	 * Specifies the tile image type. For tiles rendered by Mapnik or Osmarenderer
+	 * this is usually {@link TileImageType#PNG}.
+	 *
+	 * @return file extension of the tile image type
+	 */
+	TileImageType getTileImageType();
 
-    MapSpace getMapSpace();
+	MapSpace getMapSpace();
 
-    Color getBackgroundColor();
+	Color getBackgroundColor();
 
-    @XmlTransient
-    MapSourceLoaderInfo getLoaderInfo();
+	@XmlTransient
+	MapSourceLoaderInfo getLoaderInfo();
 
-    void setLoaderInfo(MapSourceLoaderInfo loaderInfo);
+	void setLoaderInfo(MapSourceLoaderInfo loaderInfo);
 
-    enum LoadMethod {
-        DEFAULT, CACHE, SOURCE
-    }
+	enum LoadMethod {
+		DEFAULT, CACHE, SOURCE
+	}
 
 }

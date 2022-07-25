@@ -24,34 +24,34 @@ import java.io.File;
 
 public class JDirectoryChooser extends JFileChooser {
 
-    private static final long serialVersionUID = -1954689476383812988L;
+	private static final long serialVersionUID = -1954689476383812988L;
 
-    public JDirectoryChooser() {
-        super();
-        setDialogType(CUSTOM_DIALOG);
-        setDialogTitle(I18nUtils.localizedStringForKey("dlg_select_dir_title"));
-        //setApproveButtonText("Select Directory");
-        setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        setAcceptAllFileFilterUsed(false);
-        addChoosableFileFilter(new FileFilter() {
+	public JDirectoryChooser() {
+		super();
+		setDialogType(CUSTOM_DIALOG);
+		setDialogTitle(I18nUtils.localizedStringForKey("dlg_select_dir_title"));
+		// setApproveButtonText("Select Directory");
+		setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		setAcceptAllFileFilterUsed(false);
+		addChoosableFileFilter(new FileFilter() {
 
-            @Override
-            public boolean accept(File f) {
-                return f.isDirectory();
-            }
+			@Override
+			public boolean accept(File f) {
+				return f.isDirectory();
+			}
 
-            @Override
-            public String getDescription() {
-                return I18nUtils.localizedStringForKey("dlg_select_dir_description");
-            }
-        });
-    }
+			@Override
+			public String getDescription() {
+				return I18nUtils.localizedStringForKey("dlg_select_dir_description");
+			}
+		});
+	}
 
-    @Override
-    public void approveSelection() {
-        if (!this.getFileFilter().accept(this.getSelectedFile()))
-            return;
-        super.approveSelection();
-    }
+	@Override
+	public void approveSelection() {
+		if (!this.getFileFilter().accept(this.getSelectedFile()))
+			return;
+		super.approveSelection();
+	}
 
 }

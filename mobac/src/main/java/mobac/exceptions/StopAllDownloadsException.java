@@ -18,12 +18,12 @@ package mobac.exceptions;
 
 public class StopAllDownloadsException extends TileException {
 
-    public StopAllDownloadsException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public StopAllDownloadsException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public StopAllDownloadsException(String message) {
-        super(message);
-    }
+	public StopAllDownloadsException(String message) {
+		super(message);
+	}
 
 }

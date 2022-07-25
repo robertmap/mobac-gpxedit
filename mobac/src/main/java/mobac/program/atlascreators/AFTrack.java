@@ -39,77 +39,77 @@ import java.util.Collections;
 @AtlasCreatorName("AFTrack (OSZ)")
 public class AFTrack extends OSMTracker {
 
-    private final ArrayList<Integer> zoomLevel = new ArrayList<>();
+	private final ArrayList<Integer> zoomLevel = new ArrayList<>();
 
-    private int maxZoom;
-    private Point min;
-    private Point max;
+	private int maxZoom;
+	private Point min;
+	private Point max;
 
-    @Override
-    public void initLayerCreation(LayerInterface layer) throws IOException {
-        super.initLayerCreation(layer);
-        File oszFile = new File(atlasDir, layer.getName() + ".osz");
-        mapTileWriter = new OszTileWriter(oszFile);
-        zoomLevel.clear();
-        min = new Point();
-        max = new Point();
-        maxZoom = -1;
-    }
+	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
+		super.initLayerCreation(layer);
+		File oszFile = new File(atlasDir, layer.getName() + ".osz");
+		mapTileWriter = new OszTileWriter(oszFile);
+		zoomLevel.clear();
+		min = new Point();
+		max = new Point();
+		maxZoom = -1;
+	}
 
-    @Override
-    public void finishLayerCreation() throws IOException {
-        mapTileWriter.finalizeMap();
-        mapTileWriter = null;
+	@Override
+	public void finishLayerCreation() throws IOException {
+		mapTileWriter.finalizeMap();
+		mapTileWriter = null;
 
-        super.finishLayerCreation();
-    }
+		super.finishLayerCreation();
+	}
 
-    @Override
-    public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
-        super.initializeMap(map, mapTileProvider);
-        zoomLevel.add(map.getZoom());
-        if (map.getZoom() > maxZoom) {
-            maxZoom = map.getZoom();
-            min.x = map.getMinTileCoordinate().x / 256;
-            min.y = map.getMinTileCoordinate().y / 256;
-            max.x = map.getMaxTileCoordinate().x / 256;
-            max.y = map.getMaxTileCoordinate().y / 256;
-        }
-    }
+	@Override
+	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
+		super.initializeMap(map, mapTileProvider);
+		zoomLevel.add(map.getZoom());
+		if (map.getZoom() > maxZoom) {
+			maxZoom = map.getZoom();
+			min.x = map.getMinTileCoordinate().x / 256;
+			min.y = map.getMinTileCoordinate().y / 256;
+			max.x = map.getMaxTileCoordinate().x / 256;
+			max.y = map.getMaxTileCoordinate().y / 256;
+		}
+	}
 
-    private class OszTileWriter extends OSMTileWriter {
+	private class OszTileWriter extends OSMTileWriter {
 
-        ZipStoreOutputStream zipStream;
-        FileOutputStream out;
+		ZipStoreOutputStream zipStream;
+		FileOutputStream out;
 
-        public OszTileWriter(File oszFile) throws FileNotFoundException {
-            super();
-            out = new FileOutputStream(oszFile);
-            zipStream = new ZipStoreOutputStream(out);
-        }
+		public OszTileWriter(File oszFile) throws FileNotFoundException {
+			super();
+			out = new FileOutputStream(oszFile);
+			zipStream = new ZipStoreOutputStream(out);
+		}
 
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
-            String entryName = String.format(tileFileNamePattern, zoom, tilex, tiley, tileType);
-            zipStream.writeStoredEntry(entryName, tileData);
-        }
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+			String entryName = String.format(tileFileNamePattern, zoom, tilex, tiley, tileType);
+			zipStream.writeStoredEntry(entryName, tileData);
+		}
 
-        public void finalizeMap() throws IOException {
-            try (ByteArrayOutputStream bout = new ByteArrayOutputStream(100)) {
-                try (OutputStreamWriter writer = new OutputStreamWriter(bout)) {
-                    Collections.sort(zoomLevel);
-                    for (Integer zoom : zoomLevel) {
-                        writer.append(String.format("zoom=%d\r\n", zoom.intValue()));
-                    }
-                    writer.append(String.format("minx=%d\r\n", min.x));
-                    writer.append(String.format("maxx=%d\r\n", max.x));
-                    writer.append(String.format("miny=%d\r\n", min.y));
-                    writer.append(String.format("maxy=%d\r\n", max.y));
-                }
-                zipStream.writeStoredEntry("Manifest.txt", bout.toByteArray());
-            }
-            Utilities.closeQuietly(zipStream);
-        }
+		public void finalizeMap() throws IOException {
+			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(100)) {
+				try (OutputStreamWriter writer = new OutputStreamWriter(bout)) {
+					Collections.sort(zoomLevel);
+					for (Integer zoom : zoomLevel) {
+						writer.append(String.format("zoom=%d\r\n", zoom.intValue()));
+					}
+					writer.append(String.format("minx=%d\r\n", min.x));
+					writer.append(String.format("maxx=%d\r\n", max.x));
+					writer.append(String.format("miny=%d\r\n", min.y));
+					writer.append(String.format("maxy=%d\r\n", max.y));
+				}
+				zipStream.writeStoredEntry("Manifest.txt", bout.toByteArray());
+			}
+			Utilities.closeQuietly(zipStream);
+		}
 
-    }
+	}
 
 }

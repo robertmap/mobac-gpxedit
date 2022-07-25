@@ -25,30 +25,31 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Loads a tile from the underlying {@link TileProvider}, loads the tile to memory, converts it to the desired
- * {@link TileImageFormat} and returns the binary representation of the image in the specified format.
+ * Loads a tile from the underlying {@link TileProvider}, loads the tile to
+ * memory, converts it to the desired {@link TileImageFormat} and returns the
+ * binary representation of the image in the specified format.
  */
 public class ConvertedRawTileProvider extends FilterTileProvider {
 
-    private final TileImageDataWriter writer;
+	private final TileImageDataWriter writer;
 
-    public ConvertedRawTileProvider(TileProvider tileProvider, TileImageFormat tileImageFormat) {
-        super(tileProvider);
-        writer = tileImageFormat.getDataWriterBuilder().build();
-        ImageIO.setUseCache(false);
-    }
+	public ConvertedRawTileProvider(TileProvider tileProvider, TileImageFormat tileImageFormat) {
+		super(tileProvider);
+		writer = tileImageFormat.getDataWriterBuilder().build();
+		ImageIO.setUseCache(false);
+	}
 
-    public byte[] getTileData(int x, int y) throws IOException {
-        BufferedImage image = getTileImage(x, y);
-        if (image == null)
-            return null;
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
-        writer.processImage(image, buffer);
-        return buffer.toByteArray();
-    }
+	public byte[] getTileData(int x, int y) throws IOException {
+		BufferedImage image = getTileImage(x, y);
+		if (image == null)
+			return null;
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
+		writer.processImage(image, buffer);
+		return buffer.toByteArray();
+	}
 
-    public boolean preferTileImageUsage() {
-        return true;
-    }
+	public boolean preferTileImageUsage() {
+		return true;
+	}
 
 }

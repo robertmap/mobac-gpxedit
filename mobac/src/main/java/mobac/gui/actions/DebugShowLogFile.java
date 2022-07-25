@@ -32,30 +32,29 @@ import java.io.IOException;
 
 public class DebugShowLogFile implements ActionListener {
 
-    public void actionPerformed(ActionEvent event) {
-        Logger log = LoggerFactory.getLogger(DebugShowLogFile.class);
-        String logFile = Logging.getLogFile();
-        if (logFile == null) {
-            log.error("No file logger configured");
-            JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
-                    I18nUtils.localizedStringForKey("msg_no_log_file_config"),
-                    I18nUtils.localizedStringForKey("Error"),
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        File f = new File(logFile);
-        if (!f.isFile()) {
-            log.error("Log file does not exists: " + f.getAbsolutePath());
-            JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
-                    String.format(I18nUtils.localizedStringForKey("msg_no_log_file"), f.getAbsolutePath()),
-                    I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        try {
-            Desktop.getDesktop().open(f);
-        } catch (IOException e) {
-            GUIExceptionHandler.processException(e);
-        }
-    }
+	public void actionPerformed(ActionEvent event) {
+		Logger log = LoggerFactory.getLogger(DebugShowLogFile.class);
+		String logFile = Logging.getLogFile();
+		if (logFile == null) {
+			log.error("No file logger configured");
+			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
+					I18nUtils.localizedStringForKey("msg_no_log_file_config"), I18nUtils.localizedStringForKey("Error"),
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		File f = new File(logFile);
+		if (!f.isFile()) {
+			log.error("Log file does not exists: " + f.getAbsolutePath());
+			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
+					String.format(I18nUtils.localizedStringForKey("msg_no_log_file"), f.getAbsolutePath()),
+					I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		try {
+			Desktop.getDesktop().open(f);
+		} catch (IOException e) {
+			GUIExceptionHandler.processException(e);
+		}
+	}
 
 }

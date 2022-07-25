@@ -17,20 +17,20 @@
 package mobac.mapsources.custom.aqm;
 
 /**
- * Alpine Quest Map : https://alpinequest.net/
- * Developer : ph-t@users.sourceforge.net
+ * Alpine Quest Map : https://alpinequest.net/ Developer :
+ * ph-t@users.sourceforge.net
  */
 public class MetaDataTile {
-    public final long byteIndex;
-    public final String name;
+	public final long byteIndex;
+	public final String name;
 
-    MetaDataTile(long byteIndex, String name) {
-        this.byteIndex = byteIndex;
-        this.name = name;
-    }
+	MetaDataTile(long byteIndex, String name) {
+		this.byteIndex = byteIndex;
+		this.name = name;
+	}
 
-    MetaDataTile(String byteIndex, String name) {
-        this(Long.parseLong(byteIndex), name);
-    }
+	MetaDataTile(String byteIndex, String name) {
+		this(Long.parseLong(byteIndex), name);
+	}
 
 }

@@ -35,29 +35,29 @@ import java.io.RandomAccessFile;
  */
 public class RandomAccessFileOutputStream extends OutputStream {
 
-    private final RandomAccessFile file;
+	private final RandomAccessFile file;
 
-    public RandomAccessFileOutputStream(RandomAccessFile f) {
-        this.file = f;
-    }
+	public RandomAccessFileOutputStream(RandomAccessFile f) {
+		this.file = f;
+	}
 
-    @Override
-    public void write(int b) throws IOException {
-        file.write(b);
-    }
+	@Override
+	public void write(int b) throws IOException {
+		file.write(b);
+	}
 
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        file.write(b, off, len);
-    }
+	@Override
+	public void write(byte[] b, int off, int len) throws IOException {
+		file.write(b, off, len);
+	}
 
-    @Override
-    public void write(byte[] b) throws IOException {
-        file.write(b);
-    }
+	@Override
+	public void write(byte[] b) throws IOException {
+		file.write(b);
+	}
 
-    public RandomAccessFile getFile() {
-        return file;
-    }
+	public RandomAccessFile getFile() {
+		return file;
+	}
 
 }

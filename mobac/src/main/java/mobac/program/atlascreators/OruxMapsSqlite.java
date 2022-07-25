@@ -43,188 +43,191 @@ import java.util.Locale;
 @AtlasCreatorName("OruxMaps Sqlite")
 public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
-    private static final String TABLE_TILES_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, image blob, PRIMARY KEY (x,y,z))";
-    private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z)";
-    private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,image) VALUES (?,?,?,?)";
-    private static final String TABLE_ANDROID_METADATA_DDL = "CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)";
+	private static final String TABLE_TILES_DDL = "CREATE TABLE IF NOT EXISTS tiles (x int, y int, z int, image blob, PRIMARY KEY (x,y,z))";
+	private static final String INDEX_DDL = "CREATE INDEX IF NOT EXISTS IND on tiles (x,y,z)";
+	private static final String INSERT_SQL = "INSERT or IGNORE INTO tiles (x,y,z,image) VALUES (?,?,?,?)";
+	private static final String TABLE_ANDROID_METADATA_DDL = "CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)";
 
-    private static final String DATABASE_FILENAME = "OruxMapsImages.db";
+	private static final String DATABASE_FILENAME = "OruxMapsImages.db";
 
-    private File databaseFile;
+	private File databaseFile;
 
-    private Connection conn = null;
-    private PreparedStatement prepStmt;
+	private Connection conn = null;
+	private PreparedStatement prepStmt;
 
-    private StringBuilder otrk2MapsContent;
+	private StringBuilder otrk2MapsContent;
 
-    public OruxMapsSqlite() {
-        super();
-        SQLiteLoader.loadSQLiteOrShowError();
-        calVersionCode = "3.0";
-    }
+	public OruxMapsSqlite() {
+		super();
+		SQLiteLoader.loadSQLiteOrShowError();
+		calVersionCode = "3.0";
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see mobac.program.atlascreators.AtlasCreator#startAtlasCreation(mobac.program.interfaces.AtlasInterface)
-     */
-    @Override
-    public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir) throws AtlasTestException, IOException,
-            InterruptedException {
-        super.startAtlasCreation(atlas, customAtlasDir);
-        try {
-            SQLiteLoader.loadSQLite();
-        } catch (SQLException e) {
-            throw new AtlasTestException(SQLiteLoader.getMsgSqliteMissing(), e);
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * mobac.program.atlascreators.AtlasCreator#startAtlasCreation(mobac.program.
+	 * interfaces.AtlasInterface)
+	 */
+	@Override
+	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
+			throws AtlasTestException, IOException, InterruptedException {
+		super.startAtlasCreation(atlas, customAtlasDir);
+		try {
+			SQLiteLoader.loadSQLite();
+		} catch (SQLException e) {
+			throw new AtlasTestException(SQLiteLoader.getMsgSqliteMissing(), e);
+		}
+	}
 
-    /*
-     * @see mobac.program.atlascreators.AtlasCreator#initLayerCreation(mobac.program .interfaces.LayerInterface)
-     */
-    @Override
-    public void initLayerCreation(LayerInterface layer) throws IOException {
+	/*
+	 * @see mobac.program.atlascreators.AtlasCreator#initLayerCreation(mobac.program
+	 * .interfaces.LayerInterface)
+	 */
+	@Override
+	public void initLayerCreation(LayerInterface layer) throws IOException {
 
-        super.initLayerCreation(layer);
-        databaseFile = new File(oruxMapsMainDir, DATABASE_FILENAME);
-        log.debug("SQLite Database file: " + databaseFile);
-        otrk2MapsContent = new StringBuilder();
-        try {
-            conn = getConnection();
-            initializeDB();
-        } catch (SQLException e) {
-            throw new IOException(e);
-        } finally {
-            closeConnection();
-        }
+		super.initLayerCreation(layer);
+		databaseFile = new File(oruxMapsMainDir, DATABASE_FILENAME);
+		log.debug("SQLite Database file: " + databaseFile);
+		otrk2MapsContent = new StringBuilder();
+		try {
+			conn = getConnection();
+			initializeDB();
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeConnection();
+		}
 
-    }
+	}
 
-    @Override
-    public void finishAtlasCreation() throws IOException, InterruptedException {
-        super.finishAtlasCreation();
-        closeConnection();
-    }
+	@Override
+	public void finishAtlasCreation() throws IOException, InterruptedException {
+		super.finishAtlasCreation();
+		closeConnection();
+	}
 
-    @Override
-    public void abortAtlasCreation() throws IOException {
-        super.abortAtlasCreation();
-        log.debug("Aborting OruxMapsSqlite atlas creation");
-        closeConnection();
-    }
+	@Override
+	public void abortAtlasCreation() throws IOException {
+		super.abortAtlasCreation();
+		log.debug("Aborting OruxMapsSqlite atlas creation");
+		closeConnection();
+	}
 
-    private Connection getConnection() throws SQLException, IOException {
-        String url = "jdbc:sqlite:" + databaseFile.getCanonicalPath();
-        Connection conn = DriverManager.getConnection(url);
-        return conn;
-    }
+	private Connection getConnection() throws SQLException, IOException {
+		String url = "jdbc:sqlite:" + databaseFile.getCanonicalPath();
+		Connection conn = DriverManager.getConnection(url);
+		return conn;
+	}
 
-    private void closeConnection() {
-        try {
-            if (conn != null) {
-                log.debug("Closing database connection");
-                conn.close();
-            }
-        } catch (Exception e) {
-        }
-        conn = null;
-    }
+	private void closeConnection() {
+		try {
+			if (conn != null) {
+				log.debug("Closing database connection");
+				conn.close();
+			}
+		} catch (Exception e) {
+		}
+		conn = null;
+	}
 
-    private void initializeDB() throws SQLException {
+	private void initializeDB() throws SQLException {
 
-        Statement stat = conn.createStatement();
-        stat.executeUpdate(TABLE_TILES_DDL);
-        stat.executeUpdate(INDEX_DDL);
-        stat.executeUpdate(TABLE_ANDROID_METADATA_DDL);
-        stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + Locale.getDefault().toString() + "')");
-        stat.close();
-    }
+		Statement stat = conn.createStatement();
+		stat.executeUpdate(TABLE_TILES_DDL);
+		stat.executeUpdate(INDEX_DDL);
+		stat.executeUpdate(TABLE_ANDROID_METADATA_DDL);
+		stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + Locale.getDefault().toString() + "')");
+		stat.close();
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
 
-        otrk2MapsContent.append(prepareOtrk2File());
+		otrk2MapsContent.append(prepareOtrk2File());
 
-        try {
-            conn = getConnection();
-            conn.setAutoCommit(false);
-            prepStmt = conn.prepareStatement(INSERT_SQL);
-            createTiles();
-            conn.close();
-        } catch (InterruptedException e) {
-            // User has aborted process
-        } catch (MapCreationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new MapCreationException(map, e);
-        }
-    }
+		try {
+			conn = getConnection();
+			conn.setAutoCommit(false);
+			prepStmt = conn.prepareStatement(INSERT_SQL);
+			createTiles();
+			conn.close();
+		} catch (InterruptedException e) {
+			// User has aborted process
+		} catch (MapCreationException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new MapCreationException(map, e);
+		}
+	}
 
-    @Override
-    protected void createTiles() throws InterruptedException, MapCreationException {
+	@Override
+	protected void createTiles() throws InterruptedException, MapCreationException {
 
-        CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-        try {
-            mapDlTileProvider = ctp;
-            MapTileWriter mtw = new OruxMapTileWriterDB();
-            OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, mtw);
-            // customTileCount = mapTileBuilder.getCustomTileCount();
-            atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
-            mapTileBuilder.createTiles();
-            mtw.finalizeMap();
-        } catch (IOException e) {
-            throw new MapCreationException(map, e);
-        } finally {
-            ctp.cleanup();
-        }
-    }
+		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
+		try {
+			mapDlTileProvider = ctp;
+			MapTileWriter mtw = new OruxMapTileWriterDB();
+			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, mtw);
+			// customTileCount = mapTileBuilder.getCustomTileCount();
+			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
+			mapTileBuilder.createTiles();
+			mtw.finalizeMap();
+		} catch (IOException e) {
+			throw new MapCreationException(map, e);
+		} finally {
+			ctp.cleanup();
+		}
+	}
 
-    @Override
-    protected String appendMapContent() {
-        return otrk2MapsContent.toString();
-    }
+	@Override
+	protected String appendMapContent() {
+		return otrk2MapsContent.toString();
+	}
 
-    private class OruxMapTileWriterDB implements MapTileWriter {
+	private class OruxMapTileWriterDB implements MapTileWriter {
 
-        private int tileCounter = 0;
-        private final Runtime r = Runtime.getRuntime();
+		private int tileCounter = 0;
+		private final Runtime r = Runtime.getRuntime();
 
-        public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
+		public void writeTile(int tilex, int tiley, String tileType, byte[] tileData) throws IOException {
 
-            try {
-                prepStmt.setInt(1, tilex);
-                prepStmt.setInt(2, tiley);
-                prepStmt.setInt(3, zoom);
-                prepStmt.setBytes(4, tileData);
-                prepStmt.addBatch();
-                long heapAvailable = r.maxMemory() - r.totalMemory() + r.freeMemory();
+			try {
+				prepStmt.setInt(1, tilex);
+				prepStmt.setInt(2, tiley);
+				prepStmt.setInt(3, zoom);
+				prepStmt.setBytes(4, tileData);
+				prepStmt.addBatch();
+				long heapAvailable = r.maxMemory() - r.totalMemory() + r.freeMemory();
 
-                tileCounter++;
-                if (heapAvailable < HEAP_MIN || tileCounter > MAX_BATCH_SIZE) {
-                    commit();
-                }
-            } catch (SQLException e) {
-                throw new IOException(e);
-            }
+				tileCounter++;
+				if (heapAvailable < HEAP_MIN || tileCounter > MAX_BATCH_SIZE) {
+					commit();
+				}
+			} catch (SQLException e) {
+				throw new IOException(e);
+			}
 
-        }
+		}
 
-        private void commit() throws SQLException {
-            prepStmt.executeBatch();
-            prepStmt.clearBatch();
-            atlasProgress.incMapCreationProgress(tileCounter);
-            tileCounter = 0;
-            conn.commit();
-            System.gc();
-        }
+		private void commit() throws SQLException {
+			prepStmt.executeBatch();
+			prepStmt.clearBatch();
+			atlasProgress.incMapCreationProgress(tileCounter);
+			tileCounter = 0;
+			conn.commit();
+			System.gc();
+		}
 
-        public void finalizeMap() throws IOException {
-            try {
-                commit();
-            } catch (SQLException e) {
-                throw new IOException(e);
-            }
-        }
+		public void finalizeMap() throws IOException {
+			try {
+				commit();
+			} catch (SQLException e) {
+				throw new IOException(e);
+			}
+		}
 
-    }
+	}
 }

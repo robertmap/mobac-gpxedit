@@ -22,66 +22,65 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.awt.Dimension;
 
-
 @XmlRootElement
 public final class TileImageParameters implements Cloneable {
 
-    @XmlAnyAttribute
-    protected AnyAttributeMap attr = new AnyAttributeMap();
+	@XmlAnyAttribute
+	protected AnyAttributeMap attr = new AnyAttributeMap();
 
-    /**
-     * Default constructor as required by JAXB
-     */
-    protected TileImageParameters() {
-        super();
-    }
+	/**
+	 * Default constructor as required by JAXB
+	 */
+	protected TileImageParameters() {
+		super();
+	}
 
-    private TileImageParameters(AnyAttributeMap attrMap) {
-        attr.putAll(attrMap);
-    }
+	private TileImageParameters(AnyAttributeMap attrMap) {
+		attr.putAll(attrMap);
+	}
 
-    public TileImageParameters(int width, int height, TileImageFormat format) {
-        super();
-        attr.setAttr("format", format.name());
-        attr.setInt("height", height);
-        attr.setInt("width", width);
-    }
+	public TileImageParameters(int width, int height, TileImageFormat format) {
+		super();
+		attr.setAttr("format", format.name());
+		attr.setInt("height", height);
+		attr.setInt("width", width);
+	}
 
-    protected void afterUnmarshal(Unmarshaller u, Object parent) {
-        // read all values once for detecting problems
-        attr.getInt(Name.height.name());
-        attr.getInt(Name.width.name());
-        TileImageFormat.valueOf(attr.getAttr("format"));
-    }
+	protected void afterUnmarshal(Unmarshaller u, Object parent) {
+		// read all values once for detecting problems
+		attr.getInt(Name.height.name());
+		attr.getInt(Name.width.name());
+		TileImageFormat.valueOf(attr.getAttr("format"));
+	}
 
-    public int getWidth() {
-        return attr.getInt("width");
-    }
+	public int getWidth() {
+		return attr.getInt("width");
+	}
 
-    public int getHeight() {
-        return attr.getInt("height");
-    }
+	public int getHeight() {
+		return attr.getInt("height");
+	}
 
-    public Dimension getDimension() {
-        return new Dimension(getWidth(), getHeight());
-    }
+	public Dimension getDimension() {
+		return new Dimension(getWidth(), getHeight());
+	}
 
-    public TileImageFormat getFormat() {
-        return TileImageFormat.valueOf(attr.getAttr("format"));
-    }
+	public TileImageFormat getFormat() {
+		return TileImageFormat.valueOf(attr.getAttr("format"));
+	}
 
-    @Override
-    public String toString() {
-        return "Tile size: (" + getWidth() + "/" + getHeight() + ") " + getFormat().toString() + ")";
-    }
+	@Override
+	public String toString() {
+		return "Tile size: (" + getWidth() + "/" + getHeight() + ") " + getFormat().toString() + ")";
+	}
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return new TileImageParameters(attr);
-    }
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return new TileImageParameters(attr);
+	}
 
-    public enum Name {
-        width, height, format, format_png, format_jpg
-    }
+	public enum Name {
+		width, height, format, format_png, format_jpg
+	}
 
 }

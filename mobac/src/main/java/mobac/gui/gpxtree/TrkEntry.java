@@ -21,29 +21,29 @@ import mobac.gui.mapview.layer.GpxLayer;
 import mobac.utilities.I18nUtils;
 
 public class TrkEntry extends GpxEntry {
-    private TrkType trk;
+	private TrkType trk;
 
-    public TrkEntry(TrkType trk, GpxLayer layer) {
-        this.trk = trk;
-        this.setLayer(layer);
-        this.setWaypointParent(false);
-    }
+	public TrkEntry(TrkType trk, GpxLayer layer) {
+		this.trk = trk;
+		this.setLayer(layer);
+		this.setWaypointParent(false);
+	}
 
-    public String toString() {
-        String name = "";
-        try {
-            name = trk.getName();
-        } catch (NullPointerException e) {
-            // no name set
-        }
-        if (name != null && !name.equals("")) {
-            return name;
-        } else {
-            return I18nUtils.localizedStringForKey("rp_gpx_unname_track_name");
-        }
-    }
+	public String toString() {
+		String name = "";
+		try {
+			name = trk.getName();
+		} catch (NullPointerException e) {
+			// no name set
+		}
+		if (name != null && !name.equals("")) {
+			return name;
+		} else {
+			return I18nUtils.localizedStringForKey("rp_gpx_unname_track_name");
+		}
+	}
 
-    public TrkType getTrk() {
-        return trk;
-    }
+	public TrkType getTrk() {
+		return trk;
+	}
 }

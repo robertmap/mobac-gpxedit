@@ -25,20 +25,20 @@ import java.awt.Dimension;
 
 public class MessageDialogs {
 
-    public static void showErrorMessage(Component parentComponent, String message, String title) {
-        JLabel label = new JLabel("<html>" + message + "<html>");
-        int maxWidth = 400;
-        Dimension size = label.getPreferredSize();
-        if (size.width > maxWidth) {
-            // Estimate the number of lines
-            int lineCount = (int) Math.ceil(((double) size.width) / maxWidth);
-            lineCount += 1; // Add one extra line as reserve
-            size.width = maxWidth; // Limit the maximum width
-            // Increase the size so that the
-            size.height *= lineCount;
-            label.setPreferredSize(size);
-        }
-        JOptionPane.showMessageDialog(null, label, I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-    }
+	public static void showErrorMessage(Component parentComponent, String message, String title) {
+		JLabel label = new JLabel("<html>" + message + "<html>");
+		int maxWidth = 400;
+		Dimension size = label.getPreferredSize();
+		if (size.width > maxWidth) {
+			// Estimate the number of lines
+			int lineCount = (int) Math.ceil(((double) size.width) / maxWidth);
+			lineCount += 1; // Add one extra line as reserve
+			size.width = maxWidth; // Limit the maximum width
+			// Increase the size so that the
+			size.height *= lineCount;
+			label.setPreferredSize(size);
+		}
+		JOptionPane.showMessageDialog(null, label, I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+	}
 
 }

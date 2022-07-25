@@ -24,30 +24,29 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-
 public class NodeTransferWrapper implements Transferable {
 
-    public static final DataFlavor ATLAS_OBJECT_FLAVOR = new DataFlavor(AtlasObject.class, "AtlasObject");
-    public static final DataFlavor[] FLAVORS = new DataFlavor[]{ATLAS_OBJECT_FLAVOR};
+	public static final DataFlavor ATLAS_OBJECT_FLAVOR = new DataFlavor(AtlasObject.class, "AtlasObject");
+	public static final DataFlavor[] FLAVORS = new DataFlavor[]{ATLAS_OBJECT_FLAVOR};
 
-    private final TreeNode node;
+	private final TreeNode node;
 
-    public NodeTransferWrapper(TreeNode node) {
-        this.node = node;
-    }
+	public NodeTransferWrapper(TreeNode node) {
+		this.node = node;
+	}
 
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-        if (!ATLAS_OBJECT_FLAVOR.equals(flavor))
-            throw new UnsupportedFlavorException(flavor);
-        return node;
-    }
+	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		if (!ATLAS_OBJECT_FLAVOR.equals(flavor))
+			throw new UnsupportedFlavorException(flavor);
+		return node;
+	}
 
-    public DataFlavor[] getTransferDataFlavors() {
-        return FLAVORS;
-    }
+	public DataFlavor[] getTransferDataFlavors() {
+		return FLAVORS;
+	}
 
-    public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return ATLAS_OBJECT_FLAVOR.equals(flavor);
-    }
+	public boolean isDataFlavorSupported(DataFlavor flavor) {
+		return ATLAS_OBJECT_FLAVOR.equals(flavor);
+	}
 
 }

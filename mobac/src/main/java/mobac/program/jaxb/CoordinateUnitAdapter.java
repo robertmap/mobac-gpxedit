@@ -24,20 +24,20 @@ import java.util.stream.Collectors;
 
 public class CoordinateUnitAdapter extends XmlAdapter<String, CoordinateUnit> {
 
-    @Override
-    public CoordinateUnit unmarshal(String v) throws Exception {
-        try {
-            return CoordinateUnit.valueOf(v.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            String values = Arrays.stream(CoordinateUnit.values())
-                    .map(x -> "\"" + x.name().toLowerCase() + "\"").collect(Collectors.joining(", "));
-            throw new RuntimeException(String.format("Invalid coordinateunit \"%s\" possible values: %s", v, values));
-        }
-    }
+	@Override
+	public CoordinateUnit unmarshal(String v) throws Exception {
+		try {
+			return CoordinateUnit.valueOf(v.trim().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			String values = Arrays.stream(CoordinateUnit.values()).map(x -> "\"" + x.name().toLowerCase() + "\"")
+					.collect(Collectors.joining(", "));
+			throw new RuntimeException(String.format("Invalid coordinateunit \"%s\" possible values: %s", v, values));
+		}
+	}
 
-    @Override
-    public String marshal(CoordinateUnit v) throws Exception {
-        return v.name();
-    }
+	@Override
+	public String marshal(CoordinateUnit v) throws Exception {
+		return v.name();
+	}
 
 }

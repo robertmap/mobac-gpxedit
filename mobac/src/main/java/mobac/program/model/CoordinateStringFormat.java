@@ -26,67 +26,67 @@ import java.text.NumberFormat;
 
 public enum CoordinateStringFormat {
 
-    DEG_ENG(Utilities.FORMAT_6_DEC_ENG), //
-    DEG_LOCAL(Utilities.FORMAT_6_DEC), //
-    DEG_MIN_ENG(new CoordinateDm2Format(Utilities.DFS_ENG)), //
-    DEG_MIN_LOCAL(new CoordinateDm2Format(Utilities.DFS_LOCAL)), //
-    DEG_MIN_SEC_ENG(new CoordinateDms2Format(Utilities.DFS_ENG)), //
-    DEG_MIN_SEC_LOCAL(new CoordinateDms2Format(Utilities.DFS_LOCAL)), //
-    TILE_X_Y_Z(new CoordinateTileFormat(false), new CoordinateTileFormat(true));
+	DEG_ENG(Utilities.FORMAT_6_DEC_ENG), //
+	DEG_LOCAL(Utilities.FORMAT_6_DEC), //
+	DEG_MIN_ENG(new CoordinateDm2Format(Utilities.DFS_ENG)), //
+	DEG_MIN_LOCAL(new CoordinateDm2Format(Utilities.DFS_LOCAL)), //
+	DEG_MIN_SEC_ENG(new CoordinateDms2Format(Utilities.DFS_ENG)), //
+	DEG_MIN_SEC_LOCAL(new CoordinateDms2Format(Utilities.DFS_LOCAL)), //
+	TILE_X_Y_Z(new CoordinateTileFormat(false), new CoordinateTileFormat(true));
 
-    /*
-     * formatButton.addDropDownItem(new JNumberFormatMenuItem()); formatButton.addDropDownItem(new
-     * JNumberFormatMenuItem("Deg Min Sec,2 (local)",
-     */
-    //private final String displayName;
-    private final NumberFormat numberFormatLatitude;
-    private final NumberFormat numberFormatLongitude;
+	/*
+	 * formatButton.addDropDownItem(new JNumberFormatMenuItem());
+	 * formatButton.addDropDownItem(new
+	 * JNumberFormatMenuItem("Deg Min Sec,2 (local)",
+	 */
+	// private final String displayName;
+	private final NumberFormat numberFormatLatitude;
+	private final NumberFormat numberFormatLongitude;
 
-    CoordinateStringFormat(NumberFormat numberFormat) {
-        //this.displayName = displayName;
-        this.numberFormatLatitude = numberFormat;
-        this.numberFormatLongitude = numberFormat;
-    }
+	CoordinateStringFormat(NumberFormat numberFormat) {
+		// this.displayName = displayName;
+		this.numberFormatLatitude = numberFormat;
+		this.numberFormatLongitude = numberFormat;
+	}
 
-    CoordinateStringFormat(NumberFormat numberFormatLatitude,
-                           NumberFormat numberFormatLongitude) {
-        //this.displayName = displayName;
-        this.numberFormatLatitude = numberFormatLatitude;
-        this.numberFormatLongitude = numberFormatLongitude;
-    }
+	CoordinateStringFormat(NumberFormat numberFormatLatitude, NumberFormat numberFormatLongitude) {
+		// this.displayName = displayName;
+		this.numberFormatLatitude = numberFormatLatitude;
+		this.numberFormatLongitude = numberFormatLongitude;
+	}
 
-//	public String getDisplayName() {
-//		return this.toString();
-//	}
+	// public String getDisplayName() {
+	// return this.toString();
+	// }
 
-    public NumberFormat getNumberFormatLatitude() {
-        return numberFormatLatitude;
-    }
+	public NumberFormat getNumberFormatLatitude() {
+		return numberFormatLatitude;
+	}
 
-    public NumberFormat getNumberFormatLongitude() {
-        return numberFormatLongitude;
-    }
+	public NumberFormat getNumberFormatLongitude() {
+		return numberFormatLongitude;
+	}
 
-    @Override
-    public String toString() {
-        //return displayName;
-        switch (this) {
-            case DEG_ENG:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_eng");
-            case DEG_LOCAL:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_local");
-            case DEG_MIN_ENG:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_eng");
-            case DEG_MIN_LOCAL:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_local");
-            case DEG_MIN_SEC_ENG:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_sec_eng");
-            case DEG_MIN_SEC_LOCAL:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_sec_local");
-            case TILE_X_Y_Z:
-                return I18nUtils.localizedStringForKey("lp_coords_fmt_tile");
-        }
-        return I18nUtils.localizedStringForKey("Undefined");
-    }
+	@Override
+	public String toString() {
+		// return displayName;
+		switch (this) {
+			case DEG_ENG :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_eng");
+			case DEG_LOCAL :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_local");
+			case DEG_MIN_ENG :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_eng");
+			case DEG_MIN_LOCAL :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_local");
+			case DEG_MIN_SEC_ENG :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_sec_eng");
+			case DEG_MIN_SEC_LOCAL :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_degree_min_sec_local");
+			case TILE_X_Y_Z :
+				return I18nUtils.localizedStringForKey("lp_coords_fmt_tile");
+		}
+		return I18nUtils.localizedStringForKey("Undefined");
+	}
 
 }
