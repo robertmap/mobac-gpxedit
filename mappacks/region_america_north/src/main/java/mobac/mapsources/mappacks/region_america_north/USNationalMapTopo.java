@@ -25,10 +25,10 @@ import mobac.program.model.TileImageType;
 public class USNationalMapTopo extends AbstractHttpMapSource {
 
 	public USNationalMapTopo() {
-        // 0-11: PNG
-        // 12-15: JPEG
-        super("USGS National Map Topo", 0, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
-    }
+		// 0-11: PNG
+		// 12-15: JPEG
+		super("USGS National Map Topo", 0, 15, TileImageType.PNG, TileUpdate.IfNoneMatch);
+	}
 
 	private static final String BASE_URL = "https://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/";
 

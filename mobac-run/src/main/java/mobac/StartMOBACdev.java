@@ -1,7 +1,8 @@
 package mobac;
 
 /**
- * This is just a convenience class for starting MOBAC including mappacks the easy way.
+ * This is just a convenience class for starting MOBAC including mappacks the
+ * easy way.
  */
 public class StartMOBACdev {
 

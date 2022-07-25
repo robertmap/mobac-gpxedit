@@ -26,18 +26,19 @@ import java.io.IOException;
 
 public class ShutdownServlet extends HttpServlet {
 
-    private final Serve server;
+	private final Serve server;
 
-    public ShutdownServlet(Serve server) {
-        super();
-        this.server = server;
-    }
+	public ShutdownServlet(Serve server) {
+		super();
+		this.server = server;
+	}
 
-    @Override
-    protected void doDelete(HttpServletRequest arg0, HttpServletResponse response) throws ServletException, IOException {
-        response.setStatus(202);
-        response.flushBuffer();
-        server.notifyStop();
-    }
+	@Override
+	protected void doDelete(HttpServletRequest arg0, HttpServletResponse response)
+			throws ServletException, IOException {
+		response.setStatus(202);
+		response.flushBuffer();
+		server.notifyStop();
+	}
 
 }

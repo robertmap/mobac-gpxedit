@@ -46,107 +46,108 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Base {@link TestCase} used for testing a specific {@link AtlasCreator} implementation and/or downloading of a Atlas.
+ * Base {@link TestCase} used for testing a specific {@link AtlasCreator}
+ * implementation and/or downloading of a Atlas.
  */
 public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 
-    protected static final TestTileServer TEST_TILE_SERVER;
-    protected static final TestMapSourcesManager TEST_TILE_SERVER_MANAGER;
+	protected static final TestTileServer TEST_TILE_SERVER;
+	protected static final TestMapSourcesManager TEST_TILE_SERVER_MANAGER;
 
-    static {
-        // Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
-        ProgramInfo.initialize();
-        // LoggerFactory.getLogger("mobac").setLevel(Level.INFO);
-        TEST_TILE_SERVER = new TestTileServer(18888);
-        // TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));
-        TEST_TILE_SERVER.setTileServlet(new JpgTileGeneratorServlet(90));
-        TEST_TILE_SERVER.start();
-        TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort(), TileImageType.JPG);
-    }
+	static {
+		// Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
+		ProgramInfo.initialize();
+		// LoggerFactory.getLogger("mobac").setLevel(Level.INFO);
+		TEST_TILE_SERVER = new TestTileServer(18888);
+		// TEST_TILE_SERVER.setTileServlet(new PngFileTileServlet(0));
+		TEST_TILE_SERVER.setTileServlet(new JpgTileGeneratorServlet(90));
+		TEST_TILE_SERVER.start();
+		TEST_TILE_SERVER_MANAGER = new TestMapSourcesManager(TEST_TILE_SERVER.getPort(), TileImageType.JPG);
+	}
 
-    protected final Logger log;
-    protected final File testAtlasDir;
-    protected final SecureRandom rnd;
+	protected final Logger log;
+	protected final File testAtlasDir;
+	protected final SecureRandom rnd;
 
-    public AbstractAtlasCreatorTestCase() {
-        super();
-        log = LoggerFactory.getLogger(this.getClass());
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-        }
-        TileStore.initialize();
-        testAtlasDir = new File("target/test-atlases");
-        rnd = new SecureRandom();
-    }
+	public AbstractAtlasCreatorTestCase() {
+		super();
+		log = LoggerFactory.getLogger(this.getClass());
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		}
+		TileStore.initialize();
+		testAtlasDir = new File("target/test-atlases");
+		rnd = new SecureRandom();
+	}
 
-    @Override
-    protected void runTest() throws Throwable {
-        log.info("running test \"" + getName() + "\"");
-        super.runTest();
-    }
+	@Override
+	protected void runTest() throws Throwable {
+		log.info("running test \"" + getName() + "\"");
+		super.runTest();
+	}
 
-    protected void createAtlas(String profileName, Class<? extends AtlasCreator> atlasCreatorClass)
-            throws InstantiationException, IllegalAccessException, JAXBException, AtlasTestException,
-            InterruptedException, IOException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException {
-        AtlasCreator atlasCreator = atlasCreatorClass.getConstructor().newInstance();
-        createAtlas(profileName, atlasCreator);
-    }
+	protected void createAtlas(String profileName, Class<? extends AtlasCreator> atlasCreatorClass)
+			throws InstantiationException, IllegalAccessException, JAXBException, AtlasTestException,
+			InterruptedException, IOException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
+		AtlasCreator atlasCreator = atlasCreatorClass.getConstructor().newInstance();
+		createAtlas(profileName, atlasCreator);
+	}
 
-    protected void createAtlas(String profileName, AtlasCreator atlasCreator)
-            throws JAXBException, AtlasTestException, InterruptedException, IOException {
-        String profileFile = "profiles/" + Profile.getProfileFileName(profileName);
-        InputStream in = ClassLoader.getSystemResourceAsStream(profileFile);
-        assertNotNull(in);
-        AtlasInterface atlas = loadAtlas(in);
-        createAtlas(atlas, atlasCreator);
-    }
+	protected void createAtlas(String profileName, AtlasCreator atlasCreator)
+			throws JAXBException, AtlasTestException, InterruptedException, IOException {
+		String profileFile = "profiles/" + Profile.getProfileFileName(profileName);
+		InputStream in = ClassLoader.getSystemResourceAsStream(profileFile);
+		assertNotNull(in);
+		AtlasInterface atlas = loadAtlas(in);
+		createAtlas(atlas, atlasCreator);
+	}
 
-    protected AtlasInterface loadAtlas(String profileName) throws JAXBException {
-        String profileFile = "profiles/" + Profile.getProfileFileName(profileName);
-        InputStream in = ClassLoader.getSystemResourceAsStream(profileFile);
-        assertNotNull(in);
-        return loadAtlas(in);
-    }
+	protected AtlasInterface loadAtlas(String profileName) throws JAXBException {
+		String profileFile = "profiles/" + Profile.getProfileFileName(profileName);
+		InputStream in = ClassLoader.getSystemResourceAsStream(profileFile);
+		assertNotNull(in);
+		return loadAtlas(in);
+	}
 
-    protected AtlasInterface loadAtlas(InputStream in) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(Atlas.class);
-        Unmarshaller um = context.createUnmarshaller();
-        return (AtlasInterface) um.unmarshal(in);
-    }
+	protected AtlasInterface loadAtlas(InputStream in) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(Atlas.class);
+		Unmarshaller um = context.createUnmarshaller();
+		return (AtlasInterface) um.unmarshal(in);
+	}
 
-    /**
-     * @param atlas
-     * @param atlasCreator
-     * @return directory in which the atlas has been created
-     * @throws AtlasTestException
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    protected File createAtlas(AtlasInterface atlas, AtlasCreator atlasCreator)
-            throws AtlasTestException, InterruptedException, IOException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss_SSSS");
-        File customAtlasDir = new File(testAtlasDir,
-                atlasCreator.getClass().getSimpleName() + "_" + atlas.getName() + "_" + sdf.format(new Date()));
-        createAtlas(atlas, atlasCreator, customAtlasDir);
-        return customAtlasDir;
-    }
+	/**
+	 * @param atlas
+	 * @param atlasCreator
+	 * @return directory in which the atlas has been created
+	 * @throws AtlasTestException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	protected File createAtlas(AtlasInterface atlas, AtlasCreator atlasCreator)
+			throws AtlasTestException, InterruptedException, IOException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss_SSSS");
+		File customAtlasDir = new File(testAtlasDir,
+				atlasCreator.getClass().getSimpleName() + "_" + atlas.getName() + "_" + sdf.format(new Date()));
+		createAtlas(atlas, atlasCreator, customAtlasDir);
+		return customAtlasDir;
+	}
 
-    protected void createAtlas(AtlasInterface atlas, AtlasCreator atlasCreator, File customAtlasDir)
-            throws AtlasTestException, InterruptedException, IOException {
-        log.debug("Creating atlas " + atlas.getName() + " using " + atlasCreator.getClass().getSimpleName() + " to \""
-                + customAtlasDir + "\"");
-        AtlasThread atlasThread = new AtlasThread(atlas, atlasCreator);
-        atlasThread.setCustomAtlasDir(customAtlasDir);
-        atlasThread.start();
-        atlasThread.join();
-    }
+	protected void createAtlas(AtlasInterface atlas, AtlasCreator atlasCreator, File customAtlasDir)
+			throws AtlasTestException, InterruptedException, IOException {
+		log.debug("Creating atlas " + atlas.getName() + " using " + atlasCreator.getClass().getSimpleName() + " to \""
+				+ customAtlasDir + "\"");
+		AtlasThread atlasThread = new AtlasThread(atlas, atlasCreator);
+		atlasThread.setCustomAtlasDir(customAtlasDir);
+		atlasThread.start();
+		atlasThread.join();
+	}
 
-    @Override
-    public TestResult run() {
-        TestResult result = super.run();
-        return result;
-    }
+	@Override
+	public TestResult run() {
+		TestResult result = super.run();
+		return result;
+	}
 
 }

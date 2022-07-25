@@ -23,20 +23,20 @@ import java.io.File;
 
 public class KMZTestCase extends AbstractAtlasCreatorTestCase {
 
-    public KMZTestCase() {
-        super();
-    }
+	public KMZTestCase() {
+		super();
+	}
 
-    public void testGoogleEarchOverlay() throws Exception {
-        AtlasInterface atlas = loadAtlas("HamburgPark");
-        File dir = createAtlas(atlas, new GoogleEarthOverlay());
-        assertNotNull(dir);
-    }
+	public void testGoogleEarchOverlay() throws Exception {
+		AtlasInterface atlas = loadAtlas("HamburgPark");
+		File dir = createAtlas(atlas, new GoogleEarthOverlay());
+		assertNotNull(dir);
+	}
 
-//	public void testGarminCustom() throws Exception {
-//		AtlasInterface atlas = loadAtlas("HamburgPark");
-//		File dir = createAtlas(atlas, new GarminCustom());
-//		assertNotNull(dir);
-//	}
+	// public void testGarminCustom() throws Exception {
+	// AtlasInterface atlas = loadAtlas("HamburgPark");
+	// File dir = createAtlas(atlas, new GarminCustom());
+	// assertNotNull(dir);
+	// }
 
 }

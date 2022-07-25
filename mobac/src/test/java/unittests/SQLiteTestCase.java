@@ -20,13 +20,13 @@ import mobac.program.atlascreators.RMapsSQLite;
 
 public class SQLiteTestCase extends AbstractAtlasCreatorTestCase {
 
-    public SQLiteTestCase() {
-        super();
-    }
+	public SQLiteTestCase() {
+		super();
+	}
 
-    public void testRMaps() throws Exception {
-        log.info("Starting test testRMaps");
-        createAtlas("HamburgPark", RMapsSQLite.class);
-    }
+	public void testRMaps() throws Exception {
+		log.info("Starting test testRMaps");
+		createAtlas("HamburgPark", RMapsSQLite.class);
+	}
 
 }

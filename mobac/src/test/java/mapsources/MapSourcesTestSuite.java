@@ -37,53 +37,55 @@ import java.net.HttpURLConnection;
 import java.util.HashSet;
 
 /**
- * {@link TestSuite} that tests every available map source for operability. The operability test consists of the
- * download of one map tile at the highest available zoom level of the map source. By default the map tile to be
+ * {@link TestSuite} that tests every available map source for operability. The
+ * operability test consists of the download of one map tile at the highest
+ * available zoom level of the map source. By default the map tile to be
  * downloaded is located in the middle of Berlin. As some map providers do not
- * cover Berlin for each {@link MapSource} a different test coordinate can be specified using testCoordinates.
+ * cover Berlin for each {@link MapSource} a different test coordinate can be
+ * specified using testCoordinates.
  */
 public class MapSourcesTestSuite extends TestSuite {
 
-    public static final EastNorthCoordinate C_DEFAULT = Cities.BERLIN;
-    protected final Logger log;
-    private final HashSet<String> testedMapSources;
+	public static final EastNorthCoordinate C_DEFAULT = Cities.BERLIN;
+	protected final Logger log;
+	private final HashSet<String> testedMapSources;
 
-    public MapSourcesTestSuite() throws JAXBException {
-        super();
-        HttpURLConnection.setFollowRedirects(false);
-        log = LoggerFactory.getLogger(MapSourcesTestSuite.class);
-        testedMapSources = new HashSet<String>();
-        DefaultMapSourcesManager.initialize();
-        Settings.load();
-        for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {
-            if (mapSource instanceof DebugMapSource || mapSource instanceof LocalhostTestSource)
-                continue;
-            if (mapSource instanceof AbstractMultiLayerMapSource) {
-                for (MapSource ms : (AbstractMultiLayerMapSource) mapSource)
-                    addMapSourcesTestCase(ms);
-            } else
-                addMapSourcesTestCase(mapSource);
-        }
-    }
+	public MapSourcesTestSuite() throws JAXBException {
+		super();
+		HttpURLConnection.setFollowRedirects(false);
+		log = LoggerFactory.getLogger(MapSourcesTestSuite.class);
+		testedMapSources = new HashSet<String>();
+		DefaultMapSourcesManager.initialize();
+		Settings.load();
+		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {
+			if (mapSource instanceof DebugMapSource || mapSource instanceof LocalhostTestSource)
+				continue;
+			if (mapSource instanceof AbstractMultiLayerMapSource) {
+				for (MapSource ms : (AbstractMultiLayerMapSource) mapSource)
+					addMapSourcesTestCase(ms);
+			} else
+				addMapSourcesTestCase(mapSource);
+		}
+	}
 
-    public static TestSuite suite() throws JAXBException {
-        ProgramInfo.initialize(); // Load revision info
-        DummyTileStore.initialize();
-        DefaultMapSourcesManager.initializeIntelliJMapPacksOnly();
-        MapSourcesTestSuite testSuite = new MapSourcesTestSuite();
-        return testSuite;
-    }
+	public static TestSuite suite() throws JAXBException {
+		ProgramInfo.initialize(); // Load revision info
+		DummyTileStore.initialize();
+		DefaultMapSourcesManager.initializeIntelliJMapPacksOnly();
+		MapSourcesTestSuite testSuite = new MapSourcesTestSuite();
+		return testSuite;
+	}
 
-    private void addMapSourcesTestCase(MapSource mapSource) {
-        if (!(mapSource instanceof HttpMapSource)) {
-            return;
-        }
-        if (testedMapSources.contains(mapSource.getName())) {
-            return;
-        }
-        EastNorthCoordinate coordinate = Cities.getTestCoordinate(mapSource, C_DEFAULT);
-        addTest(new MapSourceTestCase((HttpMapSource) mapSource, coordinate));
-        testedMapSources.add(mapSource.getName());
-    }
+	private void addMapSourcesTestCase(MapSource mapSource) {
+		if (!(mapSource instanceof HttpMapSource)) {
+			return;
+		}
+		if (testedMapSources.contains(mapSource.getName())) {
+			return;
+		}
+		EastNorthCoordinate coordinate = Cities.getTestCoordinate(mapSource, C_DEFAULT);
+		addTest(new MapSourceTestCase((HttpMapSource) mapSource, coordinate));
+		testedMapSources.add(mapSource.getName());
+	}
 
 }

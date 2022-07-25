@@ -33,152 +33,152 @@ import java.util.regex.Pattern;
 
 public class DeleteTiles implements Runnable {
 
-    private final List<String> tiles;
-    private final File dbDir;
+	private final List<String> tiles;
+	private final File dbDir;
 
-    public DeleteTiles(String dbDir, List<String> tiles) {
-        this.tiles = tiles;
-        this.dbDir = new File(dbDir);
-        if (!ParamTests.testBerkelyDbDir(this.dbDir)) {
-            throw new InvalidParameterException();
-        }
-    }
+	public DeleteTiles(String dbDir, List<String> tiles) {
+		this.tiles = tiles;
+		this.dbDir = new File(dbDir);
+		if (!ParamTests.testBerkelyDbDir(this.dbDir)) {
+			throw new InvalidParameterException();
+		}
+	}
 
-    @Override
-    public void run() {
+	@Override
+	public void run() {
 
-        Pattern p = Pattern.compile("z?([0-9]+)/([0-9]+)/([0-9]+)");
-        List<TileDbKey> tileKeys = new LinkedList<>();
-        for (String t : tiles) {
-            Matcher m = p.matcher(t);
-            boolean valid = m.matches();
+		Pattern p = Pattern.compile("z?([0-9]+)/([0-9]+)/([0-9]+)");
+		List<TileDbKey> tileKeys = new LinkedList<>();
+		for (String t : tiles) {
+			Matcher m = p.matcher(t);
+			boolean valid = m.matches();
 
-            int zoom = -1;
-            int x = -1;
-            int y = -1;
-            if (valid) {
-                zoom = Integer.parseInt(m.group(1));
-                x = Integer.parseInt(m.group(2));
-                y = Integer.parseInt(m.group(3));
-                valid &= (zoom >= PreviewMap.MIN_ZOOM) && (zoom <= PreviewMap.MAX_ZOOM);
-                valid &= (x >= 0) && (y >= 0);
-            }
+			int zoom = -1;
+			int x = -1;
+			int y = -1;
+			if (valid) {
+				zoom = Integer.parseInt(m.group(1));
+				x = Integer.parseInt(m.group(2));
+				y = Integer.parseInt(m.group(3));
+				valid &= (zoom >= PreviewMap.MIN_ZOOM) && (zoom <= PreviewMap.MAX_ZOOM);
+				valid &= (x >= 0) && (y >= 0);
+			}
 
-            if (!valid) {
-                System.err.println("Invalid tile coordinate: " + t);
-                System.exit(-1);
-            }
+			if (!valid) {
+				System.err.println("Invalid tile coordinate: " + t);
+				System.exit(-1);
+			}
 
-            tileKeys.add(new TileDbKey(x, y, zoom));
-        }
-        System.out.println("Deleting the following tiles:");
-        for (TileDbKey key : tileKeys) {
-            System.out.println("\t" + key);
-        }
+			tileKeys.add(new TileDbKey(x, y, zoom));
+		}
+		System.out.println("Deleting the following tiles:");
+		for (TileDbKey key : tileKeys) {
+			System.out.println("\t" + key);
+		}
 
-        BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
-        try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
-            Main.log.info("Tile store entry count: " + db.entryCount() + " (before deleting)");
-            PrimaryIndex<TileDbKey, TileDbEntry> tileIndex = db.getTileIndex();
-            for (TileDbKey key : tileKeys) {
-                if (!tileIndex.delete(key)) {
-                    Main.log.trace("Failed to delete " + key);
-                }
-            }
-            db.purge();
-            Main.log.info("Tile store entry count: " + db.entryCount() + " (after deleting)");
-        } catch (Exception e) {
-            Main.log.error("Deleting of tiles failed", e);
-        }
-    }
+		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
+		try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
+			Main.log.info("Tile store entry count: " + db.entryCount() + " (before deleting)");
+			PrimaryIndex<TileDbKey, TileDbEntry> tileIndex = db.getTileIndex();
+			for (TileDbKey key : tileKeys) {
+				if (!tileIndex.delete(key)) {
+					Main.log.trace("Failed to delete " + key);
+				}
+			}
+			db.purge();
+			Main.log.info("Tile store entry count: " + db.entryCount() + " (after deleting)");
+		} catch (Exception e) {
+			Main.log.error("Deleting of tiles failed", e);
+		}
+	}
 
-    public interface DeleteTileFilter {
-        boolean canDeleteTile(TileDbEntry entry);
+	public interface DeleteTileFilter {
+		boolean canDeleteTile(TileDbEntry entry);
 
-        String getInfoMessage();
-    }
+		String getInfoMessage();
+	}
 
-    public static class ETagDeleteTileFilter implements DeleteTileFilter {
+	public static class ETagDeleteTileFilter implements DeleteTileFilter {
 
-        final String eTagValue;
+		final String eTagValue;
 
-        public ETagDeleteTileFilter(String eTagValue) {
-            super();
-            this.eTagValue = eTagValue;
-        }
+		public ETagDeleteTileFilter(String eTagValue) {
+			super();
+			this.eTagValue = eTagValue;
+		}
 
-        @Override
-        public boolean canDeleteTile(TileDbEntry entry) {
-            String eTag = "" + entry.geteTag(); // Allows to filter for null value
-            return eTag.equals(eTagValue);
-        }
+		@Override
+		public boolean canDeleteTile(TileDbEntry entry) {
+			String eTag = "" + entry.geteTag(); // Allows to filter for null value
+			return eTag.equals(eTagValue);
+		}
 
-        @Override
-        public String getInfoMessage() {
-            return "tiles with an etag of: \"" + eTagValue + "\"";
-        }
+		@Override
+		public String getInfoMessage() {
+			return "tiles with an etag of: \"" + eTagValue + "\"";
+		}
 
-    }
+	}
 
-    public static class ZoomDeleteTileFilter implements DeleteTileFilter {
+	public static class ZoomDeleteTileFilter implements DeleteTileFilter {
 
-        final int zoom;
+		final int zoom;
 
-        public ZoomDeleteTileFilter(int zoom) {
-            super();
-            this.zoom = zoom;
-        }
+		public ZoomDeleteTileFilter(int zoom) {
+			super();
+			this.zoom = zoom;
+		}
 
-        @Override
-        public boolean canDeleteTile(TileDbEntry entry) {
-            return entry.getZoom() == zoom;
-        }
+		@Override
+		public boolean canDeleteTile(TileDbEntry entry) {
+			return entry.getZoom() == zoom;
+		}
 
-        @Override
-        public String getInfoMessage() {
-            return "tiles with an zoom level of " + zoom;
-        }
+		@Override
+		public String getInfoMessage() {
+			return "tiles with an zoom level of " + zoom;
+		}
 
-    }
+	}
 
-    public static class XDeleteTileFilter implements DeleteTileFilter {
+	public static class XDeleteTileFilter implements DeleteTileFilter {
 
-        final int x;
+		final int x;
 
-        public XDeleteTileFilter(int x) {
-            super();
-            this.x = x;
-        }
+		public XDeleteTileFilter(int x) {
+			super();
+			this.x = x;
+		}
 
-        @Override
-        public boolean canDeleteTile(TileDbEntry entry) {
-            return entry.getX() == x;
-        }
+		@Override
+		public boolean canDeleteTile(TileDbEntry entry) {
+			return entry.getX() == x;
+		}
 
-        @Override
-        public String getInfoMessage() {
-            return "tiles with an x coordinate of " + x;
-        }
+		@Override
+		public String getInfoMessage() {
+			return "tiles with an x coordinate of " + x;
+		}
 
-    }
+	}
 
-    public static class YDeleteTileFilter implements DeleteTileFilter {
+	public static class YDeleteTileFilter implements DeleteTileFilter {
 
-        final int y;
+		final int y;
 
-        public YDeleteTileFilter(int y) {
-            super();
-            this.y = y;
-        }
+		public YDeleteTileFilter(int y) {
+			super();
+			this.y = y;
+		}
 
-        @Override
-        public boolean canDeleteTile(TileDbEntry entry) {
-            return entry.getY() == y;
-        }
+		@Override
+		public boolean canDeleteTile(TileDbEntry entry) {
+			return entry.getY() == y;
+		}
 
-        @Override
-        public String getInfoMessage() {
-            return "tiles with an y coordinate of " + y;
-        }
-    }
+		@Override
+		public String getInfoMessage() {
+			return "tiles with an y coordinate of " + y;
+		}
+	}
 }

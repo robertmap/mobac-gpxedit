@@ -23,64 +23,64 @@ import mobac.utilities.geo.CoordinateDms2Format;
 
 public class CordinateTestCase extends TestCase {
 
-    public CordinateTestCase() {
-        super();
-    }
+	public CordinateTestCase() {
+		super();
+	}
 
-    public void testCoordinateDm2Format() throws Exception {
-        CoordinateDm2Format cf = new CoordinateDm2Format(Utilities.DFS_ENG);
+	public void testCoordinateDm2Format() throws Exception {
+		CoordinateDm2Format cf = new CoordinateDm2Format(Utilities.DFS_ENG);
 
-        assertEquals("03° 30.00'", cf.format(3.5d));
-        assertEquals("-03° 30.00'", cf.format(-3.5d));
+		assertEquals("03° 30.00'", cf.format(3.5d));
+		assertEquals("-03° 30.00'", cf.format(-3.5d));
 
-        assertEquals("-20° 06.00'", cf.format(-20.1d));
-        assertEquals("20° 06.00'", cf.format(20.1d));
+		assertEquals("-20° 06.00'", cf.format(-20.1d));
+		assertEquals("20° 06.00'", cf.format(20.1d));
 
-        assertEquals("-13° 54.00'", cf.format(-13.9d));
-        assertEquals("13° 54.00'", cf.format(13.9d));
+		assertEquals("-13° 54.00'", cf.format(-13.9d));
+		assertEquals("13° 54.00'", cf.format(13.9d));
 
-        assertEquals("00° 06.00'", cf.format(0.1d));
-        assertEquals("-00° 06.00'", cf.format(-0.1d));
+		assertEquals("00° 06.00'", cf.format(0.1d));
+		assertEquals("-00° 06.00'", cf.format(-0.1d));
 
-        assertEquals(-4.25, cf.parse("-04° 15.0'"));
-        assertEquals(+4.25, cf.parse("+04° 15.0'"));
+		assertEquals(-4.25, cf.parse("-04° 15.0'"));
+		assertEquals(+4.25, cf.parse("+04° 15.0'"));
 
-        assertEquals(-20.1, cf.parse("-20° 6'"));
-        assertEquals(+20.1, cf.parse("+20° 6'"));
+		assertEquals(-20.1, cf.parse("-20° 6'"));
+		assertEquals(+20.1, cf.parse("+20° 6'"));
 
-        assertEquals(-13.9, cf.parse("-13° 54'"));
-        assertEquals(+13.9, cf.parse("+13° 54'"));
+		assertEquals(-13.9, cf.parse("-13° 54'"));
+		assertEquals(+13.9, cf.parse("+13° 54'"));
 
-        assertEquals(-0.1, cf.parse("-00° 06'"));
-        assertEquals(+0.1, cf.parse("+00° 06'"));
+		assertEquals(-0.1, cf.parse("-00° 06'"));
+		assertEquals(+0.1, cf.parse("+00° 06'"));
 
-    }
+	}
 
-    public void testCoordinateDms2Format() throws Exception {
-        CoordinateDms2Format cf = new CoordinateDms2Format(Utilities.DFS_ENG);
+	public void testCoordinateDms2Format() throws Exception {
+		CoordinateDms2Format cf = new CoordinateDms2Format(Utilities.DFS_ENG);
 
-        assertEquals("03° 32' 59.99\"", cf.format(3.55d));
-        assertEquals("-03° 32' 59.99\"", cf.format(-3.55d));
+		assertEquals("03° 32' 59.99\"", cf.format(3.55d));
+		assertEquals("-03° 32' 59.99\"", cf.format(-3.55d));
 
-        assertEquals("-20° 06' 35.99\"", cf.format(-20.11d));
-        assertEquals("20° 06' 35.99\"", cf.format(20.11d));
+		assertEquals("-20° 06' 35.99\"", cf.format(-20.11d));
+		assertEquals("20° 06' 35.99\"", cf.format(20.11d));
 
-        assertEquals("-13° 59' 24.00\"", cf.format(-13.99d));
-        assertEquals("13° 59' 24.00\"", cf.format(13.99d));
+		assertEquals("-13° 59' 24.00\"", cf.format(-13.99d));
+		assertEquals("13° 59' 24.00\"", cf.format(13.99d));
 
-        assertEquals("00° 06' 00.00\"", cf.format(0.1d));
-        assertEquals("-00° 06' 00.00\"", cf.format(-0.1d));
+		assertEquals("00° 06' 00.00\"", cf.format(0.1d));
+		assertEquals("-00° 06' 00.00\"", cf.format(-0.1d));
 
-        assertEquals(-3.55, cf.parse("-03° 32' 60.00\""));
-        assertEquals(+3.55, cf.parse("+03° 32' 60.00\""));
+		assertEquals(-3.55, cf.parse("-03° 32' 60.00\""));
+		assertEquals(+3.55, cf.parse("+03° 32' 60.00\""));
 
-        assertEquals(-2011, (int) (cf.parse("-20° 6' 36\"").doubleValue() * 100d));
-        assertEquals(+2011, (int) (cf.parse("+20° 6' 36\"").doubleValue() * 100d));
+		assertEquals(-2011, (int) (cf.parse("-20° 6' 36\"").doubleValue() * 100d));
+		assertEquals(+2011, (int) (cf.parse("+20° 6' 36\"").doubleValue() * 100d));
 
-        assertEquals(-1390, (int) (cf.parse("-13° 54' 24\"").doubleValue() * 100));
-        assertEquals(+1390, (int) (cf.parse("+13° 54' 24\"").doubleValue() * 100));
+		assertEquals(-1390, (int) (cf.parse("-13° 54' 24\"").doubleValue() * 100));
+		assertEquals(+1390, (int) (cf.parse("+13° 54' 24\"").doubleValue() * 100));
 
-        assertEquals(-0.1, cf.parse("-00° 06' 0\""));
-        assertEquals(+0.1, cf.parse("+00° 06' 0\""));
-    }
+		assertEquals(-0.1, cf.parse("-00° 06' 0\""));
+		assertEquals(+0.1, cf.parse("+00° 06' 0\""));
+	}
 }

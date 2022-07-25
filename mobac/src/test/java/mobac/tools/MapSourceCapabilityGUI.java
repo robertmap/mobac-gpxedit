@@ -29,83 +29,83 @@ import java.util.List;
 
 public class MapSourceCapabilityGUI extends JFrame {
 
-    private final List<MapSourceCapabilityDetector> result;
+	private final List<MapSourceCapabilityDetector> result;
 
-    public MapSourceCapabilityGUI(List<MapSourceCapabilityDetector> result) throws HeadlessException {
-        super("Map source capabilities");
-        setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.result = result;
-        JTable table = new JTable(new Model());
-        table.setDefaultRenderer(Object.class, new Renderer());
-        add(table.getTableHeader(), BorderLayout.NORTH);
-        add(table, BorderLayout.CENTER);
-        pack();
-    }
+	public MapSourceCapabilityGUI(List<MapSourceCapabilityDetector> result) throws HeadlessException {
+		super("Map source capabilities");
+		setLayout(new BorderLayout());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.result = result;
+		JTable table = new JTable(new Model());
+		table.setDefaultRenderer(Object.class, new Renderer());
+		add(table.getTableHeader(), BorderLayout.NORTH);
+		add(table, BorderLayout.CENTER);
+		pack();
+	}
 
-    private class Model extends AbstractTableModel {
+	private class Model extends AbstractTableModel {
 
-        public int getRowCount() {
-            return result.size();
-        }
+		public int getRowCount() {
+			return result.size();
+		}
 
-        public Object getValueAt(int rowIndex, int columnIndex) {
+		public Object getValueAt(int rowIndex, int columnIndex) {
 
-            MapSourceCapabilityDetector mscd = result.get(rowIndex);
+			MapSourceCapabilityDetector mscd = result.get(rowIndex);
 
-            switch (columnIndex) {
-                case 0:
-                    return mscd.getZoom();
-                case 1:
-                    return mscd.iseTagPresent();
-                case 2:
-                    return mscd.isLastModifiedTimePresent();
-                case 3:
-                    return mscd.isIfNoneMatchSupported();
-                case 4:
-                    return mscd.isIfModifiedSinceSupported();
-                case 5:
-                    return mscd.getContentType();
-            }
-            return null;
-        }
+			switch (columnIndex) {
+				case 0 :
+					return mscd.getZoom();
+				case 1 :
+					return mscd.iseTagPresent();
+				case 2 :
+					return mscd.isLastModifiedTimePresent();
+				case 3 :
+					return mscd.isIfNoneMatchSupported();
+				case 4 :
+					return mscd.isIfModifiedSinceSupported();
+				case 5 :
+					return mscd.getContentType();
+			}
+			return null;
+		}
 
-        public int getColumnCount() {
-            return 6;
-        }
+		public int getColumnCount() {
+			return 6;
+		}
 
-        public String getColumnName(int column) {
-            switch (column) {
-                case 0:
-                    return "Zoom";
-                case 1:
-                    return "eTag";
-                case 2:
-                    return "LastModified";
-                case 3:
-                    return "IfNoneMatch";
-                case 4:
-                    return "IfModifiedSince";
-                case 5:
-                    return "Content type";
-            }
-            return null;
-        }
+		public String getColumnName(int column) {
+			switch (column) {
+				case 0 :
+					return "Zoom";
+				case 1 :
+					return "eTag";
+				case 2 :
+					return "LastModified";
+				case 3 :
+					return "IfNoneMatch";
+				case 4 :
+					return "IfModifiedSince";
+				case 5 :
+					return "Content type";
+			}
+			return null;
+		}
 
-    }
+	}
 
-    private class Renderer extends DefaultTableCellRenderer {
+	private class Renderer extends DefaultTableCellRenderer {
 
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                       boolean hasFocus, int row, int column) {
-            this.setHorizontalAlignment(JLabel.CENTER);
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if ((value != null) && (value instanceof Boolean) && ((Boolean) value))
-                c.setBackground(Color.GREEN);
-            else
-                c.setBackground(Color.WHITE);
-            return c;
-        }
-    }
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			this.setHorizontalAlignment(JLabel.CENTER);
+			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if ((value != null) && (value instanceof Boolean) && ((Boolean) value))
+				c.setBackground(Color.GREEN);
+			else
+				c.setBackground(Color.WHITE);
+			return c;
+		}
+	}
 }

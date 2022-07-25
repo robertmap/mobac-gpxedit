@@ -27,78 +27,78 @@ import java.io.IOException;
 
 public class DummyTileStore extends TileStore {
 
-    public DummyTileStore() {
-    }
+	public DummyTileStore() {
+	}
 
-    public static void initialize() {
-        INSTANCE = new DummyTileStore();
-    }
+	public static void initialize() {
+		INSTANCE = new DummyTileStore();
+	}
 
-    @Override
-    public void clearStore(String storeName) {
-    }
+	@Override
+	public void clearStore(String storeName) {
+	}
 
-    @Override
-    public void closeAll() {
-    }
+	@Override
+	public void closeAll() {
+	}
 
-    @Override
-    public boolean contains(int x, int y, int zoom, MapSource mapSource) {
-        return false;
-    }
+	@Override
+	public boolean contains(int x, int y, int zoom, MapSource mapSource) {
+		return false;
+	}
 
-    @Override
-    public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires,
-                                         String eTag) {
-        return null;
-    }
+	@Override
+	public TileStoreEntry createNewEntry(int x, int y, int zoom, byte[] data, long timeLastModified, long timeExpires,
+			String eTag) {
+		return null;
+	}
 
-    @Override
-    public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
-        return null;
-    }
+	@Override
+	public TileStoreEntry createNewEmptyEntry(int x, int y, int zoom) {
+		return null;
+	}
 
-    @Override
-    public String[] getAllStoreNames() {
-        return null;
-    }
+	@Override
+	public String[] getAllStoreNames() {
+		return null;
+	}
 
-    @Override
-    public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
-            throws InterruptedException {
-        return null;
-    }
+	@Override
+	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
+			throws InterruptedException {
+		return null;
+	}
 
-    @Override
-    public TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException {
-        return null;
-    }
+	@Override
+	public TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException {
+		return null;
+	}
 
-    @Override
-    public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
-        return null;
-    }
+	@Override
+	public TileStoreEntry getTile(int x, int y, int zoom, MapSource mapSource) {
+		return null;
+	}
 
-    @Override
-    public void prepareTileStore(MapSource mapSource) {
-    }
+	@Override
+	public void prepareTileStore(MapSource mapSource) {
+	}
 
-    @Override
-    public void putTile(TileStoreEntry tile, MapSource mapSource) {
-    }
+	@Override
+	public void putTile(TileStoreEntry tile, MapSource mapSource) {
+	}
 
-    @Override
-    public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
-    }
+	@Override
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
+	}
 
-    @Override
-    public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
-                            long timeExpires, String eTag) throws IOException {
-    }
+	@Override
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
+			long timeExpires, String eTag) throws IOException {
+	}
 
-    @Override
-    public boolean storeExists(MapSource mapSource) {
-        return false;
-    }
+	@Override
+	public boolean storeExists(MapSource mapSource) {
+		return false;
+	}
 
 }

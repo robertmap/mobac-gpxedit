@@ -24,18 +24,18 @@ import java.util.Vector;
 
 public class MapUpdateTypeLister {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Vector<MapSource> mapSources = MapSourcesManager.getInstance().getAllMapSources();
-        for (MapSource mapSource : mapSources) {
-            if (mapSource instanceof HttpMapSource) {
-                HttpMapSource httpMapSource = (HttpMapSource) mapSource;
-                String name = mapSource.getName();
-                name = name.substring(0, Math.min(25, name.length()));
-                System.out.println(String.format("%25s  %s", name, httpMapSource.getTileUpdate()));
-            }
-        }
-    }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Vector<MapSource> mapSources = MapSourcesManager.getInstance().getAllMapSources();
+		for (MapSource mapSource : mapSources) {
+			if (mapSource instanceof HttpMapSource) {
+				HttpMapSource httpMapSource = (HttpMapSource) mapSource;
+				String name = mapSource.getName();
+				name = name.substring(0, Math.min(25, name.length()));
+				System.out.println(String.format("%25s  %s", name, httpMapSource.getTileUpdate()));
+			}
+		}
+	}
 }

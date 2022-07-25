@@ -53,47 +53,47 @@ public class ClassReader extends ByteArrayInputStream {
 	// from jvm spec 2nd ed, section 4.4, pp 103
 	private static final int CONSTANT_Class = 7;
 	private static final int CONSTANT_Fieldref = 9;
-    private static final int CONSTANT_Methodref = 10;
-    private static final int CONSTANT_InterfaceMethodref = 11;
-    private static final int CONSTANT_String = 8;
-    private static final int CONSTANT_Integer = 3;
-    private static final int CONSTANT_Float = 4;
-    private static final int CONSTANT_Long = 5;
-    private static final int CONSTANT_Double = 6;
-    private static final int CONSTANT_NameAndType = 12;
-    private static final int CONSTANT_Utf8 = 1;
+	private static final int CONSTANT_Methodref = 10;
+	private static final int CONSTANT_InterfaceMethodref = 11;
+	private static final int CONSTANT_String = 8;
+	private static final int CONSTANT_Integer = 3;
+	private static final int CONSTANT_Float = 4;
+	private static final int CONSTANT_Long = 5;
+	private static final int CONSTANT_Double = 6;
+	private static final int CONSTANT_NameAndType = 12;
+	private static final int CONSTANT_Utf8 = 1;
 
-    /*
-     * java 8 9 10 11 new tokens
-     * https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html
-     */
-    private static final int CONSTANT_MethodHandle = 15;
-    private static final int CONSTANT_MethodType = 16;
-    private static final int CONSTANT_Dynamic = 17;
-    private static final int CONSTANT_InvokeDynamic = 18;
-    private static final int CONSTANT_Module = 19;
-    private static final int CONSTANT_Package = 20;
-    /* end of ava 8 9 10 11 new tokens */
+	/*
+	 * java 8 9 10 11 new tokens
+	 * https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html
+	 */
+	private static final int CONSTANT_MethodHandle = 15;
+	private static final int CONSTANT_MethodType = 16;
+	private static final int CONSTANT_Dynamic = 17;
+	private static final int CONSTANT_InvokeDynamic = 18;
+	private static final int CONSTANT_Module = 19;
+	private static final int CONSTANT_Package = 20;
+	/* end of ava 8 9 10 11 new tokens */
 
-    /**
-     * the constant pool. constant pool indices in the class file directly index
-     * into this array. The value stored in this array is the position in the class
-     * file where that constant begins.
-     */
+	/**
+	 * the constant pool. constant pool indices in the class file directly index
+	 * into this array. The value stored in this array is the position in the class
+	 * file where that constant begins.
+	 */
 	private int[] cpoolIndex;
 	private Object[] cpool;
 
 	private final Map<String, Method> attrMethods;
 
-    /**
-     * Loads the bytecode for a given class, by using the class's defining
-     * classloader and assuming that for a class named P.C, the bytecodes are in a
-     * resource named /P/C.class.
-     *
-     * @param c
-     *            the class of interest
-     * @return Returns a byte array containing the bytecode
-     * @throws IOException
+	/**
+	 * Loads the bytecode for a given class, by using the class's defining
+	 * classloader and assuming that for a class named P.C, the bytecodes are in a
+	 * resource named /P/C.class.
+	 *
+	 * @param c
+	 *            the class of interest
+	 * @return Returns a byte array containing the bytecode
+	 * @throws IOException
 	 */
 	protected static byte[] getBytes(Class<?> c) throws IOException {
 		InputStream fin = c.getResourceAsStream('/' + c.getName().replace('.', '/') + ".class");
@@ -203,22 +203,22 @@ public class ClassReader extends ByteArrayInputStream {
 		while (n > 0) {
 			int c = (int) skip(n);
 			if (c <= 0)
-                throw new EOFException("Error looking for paramter names in bytecode: unexpected end of file");
+				throw new EOFException("Error looking for paramter names in bytecode: unexpected end of file");
 			n -= c;
-        }
-    }
+		}
+	}
 
-    protected final Member resolveMethod(int index) throws IOException, ClassNotFoundException, NoSuchMethodException {
-        int oldPos = pos;
-        try {
-            Member m = (Member) cpool[index];
-            if (m == null) {
-                pos = cpoolIndex[index];
-                Class<?> owner = resolveClass(readShort());
-                NameAndType nt = resolveNameAndType(readShort());
-                String signature = nt.name + nt.type;
-                if (nt.name.equals("<init>")) {
-                    Constructor<?>[] ctors = owner.getConstructors();
+	protected final Member resolveMethod(int index) throws IOException, ClassNotFoundException, NoSuchMethodException {
+		int oldPos = pos;
+		try {
+			Member m = (Member) cpool[index];
+			if (m == null) {
+				pos = cpoolIndex[index];
+				Class<?> owner = resolveClass(readShort());
+				NameAndType nt = resolveNameAndType(readShort());
+				String signature = nt.name + nt.type;
+				if (nt.name.equals("<init>")) {
+					Constructor<?>[] ctors = owner.getConstructors();
 					for (int i = 0; i < ctors.length; i++) {
 						String sig = getSignature(ctors[i], ctors[i].getParameterTypes());
 						if (sig.equals(signature)) {
@@ -241,21 +241,21 @@ public class ClassReader extends ByteArrayInputStream {
 			return m;
 		} finally {
 			pos = oldPos;
-        }
+		}
 
-    }
+	}
 
-    protected final Field resolveField(int i) throws IOException, ClassNotFoundException, NoSuchFieldException {
-        int oldPos = pos;
-        try {
-            Field f = (Field) cpool[i];
-            if (f == null) {
-                pos = cpoolIndex[i];
-                Class<?> owner = resolveClass(readShort());
-                NameAndType nt = resolveNameAndType(readShort());
-                cpool[i] = f = owner.getDeclaredField(nt.name);
-            }
-            return f;
+	protected final Field resolveField(int i) throws IOException, ClassNotFoundException, NoSuchFieldException {
+		int oldPos = pos;
+		try {
+			Field f = (Field) cpool[i];
+			if (f == null) {
+				pos = cpoolIndex[i];
+				Class<?> owner = resolveClass(readShort());
+				NameAndType nt = resolveNameAndType(readShort());
+				cpool[i] = f = owner.getDeclaredField(nt.name);
+			}
+			return f;
 		} finally {
 			pos = oldPos;
 		}
@@ -316,64 +316,64 @@ public class ClassReader extends ByteArrayInputStream {
 			int c = read();
 			cpoolIndex[i] = super.pos;
 			switch (c) // constant pool tag
-            {
-                case CONSTANT_Fieldref:
-                case CONSTANT_Methodref:
-                case CONSTANT_InterfaceMethodref:
-                case CONSTANT_NameAndType:
+			{
+				case CONSTANT_Fieldref :
+				case CONSTANT_Methodref :
+				case CONSTANT_InterfaceMethodref :
+				case CONSTANT_NameAndType :
 
-                    readShort(); // class index or (12) name index
-                    // fall through
+					readShort(); // class index or (12) name index
+					// fall through
 
-                case CONSTANT_Class:
-                case CONSTANT_String:
+				case CONSTANT_Class :
+				case CONSTANT_String :
 
-                    readShort(); // string index or class index
-                    break;
+					readShort(); // string index or class index
+					break;
 
-                case CONSTANT_Long:
-                case CONSTANT_Double:
+				case CONSTANT_Long :
+				case CONSTANT_Double :
 
-                    readInt(); // hi-value
+					readInt(); // hi-value
 
-                    // see jvm spec section 4.4.5 - double and long cpool
-                    // entries occupy two "slots" in the cpool table.
-                    i++;
-                    // fall through
+					// see jvm spec section 4.4.5 - double and long cpool
+					// entries occupy two "slots" in the cpool table.
+					i++;
+					// fall through
 
-                case CONSTANT_Integer:
-                case CONSTANT_Float:
+				case CONSTANT_Integer :
+				case CONSTANT_Float :
 
-                    readInt(); // value
-                    break;
+					readInt(); // value
+					break;
 
-                case CONSTANT_Utf8:
+				case CONSTANT_Utf8 :
 
-                    int len = readShort();
-                    skipFully(len);
-                    break;
+					int len = readShort();
+					skipFully(len);
+					break;
 
-                case CONSTANT_MethodHandle :
+				case CONSTANT_MethodHandle :
 
 					read(); // reference kind
 					readShort(); // reference index
-                    break;
+					break;
 
-                case CONSTANT_MethodType :
+				case CONSTANT_MethodType :
 
 					readShort(); // descriptor index
-                    break;
-                case CONSTANT_Dynamic :
+					break;
+				case CONSTANT_Dynamic :
 					readShort(); // bootstrap method attr index
 					readShort(); // name and type index
-                    break;
-                case CONSTANT_InvokeDynamic :
+					break;
+				case CONSTANT_InvokeDynamic :
 
 					readShort(); // bootstrap method attr index
 					readShort(); // name and type index
-                    break;
+					break;
 
-                default :
+				default :
 					// corrupt class file
 					throw new IllegalStateException(
 							"Error looking for parameter names in bytecode: unexpected bytes in file");
@@ -419,12 +419,12 @@ public class ClassReader extends ByteArrayInputStream {
 		// read the code attributes (recursive). This is where
 		// we will find the LocalVariableTable attribute.
 		readAttributes();
-    }
+	}
 
-    /**
-     * Reads an attributes array. The elements of a class file that can contain
-     * attributes are: fields, methods, the class itself, and some other types of
-     * attributes.
+	/**
+	 * Reads an attributes array. The elements of a class file that can contain
+	 * attributes are: fields, methods, the class itself, and some other types of
+	 * attributes.
 	 */
 	protected final void readAttributes() throws IOException {
 		int count = readShort();

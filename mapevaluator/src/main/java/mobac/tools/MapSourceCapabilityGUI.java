@@ -35,7 +35,7 @@ import java.util.List;
 
 public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 
-    private static final String[] STATUS = {"failed", "success"};
+	private static final String[] STATUS = {"failed", "success"};
 
 	private final List<MapSourceCapabilityDetector> result;
 
@@ -45,17 +45,17 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 
 	private Thread workerThread = null;
 
-    public MapSourceCapabilityGUI(List<MapSourceCapabilityDetector> result) throws HeadlessException {
-        super("Map source capabilities");
-        setLayout(new BorderLayout());
-        this.result = result;
-        table = new JTable(new Model());
-        table.setDefaultRenderer(Object.class, new Renderer());
-        table.getColumnModel().getColumn(1).setMaxWidth(100);
-        button = new JButton("Detection running - abort detection");
-        button.addActionListener(this);
-        add(table.getTableHeader(), BorderLayout.NORTH);
-        add(table, BorderLayout.CENTER);
+	public MapSourceCapabilityGUI(List<MapSourceCapabilityDetector> result) throws HeadlessException {
+		super("Map source capabilities");
+		setLayout(new BorderLayout());
+		this.result = result;
+		table = new JTable(new Model());
+		table.setDefaultRenderer(Object.class, new Renderer());
+		table.getColumnModel().getColumn(1).setMaxWidth(100);
+		button = new JButton("Detection running - abort detection");
+		button.addActionListener(this);
+		add(table.getTableHeader(), BorderLayout.NORTH);
+		add(table, BorderLayout.CENTER);
 		add(button, BorderLayout.SOUTH);
 		setSize(800, 500);
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -103,23 +103,23 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 			MapSourceCapabilityDetector mscd = result.get(rowIndex);
 
 			switch (columnIndex) {
-                case 0:
-                    return STATUS[mscd.isSuccess() ? 1 : 0];
-                case 1:
-                    return mscd.getZoom();
-                case 2:
-                    return mscd.getRecommendedTileUpdate();
-                case 3:
-                    return mscd.iseTagPresent();
-                case 4:
-                    return mscd.isLastModifiedTimePresent();
-                case 5:
-                    return mscd.isIfNoneMatchSupported();
-                case 6:
-                    return mscd.isIfModifiedSinceSupported();
-                case 7:
-                    return mscd.getContentType();
-            }
+				case 0 :
+					return STATUS[mscd.isSuccess() ? 1 : 0];
+				case 1 :
+					return mscd.getZoom();
+				case 2 :
+					return mscd.getRecommendedTileUpdate();
+				case 3 :
+					return mscd.iseTagPresent();
+				case 4 :
+					return mscd.isLastModifiedTimePresent();
+				case 5 :
+					return mscd.isIfNoneMatchSupported();
+				case 6 :
+					return mscd.isIfModifiedSinceSupported();
+				case 7 :
+					return mscd.getContentType();
+			}
 			return null;
 		}
 
@@ -129,23 +129,23 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 
 		public String getColumnName(int column) {
 			switch (column) {
-                case 0:
-                    return "Test";
-                case 1:
-                    return "Zoom";
-                case 2:
-                    return "tileUpdate recommendation";
-                case 3:
-                    return "eTag";
-                case 4:
-                    return "LastModified";
-                case 5:
-                    return "IfNoneMatch";
-                case 6:
-                    return "IfModifiedSince";
-                case 7:
-                    return "Content type";
-            }
+				case 0 :
+					return "Test";
+				case 1 :
+					return "Zoom";
+				case 2 :
+					return "tileUpdate recommendation";
+				case 3 :
+					return "eTag";
+				case 4 :
+					return "LastModified";
+				case 5 :
+					return "IfNoneMatch";
+				case 6 :
+					return "IfModifiedSince";
+				case 7 :
+					return "Content type";
+			}
 			return null;
 		}
 
@@ -153,17 +153,17 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 
 	private class Renderer extends DefaultTableCellRenderer {
 
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-                                                       int row, int column) {
-            this.setHorizontalAlignment(JLabel.CENTER);
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if ((column > 2) && (value != null) && (value instanceof Boolean) && ((Boolean) value))
-                c.setBackground(Color.GREEN);
-            else
-                c.setBackground(Color.WHITE);
-            return c;
-        }
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			this.setHorizontalAlignment(JLabel.CENTER);
+			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			if ((column > 2) && (value != null) && (value instanceof Boolean) && ((Boolean) value))
+				c.setBackground(Color.GREEN);
+			else
+				c.setBackground(Color.WHITE);
+			return c;
+		}
 	}
 
 }

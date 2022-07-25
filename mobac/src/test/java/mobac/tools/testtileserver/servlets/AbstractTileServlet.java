@@ -30,80 +30,80 @@ import java.security.SecureRandom;
 
 public abstract class AbstractTileServlet extends HttpServlet {
 
-    protected static final SecureRandom RND = new SecureRandom();
+	protected static final SecureRandom RND = new SecureRandom();
 
-    protected final Logger log;
-    private final MessageDigest md5;
-    /**
-     * Error rate in percent [0..100]
-     */
-    protected int errorRate = 0;
-    protected boolean errorOnUrl = true;
-    protected int delay = 0;
+	protected final Logger log;
+	private final MessageDigest md5;
+	/**
+	 * Error rate in percent [0..100]
+	 */
+	protected int errorRate = 0;
+	protected boolean errorOnUrl = true;
+	protected int delay = 0;
 
-    public AbstractTileServlet() {
-        log = LoggerFactory.getLogger(this.getClass());
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public AbstractTileServlet() {
+		log = LoggerFactory.getLogger(this.getClass());
+		try {
+			md5 = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-            IOException {
-        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-        }
-        if (errorResponse(request, response))
-            return;
-        super.service(request, response);
-    }
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+		}
+		if (errorResponse(request, response))
+			return;
+		super.service(request, response);
+	}
 
-    public boolean errorResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (errorRate == 0)
-            return false;
-        if (errorOnUrl) {
-            String url = request.getRequestURL() + request.getQueryString();
-            byte[] digest = md5.digest(url.getBytes());
-            int hash = Math.abs(digest[4] % 100);
-            log.debug(url + " -> " + hash + ">" + errorRate + "?");
-            if (hash > errorRate)
-                return false;
-        } else {
-            int rnd = RND.nextInt(100);
-            if (rnd > errorRate)
-                return false;
-        }
-        response.sendError(404);
-        log.debug("Error response sent");
-        return true;
-    }
+	public boolean errorResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		if (errorRate == 0)
+			return false;
+		if (errorOnUrl) {
+			String url = request.getRequestURL() + request.getQueryString();
+			byte[] digest = md5.digest(url.getBytes());
+			int hash = Math.abs(digest[4] % 100);
+			log.debug(url + " -> " + hash + ">" + errorRate + "?");
+			if (hash > errorRate)
+				return false;
+		} else {
+			int rnd = RND.nextInt(100);
+			if (rnd > errorRate)
+				return false;
+		}
+		response.sendError(404);
+		log.debug("Error response sent");
+		return true;
+	}
 
-    public int getErrorRate() {
-        return errorRate;
-    }
+	public int getErrorRate() {
+		return errorRate;
+	}
 
-    public void setErrorRate(int errorRate) {
-        this.errorRate = errorRate;
-    }
+	public void setErrorRate(int errorRate) {
+		this.errorRate = errorRate;
+	}
 
-    public boolean isErrorOnUrl() {
-        return errorOnUrl;
-    }
+	public boolean isErrorOnUrl() {
+		return errorOnUrl;
+	}
 
-    public void setErrorOnUrl(boolean errorOnUrl) {
-        this.errorOnUrl = errorOnUrl;
-    }
+	public void setErrorOnUrl(boolean errorOnUrl) {
+		this.errorOnUrl = errorOnUrl;
+	}
 
-    public int getDelay() {
-        return delay;
-    }
+	public int getDelay() {
+		return delay;
+	}
 
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
 
 }

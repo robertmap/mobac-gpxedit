@@ -16,7 +16,6 @@
  ******************************************************************************/
 package unittests.helper;
 
-
 import mobac.exceptions.MapCreationException;
 import mobac.program.atlascreators.AtlasCreator;
 import mobac.program.interfaces.MapSource;
@@ -28,16 +27,16 @@ import mobac.program.interfaces.MapSource;
  */
 public class DummyAtlasCreator extends AtlasCreator {
 
-    public DummyAtlasCreator() {
-    }
+	public DummyAtlasCreator() {
+	}
 
-    @Override
-    public void createMap() throws MapCreationException, InterruptedException {
-    }
+	@Override
+	public void createMap() throws MapCreationException, InterruptedException {
+	}
 
-    @Override
-    public boolean testMapSource(MapSource mapSource) {
-        return true;
-    }
+	@Override
+	public boolean testMapSource(MapSource mapSource) {
+		return true;
+	}
 
 }

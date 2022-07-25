@@ -59,25 +59,25 @@ public class HelpAction implements ActionListener {
 		if (clazz.isArray()) {
 			String name = clazz.getName();
 			switch (name.charAt(1)) {
-				case 'B':
+				case 'B' :
 					return "byte[]";
-				case 'C':
+				case 'C' :
 					return "char[]";
-				case 'D':
+				case 'D' :
 					return "double[]";
-				case 'F':
+				case 'F' :
 					return "float[]";
-				case 'I':
+				case 'I' :
 					return "int[]";
-				case 'J':
+				case 'J' :
 					return "long[]";
-				case 'L':
+				case 'L' :
 					return "Object";
-				case 'S':
+				case 'S' :
 					return "short[]";
-				case 'Z':
+				case 'Z' :
 					return "boolean[]";
-				default:
+				default :
 					return "unknown[]";
 			}
 		} else

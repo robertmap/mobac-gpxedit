@@ -10,26 +10,26 @@ import mobac.utilities.GUIExceptionHandler;
 
 public class StartMapEvaluator {
 
-    public static void main(String[] args) {
-        StartMOBAC.setLookAndFeel();
-        ProgramInfo.PROG_NAME = "MOBAC Map Evaluator";
-        ProgramInfo.PROG_NAME_SHORT = null;
-        GUIExceptionHandler.registerForCurrentThread();
-        GUIExceptionHandler.installToolkitEventQueueProxy();
-        ProgramInfo.initialize();
-        // Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
-        DirectoryManager.initialize();
-        // MapEvaluatorMapSourcesManager.initialitze();
-        DefaultMapSourcesManager.initialize();
-        try {
-            if (Settings.FILE.isFile()) {
-                Settings.load();
-            }
-        } catch (Exception e) {
-            // Load settings.xml only if it exists
-        }
-        TileStore.initialize();
-        new MapEvaluator().setVisible(true);
-    }
+	public static void main(String[] args) {
+		StartMOBAC.setLookAndFeel();
+		ProgramInfo.PROG_NAME = "MOBAC Map Evaluator";
+		ProgramInfo.PROG_NAME_SHORT = null;
+		GUIExceptionHandler.registerForCurrentThread();
+		GUIExceptionHandler.installToolkitEventQueueProxy();
+		ProgramInfo.initialize();
+		// Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
+		DirectoryManager.initialize();
+		// MapEvaluatorMapSourcesManager.initialitze();
+		DefaultMapSourcesManager.initialize();
+		try {
+			if (Settings.FILE.isFile()) {
+				Settings.load();
+			}
+		} catch (Exception e) {
+			// Load settings.xml only if it exists
+		}
+		TileStore.initialize();
+		new MapEvaluator().setVisible(true);
+	}
 
 }

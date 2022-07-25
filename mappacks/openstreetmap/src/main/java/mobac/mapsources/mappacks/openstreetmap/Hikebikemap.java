@@ -30,14 +30,14 @@ import java.io.IOException;
 
 public class Hikebikemap extends AbstractMultiLayerMapSource {
 
-    private static final String[] SERVERS = {"a", "b", "c"};
-    private static int SERVER_NUM = 0;
+	private static final String[] SERVERS = {"a", "b", "c"};
+	private static int SERVER_NUM = 0;
 	private static final Color BACKGROUND = new Color(180, 180, 180);
 
 	public Hikebikemap() {
-        super("OpenStreetMap Hikebikemap.de", TileImageType.PNG);
-        mapSources = new MapSource[]{new HikebikemapBase(), new HikebikemapRelief()};
-        initializeValues();
+		super("OpenStreetMap Hikebikemap.de", TileImageType.PNG);
+		mapSources = new MapSource[]{new HikebikemapBase(), new HikebikemapRelief()};
+		initializeValues();
 	}
 
 	/**
@@ -66,8 +66,8 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 
 	/**
 	 * Hill shades / relief
-     *
-     * http://hikebikemap.de/
+	 *
+	 * http://hikebikemap.de/
 	 */
 	public static class HikebikemapRelief extends AbstractOsmMapSource {
 
@@ -83,13 +83,13 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 			return String.format("https://%s.tiles.wmflabs.org/hillshading/%d/%d/%d.png", server, zoom, tilex, tiley);
 		}
 
-        @Override
-        public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-                throws IOException, TileException, InterruptedException {
-            if (zoom > 16)
-                return null;
-            return super.getTileImage(zoom, x, y, loadMethod);
-        }
+		@Override
+		public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
+				throws IOException, TileException, InterruptedException {
+			if (zoom > 16)
+				return null;
+			return super.getTileImage(zoom, x, y, loadMethod);
+		}
 
 	}
 

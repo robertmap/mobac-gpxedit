@@ -27,45 +27,45 @@ import java.security.cert.CertificateException;
 
 public class MapPackUploadSelector {
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Logger log = LoggerFactory.getLogger(MapPackUploadSelector.class);
-        ProgramInfo.initialize();
-        try {
-            File mapPackDir = new File("mapsources");
-            File mapPackUpdateDir = new File("mapsources-updates");
-            Utilities.mkDirs(mapPackUpdateDir);
-            for (File newMapPack : mapPackUpdateDir.listFiles()) {
-                Utilities.deleteFile(newMapPack);
-            }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Logger log = LoggerFactory.getLogger(MapPackUploadSelector.class);
+		ProgramInfo.initialize();
+		try {
+			File mapPackDir = new File("mapsources");
+			File mapPackUpdateDir = new File("mapsources-updates");
+			Utilities.mkDirs(mapPackUpdateDir);
+			for (File newMapPack : mapPackUpdateDir.listFiles()) {
+				Utilities.deleteFile(newMapPack);
+			}
 
-            log.info("updateUrl: " + System.getProperty("mobac.updateurl"));
-            Utilities.mkDirs(mapPackUpdateDir);
-            MapPackManager mpm = new MapPackManager(mapPackDir);
-            String md5sumList = mpm.downloadMD5SumList();
-            String[] changedMapPacks = mpm.searchForOutdatedMapPacks(md5sumList);
-            for (String mapPackName : changedMapPacks) {
-                log.info("Changed local map pack found: " + mapPackName);
-                File mapPack = new File(mapPackDir, mapPackName);
-                try {
-                    mpm.testMapPack(mapPack);
-                    File mapPackCopy = new File(mapPackUpdateDir, mapPackName);
-                    Utilities.copyFile(mapPack, mapPackCopy);
-                } catch (CertificateException e) {
-                    log.error("Map pack not copied because of invalid signature", e);
-                }
-            }
-            if (changedMapPacks.length > 0) {
-                Utilities.copyFile(new File(mapPackDir, "mappacks-md5.txt"),
-                        new File(mapPackUpdateDir, "mappacks-md5.txt"));
-            } else {
-                log.info("No updated map packs found");
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-    }
+			log.info("updateUrl: " + System.getProperty("mobac.updateurl"));
+			Utilities.mkDirs(mapPackUpdateDir);
+			MapPackManager mpm = new MapPackManager(mapPackDir);
+			String md5sumList = mpm.downloadMD5SumList();
+			String[] changedMapPacks = mpm.searchForOutdatedMapPacks(md5sumList);
+			for (String mapPackName : changedMapPacks) {
+				log.info("Changed local map pack found: " + mapPackName);
+				File mapPack = new File(mapPackDir, mapPackName);
+				try {
+					mpm.testMapPack(mapPack);
+					File mapPackCopy = new File(mapPackUpdateDir, mapPackName);
+					Utilities.copyFile(mapPack, mapPackCopy);
+				} catch (CertificateException e) {
+					log.error("Map pack not copied because of invalid signature", e);
+				}
+			}
+			if (changedMapPacks.length > 0) {
+				Utilities.copyFile(new File(mapPackDir, "mappacks-md5.txt"),
+						new File(mapPackUpdateDir, "mappacks-md5.txt"));
+			} else {
+				log.info("No updated map packs found");
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
 
 }

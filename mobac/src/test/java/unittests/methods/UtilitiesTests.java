@@ -26,58 +26,58 @@ import java.lang.reflect.Field;
 
 public class UtilitiesTests extends TestCase {
 
-    public static void main(String[] args) {
-        TestRunner.run(UtilitiesTests.class);
-    }
+	public static void main(String[] args) {
+		TestRunner.run(UtilitiesTests.class);
+	}
 
-    public void testParseSVNRevision() {
-        assertEquals(4168, Utilities.parseSVNRevision("4168"));
-        assertEquals(4168, Utilities.parseSVNRevision("4123:4168"));
-        assertEquals(4168, Utilities.parseSVNRevision("4168M"));
-        assertEquals(4168, Utilities.parseSVNRevision("4212:4168MS"));
-        assertEquals(4168, Utilities.parseSVNRevision("$Revision:	4168$"));
-        assertEquals(4168, Utilities.parseSVNRevision("$Rev: 4212:4168MS$"));
-        assertEquals(-1, Utilities.parseSVNRevision("exported"));
-    }
+	public void testParseSVNRevision() {
+		assertEquals(4168, Utilities.parseSVNRevision("4168"));
+		assertEquals(4168, Utilities.parseSVNRevision("4123:4168"));
+		assertEquals(4168, Utilities.parseSVNRevision("4168M"));
+		assertEquals(4168, Utilities.parseSVNRevision("4212:4168MS"));
+		assertEquals(4168, Utilities.parseSVNRevision("$Revision:	4168$"));
+		assertEquals(4168, Utilities.parseSVNRevision("$Rev: 4212:4168MS$"));
+		assertEquals(-1, Utilities.parseSVNRevision("exported"));
+	}
 
-    public void testTarHeader() throws Exception {
+	public void testTarHeader() throws Exception {
 
-        final String str1 = "Test123";
-        final String str2 = "abcdefghijklmnopqrstuvwxyz";
-        final String str3 = "1234567890";
-        StringWriter sw = new StringWriter(110);
-        for (int i = 0; i < 100; i++)
-            sw.write('x');
-        String str4 = sw.toString();
+		final String str1 = "Test123";
+		final String str2 = "abcdefghijklmnopqrstuvwxyz";
+		final String str3 = "1234567890";
+		StringWriter sw = new StringWriter(110);
+		for (int i = 0; i < 100; i++)
+			sw.write('x');
+		String str4 = sw.toString();
 
-        for (int i = 0; i < 101; i++)
-            sw.write('y');
-        String str5 = sw.toString();
+		for (int i = 0; i < 101; i++)
+			sw.write('y');
+		String str5 = sw.toString();
 
-        TarHeader tarHeader = new TarHeader(str1, 12345, false);
-        assertEquals(str1, tarHeader.getFileName());
+		TarHeader tarHeader = new TarHeader(str1, 12345, false);
+		assertEquals(str1, tarHeader.getFileName());
 
-        tarHeader.setFileName(str2);
-        assertEquals(str2, tarHeader.getFileName());
+		tarHeader.setFileName(str2);
+		assertEquals(str2, tarHeader.getFileName());
 
-        tarHeader.setFileName(str3);
-        assertEquals(str3, tarHeader.getFileName());
+		tarHeader.setFileName(str3);
+		assertEquals(str3, tarHeader.getFileName());
 
-        tarHeader.setFileName(str4); // max length filename
-        assertEquals(str4, tarHeader.getFileName());
+		tarHeader.setFileName(str4); // max length filename
+		assertEquals(str4, tarHeader.getFileName());
 
-        try {
-            tarHeader.setFileName(str5);
-            fail("Exception expected");
-        } catch (Exception e) {
+		try {
+			tarHeader.setFileName(str5);
+			fail("Exception expected");
+		} catch (Exception e) {
 
-        }
+		}
 
-        Field f = TarHeader.class.getDeclaredField("fileName");
-        f.setAccessible(true);
-        char[] chars = (char[]) f.get(tarHeader);
-        for (char c : chars)
-            System.out.print(c == 0 ? " 0" : c);
-    }
+		Field f = TarHeader.class.getDeclaredField("fileName");
+		f.setAccessible(true);
+		char[] chars = (char[]) f.get(tarHeader);
+		for (char c : chars)
+			System.out.print(c == 0 ? " 0" : c);
+	}
 
 }

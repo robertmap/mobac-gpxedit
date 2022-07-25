@@ -22,31 +22,31 @@ import mobac.utilities.MyMath;
 
 public class MyMathTests extends TestCase {
 
-    public static void main(String[] args) {
-        TestRunner.run(MyMathTests.class);
-    }
+	public static void main(String[] args) {
+		TestRunner.run(MyMathTests.class);
+	}
 
-    public void testRoundDownToNearest() {
-        assertEquals(0, MyMath.roundDownToNearest(0, 10));
-        assertEquals(0, MyMath.roundDownToNearest(1, 10));
-        assertEquals(0, MyMath.roundDownToNearest(9, 10));
-        assertEquals(10, MyMath.roundDownToNearest(10, 10));
-        assertEquals(10, MyMath.roundDownToNearest(11, 10));
-        assertEquals(12340, MyMath.roundDownToNearest(12345, 10));
-        assertEquals(1024, MyMath.roundDownToNearest(1025, 16));
-        assertEquals(1024, MyMath.roundDownToNearest(1024, 256));
-        assertEquals(1024, MyMath.roundDownToNearest(1025, 256));
-    }
+	public void testRoundDownToNearest() {
+		assertEquals(0, MyMath.roundDownToNearest(0, 10));
+		assertEquals(0, MyMath.roundDownToNearest(1, 10));
+		assertEquals(0, MyMath.roundDownToNearest(9, 10));
+		assertEquals(10, MyMath.roundDownToNearest(10, 10));
+		assertEquals(10, MyMath.roundDownToNearest(11, 10));
+		assertEquals(12340, MyMath.roundDownToNearest(12345, 10));
+		assertEquals(1024, MyMath.roundDownToNearest(1025, 16));
+		assertEquals(1024, MyMath.roundDownToNearest(1024, 256));
+		assertEquals(1024, MyMath.roundDownToNearest(1025, 256));
+	}
 
-    public void testRoundUpToNearest() {
-        assertEquals(0, MyMath.roundUpToNearest(0, 10));
-        assertEquals(10, MyMath.roundUpToNearest(1, 10));
-        assertEquals(10, MyMath.roundUpToNearest(9, 10));
-        assertEquals(20, MyMath.roundUpToNearest(11, 10));
-        assertEquals(12350, MyMath.roundUpToNearest(12345, 10));
-        assertEquals(1040, MyMath.roundUpToNearest(1025, 16));
-        assertEquals(1024, MyMath.roundUpToNearest(1024, 256));
-        assertEquals(1280, MyMath.roundUpToNearest(1025, 256));
-    }
+	public void testRoundUpToNearest() {
+		assertEquals(0, MyMath.roundUpToNearest(0, 10));
+		assertEquals(10, MyMath.roundUpToNearest(1, 10));
+		assertEquals(10, MyMath.roundUpToNearest(9, 10));
+		assertEquals(20, MyMath.roundUpToNearest(11, 10));
+		assertEquals(12350, MyMath.roundUpToNearest(12345, 10));
+		assertEquals(1040, MyMath.roundUpToNearest(1025, 16));
+		assertEquals(1024, MyMath.roundUpToNearest(1024, 256));
+		assertEquals(1280, MyMath.roundUpToNearest(1025, 256));
+	}
 
 }

@@ -27,33 +27,33 @@ import java.security.InvalidParameterException;
 
 public class Print implements Runnable {
 
-    private final File dbDir;
+	private final File dbDir;
 
-    public Print(String dbDir) {
-        this.dbDir = new File(dbDir);
-        if (!ParamTests.testBerkelyDbDir(this.dbDir)) {
-            throw new InvalidParameterException();
-        }
-    }
+	public Print(String dbDir) {
+		this.dbDir = new File(dbDir);
+		if (!ParamTests.testBerkelyDbDir(this.dbDir)) {
+			throw new InvalidParameterException();
+		}
+	}
 
-    @Override
-    public void run() {
-        BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
-        try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
-            EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities();
-            try {
-                TileDbEntry entry = cursor.next();
-                while (entry != null) {
-                    System.out.println(entry);
-                    entry = cursor.next();
-                }
-            } finally {
-                cursor.close();
-            }
-            System.out.println("Tile store entry count: " + db.entryCount());
-        } catch (Exception e) {
-            Main.log.error("Deleting of tiles failed", e);
-        }
-    }
+	@Override
+	public void run() {
+		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
+		try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
+			EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities();
+			try {
+				TileDbEntry entry = cursor.next();
+				while (entry != null) {
+					System.out.println(entry);
+					entry = cursor.next();
+				}
+			} finally {
+				cursor.close();
+			}
+			System.out.println("Tile store entry count: " + db.entryCount());
+		} catch (Exception e) {
+			Main.log.error("Deleting of tiles failed", e);
+		}
+	}
 
 }

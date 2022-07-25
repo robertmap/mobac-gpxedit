@@ -24,18 +24,18 @@ import java.io.File;
 
 public class AtlasDownloadTestCase extends AbstractAtlasCreatorTestCase {
 
-    public AtlasDownloadTestCase() {
-        super();
-    }
+	public AtlasDownloadTestCase() {
+		super();
+	}
 
-    public void testAtlasCreation() throws Exception {
-        AtlasInterface atlas;
-        // atlas = loadAtlas("Germany10-12");
-        // atlas = loadAtlas("HamburgPark");
-        DefaultMapSourcesManager.initialize();
-        atlas = loadAtlas("Munich6-16");
-        File dir = createAtlas(atlas, new AlpineQuestMap());
-        assertNotNull(dir);
-    }
+	public void testAtlasCreation() throws Exception {
+		AtlasInterface atlas;
+		// atlas = loadAtlas("Germany10-12");
+		// atlas = loadAtlas("HamburgPark");
+		DefaultMapSourcesManager.initialize();
+		atlas = loadAtlas("Munich6-16");
+		File dir = createAtlas(atlas, new AlpineQuestMap());
+		assertNotNull(dir);
+	}
 
 }

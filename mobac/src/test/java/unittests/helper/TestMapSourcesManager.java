@@ -25,65 +25,64 @@ import java.util.Vector;
 
 public class TestMapSourcesManager extends MapSourcesManager {
 
-    private final MapSource theMapSource;
+	private final MapSource theMapSource;
 
-    public TestMapSourcesManager(int port, TileImageType tileType) {
-        super();
-        theMapSource = new LocalhostTestSource("Localhost test", port, tileType);
-        install();
-    }
+	public TestMapSourcesManager(int port, TileImageType tileType) {
+		super();
+		theMapSource = new LocalhostTestSource("Localhost test", port, tileType);
+		install();
+	}
 
-    public TestMapSourcesManager(MapSource mapSource) {
-        super();
-        theMapSource = mapSource;
-        install();
-    }
+	public TestMapSourcesManager(MapSource mapSource) {
+		super();
+		theMapSource = mapSource;
+		install();
+	}
 
-    public void install() {
-        INSTANCE = this;
-    }
+	public void install() {
+		INSTANCE = this;
+	}
 
-    @Override
-    public Vector<MapSource> getAllMapSources() {
-        Vector<MapSource> v = new Vector<MapSource>(1);
-        v.add(theMapSource);
-        return v;
-    }
+	@Override
+	public Vector<MapSource> getAllMapSources() {
+		Vector<MapSource> v = new Vector<MapSource>(1);
+		v.add(theMapSource);
+		return v;
+	}
 
-    @Override
-    public Vector<MapSource> getAllLayerMapSources() {
-        return getAllMapSources();
-    }
+	@Override
+	public Vector<MapSource> getAllLayerMapSources() {
+		return getAllMapSources();
+	}
 
-    @Override
-    public MapSource getDefaultMapSource() {
-        return theMapSource;
-    }
+	@Override
+	public MapSource getDefaultMapSource() {
+		return theMapSource;
+	}
 
-    @Override
-    public Vector<MapSource> getEnabledOrderedMapSources() {
-        return getAllMapSources();
-    }
+	@Override
+	public Vector<MapSource> getEnabledOrderedMapSources() {
+		return getAllMapSources();
+	}
 
-    @Override
-    public Vector<MapSource> getDisabledMapSources() {
-        return new Vector<MapSource>();
-    }
+	@Override
+	public Vector<MapSource> getDisabledMapSources() {
+		return new Vector<MapSource>();
+	}
 
-    @Override
-    public MapSource getSourceByName(String name) {
-        return theMapSource;
-    }
+	@Override
+	public MapSource getSourceByName(String name) {
+		return theMapSource;
+	}
 
-    @Override
-    public void addMapSource(MapSource mapSource) {
-        throw new RuntimeException("not implemented");
-    }
+	@Override
+	public void addMapSource(MapSource mapSource) {
+		throw new RuntimeException("not implemented");
+	}
 
-    @Override
-    public Vector<MapSource> getAllAvailableMapSources() {
-        return getAllMapSources();
-    }
-
+	@Override
+	public Vector<MapSource> getAllAvailableMapSources() {
+		return getAllMapSources();
+	}
 
 }

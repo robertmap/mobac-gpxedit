@@ -48,69 +48,74 @@ public class LineNumberedBorder extends AbstractBorder {
 	 */
 	private int location = LEFT_SIDE;
 
-    public LineNumberedBorder(int location, int justify) {
-        setLocation(location);
-        setLineNumberJustification(justify);
-    }
+	public LineNumberedBorder(int location, int justify) {
+		setLocation(location);
+		setLineNumberJustification(justify);
+	}
 
-    public Insets getBorderInsets(Component c) {
-        return getBorderInsets(c, new Insets(0, 0, 0, 0));
-    }
+	public Insets getBorderInsets(Component c) {
+		return getBorderInsets(c, new Insets(0, 0, 0, 0));
+	}
 
-    /**
-     * Create the string for the line number. NOTE: The <tt>length</tt> param does
-     * not include the <em>optional</em> space added after the line number.
-     *
-     * @param lineNumber to stringize
-     * @param length     the length desired of the string
-     * @param addSpace   Description of the Parameter
-     * @return the line number for drawing
-     */
-    private static String padLabel(int lineNumber, int length, boolean addSpace) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(lineNumber);
-        for (int count = (length - buffer.length()); count > 0; count--) {
-            buffer.insert(0, ' ');
-        }
-        if (addSpace) {
-            buffer.append(' ');
-        }
-        return buffer.toString();
-    }
+	/**
+	 * Create the string for the line number. NOTE: The <tt>length</tt> param does
+	 * not include the <em>optional</em> space added after the line number.
+	 *
+	 * @param lineNumber
+	 *            to stringize
+	 * @param length
+	 *            the length desired of the string
+	 * @param addSpace
+	 *            Description of the Parameter
+	 * @return the line number for drawing
+	 */
+	private static String padLabel(int lineNumber, int length, boolean addSpace) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(lineNumber);
+		for (int count = (length - buffer.length()); count > 0; count--) {
+			buffer.insert(0, ' ');
+		}
+		if (addSpace) {
+			buffer.append(' ');
+		}
+		return buffer.toString();
+	}
 
-    public int getLineNumberJustification() {
-        return lineNumberJustification;
-    }
+	public int getLineNumberJustification() {
+		return lineNumberJustification;
+	}
 
-    public void setLineNumberJustification(int justify) {
-        if (justify == RIGHT_JUSTIFY || justify == LEFT_JUSTIFY) {
-            lineNumberJustification = justify;
-        }
-    }
+	public void setLineNumberJustification(int justify) {
+		if (justify == RIGHT_JUSTIFY || justify == LEFT_JUSTIFY) {
+			lineNumberJustification = justify;
+		}
+	}
 
-    public int getLocation() {
-        return location;
-    }
+	public int getLocation() {
+		return location;
+	}
 
-    public void setLocation(int loc) {
-        if (loc == RIGHT_SIDE || loc == LEFT_SIDE) {
-            location = loc;
-        }
-    }
+	public void setLocation(int loc) {
+		if (loc == RIGHT_SIDE || loc == LEFT_SIDE) {
+			location = loc;
+		}
+	}
 
-    /**
-     * This modifies the insets, by adding space for the line number on the left.
-     * Should be modified to add space on the right, depending upon Locale.
-     *
-     * @param c      Description of the Parameter
-     * @param insets Description of the Parameter
-     * @return The borderInsets value
-     */
-    public Insets getBorderInsets(Component c, Insets insets) {
-        // if c is not a JTextArea...nothing is done...
-        if (c instanceof JTextArea) {
-            int width = lineNumberWidth((JTextArea) c);
-            if (location == LEFT_SIDE) {
+	/**
+	 * This modifies the insets, by adding space for the line number on the left.
+	 * Should be modified to add space on the right, depending upon Locale.
+	 *
+	 * @param c
+	 *            Description of the Parameter
+	 * @param insets
+	 *            Description of the Parameter
+	 * @return The borderInsets value
+	 */
+	public Insets getBorderInsets(Component c, Insets insets) {
+		// if c is not a JTextArea...nothing is done...
+		if (c instanceof JTextArea) {
+			int width = lineNumberWidth((JTextArea) c);
+			if (location == LEFT_SIDE) {
 				insets.left = width;
 			} else {
 				insets.right = width;
@@ -229,19 +234,19 @@ public class LineNumberedBorder extends AbstractBorder {
 
 	/**
 	 * Returns the width, in pixels, of the maximum line number, plus a trailing
-     * space.
-     *
-     * @param textArea
-     *            Description of the Parameter
-     * @return Description of the Return Value
-     */
-    private int lineNumberWidth(JTextArea textArea) {
-        //
-        // note: should this be changed to use all nines for the lineCount?
-        // for example, if the number of rows is 111...999 could be wider
-        // (in pixels) in a proportionally spaced font...
-        //
-        int lineCount = Math.max(textArea.getRows(), textArea.getLineCount() + 1);
-        return textArea.getFontMetrics(textArea.getFont()).stringWidth(lineCount + " ");
-    }
+	 * space.
+	 *
+	 * @param textArea
+	 *            Description of the Parameter
+	 * @return Description of the Return Value
+	 */
+	private int lineNumberWidth(JTextArea textArea) {
+		//
+		// note: should this be changed to use all nines for the lineCount?
+		// for example, if the number of rows is 111...999 could be wider
+		// (in pixels) in a proportionally spaced font...
+		//
+		int lineCount = Math.max(textArea.getRows(), textArea.getLineCount() + 1);
+		return textArea.getFontMetrics(textArea.getFont()).stringWidth(lineCount + " ");
+	}
 }

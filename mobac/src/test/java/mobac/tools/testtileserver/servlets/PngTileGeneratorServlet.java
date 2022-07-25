@@ -27,30 +27,32 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Generates for each request a png tile of size 256x256 containing the url request broken down to multiple lines.
+ * Generates for each request a png tile of size 256x256 containing the url
+ * request broken down to multiple lines.
  *
  * @author r_x
  */
 public class PngTileGeneratorServlet extends AbstractTileGeneratorServlet {
 
-    private final int pngCompressionLevel;
+	private final int pngCompressionLevel;
 
-    public PngTileGeneratorServlet(int pngCompressionLevel) {
-        super();
-        this.pngCompressionLevel = pngCompressionLevel;
-    }
+	public PngTileGeneratorServlet(int pngCompressionLevel) {
+		super();
+		this.pngCompressionLevel = pngCompressionLevel;
+	}
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BufferedImage tile = generateImage(request);
-        response.setContentType("image/png");
-        try (OutputStream out = response.getOutputStream()) {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream(16000);
-            Png4BitWriter.writeImage(bout, tile, pngCompressionLevel, request.getRequestURL().toString());
-            byte[] buf = bout.toByteArray();
-            response.setContentLength(buf.length);
-            out.write(buf);
-        }
-        response.flushBuffer();
-    }
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		BufferedImage tile = generateImage(request);
+		response.setContentType("image/png");
+		try (OutputStream out = response.getOutputStream()) {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream(16000);
+			Png4BitWriter.writeImage(bout, tile, pngCompressionLevel, request.getRequestURL().toString());
+			byte[] buf = bout.toByteArray();
+			response.setContentLength(buf.length);
+			out.write(buf);
+		}
+		response.flushBuffer();
+	}
 }

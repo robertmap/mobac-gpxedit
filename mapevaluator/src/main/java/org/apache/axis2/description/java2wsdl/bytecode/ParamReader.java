@@ -48,12 +48,12 @@ public class ParamReader extends ClassReader {
 	private Class<?>[] paramTypes;
 
 	/**
-     * Processes a class file, given it's class. We'll use the defining classloader
-     * to locate the bytecode.
-     *
-     * @param c
-     * @throws IOException
-     */
+	 * Processes a class file, given it's class. We'll use the defining classloader
+	 * to locate the bytecode.
+	 *
+	 * @param c
+	 * @throws IOException
+	 */
 	public ParamReader(Class<?> c) throws IOException {
 		this(getBytes(c));
 	}
@@ -122,30 +122,30 @@ public class ParamReader extends ClassReader {
 		// read the code attributes (recursive). This is where
 		// we will find the LocalVariableTable attribute.
 		readAttributes();
-    }
+	}
 
-    /**
-     * Returns the names of the declared parameters for the given constructor. If we
-     * cannot determine the names, return null. The returned array will have one
-     * name per parameter. The length of the array will be the same as the length of
-     * the Class[] array returned by Constructor.getParameterTypes().
-     *
-     * @param ctor
-     * @return Returns String[] array of names, one per parameter, or null
+	/**
+	 * Returns the names of the declared parameters for the given constructor. If we
+	 * cannot determine the names, return null. The returned array will have one
+	 * name per parameter. The length of the array will be the same as the length of
+	 * the Class[] array returned by Constructor.getParameterTypes().
+	 *
+	 * @param ctor
+	 * @return Returns String[] array of names, one per parameter, or null
 	 */
 	public String[] getParameterNames(Constructor<?> ctor) {
 		paramTypes = ctor.getParameterTypes();
 		return getParameterNames(ctor, paramTypes);
-    }
+	}
 
-    /**
-     * Returns the names of the declared parameters for the given method. If we
-     * cannot determine the names, return null. The returned array will have one
-     * name per parameter. The length of the array will be the same as the length of
-     * the Class[] array returned by Method.getParameterTypes().
-     *
-     * @param method
-     * @return Returns String[] array of names, one per parameter, or null
+	/**
+	 * Returns the names of the declared parameters for the given method. If we
+	 * cannot determine the names, return null. The returned array will have one
+	 * name per parameter. The length of the array will be the same as the length of
+	 * the Class[] array returned by Method.getParameterTypes().
+	 *
+	 * @param method
+	 * @return Returns String[] array of names, one per parameter, or null
 	 */
 	public String[] getParameterNames(Method method) {
 		paramTypes = method.getParameterTypes();

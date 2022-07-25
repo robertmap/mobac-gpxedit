@@ -10,9 +10,9 @@ import java.awt.Color;
  */
 public class Turaterkep extends AbstractHttpMapSource {
 
-    public Turaterkep() {
-        super("Turaterkep256", 7, 15, TileImageType.PNG, TileUpdate.IfModifiedSince);
-    }
+	public Turaterkep() {
+		super("Turaterkep256", 7, 15, TileImageType.PNG, TileUpdate.IfModifiedSince);
+	}
 
 	public String getTileUrl(int zoom, int x, int y) {
 		return "http://a.map.turistautak.hu/tiles/turistautak-domborzattal/" + zoom + "/" + x + "/" + y + ".png";

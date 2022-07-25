@@ -31,18 +31,18 @@ public class WanderreitkarteAbo extends AbstractOsmMapSource {
 		maxZoom = 16;
 	}
 
-    @Override
-    public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-            throws IOException, TileException, InterruptedException {
-        if (loadMethod == LoadMethod.CACHE)
-            return super.getTileData(zoom, x, y, loadMethod);
+	@Override
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
+		if (loadMethod == LoadMethod.CACHE)
+			return super.getTileData(zoom, x, y, loadMethod);
 
-        // No multi threaded download possible/allowed
-        // if we don't synchronize here we get a high percentage of errors
-        synchronized (this) {
-            return super.getTileData(zoom, x, y, loadMethod);
-        }
-    }
+		// No multi threaded download possible/allowed
+		// if we don't synchronize here we get a high percentage of errors
+		synchronized (this) {
+			return super.getTileData(zoom, x, y, loadMethod);
+		}
+	}
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {

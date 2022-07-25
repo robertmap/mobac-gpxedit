@@ -10,24 +10,24 @@ import java.security.InvalidParameterException;
 
 public class Purge implements Runnable {
 
-    private final File databaseDir;
+	private final File databaseDir;
 
-    public Purge(String databaseDir) {
-        this.databaseDir = new File(databaseDir);
-        if (!ParamTests.testBerkelyDbDir(this.databaseDir)) {
-            throw new InvalidParameterException();
-        }
-    }
+	public Purge(String databaseDir) {
+		this.databaseDir = new File(databaseDir);
+		if (!ParamTests.testBerkelyDbDir(this.databaseDir)) {
+			throw new InvalidParameterException();
+		}
+	}
 
-    public void run() {
-        BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
-        try (TileDatabase db = tileStore.new TileDatabase("Source", databaseDir)) {
-            Main.log.info("Database purge initiated");
-            db.purge();
-            Main.log.info("Database purge completed");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public void run() {
+		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
+		try (TileDatabase db = tileStore.new TileDatabase("Source", databaseDir)) {
+			Main.log.info("Database purge initiated");
+			db.purge();
+			Main.log.info("Database purge completed");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

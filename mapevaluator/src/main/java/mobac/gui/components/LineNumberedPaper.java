@@ -45,10 +45,10 @@ public class LineNumberedPaper extends JTextArea {
 		return getInsets(new Insets(0, 0, 0, 0));
 	}
 
-    /**
-     * This modifies the insets, by adding space for the line number on the left.
-     * Should be modified to add space on the right, depending upon Locale.
-     */
+	/**
+	 * This modifies the insets, by adding space for the line number on the left.
+	 * Should be modified to add space on the right, depending upon Locale.
+	 */
 	public Insets getInsets(Insets insets) {
 		insets = super.getInsets(insets);
 		insets.left += lineNumberWidth();
@@ -171,18 +171,18 @@ public class LineNumberedPaper extends JTextArea {
 		super.paintComponent(g);
 	} // paintComponent
 
-    /**
-     * Create the string for the line number. NOTE: The <tt>length</tt> param does
-     * not include the <em>optional</em> space added after the line number.
-     *
-     * @param lineNumber
-     *            to stringize
-     * @param length
-     *            the length desired of the string
-     * @param length
-     *            the length desired of the string
-     *
-     * @return the line number for drawing
+	/**
+	 * Create the string for the line number. NOTE: The <tt>length</tt> param does
+	 * not include the <em>optional</em> space added after the line number.
+	 *
+	 * @param lineNumber
+	 *            to stringize
+	 * @param length
+	 *            the length desired of the string
+	 * @param length
+	 *            the length desired of the string
+	 *
+	 * @return the line number for drawing
 	 */
 	private String padLabel(int lineNumber, int length, boolean addSpace) {
 		StringBuffer buffer = new StringBuffer();
