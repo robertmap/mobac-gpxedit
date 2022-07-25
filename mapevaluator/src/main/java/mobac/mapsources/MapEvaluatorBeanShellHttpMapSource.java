@@ -1,11 +1,11 @@
 package mobac.mapsources;
 
-import java.io.IOException;
-
+import bsh.EvalError;
 import mobac.exceptions.TileException;
 import mobac.mapsources.custom.BeanShellHttpMapSource;
 import mobac.program.download.TileDownLoader;
-import bsh.EvalError;
+
+import java.io.IOException;
 
 public class MapEvaluatorBeanShellHttpMapSource extends BeanShellHttpMapSource {
 
@@ -17,8 +17,8 @@ public class MapEvaluatorBeanShellHttpMapSource extends BeanShellHttpMapSource {
 	 * Prevent tile store usage
 	 */
 	@Override
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException,
-			TileException, InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
+			throws IOException, TileException, InterruptedException {
 		return TileDownLoader.downloadTile(x, y, zoom, this);
 	}
 

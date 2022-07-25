@@ -52,16 +52,12 @@ import java.util.List;
 public class MapEvaluator extends JFrame {
 
     private static MapEvaluator INSTANCE;
-
-    protected Logger log;
     private final LogPreviewMap previewMap;
     private final JSplitPane splitPane;
     private final LineNumberedPaper mapSourceEditor;
-
     private final CustomMapSourceLoader xmlLoader;
-
     private final MapSource defaultOsmMapSource;
-
+    protected Logger log;
     private File chooserDir;
 
     private File loadedFile;
@@ -105,6 +101,10 @@ public class MapEvaluator extends JFrame {
         INSTANCE = this;
     }
 
+    public static void log(String msg) {
+        INSTANCE.previewMap.addLog(msg);
+    }
+
     private void addButtons(JToolBar toolBar) {
         JButton button = null;
 
@@ -116,9 +116,8 @@ public class MapEvaluator extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 try {
                     String[] options = {"Empty", "OpenStreetMap Mapnik"};
-                    int a = JOptionPane.showOptionDialog(MapEvaluator.this,
-                            "Please select an template", "Select template", 0,
-                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    int a = JOptionPane.showOptionDialog(MapEvaluator.this, "Please select an template",
+                            "Select template", 0, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                     String code = "";
                     switch (a) {
                         case (0):
@@ -160,9 +159,8 @@ public class MapEvaluator extends JFrame {
                     loadedFile = fc.getSelectedFile();
                 } catch (IOException e) {
                     log.error("", e);
-                    JOptionPane.showMessageDialog(MapEvaluator.this,
-                            "Error reading code from file:\n" + e.getMessage(), "Loading failed",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(MapEvaluator.this, "Error reading code from file:\n" + e.getMessage(),
+                            "Loading failed", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -185,9 +183,8 @@ public class MapEvaluator extends JFrame {
                     bw.write(mapSourceEditor.getText());
                 } catch (IOException e) {
                     log.error("", e);
-                    JOptionPane.showMessageDialog(MapEvaluator.this,
-                            "Error writing code to disk:\n" + e.getMessage(), "Saving failed",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(MapEvaluator.this, "Error writing code to disk:\n" + e.getMessage(),
+                            "Saving failed", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -226,8 +223,7 @@ public class MapEvaluator extends JFrame {
         });
         toolBar.add(button);
 
-        button = new JButton("Test Capabilities",
-                Utilities.loadResourceImageIcon("capabilities-icon.png"));
+        button = new JButton("Test Capabilities", Utilities.loadResourceImageIcon("capabilities-icon.png"));
         button.setToolTipText("<html>Test the tile-update capabilities for the current map<br>"
                 + "using the current center of the map as test point</html>");
         button.addActionListener(new ActionListener() {
@@ -244,7 +240,6 @@ public class MapEvaluator extends JFrame {
         button.addActionListener(new HelpAction());
         toolBar.add(button);
     }
-
 
     private JFileChooser getMapSourceFileChooser(boolean save) {
         final JFileChooser fc = new JFileChooser();
@@ -281,8 +276,8 @@ public class MapEvaluator extends JFrame {
                     gui.setWorkerThread(Thread.currentThread());
                     gui.setVisible(true);
                     for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
-                        MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector(
-                                (HttpMapSource) mapSource, coordinate, zoom);
+                        MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource,
+                                coordinate, zoom);
                         if (!gui.isVisible())
                             return;
                         mstd.testMapSource();
@@ -317,8 +312,8 @@ public class MapEvaluator extends JFrame {
             previewMap.refreshMap();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
-                    "Error in custom code", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(), "Error in custom code",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -329,12 +324,12 @@ public class MapEvaluator extends JFrame {
                 previewMap.setMapSource(testMapSource);
                 return;
             }
-            JOptionPane.showMessageDialog(this, "Error in custom code: result is null",
-                    "Error in custom code", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error in custom code: result is null", "Error in custom code",
+                    JOptionPane.ERROR_MESSAGE);
         } catch (EvalError e) {
             log.error("", e);
-            JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(),
-                    "Error in custom code", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error in custom code: \n" + e.getMessage(), "Error in custom code",
+                    JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof EvalError) {
@@ -345,11 +340,6 @@ public class MapEvaluator extends JFrame {
                 GUIExceptionHandler.processException(e);
             }
         }
-    }
-
-
-    public static void log(String msg) {
-        INSTANCE.previewMap.addLog(msg);
     }
 
     private class MEWindowAdapter extends WindowAdapter {

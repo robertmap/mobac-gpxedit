@@ -6,10 +6,11 @@ plugins {
     id 'distribution'
     id "at.bxm.svntools" version "2.2.1"
     id 'org.gradle.crypto.checksum' version '1.1.0'
+    id 'com.diffplug.spotless' version '6.8.0'
 }
 
 group 'mobac.sourceforge.io'
-version '2.2.3.2-jai-fix'
+version '2.2.3.3'
 
 println("SVN revision $svntools.info.revisionNumber")
 
@@ -116,7 +117,7 @@ task mappacksMd5 {
     var writer = new StringWriter()
     var updDir = project.file('mapsources-updates').toPath()
     delete updDir
-    Files.createDirectories(updDir);
+    Files.createDirectories(updDir)
     fileTree("$mapPackDir").matching {
         include "**/build/libs/mp-*.jar"
     }.each {
@@ -132,4 +133,18 @@ task mappacksMd5 {
     }
     println(writer.toString())
     Files.writeString(updDir.resolve("mappacks-md5.txt"), writer.toString())
+}
+
+spotless {
+    java {
+        target fileTree(rootDir).matching {
+            include '**/*.java'
+        }
+        removeUnusedImports()
+        eclipse()
+        lineEndings(com.diffplug.spotless.LineEnding.WINDOWS)
+        encoding("UTF-8")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }

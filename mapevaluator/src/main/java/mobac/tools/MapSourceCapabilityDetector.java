@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class MapSourceCapabilityDetector {
 
-    public static final Logger log = LoggerFactory.getLogger(MapSourceCapabilityDetector.class);
+	public static final Logger log = LoggerFactory.getLogger(MapSourceCapabilityDetector.class);
 
 	private final HttpMapSource mapSource;
 	private final EastNorthCoordinate coordinate;
@@ -49,53 +49,55 @@ public class MapSourceCapabilityDetector {
 	private URL url;
 	private HttpURLConnection c;
 
-	private boolean success = false;
-	private Exception error = null;
+    private boolean success = false;
+    private Exception error = null;
 
-	private boolean eTagPresent = false;
-	private boolean expirationTimePresent = false;
-	private boolean lastModifiedTimePresent = false;
-	private boolean ifNoneMatchSupported = false;
-	private boolean ifModifiedSinceSupported = false;
+    private boolean eTagPresent = false;
+    private boolean expirationTimePresent = false;
+    private boolean lastModifiedTimePresent = false;
+    private boolean ifNoneMatchSupported = false;
+    private boolean ifModifiedSinceSupported = false;
 
-	private String contentType = "?";
+    private String contentType = "?";
+    static final byte[] HEX_CHAR_TABLE = {(byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5',
+            (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
+            (byte) 'f'};
 
-	public MapSourceCapabilityDetector(Class<? extends HttpMapSource> mapSourceClass,
-	                                   EastNorthCoordinate coordinate, int zoom) throws InstantiationException,
-			IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-		this(mapSourceClass.getConstructor().newInstance(), coordinate, zoom);
-	}
+    public MapSourceCapabilityDetector(Class<? extends HttpMapSource> mapSourceClass, EastNorthCoordinate coordinate,
+                                       int zoom)
+            throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        this(mapSourceClass.getConstructor().newInstance(), coordinate, zoom);
+    }
 
-	public MapSourceCapabilityDetector(HttpMapSource mapSource, EastNorthCoordinate coordinate,
-									   int zoom) {
-		this.mapSource = mapSource;
-		if (mapSource == null)
-			throw new NullPointerException("MapSource not set");
-		this.coordinate = coordinate;
-		this.zoom = zoom;
-	}
+    public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
+        byte[] hex = new byte[2 * raw.length];
+        int index = 0;
 
-	public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
-		byte[] hex = new byte[2 * raw.length];
-		int index = 0;
+        for (byte b : raw) {
+            int v = b & 0xFF;
+            hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+            hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+        }
+        return new String(hex, StandardCharsets.US_ASCII);
+    }
 
-		for (byte b : raw) {
-			int v = b & 0xFF;
-			hex[index++] = HEX_CHAR_TABLE[v >>> 4];
-			hex[index++] = HEX_CHAR_TABLE[v & 0xF];
-		}
-		return new String(hex, StandardCharsets.US_ASCII);
-	}
+    public MapSourceCapabilityDetector(HttpMapSource mapSource, EastNorthCoordinate coordinate, int zoom) {
+        this.mapSource = mapSource;
+        if (mapSource == null)
+            throw new NullPointerException("MapSource not set");
+        this.coordinate = coordinate;
+        this.zoom = zoom;
+    }
 
-	private void testIfNoneMatch(byte[] content) throws Exception {
-		String eTag = c.getHeaderField("ETag");
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		byte[] digest = md5.digest(content);
-		String hexDigest = getHexString(digest);
-		// log.debug("content MD5           : " + hexDigest);
-		if (hexDigest.equals(eTag))
-			log.debug("eTag content          : md5 hex string");
-		String quotedHexDigest = "\"" + hexDigest + "\"";
+    private void testIfNoneMatch(byte[] content) throws Exception {
+        String eTag = c.getHeaderField("ETag");
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        byte[] digest = md5.digest(content);
+        String hexDigest = getHexString(digest);
+        // log.debug("content MD5 : " + hexDigest);
+        if (hexDigest.equals(eTag))
+            log.debug("eTag content          : md5 hex string");
+        String quotedHexDigest = "\"" + hexDigest + "\"";
 		if (quotedHexDigest.equals(eTag))
 			log.debug("eTag content          : quoted md5 hex string");
 
@@ -109,18 +111,6 @@ public class MapSourceCapabilityDetector {
 		// log.debug(b2s(supported) + " - " + code + " (" +
 		// c2.getResponseMessage() + ")");
 		c2.disconnect();
-	}
-
-	private void testIfModified() throws IOException {
-		HttpURLConnection c2 = (HttpURLConnection) url.openConnection();
-		c2.setIfModifiedSince(System.currentTimeMillis() + 1000); // future date
-		c2.connect();
-		int code = c2.getResponseCode();
-		boolean supported = (code == 304);
-		ifModifiedSinceSupported = supported;
-		// System.out.print("If-Modified-Since     : ");
-		// log.debug(b2s(supported) + " - " + code + " (" +
-		// c2.getResponseMessage() + ")");
 	}
 
 	protected void printHeaders() {
@@ -193,29 +183,37 @@ public class MapSourceCapabilityDetector {
 			return TileUpdate.ETag;
 		if (lastModifiedTimePresent)
 			return TileUpdate.LastModified;
-		return TileUpdate.None;
-	}
+        return TileUpdate.None;
+    }
 
-	private static String b2s(boolean b) {
-		if (b)
-			return "supported";
-		else
-			return "-";
-	}
+    private static String b2s(boolean b) {
+        if (b)
+            return "supported";
+        else
+            return "-";
+    }
 
-	static final byte[] HEX_CHAR_TABLE = {(byte) '0', (byte) '1', (byte) '2', (byte) '3',
-			(byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a',
-			(byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f'};
+    private void testIfModified() throws IOException {
+        HttpURLConnection c2 = (HttpURLConnection) url.openConnection();
+        c2.setIfModifiedSince(System.currentTimeMillis() + 1000); // future date
+        c2.connect();
+        int code = c2.getResponseCode();
+        boolean supported = (code == 304);
+        ifModifiedSinceSupported = supported;
+        // System.out.print("If-Modified-Since : ");
+        // log.debug(b2s(supported) + " - " + code + " (" +
+        // c2.getResponseMessage() + ")");
+    }
 
-	public void testMapSource() {
-		try {
-			log.debug("Testing " + mapSource.toString());
+    public void testMapSource() {
+        try {
+            log.debug("Testing " + mapSource.toString());
 
-			MapSpace mapSpace = mapSource.getMapSpace();
-			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
-			int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
+            MapSpace mapSpace = mapSource.getMapSpace();
+            int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
+            int tiley = mapSpace.cLatToY(coordinate.lat, zoom) / mapSpace.getTileSize();
 
-			c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
+            c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
 			url = c.getURL();
 			log.trace("Sample url: " + c.getURL());
 			log.trace("Connecting...");
@@ -251,35 +249,34 @@ public class MapSourceCapabilityDetector {
 			Utilities.checkForInterruption();
 			eTagPresent = (eTag != null);
 			if (eTagPresent) {
-				// log.debug("eTag                  : " + eTag);
+                // log.debug("eTag : " + eTag);
 				testIfNoneMatch(content);
 			}
-			// else log.debug("eTag                  : -");
+            // else log.debug("eTag : -");
 
 			// long date = c.getDate();
-			// if (date == 0)
-			// log.debug("Date time             : -");
-			// else
-			// log.debug("Date time             : " + new Date(date));
+            // if (date == 0)
+            // log.debug("Date time : -");
+            // else
+            // log.debug("Date time : " + new Date(date));
 
 			long exp = c.getExpiration();
 			expirationTimePresent = (c.getHeaderField("expires") != null) && (exp != 0);
 			if (exp == 0) {
-				// log.debug("Expiration time       : -");
+                // log.debug("Expiration time : -");
 			} else {
-				// long diff = (exp - System.currentTimeMillis()) / 1000;
-				// log.debug("Expiration time       : " + new Date(exp)
-				// + " => "
+                // long diff = (exp - System.currentTimeMillis()) / 1000;
+                // log.debug("Expiration time : " + new Date(exp)
+                // + " => "
 				// + Utilities.formatDurationSeconds(diff));
 			}
 			long modified = c.getLastModified();
-			lastModifiedTimePresent = (c.getHeaderField("last-modified") != null)
-					&& (modified != 0);
-			// if (modified == 0)
-			// log.debug("Last modified time    : not set");
-			// else
-			// log.debug("Last modified time    : " + new
-			// Date(modified));
+            lastModifiedTimePresent = (c.getHeaderField("last-modified") != null) && (modified != 0);
+            // if (modified == 0)
+            // log.debug("Last modified time : not set");
+            // else
+            // log.debug("Last modified time : " + new
+            // Date(modified));
 
 			Utilities.checkForInterruption();
 			testIfModified();

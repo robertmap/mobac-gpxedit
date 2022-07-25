@@ -1,21 +1,20 @@
 package mobac.gui.components;
 
+import javax.swing.JTextArea;
+import javax.swing.border.AbstractBorder;
 import java.awt.Component;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Insets;
-
-import javax.swing.JTextArea;
-import javax.swing.border.AbstractBorder;
 
 /**
  * Draws line numbers next to each line, in the same font as the text.
  * Currently, this can only be used with a <tt>JTextArea</tt> , since it relies
  * on the <tt>getRows()</tt> and <tt>getLineCount()</tt> methods. A possible
  * extension, create an interface to return this rows/linecount.
- * 
- *@created January 29, 2002
- *@see http://www.esus.com/docs/GetQuestionPage.jsp?uid=1326
+ *
+ * @created January 29, 2002
+ * @see http://www.esus.com/docs/GetQuestionPage.jsp?uid=1326
  */
 public class LineNumberedBorder extends AbstractBorder {
 
@@ -49,75 +48,75 @@ public class LineNumberedBorder extends AbstractBorder {
 	 */
 	private int location = LEFT_SIDE;
 
-	public LineNumberedBorder(int location, int justify) {
-		setLocation(location);
-		setLineNumberJustification(justify);
-	}
+    public LineNumberedBorder(int location, int justify) {
+        setLocation(location);
+        setLineNumberJustification(justify);
+    }
 
-	public Insets getBorderInsets(Component c) {
-		return getBorderInsets(c, new Insets(0, 0, 0, 0));
-	}
+    public Insets getBorderInsets(Component c) {
+        return getBorderInsets(c, new Insets(0, 0, 0, 0));
+    }
 
-	/**
-	 * This modifies the insets, by adding space for the line number on the
-	 * left. Should be modified to add space on the right, depending upon
-	 * Locale.
-	 * 
-	 *@param c
-	 *            Description of the Parameter
-	 *@param insets
-	 *            Description of the Parameter
-	 *@return The borderInsets value
-	 */
-	public Insets getBorderInsets(Component c, Insets insets) {
-		// if c is not a JTextArea...nothing is done...
-		if (c instanceof JTextArea) {
-			int width = lineNumberWidth((JTextArea) c);
-			if (location == LEFT_SIDE) {
+    /**
+     * Create the string for the line number. NOTE: The <tt>length</tt> param does
+     * not include the <em>optional</em> space added after the line number.
+     *
+     * @param lineNumber to stringize
+     * @param length     the length desired of the string
+     * @param addSpace   Description of the Parameter
+     * @return the line number for drawing
+     */
+    private static String padLabel(int lineNumber, int length, boolean addSpace) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(lineNumber);
+        for (int count = (length - buffer.length()); count > 0; count--) {
+            buffer.insert(0, ' ');
+        }
+        if (addSpace) {
+            buffer.append(' ');
+        }
+        return buffer.toString();
+    }
+
+    public int getLineNumberJustification() {
+        return lineNumberJustification;
+    }
+
+    public void setLineNumberJustification(int justify) {
+        if (justify == RIGHT_JUSTIFY || justify == LEFT_JUSTIFY) {
+            lineNumberJustification = justify;
+        }
+    }
+
+    public int getLocation() {
+        return location;
+    }
+
+    public void setLocation(int loc) {
+        if (loc == RIGHT_SIDE || loc == LEFT_SIDE) {
+            location = loc;
+        }
+    }
+
+    /**
+     * This modifies the insets, by adding space for the line number on the left.
+     * Should be modified to add space on the right, depending upon Locale.
+     *
+     * @param c      Description of the Parameter
+     * @param insets Description of the Parameter
+     * @return The borderInsets value
+     */
+    public Insets getBorderInsets(Component c, Insets insets) {
+        // if c is not a JTextArea...nothing is done...
+        if (c instanceof JTextArea) {
+            int width = lineNumberWidth((JTextArea) c);
+            if (location == LEFT_SIDE) {
 				insets.left = width;
 			} else {
 				insets.right = width;
 			}
 		}
 		return insets;
-	}
-
-	public int getLineNumberJustification() {
-		return lineNumberJustification;
-	}
-
-	public void setLineNumberJustification(int justify) {
-		if (justify == RIGHT_JUSTIFY || justify == LEFT_JUSTIFY) {
-			lineNumberJustification = justify;
-		}
-	}
-
-	public int getLocation() {
-		return location;
-	}
-
-	public void setLocation(int loc) {
-		if (loc == RIGHT_SIDE || loc == LEFT_SIDE) {
-			location = loc;
-		}
-	}
-
-	/**
-	 * Returns the width, in pixels, of the maximum line number, plus a trailing
-	 * space.
-	 * 
-	 *@param textArea
-	 *            Description of the Parameter
-	 *@return Description of the Return Value
-	 */
-	private int lineNumberWidth(JTextArea textArea) {
-		//
-		// note: should this be changed to use all nines for the lineCount?
-		// for example, if the number of rows is 111...999 could be wider
-		// (in pixels) in a proportionally spaced font...
-		//
-		int lineCount = Math.max(textArea.getRows(), textArea.getLineCount() + 1);
-		return textArea.getFontMetrics(textArea.getFont()).stringWidth(lineCount + " ");
 	}
 
 	//
@@ -229,26 +228,20 @@ public class LineNumberedBorder extends AbstractBorder {
 	// paintComponent
 
 	/**
-	 * Create the string for the line number. NOTE: The <tt>length</tt> param
-	 * does not include the <em>optional</em> space added after the line number.
-	 * 
-	 *@param lineNumber
-	 *            to stringize
-	 *@param length
-	 *            the length desired of the string
-	 *@param addSpace
-	 *            Description of the Parameter
-	 *@return the line number for drawing
-	 */
-	private static String padLabel(int lineNumber, int length, boolean addSpace) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(lineNumber);
-		for (int count = (length - buffer.length()); count > 0; count--) {
-			buffer.insert(0, ' ');
-		}
-		if (addSpace) {
-			buffer.append(' ');
-		}
-		return buffer.toString();
-	}
+	 * Returns the width, in pixels, of the maximum line number, plus a trailing
+     * space.
+     *
+     * @param textArea
+     *            Description of the Parameter
+     * @return Description of the Return Value
+     */
+    private int lineNumberWidth(JTextArea textArea) {
+        //
+        // note: should this be changed to use all nines for the lineCount?
+        // for example, if the number of rows is 111...999 could be wider
+        // (in pixels) in a proportionally spaced font...
+        //
+        int lineCount = Math.max(textArea.getRows(), textArea.getLineCount() + 1);
+        return textArea.getFontMetrics(textArea.getFont()).stringWidth(lineCount + " ");
+    }
 }

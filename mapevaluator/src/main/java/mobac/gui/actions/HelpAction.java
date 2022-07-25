@@ -1,17 +1,15 @@
 package mobac.gui.actions;
 
+import mobac.utilities.beanshell.Tools;
+import mobac.utilities.beanshell.Tools.MethodDescription;
+import org.apache.axis2.description.java2wsdl.bytecode.ParamReader;
+
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
-
-import javax.swing.JOptionPane;
-
-import mobac.utilities.beanshell.Tools;
-import mobac.utilities.beanshell.Tools.MethodDescription;
-
-import org.apache.axis2.description.java2wsdl.bytecode.ParamReader;
 
 public class HelpAction implements ActionListener {
 
@@ -61,26 +59,26 @@ public class HelpAction implements ActionListener {
 		if (clazz.isArray()) {
 			String name = clazz.getName();
 			switch (name.charAt(1)) {
-			case 'B':
-				return "byte[]";
-			case 'C':
-				return "char[]";
-			case 'D':
-				return "double[]";
-			case 'F':
-				return "float[]";
-			case 'I':
-				return "int[]";
-			case 'J':
-				return "long[]";
-			case 'L':
-				return "Object";
-			case 'S':
-				return "short[]";
-			case 'Z':
-				return "boolean[]";
-			default:
-				return "unknown[]";
+				case 'B':
+					return "byte[]";
+				case 'C':
+					return "char[]";
+				case 'D':
+					return "double[]";
+				case 'F':
+					return "float[]";
+				case 'I':
+					return "int[]";
+				case 'J':
+					return "long[]";
+				case 'L':
+					return "Object";
+				case 'S':
+					return "short[]";
+				case 'Z':
+					return "boolean[]";
+				default:
+					return "unknown[]";
 			}
 		} else
 			return clazz.getSimpleName();
