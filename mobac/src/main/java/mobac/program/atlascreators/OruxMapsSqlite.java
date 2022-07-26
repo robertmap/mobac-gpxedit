@@ -131,41 +131,39 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 		} catch (Exception e) {
 		}
 		conn = null;
+		prepStmt = null;
 	}
 
 	private void initializeDB() throws SQLException {
-
-		Statement stat = conn.createStatement();
-		stat.executeUpdate(TABLE_TILES_DDL);
-		stat.executeUpdate(INDEX_DDL);
-		stat.executeUpdate(TABLE_ANDROID_METADATA_DDL);
-		stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + Locale.getDefault().toString() + "')");
-		stat.close();
+		try (Statement stat = conn.createStatement()) {
+			stat.executeUpdate(TABLE_TILES_DDL);
+			stat.executeUpdate(INDEX_DDL);
+			stat.executeUpdate(TABLE_ANDROID_METADATA_DDL);
+			stat.executeUpdate("INSERT INTO android_metadata VALUES ('" + Locale.getDefault().toString() + "')");
+		}
 	}
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
-
 		otrk2MapsContent.append(prepareOtrk2File());
-
 		try {
-			conn = getConnection();
+			this.conn = getConnection();
 			conn.setAutoCommit(false);
 			prepStmt = conn.prepareStatement(INSERT_SQL);
 			createTiles();
-			conn.close();
 		} catch (InterruptedException e) {
 			// User has aborted process
 		} catch (MapCreationException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);
+		} finally {
+			closeConnection();
 		}
 	}
 
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
-
 		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
 		try {
 			mapDlTileProvider = ctp;
