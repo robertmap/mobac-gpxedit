@@ -67,7 +67,7 @@ public class DownloadFailedException extends IOException {
 		return responseData;
 	}
 
-	public String generateReponseErrorText() {
+	public String generateResponseErrorText() {
 		try {
 			String contentType = connection.getContentType();
 			String payload = "";

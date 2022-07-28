@@ -116,7 +116,7 @@ public class TileLoader {
 					tile.setErrorImage(e.getResponseData());
 				} else {
 					tile.setErrorImage();
-					tile.setErrorMessage(e.generateReponseErrorText());
+					tile.setErrorMessage(e.generateResponseErrorText());
 				}
 			} catch (IOException e) {
 				log.warn("Downloading of {} failed: {}", tile, e.getMessage());
