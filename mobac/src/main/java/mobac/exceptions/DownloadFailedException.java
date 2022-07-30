@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +70,7 @@ public class DownloadFailedException extends IOException {
 
 	public String generateResponseErrorText() {
 		try {
-			String contentType = connection.getContentType();
+			String contentType = Objects.requireNonNullElse(connection.getContentType(), "");
 			String payload = "";
 
 			if (responseData != null
@@ -89,7 +90,6 @@ public class DownloadFailedException extends IOException {
 				} catch (IllegalArgumentException e) {
 					// ignore and continue with default charset
 				}
-
 				int contentTypeEnd = contentType.indexOf(';');
 				if (contentTypeEnd > 0) {
 					contentType = contentType.substring(0, contentTypeEnd).trim();
@@ -103,11 +103,12 @@ public class DownloadFailedException extends IOException {
 					payload = payload.replaceAll("[ ]{2,}", " "); // simplify spaces
 					log.debug(payload);
 				}
-
+				payload = "\n" + payload;
 			}
 			return connection.getURL() + "\n" + "> " + connection.getResponseCode() + " "
-					+ connection.getResponseMessage() + "\ncontent type: " + contentType + "\n" + payload;
+					+ connection.getResponseMessage() + "\ncontent type: " + connection.getContentType() + payload;
 		} catch (Exception e) {
+			log.error("Failed to generate response error text", e);
 			return "Unknown error " + e.getClass().getSimpleName() + "\n" + e.getMessage();
 		}
 	}
