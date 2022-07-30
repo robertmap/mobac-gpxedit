@@ -92,8 +92,9 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 	}
 
 	public void setOutputFormat(AtlasOutputFormat atlasOutputFormat) {
-		if (atlasOutputFormat == null)
+		if (atlasOutputFormat == null) {
 			throw new NullPointerException();
+		}
 		this.outputFormat = atlasOutputFormat;
 	}
 
@@ -108,18 +109,22 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 
 	public long calculateTilesToDownload() {
 		long tiles = 0;
-		for (LayerInterface layer : layers)
+		for (LayerInterface layer : layers) {
 			tiles += layer.calculateTilesToDownload();
+		}
 		return tiles;
 	}
 
 	public boolean checkData() {
 		if (name == null) // name set?
+		{
 			return true;
+		}
 		// Check for duplicate layer names
 		HashSet<String> names = new HashSet<String>(layers.size());
-		for (LayerInterface layer : layers)
+		for (LayerInterface layer : layers) {
 			names.add(layer.getName());
+		}
 		return names.size() < layers.size(); // at least one duplicate name found
 	}
 

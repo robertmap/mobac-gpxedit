@@ -135,13 +135,15 @@ public class PngXxlWriter {
 		int tileLineHeight = tileLineImage.getHeight();
 		int tileLineWidth = tileLineImage.getWidth();
 
-		if (width != tileLineWidth)
+		if (width != tileLineWidth) {
 			throw new RuntimeException("Invalid width");
+		}
 
 		ColorModel cm = tileLineImage.getColorModel();
 
-		if (!(cm instanceof DirectColorModel))
+		if (!(cm instanceof DirectColorModel)) {
 			throw new UnsupportedDataTypeException("Image uses wrong color model. Only DirectColorModel is supported!");
+		}
 
 		// We process the image line by line, from head to bottom
 		Rectangle rect = new Rectangle(0, 0, tileLineWidth, 1);
@@ -152,11 +154,12 @@ public class PngXxlWriter {
 		for (int line = 0; line < tileLineHeight; line++) {
 			rect.y = line;
 			DataBuffer db = tileLineImage.getData(rect).getDataBuffer();
-			if (db.getNumBanks() > 1)
+			if (db.getNumBanks() > 1) {
 				throw new UnsupportedDataTypeException("Image data has more than one data bank");
-			if (db instanceof DataBufferByte)
+			}
+			if (db instanceof DataBufferByte) {
 				curLine = ((DataBufferByte) db).getData();
-			else if (db instanceof DataBufferInt) {
+			} else if (db instanceof DataBufferInt) {
 				int[] intLine = ((DataBufferInt) db).getData();
 				int c = 0;
 				for (int i = 0; i < intLine.length; i++) {
@@ -165,8 +168,9 @@ public class PngXxlWriter {
 					curLine[c++] = (byte) (pixel >> 8 & 0xFF);
 					curLine[c++] = (byte) (pixel & 0xFF);
 				}
-			} else
+			} else {
 				throw new UnsupportedDataTypeException(db.getClass().getName());
+			}
 
 			imageDataStream.write(FILTER_TYPE_NONE);
 			imageDataStream.write(curLine);

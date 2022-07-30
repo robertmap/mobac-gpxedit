@@ -115,8 +115,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	}
 
 	public synchronized void initialize() {
-		if (initialized.get())
+		if (initialized.get()) {
 			return;
+		}
 		reinitialize();
 	}
 
@@ -187,8 +188,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	}
 
 	protected void detectTileImageType() {
-		if (tileImageType != null)
+		if (tileImageType != null) {
 			return; // Already specified manually by user
+		}
 		try (Statement statement = conn.createStatement()) {
 			if (statement.execute(sqlTileImageTypeStatement)) {
 				try (ResultSet rs = statement.getResultSet()) {
@@ -200,16 +202,18 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 		} catch (SQLException e) {
 			log.error("", e);
 		}
-		if (tileImageType == null)
+		if (tileImageType == null) {
 			throw new RuntimeException("Unable to detect image type of " + sourceFile + ".\n"
 					+ "Please specify it manually using <tileImageType> entry in map source definition.");
+		}
 
 	}
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, TileException, InterruptedException {
-		if (!initialized.get())
+		if (!initialized.get()) {
 			initialize();
+		}
 		switch (atlasType) {
 			case MBTiles :
 				y = (1 << zoom) - y - 1;
@@ -226,8 +230,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			if (statement.execute()) {
 				try (ResultSet rs = statement.getResultSet()) {
 					if (!rs.next()) {
-						if (log.isDebugEnabled())
+						if (log.isDebugEnabled()) {
 							log.debug(String.format("Tile in database not found: z=%d x=%d y=%d", zoom, x, y));
+						}
 						return null;
 					}
 					return rs.getBytes(1);
@@ -242,8 +247,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, TileException, InterruptedException {
 		byte[] data = getTileData(zoom, x, y, loadMethod);
-		if (data == null)
+		if (data == null) {
 			return null;
+		}
 		return ImageIO.read(new ByteArrayInputStream(data));
 	}
 
@@ -287,8 +293,9 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
 	protected void closeConnection() {
 		try {
-			if (conn != null)
+			if (conn != null) {
 				conn.close();
+			}
 		} catch (SQLException e) {
 		}
 		conn = null;

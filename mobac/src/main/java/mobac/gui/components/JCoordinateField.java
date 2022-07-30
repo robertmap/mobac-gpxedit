@@ -55,20 +55,23 @@ public class JCoordinateField extends JTextField {
 
 	@Override
 	public Point getToolTipLocation(MouseEvent event) {
-		if (getToolTipText().length() > 0)
+		if (getToolTipText().length() > 0) {
 			return super.getToolTipLocation(event);
-		else
-			// We don't want a tool tip but Java does not allow to disable it?
-			// -> show it at a point where no user will ever see it
+		} else
+		// We don't want a tool tip but Java does not allow to disable it?
+		// -> show it at a point where no user will ever see it
+		{
 			return new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		}
 	}
 
 	public double getCoordinate() throws ParseException {
 		ParsePosition pos = new ParsePosition(0);
 		String text = JCoordinateField.this.getText();
 		Number num = numberFormat.parse(text, pos);
-		if (num == null || pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue()))
+		if (num == null || pos.getErrorIndex() >= 0 || Double.isNaN(num.doubleValue())) {
 			throw new ParseException(text, pos.getErrorIndex());
+		}
 		return num.doubleValue();
 	}
 
@@ -84,8 +87,9 @@ public class JCoordinateField extends JTextField {
 			} else {
 				super.setText(numberFormat.format(value));
 			}
-			if (newValid != inputIsValid)
+			if (newValid != inputIsValid) {
 				coordinateListener.changeValidMode(true);
+			}
 		} finally {
 			coordinateListener.setEnabled(true);
 		}
@@ -95,8 +99,9 @@ public class JCoordinateField extends JTextField {
 		ParsePosition pos = new ParsePosition(0);
 		String text = JCoordinateField.this.getText();
 		Number num = numberFormat.parse(text, pos);
-		if (num == null || pos.getErrorIndex() >= 0)
+		if (num == null || pos.getErrorIndex() >= 0) {
 			return Double.NaN;
+		}
 		return num.doubleValue();
 	}
 
@@ -127,8 +132,9 @@ public class JCoordinateField extends JTextField {
 		}
 
 		private void checkCoordinate(DocumentEvent de) {
-			if (!enabled)
+			if (!enabled) {
 				return;
+			}
 			boolean valid = false;
 			try {
 				ParsePosition pos = new ParsePosition(0);
@@ -143,8 +149,9 @@ public class JCoordinateField extends JTextField {
 			} catch (Exception e) {
 				valid = false;
 			}
-			if (valid != inputIsValid)
+			if (valid != inputIsValid) {
 				changeValidMode(valid);
+			}
 		}
 
 		private void changeValidMode(boolean valid) {
@@ -154,8 +161,9 @@ public class JCoordinateField extends JTextField {
 					? ""
 					: String.format(INVALID_TEXT, numberFormat.format(min), numberFormat.format(max));
 			JCoordinateField.this.setToolTipText(toolTip);
-			if (toolTip.length() > 0)
+			if (toolTip.length() > 0) {
 				Utilities.showTooltipNow(JCoordinateField.this);
+			}
 			inputIsValid = valid;
 		}
 

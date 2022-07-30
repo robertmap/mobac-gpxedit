@@ -60,8 +60,9 @@ public class StandardMapSourceLayer implements MapSource, InitializableMapSource
 
 	protected void afterUnmarshal(Unmarshaller u, Object parent) {
 		mapSource = MapSourcesManager.getInstance().getSourceByName(mapSourceName);
-		if (mapSource == null)
+		if (mapSource == null) {
 			throw new RuntimeException("Unknown map source name used: " + mapSourceName);
+		}
 	}
 
 	public int getMaxZoom() {

@@ -71,12 +71,14 @@ public class DragDropController {
 
 		public void dragGestureRecognized(DragGestureEvent dge) {
 			TreePath path = atlasTree.getSelectionPath();
-			if ((path == null) || (path.getPathCount() <= 1))
+			if ((path == null) || (path.getPathCount() <= 1)) {
 				// We can't move the root node or an empty selection
 				return;
+			}
 			TreeNode oldNode = (TreeNode) path.getLastPathComponent();
-			if (!(oldNode instanceof LayerInterface || oldNode instanceof MapInterface))
+			if (!(oldNode instanceof LayerInterface || oldNode instanceof MapInterface)) {
 				return;
+			}
 			Transferable transferable = new NodeTransferWrapper(oldNode);
 			source.startDrag(dge, DragSource.DefaultMoveNoDrop, transferable, this);
 		}
@@ -156,16 +158,19 @@ public class DragDropController {
 					return;
 				}
 				AtlasTreeModel atlasTreeModel = (AtlasTreeModel) atlasTree.getModel();
-				if (sourceNode instanceof LayerInterface && targetNode instanceof LayerInterface)
+				if (sourceNode instanceof LayerInterface && targetNode instanceof LayerInterface) {
 					mergeLayers(atlasTreeModel, (LayerInterface) sourceNode, (LayerInterface) targetNode);
+				}
 
-				if (targetNode instanceof MapInterface)
+				if (targetNode instanceof MapInterface) {
 					// We can not make a map child of another map
 					// -> use it's layer instead
 					targetNode = targetNode.getParent();
+				}
 
-				if (sourceNode instanceof MapInterface && targetNode instanceof LayerInterface)
+				if (sourceNode instanceof MapInterface && targetNode instanceof LayerInterface) {
 					moveMap(atlasTreeModel, (MapInterface) sourceNode, (LayerInterface) targetNode);
+				}
 
 			} catch (Exception e) {
 				log.error("", e);
@@ -180,8 +185,9 @@ public class DragDropController {
 					String.format(I18nUtils.localizedStringForKey("msg_confirm_merge_layer"), sourceLayer.getName(),
 							targetLayer.getName()),
 					I18nUtils.localizedStringForKey("msg_confirm_merge_layer_title"), JOptionPane.YES_NO_OPTION);
-			if (answer != JOptionPane.YES_OPTION)
+			if (answer != JOptionPane.YES_OPTION) {
 				return;
+			}
 			try {
 				atlasTreeModel.mergeLayers(sourceLayer, targetLayer);
 			} catch (InvalidNameException e) {

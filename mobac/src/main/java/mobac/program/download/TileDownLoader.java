@@ -286,8 +286,9 @@ public class TileDownLoader {
 	}
 
 	public static boolean isTileExpired(TileStoreEntry tileStoreEntry) {
-		if (tileStoreEntry == null)
+		if (tileStoreEntry == null) {
 			return true;
+		}
 		long expiredTime = tileStoreEntry.getTimeExpires();
 		if (expiredTime > 0) {
 			// server had set an expiration time

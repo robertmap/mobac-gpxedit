@@ -86,8 +86,9 @@ public class Hikebikemap extends AbstractMultiLayerMapSource {
 		@Override
 		public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
 				throws IOException, TileException, InterruptedException {
-			if (zoom > 16)
+			if (zoom > 16) {
 				return null;
+			}
 			return super.getTileImage(zoom, x, y, loadMethod);
 		}
 

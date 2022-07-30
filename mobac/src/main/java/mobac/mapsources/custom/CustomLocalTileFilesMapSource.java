@@ -179,13 +179,15 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		String fileExt = null;
 		for (String file : files) {
 			Matcher m = p.matcher(file);
-			if (!m.matches())
+			if (!m.matches()) {
 				continue;
+			}
 			fileExt = m.group(2);
 			break;
 		}
-		if (fileExt == null)
+		if (fileExt == null) {
 			return; // Error no suitable file found
+		}
 		fileSyntax = "%s." + fileExt;
 
 		tileImageType = TileImageType.getTileImageType(fileExt);

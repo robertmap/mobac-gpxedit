@@ -63,8 +63,9 @@ public class MapSourceTestFailedException extends Exception {
 		String msg = super.getMessage();
 		msg = "MapSource test failed: " + msg + " " + mapSourceClass.getSimpleName() + " HTTP " + httpResponseCode
 				+ "\n" + conn.getURL();
-		if (conn != null)
+		if (conn != null) {
 			msg += "\n" + printHeaders(conn);
+		}
 		return msg;
 	}
 
@@ -74,8 +75,9 @@ public class MapSourceTestFailedException extends Exception {
 		for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
 			String key = entry.getKey();
 			for (String elem : entry.getValue()) {
-				if (key != null)
+				if (key != null) {
 					sw.append(key + " = ");
+				}
 				sw.append(elem);
 				sw.append("\n");
 			}

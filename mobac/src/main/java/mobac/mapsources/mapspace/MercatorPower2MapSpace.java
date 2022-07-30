@@ -56,8 +56,9 @@ public class MercatorPower2MapSpace implements MapSpace {
 	protected MercatorPower2MapSpace(int tileSize) {
 		this.tileSize = tileSize;
 		worldSize = new int[PreviewMap.MAX_ZOOM + 1];
-		for (int zoom = 0; zoom < worldSize.length; zoom++)
+		for (int zoom = 0; zoom < worldSize.length; zoom++) {
 			worldSize[zoom] = tileSize * (1 << zoom);
+		}
 	}
 
 	protected double radius(int zoom) {
@@ -227,12 +228,15 @@ public class MercatorPower2MapSpace implements MapSpace {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		MercatorPower2MapSpace other = (MercatorPower2MapSpace) obj;
 		return tileSize == other.tileSize;
 	}

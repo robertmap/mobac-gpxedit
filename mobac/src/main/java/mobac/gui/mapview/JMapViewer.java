@@ -196,8 +196,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public void setDisplayPosition(Point mapPoint, int x, int y, int zoom) {
-		if (zoom > mapSource.getMaxZoom() || zoom < MIN_ZOOM)
+		if (zoom > mapSource.getMaxZoom() || zoom < MIN_ZOOM) {
 			return;
+		}
 
 		// Get the plain tile number
 		Point p = new Point();
@@ -208,10 +209,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		try {
 			int oldZoom = this.zoom;
 			this.zoom = zoom;
-			if (oldZoom != zoom)
+			if (oldZoom != zoom) {
 				zoomChanged(oldZoom);
-			if (zoomSlider.getValue() != zoom)
+			}
+			if (zoomSlider.getValue() != zoom) {
 				zoomSlider.setValue(zoom);
+			}
 		} finally {
 			setIgnoreRepaint(false);
 			repaint();
@@ -282,8 +285,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int y = mapSpace.cLatToY(lat, zoom);
 		x -= center.x - getWidth() / 2;
 		y -= center.y - getHeight() / 2;
-		if (x < 0 || y < 0 || x > getWidth() || y > getHeight())
+		if (x < 0 || y < 0 || x > getWidth() || y > getHeight()) {
 			return null;
+		}
 		return new Point(x, y);
 	}
 
@@ -324,15 +328,17 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		boolean start_top = diff_top < diff_bottom;
 
 		if (start_top) {
-			if (start_left)
+			if (start_left) {
 				iMove = 2;
-			else
+			} else {
 				iMove = 3;
+			}
 		} else {
-			if (start_left)
+			if (start_left) {
 				iMove = 1;
-			else
+			} else {
 				iMove = 0;
+			}
 		} // calculate the visibility borders
 		int x_min = -tileSize;
 		int y_min = -tileSize;
@@ -348,8 +354,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		while (painted) {
 			painted = false;
 			for (int i = 0; i < 4; i++) {
-				if (i % 2 == 0)
+				if (i % 2 == 0) {
 					x++;
+				}
 				for (int j = 0; j < x; j++) {
 					if (x_min <= posx && posx <= x_max && y_min <= posy && posy <= y_max) {
 						// tile is visible
@@ -448,8 +455,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public void setZoom(int zoom, Point mapPoint) {
-		if (zoom > mapSource.getMaxZoom() || zoom < mapSource.getMinZoom() || zoom == this.zoom)
+		if (zoom > mapSource.getMaxZoom() || zoom < mapSource.getMinZoom() || zoom == this.zoom) {
 			return;
+		}
 		Point2D.Double zoomPos = getPosition(mapPoint);
 		jobDispatcher.cancelOutstandingJobs(); // Clearing outstanding load
 		// requests
@@ -477,8 +485,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	}
 
 	public void setTileGridVisible(boolean tileGridVisible) {
-		if (isTileGridVisible() == tileGridVisible)
+		if (isTileGridVisible() == tileGridVisible) {
 			return;
+		}
 		if (tileGridVisible) {
 			mapGridLayer = new MapGridLayer();
 			addMapTileLayers(mapGridLayer);

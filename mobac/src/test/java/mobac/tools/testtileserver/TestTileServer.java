@@ -73,8 +73,9 @@ public class TestTileServer extends Serve {
 			c.setConnectTimeout(100);
 			c.setRequestMethod("DELETE");
 			c.connect();
-			if (c.getResponseCode() == 202)
+			if (c.getResponseCode() == 202) {
 				Thread.sleep(1000);
+			}
 			c.disconnect();
 		} catch (SocketTimeoutException e) {
 			// port is unused -> OK
@@ -160,8 +161,9 @@ public class TestTileServer extends Serve {
 
 	public void setTileServlet(AbstractTileServlet tileServlet) {
 		Servlet oldServlet = getServlet("/");
-		if (oldServlet != null)
+		if (oldServlet != null) {
 			unloadServlet(oldServlet);
+		}
 		addServlet("/", tileServlet);
 	}
 

@@ -47,8 +47,9 @@ public class ExternalToolsLoader {
 	public static boolean load() {
 		try {
 			File dir = DirectoryManager.toolsDir;
-			if (!dir.isDirectory())
+			if (!dir.isDirectory()) {
 				return false;
+			}
 			File[] files = dir.listFiles(new FileExtFilter(".xml"));
 			tools = new LinkedList<ExternalToolDef>();
 			for (File f : files) {

@@ -78,8 +78,9 @@ public class DownloadJobEnumerator implements Enumeration<Job> {
 		x = xMin;
 
 		nextJob = new DownloadJob(mapSource, x, y, zoom, tileArchive, listener);
-		if (!tileFilter.testTile(x, y, zoom, mapSource))
+		if (!tileFilter.testTile(x, y, zoom, mapSource)) {
 			nextElement();
+		}
 	}
 
 	public boolean hasMoreElements() {

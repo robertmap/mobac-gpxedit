@@ -44,8 +44,9 @@ public class MyMath {
 	 */
 	public static int roundUpToNearest(int value, int toNearest) {
 		int remainder = value % toNearest;
-		if (remainder == 0)
+		if (remainder == 0) {
 			return value;
+		}
 		value += (toNearest - remainder);
 		return value;
 	}
@@ -75,8 +76,9 @@ public class MyMath {
 	public static int divCeil(int value, int divisor) {
 		int result = value / divisor;
 		int remainder = value % divisor;
-		if (remainder != 0)
+		if (remainder != 0) {
 			result++;
+		}
 		return result;
 	}
 
@@ -96,8 +98,9 @@ public class MyMath {
 	 */
 	public static long divCeil(long value, long divisor) {
 		long result = value / divisor;
-		if (value % divisor != 0)
+		if (value % divisor != 0) {
 			result++;
+		}
 		return result;
 	}
 
@@ -118,8 +121,9 @@ public class MyMath {
 	public static int divRound(int value, int divisor) {
 		int result = value / divisor;
 		int remainder = value % divisor;
-		if (remainder > (divisor >> 1))
+		if (remainder > (divisor >> 1)) {
 			result++;
+		}
 		return result;
 	}
 
@@ -140,8 +144,9 @@ public class MyMath {
 	public static long divRound(long value, long divisor) {
 		long result = value / divisor;
 		long remainder = value % divisor;
-		if (remainder > (divisor >> 1))
+		if (remainder > (divisor >> 1)) {
 			result++;
+		}
 		return result;
 	}
 
@@ -168,8 +173,9 @@ public class MyMath {
 	 * @return array containing the rounded value
 	 */
 	public static double prettyRound(double val) {
-		if (val < 1.0)
+		if (val < 1.0) {
 			return Math.ceil(val);
+		}
 		int l10 = (int) Math.pow(10, Math.floor(Math.log10(val)));
 		double x = val / l10;
 		x = Math.round(x);

@@ -158,8 +158,9 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 	public void updateControlsState() {
 		boolean b = false;
-		if (enableCustomTileProcessingCheckButton.isEnabled())
+		if (enableCustomTileProcessingCheckButton.isEnabled()) {
 			b = enableCustomTileProcessingCheckButton.isSelected();
+		}
 		tileSizeWidth.setEnabled(b && widthEnabled);
 		tileSizeWidthLabel.setEnabled(b && widthEnabled);
 		tileSizeHeightLabel.setEnabled(b && heightEnabled);
@@ -167,12 +168,13 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		boolean formatEnabled = formatJpgEnabled || formatPngEnabled;
 		tileImageFormatLabel.setEnabled(b && formatEnabled);
 		tileImageFormat.setEnabled(b && formatEnabled);
-		if (formatPngEnabled && !formatJpgEnabled)
+		if (formatPngEnabled && !formatJpgEnabled) {
 			updateFormatComboModel(TileImageFormat.getPngFormats());
-		else if (!formatPngEnabled && formatJpgEnabled)
+		} else if (!formatPngEnabled && formatJpgEnabled) {
 			updateFormatComboModel(TileImageFormat.getJpgFormats());
-		else
+		} else {
 			updateFormatComboModel(TileImageFormat.values());
+		}
 	}
 
 	private void updateFormatComboModel(TileImageFormat[] values) {
@@ -182,15 +184,18 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 
 	public String getValidationErrorMessages() {
 		String errorText = "";
-		if (!enableCustomTileProcessingCheckButton.isSelected())
+		if (!enableCustomTileProcessingCheckButton.isSelected()) {
 			return errorText;
-		if (!tileSizeHeight.isValueValid())
+		}
+		if (!tileSizeHeight.isValueValid()) {
 			errorText += String.format(I18nUtils.localizedStringForKey("lp_tile_param_msg_valid_height"),
 					JTileSizeCombo.MIN, JTileSizeCombo.MAX);
+		}
 
-		if (!tileSizeWidth.isValueValid())
+		if (!tileSizeWidth.isValueValid()) {
 			errorText += String.format(I18nUtils.localizedStringForKey("lp_tile_param_msg_valid_width"),
 					JTileSizeCombo.MIN, JTileSizeCombo.MAX);
+		}
 		return errorText;
 	}
 
@@ -203,21 +208,25 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 	private class TileImageFormatListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent event) {
-			if (!tileImageFormat.isEnabled())
+			if (!tileImageFormat.isEnabled()) {
 				return;
+			}
 			TileImageFormat tif = (TileImageFormat) tileImageFormat.getSelectedItem();
-			if (tif == null)
+			if (tif == null) {
 				return;
+			}
 			if (!JPEG_TESTED && (tif.getDataWriterBuilder() instanceof TileImageJpegDataWriterBuilder)) {
-				if (!TileImageJpegDataWriter.performOpenJDKJpegTest())
+				if (!TileImageJpegDataWriter.performOpenJDKJpegTest()) {
 					JOptionPane.showMessageDialog(null,
 							"<html>The JPEG image format is not supported by OpenJDK.<br>"
 									+ "Please select a different tile format.</html>",
 							"Image format not available on OpenJDK", JOptionPane.ERROR_MESSAGE);
+				}
 				JPEG_TESTED = true;
 			} else if (tif == TileImageFormat.PNG4Bit || tif == TileImageFormat.PNG8Bit) {
-				if (Utilities.testJaiColorQuantizerAvailable())
+				if (Utilities.testJaiColorQuantizerAvailable()) {
 					return;
+				}
 				JOptionPane.showMessageDialog(null,
 						"<html>This image format is requires additional libraries to be installed:<br>"
 								+ "<b>Java Advanced Image library</b> (jai_core.jar & jai_codec.jar)<br>"
@@ -239,8 +248,9 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		public TileFormatComboModel(TileImageFormat[] values) {
 			super();
 			this.values = values;
-			if (values.length > 0)
+			if (values.length > 0) {
 				selectedObject = values[0];
+			}
 		}
 
 		public void changeValues(TileImageFormat[] values) {
@@ -252,8 +262,9 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 					break;
 				}
 			}
-			if (!found)
+			if (!found) {
 				selectedObject = values[0];
+			}
 			fireContentsChanged(this, -1, -1);
 		}
 

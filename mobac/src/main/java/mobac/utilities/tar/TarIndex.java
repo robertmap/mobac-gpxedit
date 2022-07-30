@@ -43,8 +43,9 @@ public class TarIndex {
 
 	public byte[] getEntryContent(String entryName) throws IOException {
 		long off = tarIndex.getEntryOffset(entryName);
-		if (off < 0)
+		if (off < 0) {
 			return null;
+		}
 		tarRAFile.seek(off);
 		byte[] buf = new byte[512];
 		tarRAFile.readFully(buf);

@@ -77,10 +77,11 @@ public class GlopusMapFile extends TrekBuddy {
 			((GlopusTileWriter) mapTileWriter).initMap();
 			// Select the tile creator instance based on whether tile image
 			// parameters has been set or not
-			if (parameters != null)
+			if (parameters != null) {
 				createCustomTiles();
-			else
+			} else {
 				createTiles();
+			}
 		} catch (MapCreationException e) {
 			throw e;
 		} catch (InterruptedException e) {
@@ -201,9 +202,10 @@ public class GlopusMapFile extends TrekBuddy {
 						out.writeInt(tileWidth);
 						out.writeDouble(gt.calWLon);
 						out.writeDouble(gt.calSLat);
-						if (log.isTraceEnabled())
+						if (log.isTraceEnabled()) {
 							log.trace(String.format("Offset %f %f %f %f \"%s\": 0x%x", gt.calWLon, gt.calNLat,
 									gt.calELon, gt.calELon, mapName, offset));
+						}
 						offset += gt.data.length;
 					}
 					out.flush();

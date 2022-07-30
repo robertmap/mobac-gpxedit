@@ -72,8 +72,9 @@ public class DirectoryManager {
 	}
 
 	private static File applyDirConfig(String propertyName, File defaultDir) {
-		if (dirConfig == null)
+		if (dirConfig == null) {
 			return defaultDir;
+		}
 		try {
 			final String dirCfg = dirConfig.getProperty(propertyName);
 			if (dirCfg == null) {
@@ -113,26 +114,28 @@ public class DirectoryManager {
 			if (envVal == null) {
 				File defPath = null;
 
-				if ("mobac-prog".equalsIgnoreCase(envVar))
+				if ("mobac-prog".equalsIgnoreCase(envVar)) {
 					defPath = programDir;
-				else if ("home".equalsIgnoreCase(envVar))
+				} else if ("home".equalsIgnoreCase(envVar)) {
 					defPath = userHomeDir;
-				else if ("XDG_CONFIG_HOME".equalsIgnoreCase(envVar))
+				} else if ("XDG_CONFIG_HOME".equalsIgnoreCase(envVar)) {
 					defPath = new File(userHomeDir, ".config");
-				else if ("XDG_CACHE_HOME".equalsIgnoreCase(envVar))
+				} else if ("XDG_CACHE_HOME".equalsIgnoreCase(envVar)) {
 					defPath = new File(userHomeDir, ".cache");
-				else if ("XDG_DATA_HOME".equalsIgnoreCase(envVar)) {
+				} else if ("XDG_DATA_HOME".equalsIgnoreCase(envVar)) {
 					File localDataDir = new File(userHomeDir, ".local");
 					defPath = new File(localDataDir, "share");
 				}
 
-				if (defPath != null)
+				if (defPath != null) {
 					envVal = defPath.getAbsolutePath();
+				}
 			}
-			if (envVal == null)
+			if (envVal == null) {
 				sb.append(cmd, m.start(), m.end());
-			else
+			} else {
 				sb.append(envVal);
+			}
 			lastMatchEnd = m.end();
 		}
 		sb.append(cmd.substring(lastMatchEnd));
@@ -141,14 +144,16 @@ public class DirectoryManager {
 	}
 
 	public static void initialize() {
-		if (currentDir == null || mobacUserAppDataDir == null || tempDir == null || programDir == null)
+		if (currentDir == null || mobacUserAppDataDir == null || tempDir == null || programDir == null) {
 			throw new RuntimeException("DirectoryManager failed");
+		}
 	}
 
 	private static void loadDirectoriesIni() {
 		File dirIniFile = new File(programDir, "directories.ini");
-		if (!dirIniFile.isFile())
+		if (!dirIniFile.isFile()) {
 			return;
+		}
 		dirConfig = new Properties();
 		try (FileInputStream in = new FileInputStream(dirIniFile)) {
 			dirConfig.load(in);
@@ -217,16 +222,18 @@ public class DirectoryManager {
 			File appDataDir = new File(appData);
 			if (appDataDir.isDirectory()) {
 				File mobacDataDir = new File(appData, "Mobile Atlas Creator");
-				if (mobacDataDir.isDirectory() || mobacDataDir.mkdir())
+				if (mobacDataDir.isDirectory() || mobacDataDir.mkdir()) {
 					return mobacDataDir;
-				else
+				} else {
 					throw new RuntimeException("Unable to create directory \"" + mobacDataDir.getAbsolutePath() + "\"");
+				}
 			}
 		}
 		File userDir = new File(System.getProperty("user.home"));
 		File mobacUserDir = new File(userDir, ".mobac");
-		if (!mobacUserDir.exists() && !mobacUserDir.mkdir())
+		if (!mobacUserDir.exists() && !mobacUserDir.mkdir()) {
 			throw new RuntimeException("Unable to create directory \"" + mobacUserDir.getAbsolutePath() + "\"");
+		}
 		return mobacUserDir;
 	}
 }

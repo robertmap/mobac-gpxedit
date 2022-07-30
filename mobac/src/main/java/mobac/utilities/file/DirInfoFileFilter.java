@@ -30,8 +30,9 @@ public class DirInfoFileFilter implements FileFilter {
 	}
 
 	public boolean accept(File f) {
-		if (f.isDirectory())
+		if (f.isDirectory()) {
 			return false;
+		}
 		Utilities.checkForInterruptionRt();
 		dirSize += f.length();
 		fileCount++;

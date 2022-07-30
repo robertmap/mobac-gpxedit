@@ -552,9 +552,10 @@ public class SettingsGUI extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				JDirectoryChooser dc = new JDirectoryChooser();
 				dc.setCurrentDirectory(settings.getAtlasOutputDirectory());
-				if (dc.showDialog(SettingsGUI.this, I18nUtils
-						.localizedStringForKey("set_directory_output_select_dlg_title")) != JFileChooser.APPROVE_OPTION)
+				if (dc.showDialog(SettingsGUI.this, I18nUtils.localizedStringForKey(
+						"set_directory_output_select_dlg_title")) != JFileChooser.APPROVE_OPTION) {
 					return;
+				}
 				atlasOutputDirectory.setText(dc.getSelectedFile().getAbsolutePath());
 			}
 		});
@@ -692,10 +693,11 @@ public class SettingsGUI extends JDialog {
 
 		int index = Arrays.binarySearch(THREADCOUNT_LIST, s.downloadThreadCount);
 		if (index < 0) {
-			if (s.downloadThreadCount > THREADCOUNT_LIST[THREADCOUNT_LIST.length - 1])
+			if (s.downloadThreadCount > THREADCOUNT_LIST[THREADCOUNT_LIST.length - 1]) {
 				index = THREADCOUNT_LIST.length - 1;
-			else
+			} else {
 				index = 0;
+			}
 		}
 		threadCount.setSelectedIndex(index);
 
@@ -802,8 +804,9 @@ public class SettingsGUI extends JDialog {
 		tabbedPane.addChangeListener(new ChangeListener() {
 
 			public void stateChanged(ChangeEvent e) {
-				if (tabbedPane.getSelectedComponent() == null)
+				if (tabbedPane.getSelectedComponent() == null) {
 					return;
+				}
 				// First time the tile store tab is selected start updating the tile store
 				// information
 				if (tabbedPane.getSelectedComponent() == tileStoreTab) {

@@ -49,10 +49,11 @@ public class DelayedInterruptThread extends Thread {
 
 	@Override
 	public void interrupt() {
-		if (interruptPaused)
+		if (interruptPaused) {
 			interruptedWhilePaused = true;
-		else
+		} else {
 			super.interrupt();
+		}
 	}
 
 	public void pauseInterrupt() {
@@ -61,8 +62,9 @@ public class DelayedInterruptThread extends Thread {
 
 	public void resumeInterrupt() {
 		interruptPaused = false;
-		if (interruptedWhilePaused)
+		if (interruptedWhilePaused) {
 			this.interrupt();
+		}
 	}
 
 	public boolean interruptedWhilePaused() {

@@ -241,8 +241,9 @@ public abstract class PaperAtlas extends AtlasCreator {
 							int x = tileCol * tileSize * tileImageScale;
 							int y = tileRow * tileSize * tileImageScale;
 							BufferedImage tile = mapDlTileProvider.getTileImage(tileX, tileY);
-							if (tile != null)
+							if (tile != null) {
 								g.drawImage(tile, x, y, tileSize * tileImageScale, tileSize * tileImageScale, null);
+							}
 						}
 					}
 					g.translate(firstTileXOffset, firstTileYOffset);
@@ -251,10 +252,12 @@ public abstract class PaperAtlas extends AtlasCreator {
 					dummy.setSize(size);
 					Point tlc = new Point(firstTileX * tileSize * tileImageScale + firstTileXOffset,
 							firstTileY * tileSize * tileImageScale + firstTileYOffset);
-					if (s.wgsEnabled)
+					if (s.wgsEnabled) {
 						wgsGrid.paintWgsGrid(g, mapSource.getMapSpace(), tlc, zoom);
-					if (s.scaleBar)
+					}
+					if (s.scaleBar) {
 						ScaleBar.paintScaleBar(dummy, g, mapSource.getMapSpace(), tlc, zoom);
+					}
 					if (s.compass) {
 						Image compassRaw = ImageIO.read(Utilities.loadResourceAsStream("images/compass.png"));
 						Image compass = compassRaw.getScaledInstance(150, 150, Image.SCALE_SMOOTH);

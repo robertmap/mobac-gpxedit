@@ -43,8 +43,9 @@ public class RectangleSelectionLayer implements MapLayer {
 		g.setColor(Color.BLUE);
 		Point p1 = mapController.getiStartSelectionPoint();
 		Point p2 = mapController.getiEndSelectionPoint();
-		if (p1 == null || p2 == null)
+		if (p1 == null || p2 == null) {
 			return;
+		}
 		p1 = mapSpace.changeZoom(p1, PreviewMap.MAX_ZOOM, zoom);
 		p2 = mapSpace.changeZoom(p2, PreviewMap.MAX_ZOOM, zoom);
 

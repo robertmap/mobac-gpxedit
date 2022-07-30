@@ -67,9 +67,10 @@ public class MobileTrailExplorer extends AtlasCreator {
 		} catch (IOException e1) {
 			throw new MapCreationException(map, e1);
 		}
-		if (mapSource.getTileImageType() != TileImageType.PNG)
+		if (mapSource.getTileImageType() != TileImageType.PNG) {
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		}
 		createTiles();
 	}
 

@@ -74,8 +74,9 @@ public class SimpleServer {
 				g2.drawLine(255, 0, 0, 255);
 				String url = request.getRequestURL().toString();
 				String query = request.getQueryString();
-				if (query != null)
+				if (query != null) {
 					url += "?" + query;
+				}
 				String[] strings = url.split("[\\&\\?]");
 				int y = 40;
 				g2.setFont(FONT_SMALL);

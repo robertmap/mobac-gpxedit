@@ -57,8 +57,9 @@ public class StartMOBAC {
 
 	public static void setLookAndFeel() {
 		try {
-			if (System.getProperty("swing.defaultlaf") != null)
+			if (System.getProperty("swing.defaultlaf") != null) {
 				return;
+			}
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			// MainGUI.setDefaultFontOfAllUIComponents(MainGUI.customFont());
 		} catch (Exception e) {

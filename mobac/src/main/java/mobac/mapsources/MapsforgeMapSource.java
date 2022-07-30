@@ -104,8 +104,9 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 	@Override
 	public void initialize() throws MapSourceInitializationException {
 		for (File mapFile : mapFileList) {
-			if (!mapFile.exists())
+			if (!mapFile.exists()) {
 				throw new MapSourceInitializationException("File does not exist: " + mapFile.getAbsolutePath());
+			}
 		}
 		reinitialize();
 	}

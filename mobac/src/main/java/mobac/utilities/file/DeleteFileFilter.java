@@ -37,14 +37,16 @@ public class DeleteFileFilter implements FileFilter {
 
 	public boolean accept(File file) {
 		try {
-			if (file.isDirectory())
+			if (file.isDirectory()) {
 				// We only delete files
 				return false;
+			}
 			boolean success = file.delete();
-			if (success)
+			if (success) {
 				countSuccess++;
-			else
+			} else {
 				countFailed++;
+			}
 		} catch (Exception e) {
 			countError++;
 		}

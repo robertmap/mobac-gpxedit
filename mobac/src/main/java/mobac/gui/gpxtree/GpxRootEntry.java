@@ -52,8 +52,9 @@ public class GpxRootEntry extends GpxEntry {
 
 	public void setMetaDataName(String name) {
 		Gpx gpx = getLayer().getGpx();
-		if (gpx.getMetadata() == null)
+		if (gpx.getMetadata() == null) {
 			gpx.setMetadata(new MetadataType());
+		}
 		gpx.getMetadata().setName(name);
 
 		// Notify the model about the changed node text

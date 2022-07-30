@@ -32,10 +32,11 @@ public class ImageWriterWarningListener implements IIOWriteWarningListener {
 	private static final Logger log = LoggerFactory.getLogger(ImageWriterWarningListener.class);
 
 	public void warningOccurred(ImageWriter source, int imageIndex, String warning) {
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.warn(warning + " - caused by: " + source + " on imageIndex " + imageIndex);
-		else
+		} else {
 			log.warn(warning);
+		}
 	}
 
 }

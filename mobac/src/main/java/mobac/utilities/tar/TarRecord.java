@@ -45,8 +45,9 @@ public class TarRecord {
 
 	public static int calculateFileSizeInTar(File theFile) {
 		long fl = theFile.length();
-		if (fl > Integer.MAX_VALUE)
+		if (fl > Integer.MAX_VALUE) {
 			throw new RuntimeException("File size too large");
+		}
 		return calculateFileSizeInTar((int) fl);
 	}
 
@@ -56,8 +57,9 @@ public class TarRecord {
 		} else {
 			int mod = fileLength % 512;
 			// align buffer size on 512 byte block length
-			if (mod != 0)
+			if (mod != 0) {
 				fileLength += 512 - mod;
+			}
 			return fileLength;
 		}
 	}

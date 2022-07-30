@@ -97,10 +97,11 @@ public class GBC extends GridBagConstraints {
 	}
 
 	public GBC toggleEol() {
-		if (gridwidth == GBC.REMAINDER)
+		if (gridwidth == GBC.REMAINDER) {
 			gridwidth = 1;
-		else
+		} else {
 			gridwidth = GBC.REMAINDER;
+		}
 		return this;
 	}
 
@@ -139,10 +140,12 @@ public class GBC extends GridBagConstraints {
 	 */
 	public GBC fill(int value) {
 		fill = value;
-		if (value == HORIZONTAL || value == BOTH)
+		if (value == HORIZONTAL || value == BOTH) {
 			weightx = 1.0;
-		if (value == VERTICAL || value == BOTH)
+		}
+		if (value == VERTICAL || value == BOTH) {
 			weighty = 1.0;
+		}
 		return this;
 	}
 

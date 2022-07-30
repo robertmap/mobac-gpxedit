@@ -63,8 +63,9 @@ public class GpxLoad implements ActionListener {
 		fc.addChoosableFileFilter(new GpxFileFilter(false));
 		final MainGUI mainGUI = MainGUI.getMainGUI();
 		int returnVal = fc.showOpenDialog(mainGUI);
-		if (returnVal != JFileChooser.APPROVE_OPTION)
+		if (returnVal != JFileChooser.APPROVE_OPTION) {
 			return;
+		}
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 
 		File[] f = fc.getSelectedFiles();
@@ -73,16 +74,18 @@ public class GpxLoad implements ActionListener {
 		boolean duplicates = false;
 		for (File selectedFile : f) {
 			duplicates = panel.isFileOpen(selectedFile.getAbsolutePath());
-			if (duplicates)
+			if (duplicates) {
 				break;
+			}
 		}
 		if (duplicates) {
 			int answer = JOptionPane.showConfirmDialog(mainGUI,
 					I18nUtils.localizedStringForKey("rp_gpx_msg_confirm_reopen_file"),
 					I18nUtils.localizedStringForKey("Warning"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
-			if (answer != JOptionPane.YES_OPTION)
+			if (answer != JOptionPane.YES_OPTION) {
 				return;
+			}
 		}
 
 		// process

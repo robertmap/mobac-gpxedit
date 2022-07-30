@@ -82,8 +82,9 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 	@Override
 	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		super.initializeMap(map, mapTileProvider);
-		if (parameters != null)
+		if (parameters != null) {
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+		}
 	}
 
 	@Override
@@ -100,7 +101,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 			Runtime r = Runtime.getRuntime();
 			long heapMaxSize = r.maxMemory();
 
-			for (long x = xMin; x <= xMax; x++)
+			for (long x = xMin; x <= xMax; x++) {
 				for (long y = yMin; y <= yMax; y++) {
 					checkUserAbort();
 					atlasProgress.incMapCreationProgress();
@@ -127,6 +128,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 
 					}
 				}
+			}
 			prep.executeBatch();
 			conn.setAutoCommit(true);
 			atlasProgress.setMapCreationProgress(maxMapProgress);

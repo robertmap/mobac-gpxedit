@@ -122,9 +122,11 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		this.atlasThread = atlasThread;
 		ToolTipManager.sharedInstance().setDismissDelay(12000);
 		if (MainGUI.getMainGUI() == null) // Atlas creation started via command-line, no MainGUi available
+		{
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		else
+		} else {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}
 
 		setIconImages(MainGUI.MOBAC_ICONS);
 		updateTask = new UpdateTask();
@@ -410,12 +412,13 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		} else {
 			int minutes = (int) (longSeconds / 60);
 			int seconds = (int) (longSeconds % 60);
-			if (minutes > 0)
+			if (minutes > 0) {
 				timeString += minutes + " "
 						+ (minutes == 1
 								? I18nUtils.localizedStringForKey("minute")
 								: I18nUtils.localizedStringForKey("minutes"))
 						+ " ";
+			}
 			timeString += seconds + " "
 					+ (seconds == 1
 							? I18nUtils.localizedStringForKey("second")

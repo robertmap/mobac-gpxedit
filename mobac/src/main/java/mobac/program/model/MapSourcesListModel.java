@@ -55,8 +55,9 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	}
 
 	public boolean moveUp(int index) {
-		if (index < 1)
+		if (index < 1) {
 			return false;
+		}
 		MapSource ms = mapSources.remove(index - 1);
 		mapSources.add(index, ms);
 		fireContentsChanged(this, index - 1, index);
@@ -64,8 +65,9 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	}
 
 	public boolean moveDown(int index) {
-		if (index + 1 >= mapSources.size())
+		if (index + 1 >= mapSources.size()) {
 			return false;
+		}
 		MapSource ms = mapSources.remove(index + 1);
 		mapSources.add(index, ms);
 		fireContentsChanged(this, index, index + 1);

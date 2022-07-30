@@ -69,8 +69,9 @@ public class ArrayOutputStream extends OutputStream {
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
 		int newPos = pos + len;
-		if (newPos > buf.length)
+		if (newPos > buf.length) {
 			throw new IOException("End of buffer reached");
+		}
 		System.arraycopy(b, off, buf, pos, len);
 		pos = newPos;
 	}

@@ -103,8 +103,9 @@ public enum TileImageFormat {
 	protected static TileImageFormat[] getFormats(TileImageType tileImageType) {
 		ArrayList<TileImageFormat> list = new ArrayList<TileImageFormat>();
 		for (TileImageFormat format : values()) {
-			if (tileImageType.equals(format.getType()))
+			if (tileImageType.equals(format.getType())) {
 				list.add(format);
+			}
 		}
 		TileImageFormat[] result = new TileImageFormat[0];
 		result = list.toArray(result);

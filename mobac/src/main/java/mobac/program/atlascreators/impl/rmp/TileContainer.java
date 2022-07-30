@@ -51,8 +51,9 @@ public class TileContainer {
 	public void addTile(Tiledata tile, TileContainer next) {
 		tiles.add(tile);
 
-		if (previous != null)
+		if (previous != null) {
 			followUps.add(next);
+		}
 	}
 
 	/**
@@ -61,11 +62,13 @@ public class TileContainer {
 	public int getTileCount() {
 		int count = tiles.size();
 
-		if (previous != null)
+		if (previous != null) {
 			count += previous.getTileCount();
+		}
 
-		for (TileContainer next : followUps)
+		for (TileContainer next : followUps) {
 			count += next.getTileCount();
+		}
 
 		return count;
 	}
@@ -90,8 +93,9 @@ public class TileContainer {
 			writeContainer(os);
 
 			/* --- And all subtrees --- */
-			for (TileContainer tc : followUps)
+			for (TileContainer tc : followUps) {
 				tc.writeTree(os);
+			}
 		} else {
 			/* --- Just write the tile itself, if it does not have subtrees --- */
 			writeContainer(os);
@@ -131,17 +135,19 @@ public class TileContainer {
 		}
 
 		/* --- Offset to previous --- */
-		if (previous == null)
+		if (previous == null) {
 			RmpTools.writeValue(os, 0, 4);
-		else
+		} else {
 			RmpTools.writeValue(os, 0x0f5c, 4);
+		}
 
 		/* --- Offset to following --- */
 		for (int i = 0; i < 99; i++) {
-			if (i < followUps.size())
+			if (i < followUps.size()) {
 				RmpTools.writeValue(os, 0x0f5c + (i + 2) * 1992, 4);
-			else
+			} else {
 				RmpTools.writeValue(os, 0, 4);
+			}
 		}
 	}
 }

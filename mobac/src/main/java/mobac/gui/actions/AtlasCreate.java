@@ -35,8 +35,9 @@ public class AtlasCreate implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent event) {
-		if (!jAtlasTree.testAtlasContentValid())
+		if (!jAtlasTree.testAtlasContentValid()) {
 			return;
+		}
 		try {
 			// We have to work on a deep clone otherwise the user would be
 			// able to modify settings of maps, layers and the atlas itself

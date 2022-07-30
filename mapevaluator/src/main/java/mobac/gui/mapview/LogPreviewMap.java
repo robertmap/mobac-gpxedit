@@ -31,8 +31,9 @@ public class LogPreviewMap extends PreviewMap {
 
 	@Override
 	public void setTileGridVisible(boolean tileGridVisible) {
-		if (isTileGridVisible() == tileGridVisible)
+		if (isTileGridVisible() == tileGridVisible) {
 			return;
+		}
 		if (tileGridVisible) {
 			mapGridLayer = new MapGridInfoLayer();
 			addMapTileLayers(mapGridLayer);
@@ -62,8 +63,9 @@ public class LogPreviewMap extends PreviewMap {
 		entry.msg = msg;
 		synchronized (logLines) {
 			logLines.addFirst(entry);
-			if (logLines.size() > 10)
+			if (logLines.size() > 10) {
 				logLines.removeLast();
+			}
 		}
 	}
 
@@ -85,26 +87,30 @@ public class LogPreviewMap extends PreviewMap {
 						if (e.time < minTime) {
 							logLines.removeLast();
 							dirty = true;
-						} else
+						} else {
 							break;
+						}
 					}
 				}
 			} catch (NoSuchElementException e) {
 			}
-			if (dirty)
+			if (dirty) {
 				repaint();
+			}
 		}
 	}
 
 	public class MapGridInfoLayer extends MapGridLayer {
 
 		public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
-			if (tilex < 0 || tiley < 0)
+			if (tilex < 0 || tiley < 0) {
 				return;
+			}
 			int max = mapSource.getMapSpace().getMaxPixels(zoom);
 			int tileSize = mapSource.getMapSpace().getTileSize();
-			if (tilex * tileSize >= max || tiley * tileSize >= max)
+			if (tilex * tileSize >= max || tiley * tileSize >= max) {
 				return;
+			}
 			g.setColor(Color.BLACK);
 			g.drawRect(gx, gy, tileSize, tileSize);
 			g.setFont(tileInfoFont);
@@ -114,8 +120,9 @@ public class LogPreviewMap extends PreviewMap {
 			drawStringBG(g, "y=" + tiley, gx + 4, gy += 16);
 			String tileUrl = null;
 			try {
-				if (mapSource instanceof AbstractHttpMapSource)
+				if (mapSource instanceof AbstractHttpMapSource) {
 					tileUrl = ((AbstractHttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
+				}
 				if (tileUrl != null) {
 					URL url = new URL(tileUrl);
 					drawUrl(g, "host=" + url.getHost(), gx + 4, gy += 16, tileSize);

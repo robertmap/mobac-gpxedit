@@ -17,10 +17,12 @@ public class Merge implements Runnable {
 	public Merge(String sourceDir, String destDir) {
 		this.sourceDir = new File(sourceDir);
 		this.destDir = new File(destDir);
-		if (!ParamTests.testBerkelyDbDir(this.sourceDir))
+		if (!ParamTests.testBerkelyDbDir(this.sourceDir)) {
 			throw new InvalidParameterException();
-		if (!ParamTests.testBerkelyDbDir(this.destDir))
+		}
+		if (!ParamTests.testBerkelyDbDir(this.destDir)) {
 			throw new InvalidParameterException();
+		}
 	}
 
 	public void run() {

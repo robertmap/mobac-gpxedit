@@ -164,8 +164,9 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			sb.append("Version: " + ProgramInfo.getCompleteTitle());
 			sb.append("\nPlatform: " + prop("os.name") + " (" + prop("os.version") + ")");
 			String windowManager = System.getProperty("sun.desktop");
-			if (windowManager != null)
+			if (windowManager != null) {
 				sb.append(" (" + windowManager + ")");
+			}
 
 			String dist = OSUtilities.getLinuxDistributionName();
 			if (dist != null) {

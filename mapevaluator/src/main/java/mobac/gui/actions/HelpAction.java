@@ -28,8 +28,9 @@ public class HelpAction implements ActionListener {
 			e1.printStackTrace();
 		}
 		for (Method m : methods) {
-			if (!Tools.class.equals(m.getDeclaringClass()))
+			if (!Tools.class.equals(m.getDeclaringClass())) {
 				continue;
+			}
 			// sw.append("<h4>" + m.getName() + "</h4>");
 			sw.append("<hr>");
 			sw.append("<pre>");
@@ -39,15 +40,18 @@ public class HelpAction implements ActionListener {
 			int last = params.length - 1;
 			for (int i = 0; i < params.length; i++) {
 				sw.append(getClassName(params[i]));
-				if (names != null)
+				if (names != null) {
 					sw.append(" " + names[i]);
-				if (i != last)
+				}
+				if (i != last) {
 					sw.append(", ");
+				}
 			}
 			sw.append(")</pre>");
 			MethodDescription md = m.getAnnotation(Tools.MethodDescription.class);
-			if (md != null)
+			if (md != null) {
 				sw.append(md.value() + "<br>");
+			}
 		}
 
 		sw.append("<hr>");
@@ -80,7 +84,8 @@ public class HelpAction implements ActionListener {
 				default :
 					return "unknown[]";
 			}
-		} else
+		} else {
 			return clazz.getSimpleName();
+		}
 	}
 }

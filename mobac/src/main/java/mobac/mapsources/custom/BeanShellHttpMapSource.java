@@ -106,26 +106,30 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 		}
 
 		o = interpreter.get("minZoom");
-		if (o != null)
+		if (o != null) {
 			minZoom = ((Integer) o).intValue();
-		else
+		} else {
 			minZoom = 0;
+		}
 
 		o = interpreter.get("maxZoom");
-		if (o != null)
+		if (o != null) {
 			maxZoom = ((Integer) o).intValue();
-		else
+		} else {
 			maxZoom = PreviewMap.MAX_ZOOM;
+		}
 
 		o = interpreter.get("tileType");
-		if (o != null)
+		if (o != null) {
 			tileType = TileImageType.getTileImageType((String) o);
-		else
+		} else {
 			throw new EvalError("tileType definition missing", null, null);
+		}
 
 		o = interpreter.get("tileUpdate");
-		if (o != null)
+		if (o != null) {
 			tileUpdate = (TileUpdate) o;
+		}
 
 		o = interpreter.get("ignoreError");
 		if (o != null) {
@@ -133,8 +137,9 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 				ignoreError = Boolean.parseBoolean((String) o);
 			} else if (o instanceof Boolean) {
 				ignoreError = ((Boolean) o).booleanValue();
-			} else
+			} else {
 				throw new EvalError("Invalid type for \"ignoreError\": " + o.getClass(), null, null);
+			}
 		}
 
 		o = interpreter.get("backgroundColor");

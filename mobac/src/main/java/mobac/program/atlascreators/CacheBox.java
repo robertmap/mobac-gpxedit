@@ -67,12 +67,14 @@ public class CacheBox extends AtlasCreator {
 	@Override
 	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
-			if (layer.getMapCount() == 0)
+			if (layer.getMapCount() == 0) {
 				throw new AtlasTestException("Empty layers are not allowed", layer);
+			}
 			Class<? extends MapSource> mapSourceClass = layer.getMap(0).getMapSource().getClass();
 			for (MapInterface map : layer) {
-				if (!mapSourceClass.equals(map.getMapSource().getClass()))
+				if (!mapSourceClass.equals(map.getMapSource().getClass())) {
 					throw new AtlasTestException("Different map sources are not allowed within one layer", map);
+				}
 			}
 		}
 	}
@@ -85,8 +87,9 @@ public class CacheBox extends AtlasCreator {
 	public void initLayerCreation(LayerInterface layer) throws IOException {
 		nextMapOffsetIndex = 0;
 		packFile = new File(atlasDir, layer.getName() + ".pack");
-		if (packFile.exists())
+		if (packFile.exists()) {
 			Utilities.deleteFile(packFile);
+		}
 		packRaFile = new RandomAccessFile(packFile, "rw");
 		/*
 		 * We use the mapsource name as layer name. See feature request #2987674 for
@@ -138,11 +141,13 @@ public class CacheBox extends AtlasCreator {
 	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		super.initializeMap(map, mapTileProvider);
 		TileImageParameters param = map.getParameters();
-		if (param != null)
+		if (param != null) {
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());
+		}
 		activeMapInfo = mapInfos[nextMapOffsetIndex++];
-		if (!activeMapInfo.map.equals(map))
+		if (!activeMapInfo.map.equals(map)) {
 			throw new RuntimeException("Map does not match offset info!");
+		}
 		// Just to make sure we use the xy values from mapInfo
 		xMin = activeMapInfo.minX;
 		xMax = activeMapInfo.maxX;
@@ -180,8 +185,9 @@ public class CacheBox extends AtlasCreator {
 			// offset index table
 			// Due to a bug in CacheBox we have to subtract 8 from the offset
 			packRaFile.seek(activeMapInfo.indexTableOffset - 8);
-			for (long tileoffset : offsets)
+			for (long tileoffset : offsets) {
 				writeLong(tileoffset);
+			}
 			packRaFile.seek(pos);
 		} catch (IOException e) {
 			throw new MapCreationException(map, e);
@@ -208,8 +214,9 @@ public class CacheBox extends AtlasCreator {
 		mapInfos = null;
 		Utilities.closeQuietly(packRaFile);
 		packRaFile = null;
-		if (packFile != null)
+		if (packFile != null) {
 			Utilities.deleteFile(packFile);
+		}
 		packFile = null;
 	}
 
@@ -222,8 +229,9 @@ public class CacheBox extends AtlasCreator {
 		byte[] buf = new byte[length];
 		byte[] asciiBytes = text.getBytes(StandardCharsets.US_ASCII);
 		System.arraycopy(asciiBytes, 0, buf, 0, Math.min(length, asciiBytes.length));
-		for (int i = asciiBytes.length; i < length; i++)
+		for (int i = asciiBytes.length; i < length; i++) {
 			buf[i] = ' ';
+		}
 		packRaFile.write(buf);
 	}
 

@@ -26,26 +26,30 @@ public class ColorAdapter extends XmlAdapter<String, Color> {
 	public static Color parseColor(String value) throws UnmarshalException {
 		value = value.trim();
 		int length = value.length();
-		if (!value.startsWith("#"))
+		if (!value.startsWith("#")) {
 			throw new UnmarshalException("Invalid format: does not start with #");
-		if (length != 7 && length != 9)
+		}
+		if (length != 7 && length != 9) {
 			throw new UnmarshalException("Invalid format: wrong length");
+		}
 		int r = Integer.parseInt(value.substring(1, 3), 16);
 		int g = Integer.parseInt(value.substring(3, 5), 16);
 		int b = Integer.parseInt(value.substring(5, 7), 16);
-		if (length == 7)
+		if (length == 7) {
 			return new Color(r, g, b);
+		}
 		int a = Integer.parseInt(value.substring(7, 9), 16);
 		return new Color(r, g, b, a);
 	}
 
 	@Override
 	public String marshal(Color color) throws Exception {
-		if (color.getAlpha() == 255)
+		if (color.getAlpha() == 255) {
 			return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-		else
+		} else {
 			return String.format("#%02x%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue(),
 					color.getAlpha());
+		}
 	}
 
 	@Override

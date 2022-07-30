@@ -87,8 +87,9 @@ public class JAtlasTree extends JTree implements Autoscroll {
 
 	public JAtlasTree(PreviewMap mapView) {
 		super(new AtlasTreeModel());
-		if (mapView == null)
+		if (mapView == null) {
 			throw new NullPointerException("MapView parameter is null");
+		}
 		this.mapView = mapView;
 		getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		ddc = new DragDropController(this);
@@ -125,8 +126,9 @@ public class JAtlasTree extends JTree implements Autoscroll {
 	public boolean testAtlasContentValid() {
 		AtlasInterface atlas = getAtlas();
 		if (RequiresSQLite.class.isAssignableFrom(atlas.getOutputFormat().getMapCreatorClass())) {
-			if (!SQLiteLoader.loadSQLiteOrShowError())
+			if (!SQLiteLoader.loadSQLiteOrShowError()) {
 				return false;
+			}
 		}
 		if (atlas.calculateTilesToDownload() == 0) {
 			JOptionPane.showMessageDialog(null, "<html>" + MSG_ATLAS_EMPTY + "</html>", "Error - atlas has no content",
@@ -138,12 +140,14 @@ public class JAtlasTree extends JTree implements Autoscroll {
 
 	@Override
 	public String getToolTipText(MouseEvent event) {
-		if (getRowForLocation(event.getX(), event.getY()) == -1)
+		if (getRowForLocation(event.getX(), event.getY()) == -1) {
 			return defaultToolTiptext;
+		}
 		TreePath curPath = getPathForLocation(event.getX(), event.getY());
 		Object o = curPath.getLastPathComponent();
-		if (o == null || !(o instanceof ToolTipProvider))
+		if (o == null || !(o instanceof ToolTipProvider)) {
 			return null;
+		}
 		return ((ToolTipProvider) o).getToolTip();
 	}
 
@@ -183,13 +187,15 @@ public class JAtlasTree extends JTree implements Autoscroll {
 
 	public void deleteSelectedNode() {
 		TreePath path = getSelectionPath();
-		if (path == null)
+		if (path == null) {
 			return;
+		}
 		TreeNode selected = (TreeNode) path.getLastPathComponent();
 		int[] selectedRows = getSelectionRows();
 
-		if (!(selected instanceof CapabilityDeletable))
+		if (!(selected instanceof CapabilityDeletable)) {
 			return;
+		}
 		treeModel.notifyNodeDelete(selected);
 		((CapabilityDeletable) selected).delete();
 
@@ -252,8 +258,9 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		if (selPath != null) {
 			// not clicked on empty area
 			final Object o = selPath.getLastPathComponent();
-			if (o == null)
+			if (o == null) {
 				return;
+			}
 			if (o instanceof ToolTipProvider) {
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_show_detail"));
 				mi.addActionListener(new ActionListener() {
@@ -357,8 +364,9 @@ public class JAtlasTree extends JTree implements Autoscroll {
 				pm.add(mi);
 			}
 		}
-		if (pm.getComponentCount() > 0)
+		if (pm.getComponentCount() > 0) {
 			pm.addSeparator();
+		}
 		mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_clear_atals"));
 		mi.addActionListener(new ActionListener() {
 

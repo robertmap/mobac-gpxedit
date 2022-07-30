@@ -139,8 +139,9 @@ public class SettingsGUITileStore extends JPanel {
 	}
 
 	synchronized void updateTileStoreInfoPanelAsync(final String storeName) {
-		if (tileStoreAsyncThread != null)
+		if (tileStoreAsyncThread != null) {
 			return; // An update is currently running
+		}
 		tileStoreAsyncThread = new DelayedInterruptThread("TileStoreInfoRetriever") {
 
 			@Override

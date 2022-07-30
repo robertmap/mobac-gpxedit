@@ -46,8 +46,9 @@ public class CreateAtlas implements CommandLineAction {
 				System.exit(1);
 			}
 			outputDir = dir;
-		} else
+		} else {
 			outputDir = null;
+		}
 	}
 
 	@Override
@@ -72,8 +73,9 @@ public class CreateAtlas implements CommandLineAction {
 				System.exit(1);
 			}
 			AtlasThread atlasThread = new AtlasThread(atlas);
-			if (outputDir != null)
+			if (outputDir != null) {
 				atlasThread.setCustomAtlasDir(outputDir);
+			}
 			atlasThread.setQuitMobacAfterAtlasCreation(true);
 			atlasThread.start();
 		} catch (Exception e) {

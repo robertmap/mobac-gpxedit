@@ -109,8 +109,9 @@ public class LicensesDialog extends JFrame implements ChangeListener, ActionList
 		String license;
 		try {
 			String nextLicense = licenses[tab.getSelectedIndex()].licenseResource;
-			if (nextLicense.equals(currentLicense))
+			if (nextLicense.equals(currentLicense)) {
 				return;
+			}
 			license = Utilities.loadTextResource("text/" + nextLicense);
 			currentLicense = nextLicense;
 		} catch (IOException e) {

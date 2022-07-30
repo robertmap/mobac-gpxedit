@@ -41,8 +41,9 @@ public class PolygonSelectionMapController extends AbstractPolygonSelectionMapCo
 
 	public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (finished)
+			if (finished) {
 				reset();
+			}
 			Point mapPoint = map.getTopLeftCoordinate();
 			mapPoint.x += e.getX();
 			mapPoint.y += e.getY();

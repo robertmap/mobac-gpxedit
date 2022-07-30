@@ -73,16 +73,20 @@ public class CustomCombinedMapSource implements InitializableMapSource {
 
 	@Override
 	public void initialize() throws MapSourceInitializationException {
-		if (regionalMapSource.size() == 0)
+		if (regionalMapSource.size() == 0) {
 			throw new MapSourceInitializationException("Regional map missing");
-		if (baseMapSource.size() == 0)
+		}
+		if (baseMapSource.size() == 0) {
 			throw new MapSourceInitializationException("Base map missing");
-		if ((regionalMapSource.size() > 1) || baseMapSource.size() > 1)
+		}
+		if ((regionalMapSource.size() > 1) || baseMapSource.size() > 1) {
 			throw new MapSourceInitializationException(
 					"Invalid map source definition: multiple regional or base maps defined.");
-		if (!(regionalMapSource instanceof FileBasedMapSource))
+		}
+		if (!(regionalMapSource instanceof FileBasedMapSource)) {
 			throw new MapSourceInitializationException(
 					"Invalid regional map file format. Only file based local maps are supported!");
+		}
 		((InitializableMapSource) regionalMapSource).initialize();
 		if (baseMapSource instanceof InitializableMapSource) {
 			((InitializableMapSource) baseMapSource).initialize();
@@ -94,8 +98,9 @@ public class CustomCombinedMapSource implements InitializableMapSource {
 			throws IOException, TileException, InterruptedException {
 		try {
 			byte[] data = regionalMapSource.get(0).getTileData(zoom, x, y, loadMethod);
-			if (data != null)
+			if (data != null) {
 				return data;
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -107,8 +112,9 @@ public class CustomCombinedMapSource implements InitializableMapSource {
 			throws IOException, TileException, InterruptedException {
 		try {
 			BufferedImage image = regionalMapSource.get(0).getTileImage(zoom, x, y, loadMethod);
-			if (image != null)
+			if (image != null) {
 				return image;
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

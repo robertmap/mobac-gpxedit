@@ -83,8 +83,9 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 			return;
 		}
 		Integer zoom = (Integer) zoomCombo.getSelectedItem();
-		if (zoom == null)
+		if (zoom == null) {
 			return;
+		}
 		TileStoreCoverageLayer.removeCacheCoverageLayers();
 		mapViewer.repaint();
 		TileStoreCoverageLayer tscl = new TileStoreCoverageLayer(mapViewer, (MapSource) layerSelector.getSelectedItem(),
@@ -100,8 +101,9 @@ public class JTileStoreCoveragePanel extends JCollapsiblePanel implements MapEve
 		TileStoreCoverageLayer.removeCacheCoverageLayers();
 		hideCoverage.setEnabled(false);
 		Integer selZoom = (Integer) zoomCombo.getSelectedItem();
-		if (selZoom == null)
+		if (selZoom == null) {
 			selZoom = 8;
+		}
 		int zoomLevels = Math.max(0, newMapSource.getMaxZoom() - newMapSource.getMinZoom() + 1);
 		Integer[] items = new Integer[zoomLevels];
 		int zoom = newMapSource.getMinZoom();

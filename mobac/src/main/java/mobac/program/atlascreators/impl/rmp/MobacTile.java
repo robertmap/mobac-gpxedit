@@ -61,8 +61,9 @@ public class MobacTile {
 	public BufferedImage getImage() {
 
 		/* --- Load image if none is present --- */
-		if (image == null)
+		if (image == null) {
 			image = loadImage();
+		}
 
 		return image;
 	}
@@ -107,8 +108,9 @@ public class MobacTile {
 		/* --- Get Graphics context --- */
 		src_image = getImage();
 
-		if (src_image == null)
+		if (src_image == null) {
 			return;
+		}
 
 		/* --- Convert it to RGB color space --- */
 		imageBuffer = new BufferedImage(src_image.getWidth(), src_image.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -138,8 +140,9 @@ public class MobacTile {
 			pix_y = (int) ((src_c_y - src_area.getNorth()) * 256 / (src_area.getSouth() - src_area.getNorth()) + 0.5);
 
 			/* --- Ignore line that are out of the source area --- */
-			if (pix_y < 0 || pix_y > 255)
+			if (pix_y < 0 || pix_y > 255) {
 				continue;
+			}
 
 			// log.trace("scale factor y: " + (pix_y / (double) y));
 
@@ -151,8 +154,9 @@ public class MobacTile {
 				pix_x = (int) ((src_c_x - src_area.getWest()) * 256 / (src_area.getEast() - src_area.getWest()) + 0.5);
 
 				/* --- Ignore the row if it is outside the source area --- */
-				if (pix_x < 0 || pix_x > 255)
+				if (pix_x < 0 || pix_x > 255) {
 					continue;
+				}
 
 				/* --- Transfer the pixel --- */
 				src_graph.getPixel(pix_x, pix_y, pixel);

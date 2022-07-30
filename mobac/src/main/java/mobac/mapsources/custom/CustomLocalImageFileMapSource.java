@@ -175,11 +175,13 @@ public class CustomLocalImageFileMapSource
 
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, TileException, InterruptedException {
-		if (!initialized)
+		if (!initialized) {
 			initialize();
+		}
 
-		if (log.isTraceEnabled())
+		if (log.isTraceEnabled()) {
 			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+		}
 
 		BufferedImage image = null;
 		Graphics2D g2 = null;

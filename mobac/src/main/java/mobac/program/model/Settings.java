@@ -201,8 +201,9 @@ public class Settings {
 	private String httpAccept;
 
 	public static boolean checkSettingsFileModified() {
-		if (SETTINGS_LAST_MODIFIED == 0)
+		if (SETTINGS_LAST_MODIFIED == 0) {
 			return false;
+		}
 		// Check if the settings.xml has been modified
 		// since it has been loaded
 		long lastModified = FILE.lastModified();
@@ -243,17 +244,19 @@ public class Settings {
 	}
 
 	public String getUserAgent() {
-		if (userAgent != null)
+		if (userAgent != null) {
 			return userAgent;
-		else
+		} else {
 			return ProgramInfo.getUserAgent();
+		}
 	}
 
 	public void setUserAgent(String userAgent) {
 		if (userAgent != null) {
 			userAgent = userAgent.trim();
-			if (userAgent.length() == 0)
+			if (userAgent.length() == 0) {
 				userAgent = null;
+			}
 		}
 		this.userAgent = userAgent;
 	}
@@ -290,8 +293,9 @@ public class Settings {
 	public void setHttpAccept(String httpAccept) {
 		if (httpAccept != null) {
 			httpAccept = httpAccept.trim();
-			if (httpAccept.length() == 0)
+			if (httpAccept.length() == 0) {
 				httpAccept = null;
+			}
 		}
 		this.httpAccept = httpAccept;
 	}
@@ -413,8 +417,9 @@ public class Settings {
 
 	@XmlElement
 	public void setUnitSystem(UnitSystem unitSystem) {
-		if (unitSystem == null)
+		if (unitSystem == null) {
 			unitSystem = UnitSystem.Metric;
+		}
 		this.unitSystem = unitSystem;
 	}
 
@@ -422,17 +427,19 @@ public class Settings {
 	public File getMapSourcesDirectory() {
 		String mapSourcesDirCfg = directories.mapSourcesDirectory;
 		File mapSourcesDir;
-		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0)
+		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0) {
 			mapSourcesDir = DirectoryManager.mapSourcesDir;
-		else
+		} else {
 			mapSourcesDir = new File(mapSourcesDirCfg);
+		}
 		return mapSourcesDir;
 	}
 
 	@XmlTransient
 	public File getAtlasOutputDirectory() {
-		if (directories.atlasOutputDirectory != null)
+		if (directories.atlasOutputDirectory != null) {
 			return new File(directories.atlasOutputDirectory);
+		}
 		return new File(DirectoryManager.currentDir, "atlases");
 	}
 
@@ -442,14 +449,16 @@ public class Settings {
 	 *            otherwise set the new atlas output directory.
 	 */
 	public void setAtlasOutputDirectory(String dir) {
-		if (dir != null && dir.trim().length() == 0)
+		if (dir != null && dir.trim().length() == 0) {
 			dir = null;
+		}
 		directories.atlasOutputDirectory = dir;
 	}
 
 	public String getAtlasOutputDirectoryString() {
-		if (directories.atlasOutputDirectory == null)
+		if (directories.atlasOutputDirectory == null) {
 			return "";
+		}
 		return directories.atlasOutputDirectory;
 	}
 

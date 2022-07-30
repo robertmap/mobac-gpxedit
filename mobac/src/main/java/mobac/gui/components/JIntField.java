@@ -55,12 +55,14 @@ public class JIntField extends JTextField {
 	}
 
 	public void setValue(int newValue, boolean check) {
-		if (newValue <= 0)
+		if (newValue <= 0) {
 			super.setText("");
-		else
+		} else {
 			super.setText(Integer.toString(newValue));
-		if (check)
+		}
+		if (check) {
 			listener.checkInput(null);
+		}
 	}
 
 	public void setText(String t) {
@@ -96,8 +98,9 @@ public class JIntField extends JTextField {
 			} catch (Exception e) {
 				valid = false;
 			}
-			if (valid != inputIsValid)
+			if (valid != inputIsValid) {
 				setDisplayedValidMode(valid);
+			}
 			inputIsValid = valid;
 		}
 
@@ -106,8 +109,9 @@ public class JIntField extends JTextField {
 			JIntField.this.setBackground(newC);
 			String toolTip = valid ? "" : String.format(errorText, min, max);
 			JIntField.this.setToolTipText(toolTip);
-			if (toolTip.length() > 0)
+			if (toolTip.length() > 0) {
 				Utilities.showTooltipNow(JIntField.this);
+			}
 		}
 
 		public void changedUpdate(DocumentEvent e) {

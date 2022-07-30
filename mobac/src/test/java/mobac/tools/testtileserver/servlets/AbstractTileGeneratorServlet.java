@@ -47,8 +47,9 @@ public abstract class AbstractTileGeneratorServlet extends AbstractTileServlet {
 			g2.drawLine(255, 0, 0, 255);
 			String url = request.getRequestURL().toString();
 			String query = request.getQueryString();
-			if (query != null)
+			if (query != null) {
 				url += "?" + query;
+			}
 			log.debug(url);
 			String[] strings = url.split("[\\&\\?]");
 			int y = 40;

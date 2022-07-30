@@ -114,8 +114,9 @@ public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource
 
 	@Override
 	protected float getLayerAlpha(int layerIndex) {
-		if (layersAlpha.size() <= layerIndex)
+		if (layersAlpha.size() <= layerIndex) {
 			return 1.0f;
+		}
 
 		return layersAlpha.get(layerIndex);
 	}

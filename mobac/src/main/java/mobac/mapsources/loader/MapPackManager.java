@@ -317,8 +317,9 @@ public class MapPackManager {
 				int newRev = getMapPackRevision(newMapPackFile);
 				File oldMapPack = new File(mapPackDir, mapPack);
 				int oldRev = -1;
-				if (oldMapPack.isFile())
+				if (oldMapPack.isFile()) {
 					oldRev = getMapPackRevision(oldMapPack);
+				}
 				if (newRev < oldRev) {
 					log.warn("Downloaded map pack was older than existing map pack - ignoring update");
 					Utilities.deleteFile(newMapPackFile);

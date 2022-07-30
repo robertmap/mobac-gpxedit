@@ -56,11 +56,12 @@ public class MapSourceTestCase extends TestCase {
 		int tilex = mapSpace.cLonToX(testCoordinate.lon, zoom) / mapSpace.getTileSize();
 		int tiley = mapSpace.cLatToY(testCoordinate.lat, zoom) / mapSpace.getTileSize();
 
-		if (mapSource instanceof AbstractHttpMapSource)
+		if (mapSource instanceof AbstractHttpMapSource) {
 			try {
 				mapSource.getTileData(-1, 0, 0, LoadMethod.SOURCE);
 			} catch (Exception e) {
 			}
+		}
 
 		HttpURLConnection c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
 		c.setReadTimeout(10000);
@@ -77,8 +78,9 @@ public class MapSourceTestCase extends TestCase {
 				throw new MapSourceTestFailedException(mapSource, c);
 			}
 			byte[] imageData = Utilities.getInputBytes(c.getInputStream());
-			if (imageData.length == 0)
+			if (imageData.length == 0) {
 				throw new MapSourceTestFailedException(mapSource, "Image data empty", c);
+			}
 			if (ImageFormatDetector.getImageType(imageData) == null) {
 				throw new MapSourceTestFailedException(mapSource, "Image data of unknown format", c);
 			}
@@ -91,11 +93,12 @@ public class MapSourceTestCase extends TestCase {
 					}
 					break;
 				case LastModified :
-					if (c.getHeaderField("Last-Modified") == null)
+					if (c.getHeaderField("Last-Modified") == null) {
 						throw new MapSourceTestFailedException(mapSource,
 								"No Last-Modified entry present but map sources uses " + mapSource.getTileUpdate()
 										+ "\n",
 								c);
+					}
 					break;
 				default :
 			}

@@ -47,8 +47,9 @@ public class JRegexTextField extends JTextField {
 
 		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 
-			if (str == null)
+			if (str == null) {
 				return;
+			}
 
 			if (!pattern.matcher(str).matches()) {
 				Toolkit.getDefaultToolkit().beep();

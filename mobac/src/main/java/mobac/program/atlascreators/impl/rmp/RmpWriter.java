@@ -70,8 +70,9 @@ public class RmpWriter {
 		// pre-calculate the number of entries:
 		// RmpIni + (TLM & A00) per layer + Bmp2Bit + Bmp4bit
 		this.projectedEntryCount = (3 + (2 * layerCount));
-		if (rmpFile.exists())
+		if (rmpFile.exists()) {
 			Utilities.deleteFile(rmpFile);
+		}
 		log.debug("Writing data to " + rmpFile.getAbsolutePath());
 		rmpOutputFile = new RandomAccessFile(rmpFile, "rw");
 		// Calculate offset to the directory end
@@ -94,11 +95,13 @@ public class RmpWriter {
 		info.offset = rmpOutputFile.getFilePointer();
 		entry.writeFileContent(entryOut);
 		info.length = rmpOutputFile.getFilePointer() - info.offset;
-		if ((info.length % 2) != 0)
+		if ((info.length % 2) != 0) {
 			entryOut.write(0);
+		}
 		entries.add(info);
-		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE)
+		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE) {
 			throwRmpTooLarge();
+		}
 		log.debug("Written data of entry " + entry + " bytes=" + info.length);
 	}
 
@@ -112,10 +115,12 @@ public class RmpWriter {
 		entry.writeFileContent(cout);
 		info.length = cout.getBytesWritten();
 		long newPos = pos + info.length;
-		if ((info.length % 2) != 0)
+		if ((info.length % 2) != 0) {
 			newPos++;
-		if (newPos > MAX_FILE_SIZE)
+		}
+		if (newPos > MAX_FILE_SIZE) {
 			throwRmpTooLarge();
+		}
 		rmpOutputFile.seek(newPos);
 		entries.add(info);
 		log.debug("Prepared data of entry " + entry + " bytes=" + info.length);
@@ -127,19 +132,23 @@ public class RmpWriter {
 		info.name = entry.getFileName();
 		info.extendsion = entry.getFileExtension();
 		int index = entries.indexOf(info);
-		if (index < 0)
+		if (index < 0) {
 			throw new RuntimeException("Index for entry not found");
+		}
 		info = entries.get(index);
 
 		rmpOutputFile.seek(info.offset);
 		entry.writeFileContent(entryOut);
-		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE)
+		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE) {
 			throwRmpTooLarge();
+		}
 		long newLength = rmpOutputFile.getFilePointer() - info.offset;
-		if (newLength != info.length)
+		if (newLength != info.length) {
 			throw new RuntimeException("Length of entry has changed!");
-		if ((newLength % 2) != 0)
+		}
+		if ((newLength % 2) != 0) {
 			entryOut.write(0);
+		}
 
 		// restore old file position
 		rmpOutputFile.seek(pos);
@@ -156,10 +165,11 @@ public class RmpWriter {
 	 *             Error accessing disk
 	 */
 	public void writeDirectory() throws IOException {
-		if (projectedEntryCount != entries.size())
+		if (projectedEntryCount != entries.size()) {
 			throw new RuntimeException(
 					"Entry count does not correspond " + "to the projected layer count: \nProjected: "
 							+ projectedEntryCount + "\nPresent:" + entries.size());
+		}
 
 		// Finalize the list of written entries
 		RmpTools.writeFixedString(entryOut, "MAGELLAN", 8);
@@ -228,22 +238,28 @@ public class RmpWriter {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			EntryInfo other = (EntryInfo) obj;
 			if (extendsion == null) {
-				if (other.extendsion != null)
+				if (other.extendsion != null) {
 					return false;
-			} else if (!extendsion.equals(other.extendsion))
+				}
+			} else if (!extendsion.equals(other.extendsion)) {
 				return false;
+			}
 			if (name == null) {
 				return other.name == null;
-			} else
+			} else {
 				return name.equals(other.name);
+			}
 		}
 
 	}

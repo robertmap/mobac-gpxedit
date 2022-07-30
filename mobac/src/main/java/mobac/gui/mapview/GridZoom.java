@@ -37,8 +37,9 @@ public class GridZoom {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof GridZoom))
+		if (!(obj instanceof GridZoom)) {
 			return false;
+		}
 		return ((GridZoom) obj).zoom == zoom;
 	}
 

@@ -76,10 +76,11 @@ public class RmpTools {
 		int value;
 
 		for (i = 0; i < length; i++) {
-			if (i < str.length())
+			if (i < str.length()) {
 				value = str.charAt(i);
-			else
+			} else {
 				value = 0;
+			}
 
 			stream.write(value);
 		}
@@ -128,12 +129,14 @@ public class RmpTools {
 
 		/* --- Remove the extension --- */
 		index = name.indexOf('.');
-		if (index != -1)
+		if (index != -1) {
 			name = name.substring(0, index);
+		}
 
 		/* --- Limit the filename to 8 chars --- */
-		if (name.length() > 8)
+		if (name.length() > 8) {
 			name = name.substring(0, 8);
+		}
 
 		return name.toLowerCase().trim();
 	}
@@ -150,8 +153,9 @@ public class RmpTools {
 		/*
 		 * --- cut the basename so that basename+index is not longer than 8 chars ---
 		 */
-		if (indexstr.length() + basename.length() > 8)
+		if (indexstr.length() + basename.length() > 8) {
 			basename = basename.substring(0, 8 - indexstr.length());
+		}
 
 		return basename.trim() + indexstr;
 	}

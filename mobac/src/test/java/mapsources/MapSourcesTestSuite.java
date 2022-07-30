@@ -58,13 +58,16 @@ public class MapSourcesTestSuite extends TestSuite {
 		DefaultMapSourcesManager.initialize();
 		Settings.load();
 		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {
-			if (mapSource instanceof DebugMapSource || mapSource instanceof LocalhostTestSource)
+			if (mapSource instanceof DebugMapSource || mapSource instanceof LocalhostTestSource) {
 				continue;
+			}
 			if (mapSource instanceof AbstractMultiLayerMapSource) {
-				for (MapSource ms : (AbstractMultiLayerMapSource) mapSource)
+				for (MapSource ms : (AbstractMultiLayerMapSource) mapSource) {
 					addMapSourcesTestCase(ms);
-			} else
+				}
+			} else {
 				addMapSourcesTestCase(mapSource);
+			}
 		}
 	}
 

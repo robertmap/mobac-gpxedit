@@ -46,8 +46,9 @@ public class JProfilesPanel extends JCollapsiblePanel {
 	public JProfilesPanel(JAtlasTree atlasTree) {
 		super(I18nUtils.localizedStringForKey("lp_atlas_profile_title"), new GridBagLayout());
 
-		if (atlasTree == null)
+		if (atlasTree == null) {
 			throw new NullPointerException();
+		}
 
 		// profiles combo box
 		profilesCombo = new JProfilesComboBox();
@@ -128,16 +129,18 @@ public class JProfilesPanel extends JCollapsiblePanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (!jAtlasTree.testAtlasContentValid())
+			if (!jAtlasTree.testAtlasContentValid()) {
 				return;
+			}
 			Object selObject = profilesCombo.getEditor().getItem();
 			String profileName = null;
 			Profile profile = null;
 			if (selObject instanceof Profile) {
 				profile = (Profile) selObject;
 				profileName = profile.getName();
-			} else
+			} else {
 				profileName = (String) selObject;
+			}
 
 			if (profileName.length() == 0) {
 				JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("lp_atlas_profile_msg_ask_name"),
@@ -153,8 +156,9 @@ public class JProfilesPanel extends JCollapsiblePanel {
 								profileName),
 						I18nUtils.localizedStringForKey("lp_atlas_profile_msg_overwrite_confirm_title"),
 						JOptionPane.YES_NO_OPTION);
-				if (response != JOptionPane.YES_OPTION)
+				if (response != JOptionPane.YES_OPTION) {
 					return;
+				}
 			}
 
 			if (jAtlasTree.save(profile)) {

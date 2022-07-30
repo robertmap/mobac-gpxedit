@@ -83,9 +83,10 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
-		if (mapSource.getTileImageType() != TileImageType.PNG)
+		if (mapSource.getTileImageType() != TileImageType.PNG) {
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		}
 		createTiles();
 	}
 
@@ -100,8 +101,9 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 				atlasProgress.incMapCreationProgress();
 				try {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null)
+					if (sourceTileData != null) {
 						writeTile(mapName, sourceTileData, x, y, zoom);
+					}
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}

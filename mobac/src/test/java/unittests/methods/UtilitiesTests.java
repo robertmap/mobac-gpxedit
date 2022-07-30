@@ -46,12 +46,14 @@ public class UtilitiesTests extends TestCase {
 		final String str2 = "abcdefghijklmnopqrstuvwxyz";
 		final String str3 = "1234567890";
 		StringWriter sw = new StringWriter(110);
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 100; i++) {
 			sw.write('x');
+		}
 		String str4 = sw.toString();
 
-		for (int i = 0; i < 101; i++)
+		for (int i = 0; i < 101; i++) {
 			sw.write('y');
+		}
 		String str5 = sw.toString();
 
 		TarHeader tarHeader = new TarHeader(str1, 12345, false);
@@ -76,8 +78,9 @@ public class UtilitiesTests extends TestCase {
 		Field f = TarHeader.class.getDeclaredField("fileName");
 		f.setAccessible(true);
 		char[] chars = (char[]) f.get(tarHeader);
-		for (char c : chars)
+		for (char c : chars) {
 			System.out.print(c == 0 ? " 0" : c);
+		}
 	}
 
 }

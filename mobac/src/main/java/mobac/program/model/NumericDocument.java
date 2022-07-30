@@ -27,8 +27,9 @@ public class NumericDocument extends PlainDocument {
 
 	public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 
-		if (str == null)
+		if (str == null) {
 			return;
+		}
 
 		for (char c : str.toCharArray()) {
 			if (NUMERIC.indexOf(c) == -1) {

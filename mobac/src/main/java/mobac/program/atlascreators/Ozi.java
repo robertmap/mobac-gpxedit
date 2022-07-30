@@ -223,8 +223,9 @@ public class Ozi extends AtlasCreator {
 						checkUserAbort();
 						atlasProgress.incMapCreationProgress();
 						BufferedImage tile = mapDlTileProvider.getTileImage(x, y);
-						if (tile != null)
+						if (tile != null) {
 							graphics.drawImage(tile, lineX, 0, backgroundColor, null);
+						}
 						lineX += tileSize;
 					}
 				} finally {

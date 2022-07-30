@@ -54,10 +54,11 @@ public class NodeRenderer implements TreeCellRenderer {
 		TreeCellRenderer tcr;
 		if (value instanceof AtlasInterface) {
 			tcr = atlasRenderer;
-		} else if (value instanceof LayerInterface)
+		} else if (value instanceof LayerInterface) {
 			tcr = layerRenderer;
-		else
+		} else {
 			tcr = mapRenderer;
+		}
 		return tcr.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 	}
 

@@ -75,8 +75,9 @@ public class MapSelection {
 	}
 
 	public MapSelection(MapSource mapSource, MercatorPixelCoordinate c1, MercatorPixelCoordinate c2) {
-		if (c1.getZoom() != c2.getZoom())
+		if (c1.getZoom() != c2.getZoom()) {
 			throw new RuntimeException("Different zoom levels - unsuported!");
+		}
 		this.mapSource = mapSource;
 		this.mapSpace = mapSource.getMapSpace();
 		mapSourceTileSize = mapSpace.getTileSize();

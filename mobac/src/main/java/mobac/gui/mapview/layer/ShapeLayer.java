@@ -41,10 +41,11 @@ public class ShapeLayer implements MapLayer {
 		AffineTransform af = g.getTransform();
 		g.translate(-minX, -minY);
 		double scale;
-		if (zoom < calculationZoom)
+		if (zoom < calculationZoom) {
 			scale = 1d / (1 << (calculationZoom - zoom));
-		else
+		} else {
 			scale = 1 << (zoom - calculationZoom);
+		}
 		g.scale(scale, scale);
 		g.setColor(color);
 		g.fill(shape);

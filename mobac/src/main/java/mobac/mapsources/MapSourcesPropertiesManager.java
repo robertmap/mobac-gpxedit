@@ -36,8 +36,9 @@ public class MapSourcesPropertiesManager {
 	public static void load() {
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 		File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
-		if (!mapSourcesProperties.isFile())
+		if (!mapSourcesProperties.isFile()) {
 			return;
+		}
 		try (FileInputStream in = new FileInputStream(mapSourcesProperties)) {
 			PROPERTIES.load(in);
 		} catch (IOException e) {
@@ -56,8 +57,9 @@ public class MapSourcesPropertiesManager {
 	}
 
 	public static void save() {
-		if (PROPERTIES.size() == 0)
+		if (PROPERTIES.size() == 0) {
 			return;
+		}
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 		File mapSourcesProperties = new File(mapSourcesDir, FILENAME);
 		try (FileOutputStream out = new FileOutputStream(mapSourcesProperties)) {

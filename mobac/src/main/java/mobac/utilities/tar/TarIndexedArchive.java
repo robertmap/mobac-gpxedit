@@ -44,8 +44,9 @@ public class TarIndexedArchive extends TarArchive {
 	public void delete() {
 		if (tarFile != null) {
 			boolean b = tarFile.delete();
-			if (!b && tarFile.isFile())
+			if (!b && tarFile.isFile()) {
 				tarFile.deleteOnExit();
+			}
 		}
 	}
 

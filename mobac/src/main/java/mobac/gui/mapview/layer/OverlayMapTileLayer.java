@@ -39,8 +39,9 @@ public class OverlayMapTileLayer implements MapTileLayer {
 
 	public void paintTile(Graphics g, int gx, int gy, int tilex, int tiley, int zoom) {
 		Tile tile = getTile(tilex, tiley, zoom);
-		if (tile == null)
+		if (tile == null) {
 			return;
+		}
 		tile.paintTransparent(g, gx, gy);
 	}
 
@@ -56,8 +57,9 @@ public class OverlayMapTileLayer implements MapTileLayer {
 	 */
 	protected Tile getTile(int tilex, int tiley, int zoom) {
 		int max = (1 << zoom);
-		if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max)
+		if (tilex < 0 || tilex >= max || tiley < 0 || tiley >= max) {
 			return null;
+		}
 		Tile tile = mapViewer.getTileImageCache().getTile(mapSource, tilex, tiley, zoom);
 		if (tile == null) {
 			tile = new Tile(mapSource, tilex, tiley, zoom);

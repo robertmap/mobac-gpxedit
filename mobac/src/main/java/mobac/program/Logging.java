@@ -174,8 +174,9 @@ public class Logging {
 			);
 			log.info("System console available: {}", (System.console() != null));
 			log.info("Startup arguments (count={}):", StartMOBAC.ARGS.length);
-			for (int i = 0; i < StartMOBAC.ARGS.length; i++)
+			for (int i = 0; i < StartMOBAC.ARGS.length; i++) {
 				log.info("\t{}:{}", i, StartMOBAC.ARGS[i]);
+			}
 		}
 		if (log.isDebugEnabled()) {
 			log.debug("Detected operating system: {} ({})", OSUtilities.detectOs(), System.getProperty("os.name"));

@@ -47,8 +47,9 @@ public class MapDataFileParser {
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String line = br.readLine();
 		Matcher m = Pattern.compile(HEAD_REGEX).matcher(line);
-		if (!m.matches())
+		if (!m.matches()) {
 			throw new MapFileFormatException("OziExplorer Map Data File Version not found");
+		}
 		String fileVersion = m.group(1);
 		line = br.readLine();
 		// System.out.println(POINT_REGEX.replace("@", K));
@@ -65,12 +66,14 @@ public class MapDataFileParser {
 				p.x = Integer.parseInt(m.group(2));
 				p.y = Integer.parseInt(m.group(3));
 				double lat = Integer.parseInt(m.group(4)) + (Double.parseDouble(m.group(5)) / 60.0);
-				if ("S".equalsIgnoreCase(m.group(6)))
+				if ("S".equalsIgnoreCase(m.group(6))) {
 					lat = -lat;
+				}
 				p.lat = lat;
 				double lon = Integer.parseInt(m.group(7)) + (Double.parseDouble(m.group(8)) / 60.0);
-				if ("W".equalsIgnoreCase(m.group(9)))
+				if ("W".equalsIgnoreCase(m.group(9))) {
 					lon = -lon;
+				}
 				p.lon = lon;
 				mapPoints.add(p);
 				// System.out.println(m.group(0));

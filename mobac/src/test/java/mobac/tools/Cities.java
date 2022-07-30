@@ -86,10 +86,11 @@ public class Cities {
 	public static EastNorthCoordinate getTestCoordinate(Class<? extends MapSource> mapSourceClass,
 			EastNorthCoordinate defaultCoordinate) {
 		EastNorthCoordinate coord = TEST_COORDINATES.get(mapSourceClass);
-		if (coord != null)
+		if (coord != null) {
 			return coord;
-		else
+		} else {
 			return defaultCoordinate;
+		}
 	}
 
 }

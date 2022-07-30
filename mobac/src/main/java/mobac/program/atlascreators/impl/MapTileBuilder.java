@@ -126,10 +126,12 @@ public class MapTileBuilder {
 		if (useRealTileSize) {
 			// Reduce tile size of overall map height/width
 			// if it is smaller than one tile
-			if (realWidth > mergedWidth)
+			if (realWidth > mergedWidth) {
 				realWidth = mergedWidth;
-			if (realHeight > mergedHeight)
+			}
+			if (realHeight > mergedHeight) {
 				realHeight = mergedHeight;
+			}
 		}
 		customTileCount = MyMath.divCeil(mergedWidth, realWidth) * MyMath.divCeil(mergedHeight, realHeight);
 	}
@@ -157,11 +159,13 @@ public class MapTileBuilder {
 			while (yAbsPos < yEnd) {
 				int tilex = 0;
 				xAbsPos = xStart;
-				if (useRealTileSize)
+				if (useRealTileSize) {
 					currentTileHeight = Math.min(realHeight, yEnd - yAbsPos + 1);
+				}
 				while (xAbsPos < xEnd) {
-					if (useRealTileSize)
+					if (useRealTileSize) {
 						currentTileWidth = Math.min(realWidth, xEnd - xAbsPos + 1);
+					}
 					atlasCreator.checkUserAbort();
 					atlasCreator.getAtlasProgress().incMapCreationProgress();
 					BufferedImage tileImage = new BufferedImage(currentTileWidth, currentTileHeight,
@@ -233,8 +237,9 @@ public class MapTileBuilder {
 
 	private BufferedImage loadOriginalMapTile(int xTile, int yTile) throws Exception {
 		for (CachedTile ct : cache) {
-			if (ct == null)
+			if (ct == null) {
 				continue;
+			}
 			if (ct.xTile == xTile && ct.yTile == yTile) {
 				// log.trace("cache hit");
 				return ct.image;
@@ -242,8 +247,9 @@ public class MapTileBuilder {
 		}
 		// log.trace("cache miss");
 		BufferedImage image = mapDlTileProvider.getTileImage(xTile, yTile);
-		if (image == null)
+		if (image == null) {
 			return null;
+		}
 		cache[cachePos] = new CachedTile(image, xTile, yTile);
 		cachePos = (cachePos + 1) % cache.length;
 		return image;

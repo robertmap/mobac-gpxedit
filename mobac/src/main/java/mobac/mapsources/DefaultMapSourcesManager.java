@@ -129,8 +129,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	}
 
 	public void addMapSource(MapSource mapSource) {
-		if (mapSource instanceof StandardMapSourceLayer)
+		if (mapSource instanceof StandardMapSourceLayer) {
 			mapSource = ((StandardMapSourceLayer) mapSource).getMapSource();
+		}
 		allAvailableMapSources.put(mapSource.getName(), mapSource);
 		if (mapSource instanceof AbstractMultiLayerMapSource) {
 			for (MapSource multiLayerMapSource : ((AbstractMultiLayerMapSource) mapSource)) {
@@ -140,10 +141,11 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				MapSource old = allAvailableMapSources.put(multiLayerMapSource.getName(), multiLayerMapSource);
 				if (old != null) {
 					allAvailableMapSources.put(old.getName(), old);
-					if (mapSource.equals(old))
+					if (mapSource.equals(old)) {
 						JOptionPane.showMessageDialog(null,
 								"Error: Duplicate map source name found: " + mapSource.getName(), "Duplicate name",
 								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}
@@ -184,8 +186,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				for (MapSource lms : ((AbstractMultiLayerMapSource) ms)) {
 					uniqueSources.add(lms);
 				}
-			} else
+			} else {
 				uniqueSources.add(ms);
+			}
 		}
 		Vector<MapSource> result = new Vector<MapSource>(uniqueSources);
 		return result;
@@ -213,8 +216,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				mapSources.add(ms);
 			}
 		}
-		if (mapSources.size() == 0)
+		if (mapSources.size() == 0) {
 			mapSources.add(new SimpleMapSource());
+		}
 		return mapSources;
 	}
 
@@ -234,8 +238,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	@Override
 	public MapSource getDefaultMapSource() {
 		MapSource ms = getSourceByName("4uMaps");// DEFAULT;
-		if (ms != null)
+		if (ms != null) {
 			return ms;
+		}
 		// Fallback: return first
 		return allMapSources.values().iterator().next();
 	}

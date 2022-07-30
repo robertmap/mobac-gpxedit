@@ -53,8 +53,9 @@ public class ExternalToolDef implements ActionListener {
 	public List<ToolParameters> parameters = new ArrayList<ToolParameters>();
 
 	private boolean mapSelNull(MapSelection mapSel) {
-		if (mapSel != null)
+		if (mapSel != null) {
 			return false;
+		}
 		JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
 				I18nUtils.localizedStringForKey("msg_tools_exec_error_selected_area"),
 				I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
@@ -73,23 +74,27 @@ public class ExternalToolDef implements ActionListener {
 				String add = "";
 				switch (param) {
 					case MAX_LAT :
-						if (mapSelNull(mapSel))
+						if (mapSelNull(mapSel)) {
 							return;
+						}
 						add = Double.toString(mapSel.getMax().lat);
 						break;
 					case MIN_LAT :
-						if (mapSelNull(mapSel))
+						if (mapSelNull(mapSel)) {
 							return;
+						}
 						add = Double.toString(mapSel.getMin().lat);
 						break;
 					case MAX_LON :
-						if (mapSelNull(mapSel))
+						if (mapSelNull(mapSel)) {
 							return;
+						}
 						add = Double.toString(mapSel.getMax().lon);
 						break;
 					case MIN_LON :
-						if (mapSelNull(mapSel))
+						if (mapSelNull(mapSel)) {
 							return;
+						}
 						add = Double.toString(mapSel.getMin().lon);
 						break;
 					case MAX_ZOOM :
@@ -122,8 +127,9 @@ public class ExternalToolDef implements ActionListener {
 					default :
 						throw new RuntimeException("Unsupported parameter type: " + param);
 				}
-				if (add.indexOf(' ') >= 0)
+				if (add.indexOf(' ') >= 0) {
 					add = "\"" + add + "\"";
+				}
 				executeCommand += " " + add;
 			}
 			if (debug) {
@@ -131,8 +137,9 @@ public class ExternalToolDef implements ActionListener {
 						String.format(I18nUtils.localizedStringForKey("msg_tools_exec_command_ask"), executeCommand),
 						I18nUtils.localizedStringForKey("msg_tools_exec_command_ask_title"),
 						JOptionPane.OK_CANCEL_OPTION);
-				if (r != JOptionPane.OK_OPTION)
+				if (r != JOptionPane.OK_OPTION) {
 					return;
+				}
 			}
 			log.debug("Executing " + executeCommand);
 			Runtime.getRuntime().exec(executeCommand);

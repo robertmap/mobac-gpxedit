@@ -45,13 +45,15 @@ public class CoordinateDm2Format extends NumberFormat {
 	@Override
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
 		int degrees;
-		if (number >= 0)
+		if (number >= 0) {
 			degrees = (int) Math.floor(number);
-		else
+		} else {
 			degrees = (int) Math.ceil(number);
+		}
 		double minutes = Math.abs((number - degrees) * 60);
-		if (number < 0 && degrees == 0)
+		if (number < 0 && degrees == 0) {
 			toAppendTo.append("-");
+		}
 		toAppendTo.append(degFmt.format(degrees) + " ");
 		toAppendTo.append(minFmt.format(minutes));
 		return toAppendTo;
@@ -70,17 +72,19 @@ public class CoordinateDm2Format extends NumberFormat {
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
 		String[] tokens = source.trim().split("[°\\']");
-		if (tokens.length != 2)
+		if (tokens.length != 2) {
 			return null;
+		}
 		try {
 			String degStr = tokens[0].trim();
 			int deg = Integer.parseInt(degStr);
 			double min = minFmtParser.parse(tokens[1].trim()).doubleValue();
 			double coord;
-			if (degStr.startsWith("-"))
+			if (degStr.startsWith("-")) {
 				coord = deg - min / 60.0;
-			else
+			} else {
 				coord = deg + min / 60.0;
+			}
 			return coord;
 		} catch (Exception e) {
 			parsePosition.setErrorIndex(0);

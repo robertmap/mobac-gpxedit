@@ -57,8 +57,9 @@ public class GarminCustom extends GoogleEarthOverlay {
 			TileImageJpegDataWriterBuilder builder;
 			if (parameters != null) {
 				builder = (TileImageJpegDataWriterBuilder) parameters.getFormat().getDataWriterBuilder();
-			} else
+			} else {
 				builder = new TileImageJpegDataWriterBuilder(0.9);
+			}
 
 			// The maximum file size for the jpg image is 3 MB
 			// This OutputStream will fail if the resulting image is larger than

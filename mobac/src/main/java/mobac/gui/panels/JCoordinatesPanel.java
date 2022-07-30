@@ -90,8 +90,9 @@ public class JCoordinatesPanel extends JCollapsiblePanel {
 		formatButton.setMargin(new Insets(0, 5, 0, 0));
 		formatButton.setBounds(2, 2, 55, 20);
 		formatButtonPanel.add(formatButton);
-		for (CoordinateStringFormat csf : CoordinateStringFormat.values())
+		for (CoordinateStringFormat csf : CoordinateStringFormat.values()) {
 			formatButton.addDropDownItem(new JNumberFormatMenuItem(csf));
+		}
 
 		layeredPane.add(northInnerPanel, Integer.valueOf(0));
 		layeredPane.setMinimumSize(northInnerPanel.getMinimumSize());

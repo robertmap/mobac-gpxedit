@@ -156,8 +156,9 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 
 	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
 		String url = getTileUrl(zoom, tilex, tiley);
-		if (url == null)
+		if (url == null) {
 			return null;
+		}
 		return (HttpURLConnection) new URL(url).openConnection();
 	}
 
@@ -176,8 +177,9 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 
 		if (loadMethod == LoadMethod.CACHE) {
 			TileStoreEntry entry = TileStore.getInstance().getTile(x, y, zoom, this);
-			if (entry == null)
+			if (entry == null) {
 				return null;
+			}
 			byte[] data = entry.getData();
 			if (Thread.currentThread() instanceof MapSourceListener) {
 				((MapSourceListener) Thread.currentThread()).tileDownloaded(data.length);
@@ -185,8 +187,9 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 			return data;
 		}
 		try {
-			if (invertYCoordinate)
+			if (invertYCoordinate) {
 				y = ((1 << zoom) - y - 1);
+			}
 
 			return TileDownLoader.getImage(x, y, zoom, this);
 		} catch (Exception e) {
@@ -204,23 +207,23 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 		byte[] data = getTileData(zoom, x, y, loadMethod);
 
 		if (data == null) {
-			if (!ignoreErrors)
+			if (!ignoreErrors) {
 				return null;
-			else {
-				int tileSize = this.getMapSpace().getTileSize();
-				BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_4BYTE_ABGR);
-				Graphics g = image.getGraphics();
-				try {
-					g.setColor(backgroundColor);
-					g.fillRect(0, 0, tileSize, tileSize);
-				} finally {
-					g.dispose();
-				}
-				return image;
 			}
-		} else {
-			return ImageIO.read(new ByteArrayInputStream(data));
+			int tileSize = this.getMapSpace().getTileSize();
+			BufferedImage image = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_4BYTE_ABGR);
+			Graphics g = image.getGraphics();
+			try {
+				g.setColor(backgroundColor);
+				g.fillRect(0, 0, tileSize, tileSize);
+			} finally {
+				g.dispose();
+			}
+			return image;
+
 		}
+		return ImageIO.read(new ByteArrayInputStream(data));
+
 	}
 
 	@Override

@@ -70,8 +70,9 @@ public class OSMTracker extends AtlasCreator {
 
 	public void createMap() throws MapCreationException, InterruptedException {
 		// This means there should not be any resizing of the tiles.
-		if (mapTileWriter == null)
+		if (mapTileWriter == null) {
 			mapTileWriter = new OSMTileWriter();
+		}
 		createTiles();
 	}
 
@@ -85,8 +86,9 @@ public class OSMTracker extends AtlasCreator {
 				atlasProgress.incMapCreationProgress();
 				try {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null)
+					if (sourceTileData != null) {
 						mapTileWriter.writeTile(x, y, tileType, sourceTileData);
+					}
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}

@@ -48,8 +48,9 @@ public class TileDbEntry implements TileStoreEntry {
 
 	public TileDbEntry(int x, int y, int zoom, byte[] data) {
 		tileKey = new TileDbKey(x, y, zoom);
-		if (data == null)
+		if (data == null) {
 			throw new NullPointerException("Tile data can not be null!");
+		}
 		this.data = data;
 		this.timeDownloaded = System.currentTimeMillis();
 	}

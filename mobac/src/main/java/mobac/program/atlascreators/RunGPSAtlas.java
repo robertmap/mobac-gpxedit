@@ -111,9 +111,10 @@ public class RunGPSAtlas extends AtlasCreator {
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
-		if (mapSource.getTileImageType() != TileImageType.PNG)
+		if (mapSource.getTileImageType() != TileImageType.PNG) {
 			// If the tile image format is not png we have to convert it
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, TileImageFormat.PNG);
+		}
 		createTiles();
 	}
 
@@ -139,10 +140,12 @@ public class RunGPSAtlas extends AtlasCreator {
 	}
 
 	protected boolean writeTile(String cache, byte[] tileData, int x, int y, int zoom) throws IOException {
-		if (zoom < minZoom)
+		if (zoom < minZoom) {
 			minZoom = zoom;
-		if (zoom > maxZoom)
+		}
+		if (zoom > maxZoom) {
 			maxZoom = zoom;
+		}
 
 		String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
 

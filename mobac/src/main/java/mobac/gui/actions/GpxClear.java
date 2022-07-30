@@ -40,8 +40,9 @@ public class GpxClear implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Iterator<MapLayer> mapLayers = MainGUI.getMainGUI().previewMap.mapLayers.iterator();
 		while (mapLayers.hasNext()) {
-			if (mapLayers.next() instanceof GpxLayer)
+			if (mapLayers.next() instanceof GpxLayer) {
 				mapLayers.remove();
+			}
 		}
 		panel.resetModel();
 		MainGUI.getMainGUI().previewMap.repaint();

@@ -301,8 +301,9 @@ public class Utilities {
 		if (n == null) {
 			throw new ParseException("Unknown error", 0);
 		}
-		if (pos.getIndex() != text.length())
+		if (pos.getIndex() != text.length()) {
 			throw new ParseException("Text ends with unparsable characters", pos.getIndex());
+		}
 		return n.doubleValue();
 	}
 
@@ -572,8 +573,9 @@ public class Utilities {
 	public static byte[] downloadHttpFile(String url) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		int responseCode = conn.getResponseCode();
-		if (responseCode != HttpURLConnection.HTTP_OK)
+		if (responseCode != HttpURLConnection.HTTP_OK) {
 			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());
+		}
 		try (InputStream in = conn.getInputStream()) {
 			return Utilities.getInputBytes(in);
 		}

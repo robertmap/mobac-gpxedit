@@ -78,16 +78,18 @@ public class MBTiles extends RMapsSQLite {
 				TileImageType currentTit;
 				if (parameters == null) {
 					currentTit = map.getMapSource().getTileImageType();
-					if (!allowed.contains(currentTit))
+					if (!allowed.contains(currentTit)) {
 						throw new AtlasTestException(
 								"Map source format incompatible - tile format conversion to PNG or JPG is required for this map.",
 								map);
+					}
 				} else {
 					currentTit = parameters.getFormat().getType();
-					if (!allowed.contains(currentTit))
+					if (!allowed.contains(currentTit)) {
 						throw new AtlasTestException(
 								"Selected custom tile format not supported - only JPG and PNG formats are supported.",
 								map);
+					}
 				}
 				if (tit != null && !currentTit.equals(tit)) {
 					throw new AtlasTestException("All maps within one atlas must use the same format (PNG or JPG). "

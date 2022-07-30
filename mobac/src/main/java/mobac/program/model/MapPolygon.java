@@ -167,8 +167,9 @@ public class MapPolygon extends Map {
 
 	@Override
 	public long calculateTilesToDownload() {
-		if (calculatedTileCount < 0)
+		if (calculatedTileCount < 0) {
 			internalCalculateTilesToDownload();
+		}
 		return calculatedTileCount;
 	}
 
@@ -183,8 +184,9 @@ public class MapPolygon extends Map {
 		int count = 0;
 		for (int x = xMin; x <= xMax; x += tileSize) {
 			for (int y = yMin; y <= yMax; y += tileSize) {
-				if (polygon.intersects(x, y, tileSizeD, tileSizeD))
+				if (polygon.intersects(x, y, tileSizeD, tileSizeD)) {
 					count++;
+				}
 			}
 		}
 		calculatedTileCount = count;
@@ -213,8 +215,9 @@ public class MapPolygon extends Map {
 					parameters.getHeight()));
 			sw.write(String.format(I18nUtils.localizedStringForKey("lp_atlas_info_tile_format"),
 					parameters.getFormat()));
-		} else
+		} else {
 			sw.write(I18nUtils.localizedStringForKey("lp_atlas_info_tile_format_origin"));
+		}
 		sw.write(String.format(I18nUtils.localizedStringForKey("lp_atlas_info_max_tile"), calculateTilesToDownload()));
 		sw.write("</html>");
 		return sw.toString();

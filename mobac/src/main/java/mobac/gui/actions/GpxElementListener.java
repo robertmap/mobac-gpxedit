@@ -71,8 +71,9 @@ public class GpxElementListener implements MouseListener {
 
 	private void handleClick(MouseEvent e) {
 		JMenuItem item = (JMenuItem) e.getSource();
-		if (item == null)
+		if (item == null) {
 			return;
+		}
 		if (MENU_NAME_RENAME.equals(item.getName())) {
 			renameEntry();
 		} else if (MENU_NAME_DELETE.equals(item.getName())) {
@@ -91,8 +92,9 @@ public class GpxElementListener implements MouseListener {
 		if (answer == JOptionPane.YES_OPTION) {
 			PreviewMap map = MainGUI.getMainGUI().previewMap;
 			map.getMapSelectionController().disable();
-			if (mapController == null)
+			if (mapController == null) {
 				mapController = new GpxMapController(map, gpxEntry.getLayer().getPanel(), false);
+			}
 			mapController.enable();
 
 			if (gpxEntry.getClass().equals(RteEntry.class)) {

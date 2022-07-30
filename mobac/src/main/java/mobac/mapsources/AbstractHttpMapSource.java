@@ -69,8 +69,9 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 
 	public HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
 		String url = getTileUrl(zoom, tilex, tiley);
-		if (url == null)
+		if (url == null) {
 			return null;
+		}
 		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 		prepareTileUrlConnection(conn);
 		return conn;
@@ -86,15 +87,18 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 	 * Can be used to e.g. retrieve the url pattern before the first call
 	 */
 	protected final void initializeHttpMapSource() {
-		if (initialized)
+		if (initialized) {
 			return;
+		}
 		// Prevent multiple initializations in case of multi-threaded access
 		try {
 			synchronized (this) {
 				if (initialized)
-					// Another thread has already completed initialization while this one was
-					// blocked
+				// Another thread has already completed initialization while this one was
+				// blocked
+				{
 					return;
+				}
 				internalInitialize();
 				initialized = true;
 				log.debug("Map source has been initialized");
@@ -113,8 +117,9 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 			throws IOException, TileException, InterruptedException {
 		if (loadMethod == LoadMethod.CACHE) {
 			TileStoreEntry entry = TileStore.getInstance().getTile(x, y, zoom, this);
-			if (entry == null)
+			if (entry == null) {
 				return null;
+			}
 			byte[] data = entry.getData();
 			if (Thread.currentThread() instanceof MapSourceListener) {
 				((MapSourceListener) Thread.currentThread()).tileDownloaded(data.length);
@@ -184,8 +189,9 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 	}
 
 	public void setLoaderInfo(MapSourceLoaderInfo loaderInfo) {
-		if (this.loaderInfo != null)
+		if (this.loaderInfo != null) {
 			throw new RuntimeException("LoaderInfo already set for map source " + name);
+		}
 		this.loaderInfo = loaderInfo;
 	}
 
@@ -196,12 +202,15 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof MapSource))
+		}
+		if (!(obj instanceof MapSource)) {
 			return false;
+		}
 		MapSource other = (MapSource) obj;
 		return other.getName().equals(getName());
 	}

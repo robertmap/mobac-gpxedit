@@ -49,8 +49,9 @@ public class JDirectoryChooser extends JFileChooser {
 
 	@Override
 	public void approveSelection() {
-		if (!this.getFileFilter().accept(this.getSelectedFile()))
+		if (!this.getFileFilter().accept(this.getSelectedFile())) {
 			return;
+		}
 		super.approveSelection();
 	}
 

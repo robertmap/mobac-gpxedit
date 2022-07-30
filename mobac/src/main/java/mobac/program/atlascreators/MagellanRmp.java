@@ -65,8 +65,9 @@ public class MagellanRmp extends AtlasCreator {
 			throws IOException, InterruptedException, AtlasTestException {
 		super.startAtlasCreation(atlas, customAtlasDir);
 		int mapCount = 0;
-		for (LayerInterface layer : atlas)
+		for (LayerInterface layer : atlas) {
 			mapCount += layer.getMapCount();
+		}
 		imageName = RmpTools.buildImageName(atlas.getName());
 		rmpWriter = new RmpWriter(imageName, mapCount, new File(atlasDir, imageName + ".rmp"));
 	}
@@ -81,8 +82,9 @@ public class MagellanRmp extends AtlasCreator {
 				// throw new AtlasTestException("Map too large. Max size 18000x18000");
 				if (map.getParameters() != null) {
 					if (!(map.getParameters().getFormat()
-							.getDataWriterBuilder() instanceof TileImageJpegDataWriterBuilder))
+							.getDataWriterBuilder() instanceof TileImageJpegDataWriterBuilder)) {
 						throw new AtlasTestException("Only JPEG formats are supported", map);
+					}
 				}
 			}
 		}
@@ -93,8 +95,9 @@ public class MagellanRmp extends AtlasCreator {
 		super.initializeMap(map, mapTileProvider);
 		if (parameters != null) {
 			tileWriterBuilder = parameters.getFormat().getDataWriterBuilder();
-		} else
+		} else {
 			tileWriterBuilder = new TileImageJpegDataWriterBuilder(0.9);
+		}
 		tileWriterBuilder.build();
 	}
 
@@ -125,8 +128,9 @@ public class MagellanRmp extends AtlasCreator {
 
 	@Override
 	public void finishAtlasCreation() throws IOException, InterruptedException {
-		if (rmpWriter == null)
+		if (rmpWriter == null) {
 			return; // Creation already aborted
+		}
 		try {
 			rmpWriter.writeFileEntry(new Bmp2bit());
 			rmpWriter.writeFileEntry(new Bmp4bit());

@@ -34,8 +34,9 @@ public class WanderreitkarteAbo extends AbstractOsmMapSource {
 	@Override
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, TileException, InterruptedException {
-		if (loadMethod == LoadMethod.CACHE)
+		if (loadMethod == LoadMethod.CACHE) {
 			return super.getTileData(zoom, x, y, loadMethod);
+		}
 
 		// No multi threaded download possible/allowed
 		// if we don't synchronize here we get a high percentage of errors
@@ -49,8 +50,8 @@ public class WanderreitkarteAbo extends AbstractOsmMapSource {
 		String ticket = Settings.getInstance().osmHikingTicket;
 		if (ticket != null && ticket.length() > 0) {
 			return ABO + super.getTileUrl(zoom, tilex, tiley) + "/ticket/" + ticket;
-		} else
-			return null;
+		}
+		return null;
 	}
 
 	@Override

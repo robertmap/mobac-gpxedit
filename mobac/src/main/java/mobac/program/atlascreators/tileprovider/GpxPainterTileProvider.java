@@ -61,8 +61,9 @@ public class GpxPainterTileProvider extends ConvertedRawTileProvider {
 			for (TrksegType trkSeg : trk.getTrkseg()) {
 				List<WptType> trackPoints = trkSeg.getTrkpt();
 
-				if (trackPoints.size() < 2)
+				if (trackPoints.size() < 2) {
 					continue;
+				}
 				Point last = convert(trackPoints.get(0));
 				points.add(last);
 				for (int i = 1; i < trackPoints.size(); i++) {

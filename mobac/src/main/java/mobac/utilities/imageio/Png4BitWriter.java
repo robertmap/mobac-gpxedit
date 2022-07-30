@@ -115,8 +115,9 @@ public class Png4BitWriter {
 
 		ColorModel cm = image.getColorModel();
 
-		if (!(cm instanceof IndexColorModel))
+		if (!(cm instanceof IndexColorModel)) {
 			throw new UnsupportedOperationException("Image format not compatible");
+		}
 
 		IndexColorModel palette = (IndexColorModel) cm;
 
@@ -176,8 +177,9 @@ public class Png4BitWriter {
 				int sample2 = (i <= iMax) ? samples[i + 1] : 0;
 				int s1 = sample1 & 0x0F;
 				int s2 = sample2 & 0x0F;
-				if ((s1 != sample1) || (s2 != sample2))
+				if ((s1 != sample1) || (s2 != sample2)) {
 					throw new RuntimeException("sample has more than 4 bit!");
+				}
 				lineOut[sx++] = (byte) ((s1 << 4) | s2);
 			}
 			dfos.write(lineOut);

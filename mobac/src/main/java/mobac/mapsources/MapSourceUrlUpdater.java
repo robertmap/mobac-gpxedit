@@ -62,14 +62,16 @@ public class MapSourceUrlUpdater {
 			throw new RuntimeException(e);
 		}
 		Pattern p = null;
-		if (regex != null)
+		if (regex != null) {
 			p = Pattern.compile(regex);
+		}
 		for (int i = 0; i < nodes.getLength(); i++) {
 			String imgUrl = nodes.item(i).getAttributes().getNamedItem("src").getNodeValue();
 			if (imgUrl != null && imgUrl.length() > 0) {
 				if (p != null) {
-					if (!p.matcher(imgUrl).matches())
+					if (!p.matcher(imgUrl).matches()) {
 						continue;
+					}
 				}
 				list.add(imgUrl);
 			}
@@ -118,8 +120,9 @@ public class MapSourceUrlUpdater {
 					"Failed to retrieve initialization document from url: " + url + "\nError: " + e.getMessage(), e);
 		}
 		Matcher m = Pattern.compile(regex).matcher(document);
-		if (!m.find())
+		if (!m.find()) {
 			throw new MapSourceInitializationException("pattern not found: " + regex);
+		}
 		return m.group(1);
 	}
 
@@ -127,8 +130,9 @@ public class MapSourceUrlUpdater {
 		try {
 			List<String> imgUrls = extractImgSrcList("http://maps.google.com/?ie=UTF8&ll=0,0&spn=0,0&z=2",
 					"^http://mt\\d\\.google\\.com/.*");
-			for (String s : imgUrls)
+			for (String s : imgUrls) {
 				System.out.println(s);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -115,10 +115,11 @@ public class MGMaps extends AtlasCreator {
 	public void createMap() throws MapCreationException, InterruptedException {
 		MGMTileWriter mgmTileWriter = null;
 		try {
-			if ((xResizeRatio != 1.0) || (yResizeRatio != 1.0))
+			if ((xResizeRatio != 1.0) || (yResizeRatio != 1.0)) {
 				mgmTileWriter = new MGMResizeTileWriter();
-			else
+			} else {
 				mgmTileWriter = new MGMTileWriter();
+			}
 
 			String name = map.getLayer().getName();
 
@@ -159,8 +160,10 @@ public class MGMaps extends AtlasCreator {
 								}
 
 								if (raf == null)
-									// Only create a file when needed
+								// Only create a file when needed
+								{
 									raf = new RandomAccessFile(pack, "rw");
+								}
 
 								checkUserAbort();
 								atlasProgress.incMapCreationProgress();
@@ -182,8 +185,9 @@ public class MGMaps extends AtlasCreator {
 					}
 					if (count == 0) {
 						// the file doesn't contain any tiles
-						if (pack.exists())
+						if (pack.exists()) {
 							Utilities.deleteFile(pack);
+						}
 					}
 				}
 			}
@@ -191,8 +195,9 @@ public class MGMaps extends AtlasCreator {
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);
 		} finally {
-			if (mgmTileWriter != null)
+			if (mgmTileWriter != null) {
 				mgmTileWriter.dispose();
+			}
 		}
 	}
 
@@ -217,8 +222,9 @@ public class MGMaps extends AtlasCreator {
 				throws MapCreationException {
 			try {
 				byte[] sourceTileData = getSourceTileData(x, y);
-				if (sourceTileData == null)
+				if (sourceTileData == null) {
 					return -1;
+				}
 				raf.seek(startPos);
 				raf.write(sourceTileData);
 

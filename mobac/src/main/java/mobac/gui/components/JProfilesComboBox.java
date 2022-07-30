@@ -44,8 +44,9 @@ public class JProfilesComboBox extends JComboBox<Profile> {
 
 	public boolean deleteSelectedProfile() {
 		Profile profile = (Profile) getSelectedItem();
-		if (profile == null)
+		if (profile == null) {
 			return false;
+		}
 		profile.delete();
 		setSelectedIndex(-1);
 		removeItem(profile);
@@ -58,10 +59,11 @@ public class JProfilesComboBox extends JComboBox<Profile> {
 	 */
 	public Profile getSelectedProfile() {
 		Object selItem = getSelectedItem();
-		if (selItem instanceof Profile)
+		if (selItem instanceof Profile) {
 			return (Profile) selItem;
-		else
-			return null;
+		}
+		return null;
+
 	}
 
 	protected static class ProfilesComboBoxEditor extends BasicComboBoxEditor {

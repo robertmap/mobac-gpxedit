@@ -83,8 +83,9 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 	@Override
 	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
 			throws IOException, AtlasTestException, InterruptedException {
-		if (customAtlasDir == null)
+		if (customAtlasDir == null) {
 			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
+		}
 		super.startAtlasCreation(atlas, customAtlasDir);
 
 		databaseFile = getDatabaseFileName();
@@ -111,8 +112,9 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 
 	@Override
 	public void createMap() throws MapCreationException, InterruptedException {
-		if (parameters != null)
+		if (parameters != null) {
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, parameters.getFormat());
+		}
 
 		createTiles();
 
@@ -159,8 +161,9 @@ public class NaviComputer extends AtlasCreator implements RequiresSQLite {
 	protected void initializeDB() throws SQLException {
 		Statement stat = conn.createStatement();
 		String[] sqlList = NAVI_TABLES.split("\\n");
-		for (String sql : sqlList)
+		for (String sql : sqlList) {
 			stat.addBatch(sql);
+		}
 		stat.executeBatch();
 		stat.close();
 		log.debug("Database initialization complete: tables, trigges and index created");

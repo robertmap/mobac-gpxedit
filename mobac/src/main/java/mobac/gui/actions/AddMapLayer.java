@@ -30,11 +30,12 @@ public class AddMapLayer implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 		JMapController msc = MainGUI.getMainGUI().previewMap.getMapSelectionController();
-		if (msc instanceof RectangleSelectionMapController)
+		if (msc instanceof RectangleSelectionMapController) {
 			new AddRectangleMapAutocut().actionPerformed(event);
-		else if (msc instanceof AbstractPolygonSelectionMapController)
+		} else if (msc instanceof AbstractPolygonSelectionMapController) {
 			new AddPolygonMapLayer().actionPerformed(event);
-		else
+		} else {
 			throw new RuntimeException("Unknown mapSelectionController type");
+		}
 	}
 }

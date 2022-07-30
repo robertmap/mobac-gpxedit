@@ -97,16 +97,18 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 				TileImageType currentTit;
 				if (parameters == null) {
 					currentTit = map.getMapSource().getTileImageType();
-					if (!allowed.contains(currentTit))
+					if (!allowed.contains(currentTit)) {
 						throw new AtlasTestException(
 								"Map source format incompatible - tile format conversion to PNG or JPG is required for this map.",
 								map);
+					}
 				} else {
 					currentTit = parameters.getFormat().getType();
-					if (!allowed.contains(currentTit))
+					if (!allowed.contains(currentTit)) {
 						throw new AtlasTestException(
 								"Selected custom tile format not supported - only JPG and PNG formats are supported.",
 								map);
+					}
 				}
 			}
 		}
@@ -126,8 +128,9 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 		Statement stat = conn.createStatement();
 		stat.executeUpdate(TABLE_IMAGES);
 		stat.executeUpdate(INDEX_IMAGES);
-		if (stat.executeUpdate(TABLE_VERSION) == 0)
+		if (stat.executeUpdate(TABLE_VERSION) == 0) {
 			stat.execute(TABLE_VERSION_DATA);
+		}
 		stat.close();
 	}
 
@@ -149,8 +152,9 @@ public class IPhone3MapTiles5 extends RMapsSQLite {
 			throw new MapCreationException(map, e);
 		} catch (IOException e) {
 			Throwable t = e;
-			if (t.getCause() instanceof SQLException)
+			if (t.getCause() instanceof SQLException) {
 				t = t.getCause();
+			}
 			throw new MapCreationException(map, t);
 		}
 	}

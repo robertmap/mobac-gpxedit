@@ -49,8 +49,9 @@ public class DownloadedTileProvider implements TileProvider {
 
 	public BufferedImage getTileImage(int x, int y) throws IOException {
 		byte[] unconvertedTileData = getTileData(x, y);
-		if (unconvertedTileData == null)
+		if (unconvertedTileData == null) {
 			return null;
+		}
 		try {
 			return ImageIO.read(new ByteArrayInputStream(unconvertedTileData));
 		} catch (Exception e) {

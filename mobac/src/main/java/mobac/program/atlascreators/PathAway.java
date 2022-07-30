@@ -46,24 +46,27 @@ public class PathAway extends OSMTracker {
 
 		MapSource mapSource = map.getMapSource();
 		String shortMapDir = null;
-		if (mapSource.getName().equals("Google Maps"))
+		if (mapSource.getName().equals("Google Maps")) {
 			shortMapDir = "G1";
-		else if (mapSource.getName().equals("Google Earth"))
+		} else if (mapSource.getName().equals("Google Earth")) {
 			shortMapDir = "G2";
-		else if (mapSource.getName().equals("Google Terrain"))
+		} else if (mapSource.getName().equals("Google Terrain")) {
 			shortMapDir = "G3";
-		else if (mapSource.getName().equals("Mapnik"))
+		} else if (mapSource.getName().equals("Mapnik")) {
 			shortMapDir = "OSM1";
-		else if (mapSource.getName().equals("OSM Cycle Map"))
+		} else if (mapSource.getName().equals("OSM Cycle Map")) {
 			shortMapDir = "OCM1";
-		if (shortMapDir != null)
+		}
+		if (shortMapDir != null) {
 			mapDir = new File(atlasDir, shortMapDir);
+		}
 	}
 
 	public void createMap() throws MapCreationException, InterruptedException {
 		// This means there should not be any resizing of the tiles.
-		if (mapTileWriter == null)
+		if (mapTileWriter == null) {
 			mapTileWriter = new PathAwayTileWriter();
+		}
 		createTiles();
 	}
 
@@ -71,8 +74,9 @@ public class PathAway extends OSMTracker {
 	protected void testAtlas() throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
-				if (map.getZoom() > 17)
+				if (map.getZoom() > 17) {
 					throw new AtlasTestException("resolution too high - " + "highest possible zoom level is 17");
+				}
 			}
 		}
 	}

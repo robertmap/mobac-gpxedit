@@ -114,8 +114,9 @@ public class TwoNavRMAP extends AtlasCreator {
 
 	@Override
 	public void initLayerCreation(LayerInterface layer) throws IOException {
-		if (rmapFile != null)
+		if (rmapFile != null) {
 			throw new RuntimeException("Layer mismatch - last layer has not been finished correctly!");
+		}
 
 		super.initLayerCreation(layer);
 		// Logging.configureConsoleLogging(org.apache.log4j.Level.ALL, new
@@ -234,8 +235,9 @@ public class TwoNavRMAP extends AtlasCreator {
 			if ((map.getMapSource().getTileImageType() != TileImageType.JPG) || (map.getParameters() != null)) {
 				// Tiles have to be converted to jpeg format
 				TileImageFormat imageFormat = TileImageFormat.JPEG90;
-				if (map.getParameters() != null)
+				if (map.getParameters() != null) {
 					imageFormat = map.getParameters().getFormat();
+				}
 				mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, imageFormat);
 			}
 

@@ -45,8 +45,9 @@ public class GpxAddPoint implements ActionListener {
 					I18nUtils.localizedStringForKey("rp_gpx_msg_ask_create_new"),
 					I18nUtils.localizedStringForKey("rp_gpx_msg_ask_create_new_title"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
-			if (answer != JOptionPane.YES_OPTION)
+			if (answer != JOptionPane.YES_OPTION) {
 				return;
+			}
 			entry = new GpxNew(panel).newGpx();
 		}
 
@@ -58,8 +59,9 @@ public class GpxAddPoint implements ActionListener {
 
 		PreviewMap map = MainGUI.getMainGUI().previewMap;
 		map.getMapSelectionController().disable();
-		if (mapController == null)
+		if (mapController == null) {
 			mapController = new GpxMapController(map, panel, false);
+		}
 		mapController.enable();
 	}
 }

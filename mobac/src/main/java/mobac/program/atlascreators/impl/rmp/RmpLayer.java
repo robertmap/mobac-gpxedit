@@ -87,22 +87,25 @@ public class RmpLayer {
 		 */
 		int count = tiles.size();
 		containerCount = count / 80;
-		if (count % 80 != 0)
+		if (count % 80 != 0) {
 			containerCount++;
+		}
 
 		int tilesPerContainer = count / containerCount;
 
 		/* --- Create containers --- */
 		container = new TileContainer[containerCount];
-		for (int i = 0; i < containerCount; i++)
+		for (int i = 0; i < containerCount; i++) {
 			container[i] = new TileContainer();
+		}
 
 		/*
 		 * --- We need an index container if there is more than one container. Container
 		 * 0 is the previous of the index container ---
 		 */
-		if (containerCount > 1)
+		if (containerCount > 1) {
 			indexContainer = new TileContainer(container[0]);
+		}
 
 		/* --- Place the tiles into the container --- */
 		int tileCount = 0;
@@ -113,10 +116,11 @@ public class RmpLayer {
 			 * --- Starting with the second container, the first element is moved to the
 			 * index container ---
 			 */
-			if (tileCount == 0 && containerNumber != 0)
+			if (tileCount == 0 && containerNumber != 0) {
 				indexContainer.addTile(tiledata, container[containerNumber]);
-			else
+			} else {
 				container[containerNumber].addTile(tiledata, null);
+			}
 
 			/* --- Switch to next container if we reach end of container --- */
 			tileCount++;
@@ -127,8 +131,9 @@ public class RmpLayer {
 				/*
 				 * --- Recalculate the number of tiles per container because of rounding issues
 				 */
-				if (containerCount != containerNumber)
+				if (containerCount != containerNumber) {
 					tilesPerContainer = (count - (totalTileCount + 1)) / (containerCount - containerNumber);
+				}
 			}
 			totalTileCount++;
 		}
@@ -137,10 +142,11 @@ public class RmpLayer {
 		 * --- If we have multiple containers, then the index container is the result,
 		 * otherwise the single container.
 		 */
-		if (indexContainer == null)
+		if (indexContainer == null) {
 			return container[0];
-		else
+		} else {
 			return indexContainer;
+		}
 	}
 
 	/**
@@ -211,8 +217,9 @@ public class RmpLayer {
 
 			int size = 256 + 1940 + 3 * 1992;
 			size += container.getContainerCount() * 1992;
-			if (container.getContainerCount() != 1)
+			if (container.getContainerCount() != 1) {
 				size += 1992;
+			}
 			RmpTools.writeValue(bos, size, 4); // File size
 
 			RmpTools.writeValue(bos, 0, 96); // Filler

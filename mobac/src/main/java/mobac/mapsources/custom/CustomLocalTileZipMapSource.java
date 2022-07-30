@@ -105,16 +105,18 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	}
 
 	public synchronized void initialize() {
-		if (initialized.get())
+		if (initialized.get()) {
 			return;
+		}
 		reinitialize();
 	}
 
 	public void reinitialize() {
 		try {
 			openZipFile();
-			if (zips.size() == 0)
+			if (zips.size() == 0) {
 				return;
+			}
 			switch (sourceType) {
 				case DIR_ZOOM_X_Y :
 				case DIR_ZOOM_Y_X :
@@ -157,19 +159,22 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 		String syntax = "%d/%d/%d";
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();
-			if (entry.isDirectory())
+			if (entry.isDirectory()) {
 				continue;
+			}
 			String name = entry.getName();
 			int i = name.lastIndexOf("/");
 			name = name.substring(i + 1);
 
 			String[] parts = name.split("\\.");
-			if (parts.length < 2 || parts.length > 3)
+			if (parts.length < 2 || parts.length > 3) {
 				break;
+			}
 			syntax += "." + parts[1];
 			tileImageType = TileImageType.getTileImageType(parts[1]);
-			if (parts.length == 3)
+			if (parts.length == 3) {
 				syntax += "." + parts[2];
+			}
 			fileSyntax = syntax;
 			log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
 			break;
@@ -183,13 +188,15 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();
 			Matcher m = p.matcher(entry.getName());
-			if (!m.matches())
+			if (!m.matches()) {
 				continue;
+			}
 			fileExt = m.group(2);
 			break;
 		}
-		if (fileExt == null)
+		if (fileExt == null) {
 			return; // Error no suitable file found
+		}
 		fileSyntax = "%s." + fileExt;
 
 		tileImageType = TileImageType.getTileImageType(fileExt);
@@ -203,10 +210,12 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
 				Matcher m = p.matcher(entry.getName());
-				if (!m.matches())
+				if (!m.matches()) {
 					continue;
-				if (fileSyntax == null)
+				}
+				if (fileSyntax == null) {
 					fileSyntax = "%s." + m.group(2);
+				}
 				int z = m.group(1).length();
 				min = Math.min(min, z);
 				max = Math.max(max, z);
@@ -218,15 +227,19 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 
 	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, TileException, InterruptedException {
-		if (!initialized.get())
+		if (!initialized.get()) {
 			initialize();
-		if (fileSyntax == null)
+		}
+		if (fileSyntax == null) {
 			return null;
-		if (log.isTraceEnabled())
+		}
+		if (log.isTraceEnabled()) {
 			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+		}
 
-		if (invertYCoordinate)
+		if (invertYCoordinate) {
 			y = ((1 << zoom) - y - 1);
+		}
 		ZipEntry entry = null;
 		String fileName;
 		switch (sourceType) {
@@ -257,8 +270,9 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
 			throws IOException, TileException, InterruptedException {
 		byte[] data = getTileData(zoom, x, y, loadMethod);
-		if (data == null)
+		if (data == null) {
 			return null;
+		}
 		return ImageIO.read(new ByteArrayInputStream(data));
 	}
 

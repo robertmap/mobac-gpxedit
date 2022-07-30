@@ -88,8 +88,9 @@ public class JIntCombo extends JComboBox<Integer> {
 		}
 
 		public void setItem(Object entry) {
-			if (entry == null)
+			if (entry == null) {
 				return;
+			}
 			editorComponent.setValue(((Integer) entry).intValue(), true);
 		}
 

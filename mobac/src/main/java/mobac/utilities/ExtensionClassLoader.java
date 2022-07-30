@@ -60,8 +60,9 @@ public class ExtensionClassLoader extends URLClassLoader {
 		File[] jarFiles = null;
 		File jarDir = null;
 		for (File dir : dirList) {
-			if (dir == null || !dir.isDirectory())
+			if (dir == null || !dir.isDirectory()) {
 				continue;
+			}
 			File[] files = dir.listFiles(new RegexFileFilter(regexFilePattern));
 			if (files.length > 0) {
 				log.debug("Directory: \"" + dir.getAbsolutePath() + "\"");
@@ -71,8 +72,9 @@ public class ExtensionClassLoader extends URLClassLoader {
 				break;
 			}
 		}
-		if (jarFiles == null)
+		if (jarFiles == null) {
 			throw new FileNotFoundException("No directory containing \"" + regexFilePattern + "\" found.");
+		}
 		final URL[] urls = new URL[jarFiles.length];
 		for (int i = 0; i < urls.length; i++) {
 			try {
@@ -98,10 +100,11 @@ public class ExtensionClassLoader extends URLClassLoader {
 	protected String findLibrary(String libname) {
 		String mappedLibname = System.mapLibraryName(libname);
 		File f = new File(jarDir, mappedLibname);
-		if (f.isFile())
+		if (f.isFile()) {
 			return f.getAbsolutePath();
-		else
+		} else {
 			return null;
+		}
 	}
 
 }

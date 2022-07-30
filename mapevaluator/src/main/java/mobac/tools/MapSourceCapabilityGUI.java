@@ -73,10 +73,11 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (workerThread != null)
+		if (workerThread != null) {
 			workerThread.interrupt();
-		else
+		} else {
 			dispose();
+		}
 	}
 
 	public void workerFinished() {
@@ -158,10 +159,11 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 				int row, int column) {
 			this.setHorizontalAlignment(JLabel.CENTER);
 			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if ((column > 2) && (value != null) && (value instanceof Boolean) && ((Boolean) value))
+			if ((column > 2) && (value != null) && (value instanceof Boolean) && ((Boolean) value)) {
 				c.setBackground(Color.GREEN);
-			else
+			} else {
 				c.setBackground(Color.WHITE);
+			}
 			return c;
 		}
 	}

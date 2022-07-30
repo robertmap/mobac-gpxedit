@@ -84,13 +84,15 @@ public class Map
 	}
 
 	protected void calculateRuntimeValues() {
-		if (mapSource == null)
+		if (mapSource == null) {
 			throw new RuntimeException("The map source of map " + name + " is unknown to MOBAC");
+		}
 		if (parameters == null) {
 			int tileSize = mapSource.getMapSpace().getTileSize();
 			tileDimension = new Dimension(tileSize, tileSize);
-		} else
+		} else {
 			tileDimension = parameters.getDimension();
+		}
 	}
 
 	public LayerInterface getLayer() {
@@ -123,9 +125,10 @@ public class Map
 		newName = newName.trim();
 		if (layer != null) {
 			for (MapInterface map : layer) {
-				if ((map != this) && (newName.equals(map.getName())))
+				if ((map != this) && (newName.equals(map.getName()))) {
 					throw new InvalidNameException("There is already a map named \"" + newName
 							+ "\" in this layer.\nMap names have to unique within an layer.");
+				}
 			}
 		}
 		this.name = newName;
@@ -268,11 +271,12 @@ public class Map
 				zoom < 0 // 5
 		};
 
-		for (int i = 0; i < checks.length; i++)
+		for (int i = 0; i < checks.length; i++) {
 			if (checks[i]) {
 				log.error("Problem detectected with map \"" + name + "\" check: " + i);
 				result = true;
 			}
+		}
 		// Automatically correct bad ordered min/max coordinates
 		try {
 			if (minTileCoordinate.x > maxTileCoordinate.x) {
@@ -303,10 +307,11 @@ public class Map
 			map.maxTileCoordinate = (Point) maxTileCoordinate.clone();
 			map.minTileCoordinate = (Point) minTileCoordinate.clone();
 			map.name = name;
-			if (parameters != null)
+			if (parameters != null) {
 				map.parameters = (TileImageParameters) parameters.clone();
-			else
+			} else {
 				map.parameters = null;
+			}
 			map.tileDimension = (Dimension) tileDimension.clone();
 			map.zoom = zoom;
 			return map;

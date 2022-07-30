@@ -88,8 +88,9 @@ public abstract class AbstractSQLite extends AtlasCreator implements RequiresSQL
 		int maxMapProgress = 2 * (xMax - xMin + 1) * (yMax - yMin + 1);
 		atlasProgress.initMapCreation(maxMapProgress);
 		TileImageParameters param = map.getParameters();
-		if (param != null)
+		if (param != null) {
 			mapDlTileProvider = new ConvertedRawTileProvider(mapDlTileProvider, param.getFormat());
+		}
 		try {
 			conn.setAutoCommit(false);
 			int batchTileCount = 0;

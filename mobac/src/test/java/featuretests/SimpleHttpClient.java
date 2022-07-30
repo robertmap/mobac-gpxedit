@@ -36,14 +36,16 @@ public class SimpleHttpClient implements Runnable {
 			t.start();
 			threads[i] = t;
 		}
-		for (Thread t : threads)
+		for (Thread t : threads) {
 			t.join();
+		}
 	}
 
 	public void run() {
 		try {
-			for (int i = 0; i < 100; i++)
+			for (int i = 0; i < 100; i++) {
 				load();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,15 +59,17 @@ public class SimpleHttpClient implements Runnable {
 		conn.connect();
 
 		int code = conn.getResponseCode();
-		if (code != 200)
+		if (code != 200) {
 			throw new IOException("Invalid HTTP response");
+		}
 		InputStream in = conn.getInputStream();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream(32000);
 		byte[] buffer = new byte[2049];
 		do {
 			int read = in.read(buffer);
-			if (read <= 0)
+			if (read <= 0) {
 				break;
+			}
 			bout.write(buffer, 0, read);
 		} while (true);
 		System.out.println(Thread.currentThread().getName() + " retrieved " + bout.size() + " bytes - url: " + url);

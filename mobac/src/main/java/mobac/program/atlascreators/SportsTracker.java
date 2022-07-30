@@ -97,8 +97,9 @@ public class SportsTracker extends AtlasCreator {
 				atlasProgress.incMapCreationProgress();
 				try {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null)
+					if (sourceTileData != null) {
 						writeTile(x, y, sourceTileData);
+					}
 				} catch (IOException e) {
 					throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 				}
@@ -110,8 +111,9 @@ public class SportsTracker extends AtlasCreator {
 		String tileName = getTileName(zoom, tilex, tiley);
 		int count = tileName.length();
 		int dirCount = count / 3;
-		if ((count % 3 == 0) & (dirCount > 0))
+		if ((count % 3 == 0) & (dirCount > 0)) {
 			dirCount--;
+		}
 		File tileDir = mapDir;
 		for (int i = 0; i < dirCount; i++) {
 			int start = i * 3;

@@ -40,8 +40,9 @@ public class PolygonTileFilter implements TileFilter {
 	}
 
 	public boolean testTile(int x, int y, int zoom, MapSource mapSource) {
-		if (polygonZoom != zoom)
+		if (polygonZoom != zoom) {
 			throw new RuntimeException("Wrong zoom level!");
+		}
 		int tileCoordinateX = x * tileSize;
 		int tileCoordinateY = y * tileSize;
 		return polygon.intersects(tileCoordinateX, tileCoordinateY, tileSize, tileSize);

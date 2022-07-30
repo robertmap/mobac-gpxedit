@@ -156,24 +156,25 @@ public class ClassReader extends ByteArrayInputStream {
 
 	private static void addDescriptor(StringBuffer b, Class<?> c) {
 		if (c.isPrimitive()) {
-			if (c == void.class)
+			if (c == void.class) {
 				b.append('V');
-			else if (c == int.class)
+			} else if (c == int.class) {
 				b.append('I');
-			else if (c == boolean.class)
+			} else if (c == boolean.class) {
 				b.append('Z');
-			else if (c == byte.class)
+			} else if (c == byte.class) {
 				b.append('B');
-			else if (c == short.class)
+			} else if (c == short.class) {
 				b.append('S');
-			else if (c == long.class)
+			} else if (c == long.class) {
 				b.append('J');
-			else if (c == char.class)
+			} else if (c == char.class) {
 				b.append('C');
-			else if (c == float.class)
+			} else if (c == float.class) {
 				b.append('F');
-			else if (c == double.class)
+			} else if (c == double.class) {
 				b.append('D');
+			}
 		} else if (c.isArray()) {
 			b.append('[');
 			addDescriptor(b, c.getComponentType());
@@ -202,8 +203,9 @@ public class ClassReader extends ByteArrayInputStream {
 	protected void skipFully(int n) throws IOException {
 		while (n > 0) {
 			int c = (int) skip(n);
-			if (c <= 0)
+			if (c <= 0) {
 				throw new EOFException("Error looking for paramter names in bytecode: unexpected end of file");
+			}
 			n -= c;
 		}
 	}

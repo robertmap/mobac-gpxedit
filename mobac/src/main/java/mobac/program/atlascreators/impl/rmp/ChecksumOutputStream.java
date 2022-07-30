@@ -89,10 +89,11 @@ public class ChecksumOutputStream extends OutputStream {
 		int o = off;
 
 		for (int i = 0; i < len; i++) {
-			if (evenByte)
+			if (evenByte) {
 				value = (((int) buf[o++]) & 0xFF) << 8;
-			else
+			} else {
 				value = (((int) buf[o++]) & 0xFF);
+			}
 
 			checksum ^= value;
 			evenByte = !evenByte;
@@ -111,10 +112,11 @@ public class ChecksumOutputStream extends OutputStream {
 	public void write(int val) throws IOException {
 		int value;
 
-		if (evenByte)
+		if (evenByte) {
 			value = (val & 0xFF) << 8;
-		else
+		} else {
 			value = (val & 0xFF);
+		}
 
 		checksum ^= value;
 		evenByte = !evenByte;

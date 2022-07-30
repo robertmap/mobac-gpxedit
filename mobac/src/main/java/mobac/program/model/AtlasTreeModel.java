@@ -83,13 +83,15 @@ public class AtlasTreeModel implements TreeModel {
 		TreePath path = getNodePath(parent);
 
 		TreeModelEvent event = new TreeModelEvent(this, path, new int[]{childrenIdx}, children);
-		for (TreeModelListener l : listeners)
+		for (TreeModelListener l : listeners) {
 			l.treeNodesRemoved(event);
+		}
 	}
 
 	protected void notifyStructureChanged(TreeModelEvent event) {
-		for (TreeModelListener l : listeners)
+		for (TreeModelListener l : listeners) {
 			l.treeStructureChanged(event);
+		}
 	}
 
 	public void notifyNodeInsert(TreeNode insertedNode) {
@@ -99,8 +101,9 @@ public class AtlasTreeModel implements TreeModel {
 		int childId = parent.getIndex(insertedNode);
 		assert (childId <= 0);
 		TreeModelEvent event = new TreeModelEvent(this, path, new int[]{childId}, childs);
-		for (TreeModelListener l : listeners)
+		for (TreeModelListener l : listeners) {
 			l.treeNodesInserted(event);
+		}
 	}
 
 	public TreePath getNodePath(TreeNode node) {
@@ -139,8 +142,9 @@ public class AtlasTreeModel implements TreeModel {
 		try {
 			AtlasObject sel = (AtlasObject) o;
 			String newName = (String) newValue;
-			if (newName.length() == 0)
+			if (newName.length() == 0) {
 				return;
+			}
 			sel.setName(newName);
 			success = true;
 		} catch (ClassCastException e) {
@@ -160,25 +164,32 @@ public class AtlasTreeModel implements TreeModel {
 		boolean sourceFound = false;
 		boolean targetFound = false;
 		for (LayerInterface l : atlasInterface) {
-			if (l.equals(source))
+			if (l.equals(source)) {
 				sourceFound = true;
-			if (l.equals(target))
+			}
+			if (l.equals(target)) {
 				targetFound = true;
+			}
 		}
-		if (!targetFound)
+		if (!targetFound) {
 			return;
+		}
 		// Check for duplicate names
 		HashSet<String> names = new HashSet<String>();
-		for (MapInterface map : source)
+		for (MapInterface map : source) {
 			names.add(map.getName());
-		for (MapInterface map : target)
+		}
+		for (MapInterface map : target) {
 			names.add(map.getName());
-		if (names.size() < (source.getMapCount() + target.getMapCount()))
+		}
+		if (names.size() < (source.getMapCount() + target.getMapCount())) {
 			throw new InvalidNameException(
 					"Map naming conflict:\n" + "The layers to be merged contain map(s) of the same name.");
+		}
 
-		if (sourceFound)
+		if (sourceFound) {
 			atlasInterface.deleteLayer(source);
+		}
 		for (MapInterface map : source) {
 			target.addMap(map);
 		}

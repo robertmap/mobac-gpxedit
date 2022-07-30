@@ -77,8 +77,9 @@ public class MapSourceCapabilityDetector {
 
 	public MapSourceCapabilityDetector(HttpMapSource mapSource, EastNorthCoordinate coordinate, int zoom) {
 		this.mapSource = mapSource;
-		if (mapSource == null)
+		if (mapSource == null) {
 			throw new NullPointerException("MapSource not set");
+		}
 		this.coordinate = coordinate;
 		this.zoom = zoom;
 	}
@@ -107,8 +108,9 @@ public class MapSourceCapabilityDetector {
 
 	public static List<MapSourceCapabilityDetector> testMapSource(Class<? extends HttpMapSource> mapSourceClass,
 			EastNorthCoordinate coordinate) {
-		if (coordinate == null)
+		if (coordinate == null) {
 			throw new NullPointerException("Coordinate not set for " + mapSourceClass.getSimpleName());
+		}
 		try {
 			return testMapSource(mapSourceClass.getConstructor().newInstance(), coordinate);
 		} catch (Exception e) {
@@ -120,8 +122,9 @@ public class MapSourceCapabilityDetector {
 	public static List<MapSourceCapabilityDetector> testMapSource(String mapSourceName,
 			EastNorthCoordinate coordinate) {
 		MapSource mapSource = MapSourcesManager.getInstance().getSourceByName(mapSourceName);
-		if (!(mapSource instanceof HttpMapSource))
+		if (!(mapSource instanceof HttpMapSource)) {
 			throw new RuntimeException("Not an HTTP map source: " + mapSource.getName());
+		}
 		return testMapSource((HttpMapSource) mapSource, coordinate);
 	}
 
@@ -141,10 +144,11 @@ public class MapSourceCapabilityDetector {
 	}
 
 	private static String b2s(boolean b) {
-		if (b)
+		if (b) {
 			return "supported";
-		else
+		} else {
 			return "-";
+		}
 	}
 
 	public static String getHexString(byte[] raw) throws UnsupportedEncodingException {
@@ -187,16 +191,18 @@ public class MapSourceCapabilityDetector {
 
 			contentType = c.getContentType();
 			contentType = contentType.substring(6);
-			if ("png".equals(contentType))
+			if ("png".equals(contentType)) {
 				contentType = "png";
-			else if ("jpeg".equals(contentType))
+			} else if ("jpeg".equals(contentType)) {
 				contentType = "jpg";
-			else
+			} else {
 				contentType = "unknown: " + c.getContentType();
-			if (contentType.equals(detectedContentType.getFileExt()))
+			}
+			if (contentType.equals(detectedContentType.getFileExt())) {
 				contentType += " (verified)";
-			else
+			} else {
 				contentType += " (unverified)";
+			}
 			log.debug("Image format          : " + contentType);
 
 			String eTag = c.getHeaderField("ETag");
@@ -245,11 +251,13 @@ public class MapSourceCapabilityDetector {
 		byte[] digest = md5.digest(content);
 		String hexDigest = getHexString(digest);
 		// log.debug("content MD5 : " + hexDigest);
-		if (hexDigest.equals(eTag))
+		if (hexDigest.equals(eTag)) {
 			log.debug("eTag content          : md5 hex string");
+		}
 		String quotedHexDigest = "\"" + hexDigest + "\"";
-		if (quotedHexDigest.equals(eTag))
+		if (quotedHexDigest.equals(eTag)) {
 			log.debug("eTag content          : quoted md5 hex string");
+		}
 
 		HttpURLConnection c2 = (HttpURLConnection) url.openConnection();
 		c2.addRequestProperty("If-None-Match", eTag);
@@ -280,8 +288,9 @@ public class MapSourceCapabilityDetector {
 		for (Map.Entry<String, List<String>> entry : c.getHeaderFields().entrySet()) {
 			String key = entry.getKey();
 			for (String elem : entry.getValue()) {
-				if (key != null)
+				if (key != null) {
 					log.debug(key + " = ");
+				}
 				log.debug(elem);
 			}
 		}

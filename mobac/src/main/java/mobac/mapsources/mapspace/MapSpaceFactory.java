@@ -26,10 +26,11 @@ public class MapSpaceFactory {
 	 * @return
 	 */
 	public static MapSpace getInstance(int tileSize, boolean isSpherical) {
-		if (isSpherical)
+		if (isSpherical) {
 			return new MercatorPower2MapSpace(tileSize);
-		else
-			return new MercatorPower2MapSpaceEllipsoidal(tileSize);
+		}
+		return new MercatorPower2MapSpaceEllipsoidal(tileSize);
+
 	}
 
 }

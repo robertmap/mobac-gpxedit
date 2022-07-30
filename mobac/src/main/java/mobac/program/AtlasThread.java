@@ -157,8 +157,9 @@ public class AtlasThread extends Thread
 				public void run() {
 					String message = I18nUtils.localizedStringForKey("msg_out_of_memory_head");
 					int maxMem = Utilities.getJavaMaxHeapMB();
-					if (maxMem > 0)
+					if (maxMem > 0) {
 						message += String.format(I18nUtils.localizedStringForKey("msg_out_of_memory_detail"), maxMem);
+					}
 					JOptionPane.showMessageDialog(null, message,
 							I18nUtils.localizedStringForKey("msg_out_of_memory_title"), JOptionPane.ERROR_MESSAGE);
 					ap.closeWindow();
@@ -381,8 +382,9 @@ public class AtlasThread extends Thread
 										missing),
 								I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile"),
 								JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-						if (answer != JOptionPane.YES_OPTION)
+						if (answer != JOptionPane.YES_OPTION) {
 							throw new InterruptedException();
+						}
 					}
 				}
 				downloadJobDispatcher.cancelOutstandingJobs();

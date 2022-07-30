@@ -48,8 +48,9 @@ public class Osmdroid extends OSMTracker {
 	@Override
 	public void startAtlasCreation(AtlasInterface atlas, File customAtlasDir)
 			throws AtlasTestException, IOException, InterruptedException {
-		if (customAtlasDir == null)
+		if (customAtlasDir == null) {
 			customAtlasDir = Settings.getInstance().getAtlasOutputDirectory();
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
 		super.startAtlasCreation(atlas, customAtlasDir);
@@ -73,10 +74,11 @@ public class Osmdroid extends OSMTracker {
 	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		super.initializeMap(map, mapTileProvider);
 		currentMapStoreName = map.getMapSource().getName();
-		if (currentMapStoreName.equals("TilesAtHome"))
+		if (currentMapStoreName.equals("TilesAtHome")) {
 			currentMapStoreName = "Osmarender";
-		else if (currentMapStoreName.equals("OSM Cycle Map"))
+		} else if (currentMapStoreName.equals("OSM Cycle Map")) {
 			currentMapStoreName = "CycleMap";
+		}
 	}
 
 	private class OSMDroidTileWriter implements MapTileWriter {

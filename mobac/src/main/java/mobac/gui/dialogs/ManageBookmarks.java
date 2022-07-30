@@ -60,8 +60,9 @@ public class ManageBookmarks extends JDialog implements ListSelectionListener, A
 		deleteButton.addActionListener(this);
 
 		bookmarksModel = new DefaultListModel<Bookmark>();
-		for (Bookmark b : Settings.getInstance().placeBookmarks)
+		for (Bookmark b : Settings.getInstance().placeBookmarks) {
 			bookmarksModel.addElement(b);
+		}
 		bookmarks = new JList<Bookmark>(bookmarksModel);
 		bookmarks.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		bookmarks.addListSelectionListener(this);
@@ -80,22 +81,25 @@ public class ManageBookmarks extends JDialog implements ListSelectionListener, A
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if (deleteButton.equals(e.getSource()))
+		if (deleteButton.equals(e.getSource())) {
 			deleteSelectedEntries();
-		else if (applyButton.equals(e.getSource()))
+		} else if (applyButton.equals(e.getSource())) {
 			apply();
+		}
 	}
 
 	protected void deleteSelectedEntries() {
 		int[] selected = bookmarks.getSelectedIndices();
-		for (int i = selected.length - 1; i >= 0; i--)
+		for (int i = selected.length - 1; i >= 0; i--) {
 			bookmarksModel.remove(selected[i]);
+		}
 	}
 
 	protected void apply() {
 		ArrayList<Bookmark> bookmarksList = new ArrayList<Bookmark>(bookmarksModel.getSize());
-		for (int i = 0; i < bookmarksModel.getSize(); i++)
+		for (int i = 0; i < bookmarksModel.getSize(); i++) {
 			bookmarksList.add(bookmarksModel.get(i));
+		}
 		Settings.getInstance().placeBookmarks = bookmarksList;
 		setVisible(false);
 		dispose();

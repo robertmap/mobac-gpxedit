@@ -101,10 +101,11 @@ public class MapSourceCapabilityGUI extends JFrame {
 				int row, int column) {
 			this.setHorizontalAlignment(JLabel.CENTER);
 			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if ((value != null) && (value instanceof Boolean) && ((Boolean) value))
+			if ((value != null) && (value instanceof Boolean) && ((Boolean) value)) {
 				c.setBackground(Color.GREEN);
-			else
+			} else {
 				c.setBackground(Color.WHITE);
+			}
 			return c;
 		}
 	}

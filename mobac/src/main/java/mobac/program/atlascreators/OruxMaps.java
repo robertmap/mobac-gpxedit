@@ -98,12 +98,13 @@ public class OruxMaps extends AtlasCreator {
 				for (int j = i + 1; j < cont; j++) {
 					MapInterface nextMap = layer.getMap(j);
 					int nextZoomLevel = nextMap.getZoom();
-					if (currZoomLevel == nextZoomLevel)
+					if (currZoomLevel == nextZoomLevel) {
 						throw new AtlasTestException(
 								"Unable to create a map with more than a layer with the same zoom level: " + currMap
 										+ " & " + nextMap + "\nPossible causes:\n"
 										+ "You are combining several layers (using drag & drop in 'Atlas Content')\n"
 										+ "You are creating a large map, and you have not selected the maximum value in 'Settings - Map size'");
+					}
 				}
 			}
 		}
@@ -141,10 +142,11 @@ public class OruxMaps extends AtlasCreator {
 
 		super.initializeMap(map, mapTileProvider);
 		// OruxMaps default image format, jpeg90; always TILE_SIZE=512;
-		if (parameters == null)
+		if (parameters == null) {
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, TileImageFormat.JPEG90);
-		else
+		} else {
 			parameters = new TileImageParameters(TILE_SIZE, TILE_SIZE, parameters.getFormat());
+		}
 		mapName = String.format("%s %02d", currentLayer.getName(), map.getZoom());
 	}
 

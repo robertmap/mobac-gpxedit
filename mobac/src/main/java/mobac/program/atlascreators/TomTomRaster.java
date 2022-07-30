@@ -73,9 +73,10 @@ public class TomTomRaster extends AtlasCreator {
 			for (MapInterface map : layer) {
 				int w = map.getMaxTileCoordinate().x - map.getMinTileCoordinate().x;
 				int h = map.getMaxTileCoordinate().y - map.getMinTileCoordinate().y;
-				if (w > maxMapSize || h > maxMapSize)
+				if (w > maxMapSize || h > maxMapSize) {
 					throw new AtlasTestException(
 							"Map size too large for memory (is: " + Math.max(w, h) + " max:  " + maxMapSize + ")", map);
+				}
 			}
 		}
 
@@ -119,19 +120,22 @@ public class TomTomRaster extends AtlasCreator {
 			scaleFactor = (double) getMaxImageSize() / (double) len;
 			if (mapWidth != mapHeight) {
 				// Map is not rectangle -> adapt height or width
-				if (mapWidth > mapHeight)
+				if (mapWidth > mapHeight) {
 					imageHeight = (int) (scaleFactor * mapHeight);
-				else
+				} else {
 					imageWidth = (int) (scaleFactor * mapWidth);
+				}
 			}
 		}
-		if (imageHeight < 0 || imageWidth < 0)
+		if (imageHeight < 0 || imageWidth < 0) {
 			throw new MapCreationException("Invalid map size: (width/height: " + imageWidth + "/" + imageHeight + ")",
 					map);
+		}
 		long imageSize = 3l * ((long) imageWidth) * ((long) imageHeight);
-		if (imageSize > Integer.MAX_VALUE)
+		if (imageSize > Integer.MAX_VALUE) {
 			throw new MapCreationException("Map image too large: (width/height: " + imageWidth + "/" + imageHeight
 					+ ") - reduce the map size and try again", map);
+		}
 		BufferedImage tileImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
 		Graphics2D graphics = tileImage.createGraphics();
 		try {
@@ -169,8 +173,9 @@ public class TomTomRaster extends AtlasCreator {
 		TileImageDataWriter writer;
 		if (parameters != null) {
 			writer = parameters.getFormat().getDataWriterBuilder().build();
-		} else
+		} else {
 			writer = new TileImageJpegDataWriter(0.9);
+		}
 		try {
 			int initialBufferSize = tileImage.getWidth() * tileImage.getHeight() / 4;
 			ByteArrayOutputStream buf = new ByteArrayOutputStream(initialBufferSize);

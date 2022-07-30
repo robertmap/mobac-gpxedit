@@ -30,10 +30,11 @@ public class GeoUtils {
 		String degMinFormat = "%d, %3.6f, %c";
 
 		char dirC;
-		if (isLatitude)
+		if (isLatitude) {
 			dirC = (neg ? 'S' : 'N');
-		else
+		} else {
 			dirC = (neg ? 'W' : 'E');
+		}
 
 		return String.format(Locale.ENGLISH, degMinFormat, deg, min, dirC);
 	}

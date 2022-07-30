@@ -58,14 +58,16 @@ public class AtlasConvert implements ActionListener {
 			currentAOF = mg.getAtlas().getOutputFormat();
 		} catch (Exception e) {
 		}
-		if (currentAOF != null)
+		if (currentAOF != null) {
 			atlasFormatList.setSelectedValue(currentAOF, true);
-		else
+		} else {
 			atlasFormatList.setSelectedIndex(1);
+		}
 		int result = JOptionPane.showConfirmDialog(MainGUI.getMainGUI(), panel,
 				I18nUtils.localizedStringForKey("msg_convert_atlas_format"), JOptionPane.OK_CANCEL_OPTION);
-		if (result != JOptionPane.OK_OPTION)
+		if (result != JOptionPane.OK_OPTION) {
 			return;
+		}
 
 		AtlasOutputFormat format = atlasFormatList.getSelectedValue();
 		mg.jAtlasTree.convertAtlas(format);

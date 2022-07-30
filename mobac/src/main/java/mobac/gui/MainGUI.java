@@ -276,8 +276,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	public static void createMainGui() {
-		if (mainGUI != null)
+		if (mainGUI != null) {
 			return;
+		}
 
 		mainGUI = new MainGUI();
 		mainGUI.setVisible(true);
@@ -836,8 +837,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 				GUIExceptionHandler.processException(e);
 				new AtlasNew().actionPerformed(null);
 			}
-		} else
+		} else {
 			new AtlasNew().actionPerformed(null);
+		}
 
 		Settings settings = Settings.getInstance();
 		atlasNameTextField.setText(settings.elementName);
@@ -872,8 +874,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		} else {
 			setLocation(windowLocation);
 		}
-		if (settings.mainWindow.maximized)
+		if (settings.mainWindow.maximized) {
 			setExtendedState(Frame.MAXIMIZED_BOTH);
+		}
 
 		leftPanel.setVisible(settings.mainWindow.leftPanelVisible);
 		leftPanel.setPreferredSize(new Dimension(settings.mainWindow.leftPanelWidth, 100));
@@ -884,8 +887,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 				if (c instanceof JCollapsiblePanel) {
 					JCollapsiblePanel cp = (JCollapsiblePanel) c;
 					String name = cp.getName();
-					if (name != null && settings.mainWindow.collapsedPanels.contains(name))
+					if (name != null && settings.mainWindow.collapsedPanels.contains(name)) {
 						cp.setCollapsed(true);
+					}
 				}
 			}
 		}
@@ -917,8 +921,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 				for (Component c : leftPanelContent.getComponents()) {
 					if (c instanceof JCollapsiblePanel) {
 						JCollapsiblePanel cp = (JCollapsiblePanel) c;
-						if (cp.isCollapsed())
+						if (cp.isCollapsed()) {
 							s.mainWindow.collapsedPanels.add(cp.getName());
+						}
 					}
 				}
 			}
@@ -939,8 +944,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 					I18nUtils.localizedStringForKey("msg_setting_file_is_changed_by_other"),
 					I18nUtils.localizedStringForKey("msg_setting_file_is_changed_by_other_title"),
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (x != JOptionPane.YES_OPTION)
+			if (x != JOptionPane.YES_OPTION) {
 				return;
+			}
 		}
 		Settings.save();
 
@@ -976,8 +982,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		for (int i = maxZoom; i >= minZoom; i--) {
 			gridZoomCombo.addItem(new GridZoom(i));
 		}
-		if (lastGridZoom != null)
+		if (lastGridZoom != null) {
 			gridZoomCombo.setSelectedItem(lastGridZoom);
+		}
 		gridZoomCombo.setEnabled(true);
 	}
 
@@ -987,8 +994,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		zoomLevels = Math.max(zoomLevels, 0);
 		JCheckBox[] oldZoomLevelCheckBoxes = cbZoom;
 		int oldMinZoom = 0;
-		if (cbZoom.length > 0)
+		if (cbZoom.length > 0) {
 			oldMinZoom = cbZoom[0].getZoomLevel();
+		}
 		cbZoom = new JZoomCheckBox[zoomLevels];
 		zoomLevelPanel.removeAll();
 
@@ -1004,8 +1012,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 			cb.setFocusable(false);
 			cb.setName(Integer.toString(cbz));
 			int oldCbIndex = cbz - oldMinZoom;
-			if (oldCbIndex >= 0 && oldCbIndex < (oldZoomLevelCheckBoxes.length))
+			if (oldCbIndex >= 0 && oldCbIndex < (oldZoomLevelCheckBoxes.length)) {
 				cb.setSelected(oldZoomLevelCheckBoxes[oldCbIndex].isSelected());
+			}
 			cb.addActionListener(cbl);
 			// cb.setToolTipText("Select zoom level " + cbz + " for atlas");
 			zoomLevelPanel.add(cb);
@@ -1073,12 +1082,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 		smPolygon.setSelected(false);
 		smCircle.setSelected(false);
 		smRectangle.setSelected(false);
-		if (newMapController instanceof PolygonSelectionMapController)
+		if (newMapController instanceof PolygonSelectionMapController) {
 			smPolygon.setSelected(true);
-		else if (newMapController instanceof PolygonCircleSelectionMapController)
+		} else if (newMapController instanceof PolygonCircleSelectionMapController) {
 			smCircle.setSelected(true);
-		else if (newMapController instanceof RectangleSelectionMapController)
+		} else if (newMapController instanceof RectangleSelectionMapController) {
 			smRectangle.setSelected(true);
+		}
 	}
 
 	private void setSelectionByEnteredCoordinates() {
@@ -1090,8 +1100,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	public MapSelection getMapSelectionCoordinates() {
-		if (mapSelectionMax == null || mapSelectionMin == null)
+		if (mapSelectionMax == null || mapSelectionMin == null) {
 			return null;
+		}
 		return new MapSelection(previewMap.getMapSource(), mapSelectionMax, mapSelectionMin);
 	}
 
@@ -1148,11 +1159,13 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 	private class GridZoomComboListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			if (!gridZoomCombo.isEnabled())
+			if (!gridZoomCombo.isEnabled()) {
 				return;
+			}
 			GridZoom g = (GridZoom) gridZoomCombo.getSelectedItem();
-			if (g == null)
+			if (g == null) {
 				return;
+			}
 			log.debug("Selected grid zoom combo box item has changed: " + g.getZoom());
 			previewMap.setGridZoom(g.getZoom());
 			repaint();
@@ -1203,8 +1216,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		public void actionPerformed(ActionEvent e) {
 			Profile profile = profilesPanel.getSelectedProfile();
 			profilesPanel.getDeleteButton().setEnabled(profile != null);
-			if (profile == null)
+			if (profile == null) {
 				return;
+			}
 
 			jAtlasTree.load(profile);
 			previewMap.repaint();
@@ -1256,8 +1270,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 			// Note(Java bug): Sometimes getExtendedState() says the window is
 			// not maximized but maximizing is already in progress and therefore
 			// the window bounds are already changed.
-			if ((getExtendedState() & MAXIMIZED_BOTH) != 0)
+			if ((getExtendedState() & MAXIMIZED_BOTH) != 0) {
 				return;
+			}
 			Settings s = Settings.getInstance();
 			s.mainWindow.size = getSize();
 			s.mainWindow.position = getLocation();

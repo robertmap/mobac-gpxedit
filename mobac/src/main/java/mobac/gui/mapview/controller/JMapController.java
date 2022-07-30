@@ -46,31 +46,40 @@ public abstract class JMapController {
 
 	public JMapController(PreviewMap map, boolean enabled) {
 		this(map);
-		if (enabled)
+		if (enabled) {
 			enable();
+		}
 	}
 
 	public void enable() {
-		if (enabled)
+		if (enabled) {
 			return;
-		if (this instanceof MouseListener)
+		}
+		if (this instanceof MouseListener) {
 			map.addMouseListener((MouseListener) this);
-		if (this instanceof MouseWheelListener)
+		}
+		if (this instanceof MouseWheelListener) {
 			map.addMouseWheelListener((MouseWheelListener) this);
-		if (this instanceof MouseMotionListener)
+		}
+		if (this instanceof MouseMotionListener) {
 			map.addMouseMotionListener((MouseMotionListener) this);
+		}
 		this.enabled = true;
 	}
 
 	public void disable() {
-		if (!enabled)
+		if (!enabled) {
 			return;
-		if (this instanceof MouseListener)
+		}
+		if (this instanceof MouseListener) {
 			map.removeMouseListener((MouseListener) this);
-		if (this instanceof MouseWheelListener)
+		}
+		if (this instanceof MouseWheelListener) {
 			map.removeMouseWheelListener((MouseWheelListener) this);
-		if (this instanceof MouseMotionListener)
+		}
+		if (this instanceof MouseMotionListener) {
 			map.removeMouseMotionListener((MouseMotionListener) this);
+		}
 		this.enabled = false;
 	}
 

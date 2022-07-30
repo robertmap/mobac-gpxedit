@@ -48,15 +48,17 @@ public class FilteredMapSourceProvider extends MapSourceProvider {
 
 	@Override
 	public byte[] getTileData(int x, int y) throws IOException {
-		if (!tileFilter.testTile(x, y, zoom, mapSource))
+		if (!tileFilter.testTile(x, y, zoom, mapSource)) {
 			return null;
+		}
 		return super.getTileData(x, y);
 	}
 
 	@Override
 	public BufferedImage getTileImage(int x, int y) throws IOException {
-		if (!tileFilter.testTile(x, y, zoom, mapSource))
+		if (!tileFilter.testTile(x, y, zoom, mapSource)) {
 			return null;
+		}
 		return super.getTileImage(x, y);
 	}
 

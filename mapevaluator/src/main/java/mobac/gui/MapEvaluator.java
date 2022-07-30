@@ -278,8 +278,9 @@ public class MapEvaluator extends JFrame {
 					for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
 						MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource,
 								coordinate, zoom);
-						if (!gui.isVisible())
+						if (!gui.isVisible()) {
 							return;
+						}
 						mstd.testMapSource();
 						result.add(mstd);
 						gui.refresh();

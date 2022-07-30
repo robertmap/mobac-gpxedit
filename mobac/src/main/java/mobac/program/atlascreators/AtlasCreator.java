@@ -126,8 +126,9 @@ public abstract class AtlasCreator {
 			String atlasDirName = atlas.getName() + "_" + sdf.format(new Date());
 			File atlasOutputDir = Settings.getInstance().getAtlasOutputDirectory();
 			atlasDir = new File(atlasOutputDir, atlasDirName);
-		} else
+		} else {
 			atlasDir = customAtlasDir;
+		}
 		Utilities.mkDirs(atlasDir);
 	}
 
@@ -172,8 +173,9 @@ public abstract class AtlasCreator {
 	 */
 	public void initializeMap(MapInterface map, TileProvider mapTileProvider) {
 		LayerInterface layer = map.getLayer();
-		if (mapTileProvider == null)
+		if (mapTileProvider == null) {
 			throw new NullPointerException();
+		}
 		this.mapDlTileProvider = mapTileProvider;
 		this.map = map;
 		this.mapSource = map.getMapSource();
@@ -195,8 +197,9 @@ public abstract class AtlasCreator {
 		this.atlasOutputFormat = layer.getAtlas().getOutputFormat();
 
 		Thread t = Thread.currentThread();
-		if (!(t instanceof AtlasThread))
+		if (!(t instanceof AtlasThread)) {
 			throw new RuntimeException("Calling thread must be AtlasThread!");
+		}
 		AtlasThread at = (AtlasThread) t;
 		atlasProgress = at.getAtlasProgress();
 		pauseResumeHandler = at.getPauseResumeHandler();
@@ -215,8 +218,9 @@ public abstract class AtlasCreator {
 	 * @throws InterruptedException
 	 */
 	public void checkUserAbort() throws InterruptedException {
-		if (Thread.currentThread().isInterrupted())
+		if (Thread.currentThread().isInterrupted()) {
 			throw new InterruptedException();
+		}
 		pauseResumeHandler.pauseWait();
 	}
 
@@ -264,13 +268,15 @@ public abstract class AtlasCreator {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				TileImageParameters parameters = map.getParameters();
-				if (parameters == null)
+				if (parameters == null) {
 					continue;
-				if (!allowedFormats.contains(parameters.getFormat()))
+				}
+				if (!allowedFormats.contains(parameters.getFormat())) {
 					throw new AtlasTestException(
 							"Selected custom tile format not supported - only the following format(s) are supported: "
 									+ allowedFormats,
 							map);
+				}
 			}
 		}
 	}
@@ -278,8 +284,9 @@ public abstract class AtlasCreator {
 	protected void performTest_MaxMapZoom(int maxZoom) throws AtlasTestException {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
-				if (map.getZoom() > maxZoom)
+				if (map.getZoom() > maxZoom) {
 					throw new AtlasTestException("Maximum zoom is " + maxZoom + " for this atlas format", map);
+				}
 			}
 		}
 	}

@@ -54,9 +54,10 @@ public class CacheWolf extends Ozi {
 			// One image per map
 			super.createTiles();
 			writeWflFile();
-		} else
+		} else {
 			// Use automatic tiling as specified in the parameters
 			createTiles();
+		}
 	}
 
 	@Override
@@ -115,8 +116,9 @@ public class CacheWolf extends Ozi {
 			affine[1] = (bottomRightLon - topLeftLon) / width;
 			affine[2] = (bottomRightLat - topLeftLat) / height;
 
-			for (double d : affine)
+			for (double d : affine) {
 				mapWriter.write(d + "\n");
+			}
 
 			mapWriter.write(topLeftLat + "\n");
 			mapWriter.write(topLeftLon + "\n");

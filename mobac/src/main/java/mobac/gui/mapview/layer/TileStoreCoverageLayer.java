@@ -85,16 +85,18 @@ public class TileStoreCoverageLayer implements MapLayer {
 			public void run() {
 				try {
 					coverageImage = TileStore.getInstance().getCacheCoverage(mapSource, zoom, tileNumMin, tileNumMax);
-					if (coverageImage == null)
+					if (coverageImage == null) {
 						JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
 								I18nUtils.localizedStringForKey("msg_tile_store_failed_retrieve_coverage"),
 								I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (InterruptedException e) {
 				} catch (Exception e) {
 					GUIExceptionHandler.processException(e);
 				}
-				if (coverageImage == null)
+				if (coverageImage == null) {
 					removeCacheCoverageLayers();
+				}
 				MainGUI.getMainGUI().previewMap.repaint();
 			}
 		};
@@ -104,8 +106,9 @@ public class TileStoreCoverageLayer implements MapLayer {
 	}
 
 	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-		if (coverageImage == null)
+		if (coverageImage == null) {
 			return;
+		}
 		paintCoverage(g, zoom, minX, minY, maxX, maxY);
 	}
 

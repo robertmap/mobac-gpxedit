@@ -61,17 +61,19 @@ public class TarArchive implements Closeable {
 	}
 
 	public boolean writeContentFromDir(File dirToAdd) throws IOException {
-		if (!dirToAdd.isDirectory())
+		if (!dirToAdd.isDirectory()) {
 			return false;
+		}
 		TarHeader th = new TarHeader(dirToAdd, baseDir);
 		writeTarHeader(th);
 		File[] files = dirToAdd.listFiles();
 		Arrays.sort(files);
 		for (File f : files) {
-			if (!f.isDirectory())
+			if (!f.isDirectory()) {
 				writeFile(f);
-			else
+			} else {
 				writeContentFromDir(f);
+			}
 		}
 		return true;
 	}

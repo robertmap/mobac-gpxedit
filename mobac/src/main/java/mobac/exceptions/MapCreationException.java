@@ -52,8 +52,9 @@ public class MapCreationException extends Exception implements ExceptionExtended
 				MapSourceLoaderInfo loaderInfo = map.getMapSource().getLoaderInfo();
 				if (loaderInfo != null) {
 					sw.append("\nMap type: " + loaderInfo.getLoaderType());
-					if (loaderInfo.getSourceFile() != null)
+					if (loaderInfo.getSourceFile() != null) {
 						sw.append("\nMap implementation: " + loaderInfo.getSourceFile().getName());
+					}
 					sw.append("\nMap revision: " + loaderInfo.getRevision());
 				}
 			}

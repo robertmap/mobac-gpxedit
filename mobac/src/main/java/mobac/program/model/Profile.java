@@ -100,14 +100,16 @@ public class Profile implements Comparable<Profile> {
 				if (m.matches()) {
 					String profileName = m.group(1);
 					Profile profile = new Profile(new File(dir, fileName), profileName);
-					if (!deletedProfiles.remove(profile))
+					if (!deletedProfiles.remove(profile)) {
 						profiles.add(profile);
+					}
 				}
 				return false;
 			}
 		});
-		for (Profile p : deletedProfiles)
+		for (Profile p : deletedProfiles) {
 			profiles.remove(p);
+		}
 		Collections.sort(profiles);
 	}
 
@@ -159,8 +161,9 @@ public class Profile implements Comparable<Profile> {
 	}
 
 	public void delete() {
-		if (!file.delete())
+		if (!file.delete()) {
 			file.deleteOnExit();
+		}
 	}
 
 	public int compareTo(Profile o) {
@@ -169,8 +172,9 @@ public class Profile implements Comparable<Profile> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Profile))
+		if (!(obj instanceof Profile)) {
 			return false;
+		}
 		Profile p = (Profile) obj;
 		return file.equals(p.file);
 	}

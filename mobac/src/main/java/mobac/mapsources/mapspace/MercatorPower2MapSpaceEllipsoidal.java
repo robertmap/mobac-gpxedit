@@ -154,15 +154,19 @@ public class MercatorPower2MapSpaceEllipsoidal extends MercatorPower2MapSpace {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		MercatorPower2MapSpaceEllipsoidal other = (MercatorPower2MapSpaceEllipsoidal) obj;
-		if (Double.doubleToLongBits(excentricity) != Double.doubleToLongBits(other.excentricity))
+		if (Double.doubleToLongBits(excentricity) != Double.doubleToLongBits(other.excentricity)) {
 			return false;
+		}
 		return Double.doubleToLongBits(excentricitySquared) == Double.doubleToLongBits(other.excentricitySquared);
 	}
 

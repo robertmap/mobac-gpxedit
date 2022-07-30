@@ -36,8 +36,9 @@ public class NodeTransferWrapper implements Transferable {
 	}
 
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		if (!ATLAS_OBJECT_FLAVOR.equals(flavor))
+		if (!ATLAS_OBJECT_FLAVOR.equals(flavor)) {
 			throw new UnsupportedFlavorException(flavor);
+		}
 		return node;
 	}
 

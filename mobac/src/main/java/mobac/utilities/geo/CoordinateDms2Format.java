@@ -51,15 +51,17 @@ public class CoordinateDms2Format extends NumberFormat {
 		int degrees;
 		int minutes;
 		double seconds;
-		if (number >= 0)
+		if (number >= 0) {
 			degrees = (int) Math.floor(number);
-		else
+		} else {
 			degrees = (int) Math.ceil(number);
+		}
 		number = Math.abs((number - degrees) * 60);
 		minutes = (int) Math.floor(number);
 		seconds = (number - minutes) * 60;
-		if (numberOrg < 0 && degrees == 0)
+		if (numberOrg < 0 && degrees == 0) {
 			toAppendTo.append("-");
+		}
 		toAppendTo.append(degFmt.format(degrees) + " ");
 		toAppendTo.append(minFmt.format(minutes) + " ");
 		toAppendTo.append(secFmt.format(seconds));
@@ -79,18 +81,20 @@ public class CoordinateDms2Format extends NumberFormat {
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
 		String[] tokens = source.trim().split("[°\\'\\\"]");
-		if (tokens.length != 3)
+		if (tokens.length != 3) {
 			return null;
+		}
 		try {
 			String degStr = tokens[0].trim();
 			int deg = Integer.parseInt(degStr);
 			int min = Integer.parseInt(tokens[1].trim());
 			double sec = secFmtParser.parse(tokens[2].trim()).doubleValue();
 			double coord;
-			if (degStr.startsWith("-"))
+			if (degStr.startsWith("-")) {
 				coord = deg - sec / 3600 - min / 60.0;
-			else
+			} else {
 				coord = deg + sec / 3600 + min / 60.0;
+			}
 			return coord;
 		} catch (Exception e) {
 			parsePosition.setErrorIndex(0);

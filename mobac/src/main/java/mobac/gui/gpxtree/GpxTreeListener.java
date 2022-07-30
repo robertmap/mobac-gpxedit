@@ -70,8 +70,9 @@ public class GpxTreeListener implements MouseListener {
 		JTree tree = (JTree) e.getSource();
 		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 		tree.setSelectionPath(selPath);
-		if (selPath == null)
+		if (selPath == null) {
 			return;
+		}
 
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
 

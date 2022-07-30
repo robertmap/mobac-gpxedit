@@ -123,8 +123,9 @@ public class JGpxPanel extends JCollapsiblePanel {
 		addTrks(layer, gpxNode);
 		addWpts(layer, gpxNode);
 
-		if (layer.getFile() != null)
+		if (layer.getFile() != null) {
 			openedFiles.add(layer.getFile().getAbsolutePath());
+		}
 
 		previewMap.mapLayers.add(layer);
 		return gpxEntry;

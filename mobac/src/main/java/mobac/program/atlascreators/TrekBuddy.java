@@ -123,10 +123,11 @@ public class TrekBuddy extends AtlasCreator {
 
 			// Select the tile creator instance based on whether tile image
 			// parameters has been set or not
-			if (parameters != null)
+			if (parameters != null) {
 				createCustomTiles();
-			else
+			} else {
 				createTiles();
+			}
 
 			mapTileWriter.finalizeMap();
 		} catch (MapCreationException e) {

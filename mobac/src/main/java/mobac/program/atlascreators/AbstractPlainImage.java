@@ -106,10 +106,11 @@ public abstract class AbstractPlainImage extends AtlasCreator {
 			scaleFactor = (double) getMaxImageSize() / (double) len;
 			if (mapWidth != mapHeight) {
 				// Map is not rectangle -> adapt height or width
-				if (mapWidth > mapHeight)
+				if (mapWidth > mapHeight) {
 					imageHeight = (int) (scaleFactor * mapHeight);
-				else
+				} else {
 					imageWidth = (int) (scaleFactor * mapWidth);
+				}
 			}
 		}
 		if (imageHeight < 0 || imageWidth < 0) {

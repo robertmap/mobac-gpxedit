@@ -153,16 +153,18 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 
 	public static AtlasOutputFormat getFormatByName(String Name) {
 		for (AtlasOutputFormat af : FORMATS) {
-			if (af.getTypeName().equals(Name))
+			if (af.getTypeName().equals(Name)) {
 				return af;
+			}
 		}
 		throw new NoSuchElementException("Unknown atlas format: \"" + Name + "\"");
 	}
 
 	private static AtlasOutputFormat createByClass(Class<? extends AtlasCreator> atlasCreatorClass) {
 		AtlasCreatorName acName = atlasCreatorClass.getAnnotation(AtlasCreatorName.class);
-		if (acName == null)
+		if (acName == null) {
 			throw new RuntimeException("AtlasCreator " + atlasCreatorClass.getName() + " has no name");
+		}
 		String typeName = acName.type();
 		if (typeName == null || typeName.isEmpty()) {
 			typeName = atlasCreatorClass.getSimpleName();
@@ -194,8 +196,9 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 	}
 
 	public AtlasCreator createAtlasCreatorInstance() {
-		if (atlasCreatorClass == null)
+		if (atlasCreatorClass == null) {
 			return null;
+		}
 		try {
 			return atlasCreatorClass.getConstructor().newInstance();
 		} catch (Throwable t) {

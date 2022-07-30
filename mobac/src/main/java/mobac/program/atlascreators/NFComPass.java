@@ -70,8 +70,9 @@ public class NFComPass extends AtlasCreator {
 	@Override
 	public void initLayerCreation(LayerInterface layer) throws IOException {
 		super.initLayerCreation(layer);
-		if (layer.getMapCount() == 0)
+		if (layer.getMapCount() == 0) {
 			return;
+		}
 		int lastZoom = layer.getMap(0).getZoom();
 		File datFile = new File(atlasDir, "nfComPass.dat");
 		try (Writer w = new BufferedWriter(new FileWriter(datFile, true))) {

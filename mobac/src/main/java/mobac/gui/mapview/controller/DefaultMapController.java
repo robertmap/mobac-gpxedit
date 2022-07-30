@@ -58,8 +58,9 @@ public class DefaultMapController extends JMapController
 	}
 
 	public void mouseDragged(MouseEvent e) {
-		if (!movementEnabled || !isMoving)
+		if (!movementEnabled || !isMoving) {
 			return;
+		}
 		// Is only the selected mouse button pressed?
 		if ((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == movementMouseButtonMask) {
 			Point p = e.getPoint();
@@ -73,9 +74,11 @@ public class DefaultMapController extends JMapController
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (!map.isMeasuring)
-			if (doubleClickZoomEnabled && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1)
+		if (!map.isMeasuring) {
+			if (doubleClickZoomEnabled && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
 				map.zoomIn(e.getPoint());
+			}
+		}
 
 		// right click delete last inserted segment
 		if (e.getButton() == 3) {
@@ -107,8 +110,9 @@ public class DefaultMapController extends JMapController
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (wheelZoomEnabled)
+		if (wheelZoomEnabled) {
 			map.setZoom(map.getZoom() - e.getWheelRotation(), e.getPoint());
+		}
 	}
 
 	public boolean isMovementEnabled() {

@@ -31,11 +31,13 @@ public class MouseController extends MouseAdapter {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2)
+		if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() != 2) {
 			return;
+		}
 		TreePath selPath = atlasTree.getSelectionPath();
-		if (selPath == null)
+		if (selPath == null) {
 			return; // clicked on empty area
+		}
 		atlasTree.selectElementOnMap(selPath.getLastPathComponent());
 	}
 

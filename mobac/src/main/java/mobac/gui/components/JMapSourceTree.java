@@ -450,12 +450,14 @@ public class JMapSourceTree extends JTree {
 
 	@Override
 	public String getToolTipText(MouseEvent event) {
-		if (getRowForLocation(event.getX(), event.getY()) == -1)
+		if (getRowForLocation(event.getX(), event.getY()) == -1) {
 			return "";
+		}
 		TreePath curPath = getPathForLocation(event.getX(), event.getY());
 		Object lastPathComponent = curPath.getLastPathComponent();
-		if (lastPathComponent == null)
+		if (lastPathComponent == null) {
 			return null;
+		}
 
 		Object userObject = ((ComparableTreeNode) lastPathComponent).getUserObject();
 		if (userObject.getClass().equals(folderClass)) {

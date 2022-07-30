@@ -38,8 +38,9 @@ public class BookmarkAdd implements ActionListener {
 		Bookmark bm = previewMap.getPositionBookmark();
 		String name = JOptionPane.showInputDialog(I18nUtils.localizedStringForKey("dlg_add_bookmark_msg"),
 				bm.toString());
-		if (name == null)
+		if (name == null) {
 			return;
+		}
 		bm.setName(name);
 		Settings.getInstance().placeBookmarks.add(bm);
 		MainGUI.getMainGUI().updateBookmarksMenu();

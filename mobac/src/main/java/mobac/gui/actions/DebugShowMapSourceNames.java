@@ -108,17 +108,20 @@ public class DebugShowMapSourceNames implements ActionListener {
 					return ms.toString();
 				case 2 :
 					li = ms.getLoaderInfo();
-					if (li == null)
+					if (li == null) {
 						return null;
+					}
 					return li.getRevision();
 				case 3 :
 					li = ms.getLoaderInfo();
-					if (li == null)
+					if (li == null) {
 						return null;
+					}
 					String s = "";
 					File f = li.getSourceFile();
-					if (f != null)
+					if (f != null) {
 						s += f.getName() + " / ";
+					}
 					return s + li.getLoaderType();
 				default :
 					return null;

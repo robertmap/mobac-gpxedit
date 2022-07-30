@@ -66,15 +66,17 @@ public class Bookmark extends EastNorthCoordinate {
 	}
 
 	public void setName(String name) {
-		if (name != null && name.trim().length() == 0)
+		if (name != null && name.trim().length() == 0) {
 			name = null;
+		}
 		this.name = name;
 	}
 
 	@Override
 	public String toString() {
-		if (name != null)
+		if (name != null) {
 			return name;
+		}
 		return String.format("%s at lat=%.3f lon=%.3f (zoom = %d)", mapSource, lat, lon, zoom);
 	}
 

@@ -28,8 +28,9 @@ public class SelectedZoomLevels {
 
 	public SelectedZoomLevels(JZoomCheckBox[] zoomCheckboxes) {
 		for (JZoomCheckBox cb : zoomCheckboxes) {
-			if (cb.isSelected())
+			if (cb.isSelected()) {
 				setZoomLevelSelected(cb.getZoomLevel());
+			}
 		}
 	}
 

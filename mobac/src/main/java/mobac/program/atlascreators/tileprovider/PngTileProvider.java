@@ -41,13 +41,15 @@ public class PngTileProvider extends FilterTileProvider {
 	public byte[] getTileData(int x, int y) throws IOException {
 		if (!tileProvider.preferTileImageUsage()) {
 			byte[] data = super.getTileData(x, y);
-			if (ImageFormatDetector.getImageType(data) == TileImageType.PNG)
+			if (ImageFormatDetector.getImageType(data) == TileImageType.PNG) {
 				return data;
+			}
 		}
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
 		BufferedImage image = getTileImage(x, y);
-		if (image == null)
+		if (image == null) {
 			return null;
+		}
 		writer.processImage(image, buffer);
 		return buffer.toByteArray();
 	}

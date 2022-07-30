@@ -171,8 +171,9 @@ public class JobDispatcher {
 				} catch (InterruptedException e) {
 					return;
 				}
-				if (job == null)
+				if (job == null) {
 					return;
+				}
 				try {
 					job.run(JobDispatcher.this);
 					job = null;

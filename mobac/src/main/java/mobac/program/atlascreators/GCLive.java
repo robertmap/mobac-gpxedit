@@ -110,9 +110,10 @@ public class GCLive extends AtlasCreator {
 				tileCount += (xMax_t - xMin_t + 1) * (yMax_t - yMin_t + 1);
 			}
 			// Check for max tile count <= 65535
-			if (tileCount > MAX_TILES)
+			if (tileCount > MAX_TILES) {
 				throw new AtlasTestException(
 						"Tile count too high in layer " + layer.getName() + "\n - please select smaller/fewer areas");
+			}
 		}
 	}
 
@@ -161,8 +162,9 @@ public class GCLive extends AtlasCreator {
 				atlasProgress.incMapCreationProgress();
 				try {
 					byte[] sourceTileData = mapDlTileProvider.getTileData(x, y);
-					if (sourceTileData != null)
+					if (sourceTileData != null) {
 						mapTileWriter.writeTile(x, y, null, sourceTileData);
+					}
 					// else
 					// mapTileWriter.writeTile(x, y, null, emptyTileData);
 				} catch (IOException e) {
@@ -210,18 +212,24 @@ public class GCLive extends AtlasCreator {
 		}
 
 		public int compareTo(GCHeaderEntry o) {
-			if (zoom > o.zoom)
+			if (zoom > o.zoom) {
 				return -1;
-			if (zoom < o.zoom)
+			}
+			if (zoom < o.zoom) {
 				return 1;
-			if (tilex > o.tilex)
+			}
+			if (tilex > o.tilex) {
 				return 1;
-			if (tilex < o.tilex)
+			}
+			if (tilex < o.tilex) {
 				return -1;
-			if (tiley > o.tiley)
+			}
+			if (tiley > o.tiley) {
 				return 1;
-			if (tiley < o.tiley)
+			}
+			if (tiley < o.tiley) {
 				return -1;
+			}
 			return 0;
 		}
 
@@ -254,8 +262,9 @@ public class GCLive extends AtlasCreator {
 		}
 
 		private void prepareDataFile() throws IOException {
-			if (currentDataFile != null)
+			if (currentDataFile != null) {
 				Utilities.closeQuietly(currentDataFile);
+			}
 			currentDataFile = null;
 			File dataDir = new File(mapDir, Integer.toString(dataDirCounter));
 			Utilities.mkDir(dataDir);
@@ -270,8 +279,9 @@ public class GCLive extends AtlasCreator {
 				dataFileCounter++;
 				if (dataFileCounter % 32 == 0) {
 					dataDirCounter++;
-					if (dataDirCounter >= 32)
+					if (dataDirCounter >= 32) {
 						throw new RuntimeException("Maximum number of tiles exceeded");
+					}
 				}
 				prepareDataFile();
 			}

@@ -57,25 +57,29 @@ public abstract class AbstractTileServlet extends HttpServlet {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
 		}
-		if (errorResponse(request, response))
+		if (errorResponse(request, response)) {
 			return;
+		}
 		super.service(request, response);
 	}
 
 	public boolean errorResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		if (errorRate == 0)
+		if (errorRate == 0) {
 			return false;
+		}
 		if (errorOnUrl) {
 			String url = request.getRequestURL() + request.getQueryString();
 			byte[] digest = md5.digest(url.getBytes());
 			int hash = Math.abs(digest[4] % 100);
 			log.debug(url + " -> " + hash + ">" + errorRate + "?");
-			if (hash > errorRate)
+			if (hash > errorRate) {
 				return false;
+			}
 		} else {
 			int rnd = RND.nextInt(100);
-			if (rnd > errorRate)
+			if (rnd > errorRate) {
 				return false;
+			}
 		}
 		response.sendError(404);
 		log.debug("Error response sent");

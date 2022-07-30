@@ -41,8 +41,9 @@ public class ConvertedRawTileProvider extends FilterTileProvider {
 
 	public byte[] getTileData(int x, int y) throws IOException {
 		BufferedImage image = getTileImage(x, y);
-		if (image == null)
+		if (image == null) {
 			return null;
+		}
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream(32000);
 		writer.processImage(image, buffer);
 		return buffer.toByteArray();

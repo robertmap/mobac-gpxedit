@@ -86,16 +86,18 @@ public class GpxSave implements ActionListener {
 		JFileChooser fc = new JFileChooser();
 		try {
 			File dir = new File(Settings.getInstance().gpxFileChooserDir);
-			if (f == null)
+			if (f == null) {
 				fc.setCurrentDirectory(dir); // restore the saved directory
-			else
+			} else {
 				fc.setSelectedFile(f);
+			}
 		} catch (Exception e) {
 		}
 		fc.addChoosableFileFilter(new GpxFileFilter(true));
 		int returnVal = fc.showSaveDialog(MainGUI.getMainGUI());
-		if (returnVal != JFileChooser.APPROVE_OPTION)
+		if (returnVal != JFileChooser.APPROVE_OPTION) {
 			return null;
+		}
 		Settings.getInstance().gpxFileChooserDir = fc.getCurrentDirectory().getAbsolutePath();
 		return fc.getSelectedFile();
 	}

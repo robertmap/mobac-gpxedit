@@ -105,18 +105,21 @@ public class MemoryTileCache implements NotificationListener {
 		CacheEntry entry = createCacheEntry(tile);
 		hashtable.put(tile.getKey(), entry);
 		lruTiles.addFirst(entry);
-		if (hashtable.size() > cacheSize)
+		if (hashtable.size() > cacheSize) {
 			removeOldEntries();
+		}
 	}
 
 	public Tile getTile(MapSource source, int x, int y, int z) {
 		CacheEntry entry = hashtable.get(Tile.getTileKey(source, x, y, z));
-		if (entry == null)
+		if (entry == null) {
 			return null;
+		}
 		// We don't care about placeholder tiles and hourglass image tiles, the
 		// important tiles are the loaded ones
-		if (entry.tile.getTileState() == TileState.TS_LOADED)
+		if (entry.tile.getTileState() == TileState.TS_LOADED) {
 			lruTiles.moveElementToFirstPos(entry);
+		}
 		return entry.tile;
 	}
 
@@ -170,8 +173,9 @@ public class MemoryTileCache implements NotificationListener {
 	 */
 	public void setCacheSize(int cacheSize) {
 		this.cacheSize = cacheSize;
-		if (hashtable.size() > cacheSize)
+		if (hashtable.size() > cacheSize) {
 			removeOldEntries();
+		}
 	}
 
 	/**
@@ -258,18 +262,21 @@ public class MemoryTileCache implements NotificationListener {
 			if (element.prev != null) {
 				element.prev.next = element.next;
 			}
-			if (element == firstElement)
+			if (element == firstElement) {
 				firstElement = element.next;
-			if (element == lastElement)
+			}
+			if (element == lastElement) {
 				lastElement = element.prev;
+			}
 			element.next = null;
 			element.prev = null;
 			elementCount--;
 		}
 
 		public synchronized void moveElementToFirstPos(CacheEntry entry) {
-			if (firstElement == entry)
+			if (firstElement == entry) {
 				return;
+			}
 			removeEntry(entry);
 			addFirst(entry);
 		}

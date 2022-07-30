@@ -59,8 +59,9 @@ public class GpxMapController extends JMapController implements MouseListener {
 			p.y += tl.y;
 			MapSpace mapSpace = map.getMapSource().getMapSpace();
 			int maxPixel = mapSpace.getMaxPixels(map.getZoom());
-			if (p.x < 0 || p.x > maxPixel || p.y < 0 || p.y > maxPixel)
+			if (p.x < 0 || p.x > maxPixel || p.y < 0 || p.y > maxPixel) {
 				return; // outside of world region
+			}
 			double lon = mapSpace.cXToLon(p.x, map.getZoom());
 			double lat = mapSpace.cYToLat(p.y, map.getZoom());
 			String name = JOptionPane.showInputDialog(null, I18nUtils.localizedStringForKey("dlg_gpx_inpu_point_name"));

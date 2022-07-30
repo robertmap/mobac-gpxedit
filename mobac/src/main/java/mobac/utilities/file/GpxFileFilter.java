@@ -34,10 +34,11 @@ public class GpxFileFilter extends FileFilter {
 
 	@Override
 	public String getDescription() {
-		if (onlyGpx11)
+		if (onlyGpx11) {
 			return "GPX 1.1 files (*.gpx)";
-		else
+		} else {
 			return "GPX 1.0/1.1 files (*.gpx)";
+		}
 
 	}
 

@@ -87,8 +87,9 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 	}
 
 	public void paint(JMapViewer mapViewer, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-		if (object == null)
+		if (object == null) {
 			return;
+		}
 		if (object instanceof AtlasInterface) {
 			for (LayerInterface layer : (AtlasInterface) object) {
 				for (MapInterface map : layer) {
@@ -105,10 +106,11 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 	}
 
 	protected void paintMap(MapInterface map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-		if (map instanceof MapPolygon)
+		if (map instanceof MapPolygon) {
 			paintMapPolygon((MapPolygon) map, g, zoom, minX, minY, maxX, maxY);
-		else
+		} else {
 			paintMapRectangle(map, g, zoom, minX, minY, maxX, maxY);
+		}
 	}
 
 	protected void paintMapRectangle(MapInterface map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
@@ -144,8 +146,9 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 	}
 
 	protected void unregisterTreeListener() {
-		if (treeListener == null)
+		if (treeListener == null) {
 			return;
+		}
 		try {
 			tree.getModel().removeTreeModelListener(this);
 			tree.removeTreeSelectionListener(treeListener);

@@ -64,8 +64,9 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 		final MainGUI mg = MainGUI.getMainGUI();
 		GpxEntry entry = mg.gpxPanel.getSelectedEntry();
 
-		if (entry == null)
+		if (entry == null) {
 			return;
+		}
 
 		TrksegType trk = null;
 		TrkType t = null;
@@ -78,18 +79,21 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 				JOptionPane.showMessageDialog(mg,
 						I18nUtils.localizedStringForKey("msg_add_gpx_polygon_too_many_track"));
 				return;
-			} else if (tlist.size() == 1)
+			} else if (tlist.size() == 1) {
 				t = tlist.get(0);
+			}
 		}
-		if (entry instanceof TrkEntry)
+		if (entry instanceof TrkEntry) {
 			t = ((TrkEntry) entry).getTrk();
+		}
 		if (t != null) {
 			if (t.getTrkseg().size() > 1) {
 				JOptionPane.showMessageDialog(mg,
 						I18nUtils.localizedStringForKey("msg_add_gpx_polygon_too_many_segment"));
 				return;
-			} else if (t.getTrkseg().size() == 1)
+			} else if (t.getTrkseg().size() == 1) {
 				trk = t.getTrkseg().get(0);
+			}
 		}
 		if (trk == null) {
 			JOptionPane.showMessageDialog(mg, I18nUtils.localizedStringForKey("msg_add_gpx_polygon_no_select"),
@@ -184,8 +188,9 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 			msl.setObject(null);
 		}
 
-		if (result != JOptionPane.OK_OPTION)
+		if (result != JOptionPane.OK_OPTION) {
 			return;
+		}
 
 		int distance = slider.getValue();
 		MapPolygon maxZoomMap = MapPolygon.createTrackEnclosure(null, "Dummy", mapSource, maxZoom, trackPoints,
@@ -211,8 +216,9 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 			result = JOptionPane.showConfirmDialog(mg, msg,
 					I18nUtils.localizedStringForKey("msg_add_gpx_polygon_maxsize_title"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
-			if (result != JOptionPane.YES_OPTION)
+			if (result != JOptionPane.YES_OPTION) {
 				return;
+			}
 		}
 
 		for (int zoom : zoomLevels) {

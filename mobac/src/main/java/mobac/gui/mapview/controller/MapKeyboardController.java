@@ -221,9 +221,9 @@ public class MapKeyboardController extends JMapController {
 
 			if (newMoveTaskState != scheduled) {
 				scheduled = newMoveTaskState;
-				if (newMoveTaskState)
+				if (newMoveTaskState) {
 					timer.schedule(this, 0, timerInterval);
-				else {
+				} else {
 					// We have to create a new instance because rescheduling a
 					// once canceled TimerTask is not possible
 					moveTask = new MoveTask();
@@ -237,46 +237,55 @@ public class MapKeyboardController extends JMapController {
 			// update the x speed
 			switch (directionX) {
 				case -1 :
-					if (speedX > -1)
+					if (speedX > -1) {
 						speedX = -1;
-					if (speedX > -1 * MAX_SPEED)
+					}
+					if (speedX > -1 * MAX_SPEED) {
 						speedX -= ACCELERATION;
+					}
 					break;
 				case 0 :
 					speedX = 0;
 					break;
 				case 1 :
-					if (speedX < 1)
+					if (speedX < 1) {
 						speedX = 1;
-					if (speedX < MAX_SPEED)
+					}
+					if (speedX < MAX_SPEED) {
 						speedX += ACCELERATION;
+					}
 					break;
 			}
 
 			// update the y speed
 			switch (directionY) {
 				case -1 :
-					if (speedY > -1)
+					if (speedY > -1) {
 						speedY = -1;
-					if (speedY > -1 * MAX_SPEED)
+					}
+					if (speedY > -1 * MAX_SPEED) {
 						speedY -= ACCELERATION;
+					}
 					break;
 				case 0 :
 					speedY = 0;
 					break;
 				case 1 :
-					if (speedY < 1)
+					if (speedY < 1) {
 						speedY = 1;
-					if (speedY < MAX_SPEED)
+					}
+					if (speedY < MAX_SPEED) {
 						speedY += ACCELERATION;
+					}
 					break;
 			}
 
 			// move the map
 			int moveX = (int) Math.floor(speedX);
 			int moveY = (int) Math.floor(speedY);
-			if (moveX != 0 || moveY != 0)
+			if (moveX != 0 || moveY != 0) {
 				map.moveMap(moveX, moveY);
+			}
 		}
 	}
 

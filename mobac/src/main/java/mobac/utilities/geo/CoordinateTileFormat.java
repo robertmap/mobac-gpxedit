@@ -40,15 +40,17 @@ public class CoordinateTileFormat extends NumberFormat {
 	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
 		MainGUI gui = MainGUI.getMainGUI();
 		MapSource mapSource = gui.getSelectedMapSource();
-		if (mapSource == null)
+		if (mapSource == null) {
 			return toAppendTo;
+		}
 		MapSpace mapSpace = mapSource.getMapSpace();
 		int zoom = gui.previewMap.getZoom();
 		int tileNum = 0;
-		if (isLongitude)
+		if (isLongitude) {
 			tileNum = mapSpace.cLonToX(number, zoom);
-		else
+		} else {
 			tileNum = mapSpace.cLatToY(number, zoom);
+		}
 		toAppendTo.append(String.format("%d / z%d ", tileNum / mapSpace.getTileSize(), zoom));
 		return toAppendTo;
 	}
@@ -68,8 +70,9 @@ public class CoordinateTileFormat extends NumberFormat {
 			int tileNum = 0;
 			if (tokens.length == 2) {
 				String s = tokens[1].trim();
-				if (s.startsWith("z"))
+				if (s.startsWith("z")) {
 					s = s.substring(1);
+				}
 				zoom = Integer.parseInt(s);
 			} else {
 				zoom = gui.previewMap.getZoom();
@@ -86,8 +89,9 @@ public class CoordinateTileFormat extends NumberFormat {
 				}
 			}
 			parsePosition.setIndex(source.length());
-			if (isLongitude)
+			if (isLongitude) {
 				return mapSpace.cXToLon(tileNum, zoom);
+			}
 			return mapSpace.cYToLat(tileNum, zoom);
 		} catch (Exception e) {
 			parsePosition.setErrorIndex(0);
