@@ -26,15 +26,15 @@ import java.util.Locale;
 
 public class BigDecimalAdapter extends XmlAdapter<String, BigDecimal> {
 
-	NumberFormat df = new DecimalFormat("0.00000", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+	final NumberFormat df = new DecimalFormat("0.00000", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 	@Override
-	public BigDecimal unmarshal(String v) throws Exception {
+	public BigDecimal unmarshal(String v) {
 		return new BigDecimal(v);
 	}
 
 	@Override
-	public String marshal(BigDecimal v) throws Exception {
+	public String marshal(BigDecimal v) {
 		return df.format(v);
 	}
 }

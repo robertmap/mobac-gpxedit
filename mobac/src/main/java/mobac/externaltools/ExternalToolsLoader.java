@@ -89,7 +89,7 @@ public class ExternalToolsLoader {
 		}
 	}
 
-	public static final void main(String[] args) {
+	public static void main(String[] args) {
 		try {
 			ExternalToolDef t = new ExternalToolDef();
 			t.command = "command";

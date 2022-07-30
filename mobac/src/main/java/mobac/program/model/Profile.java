@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -91,21 +90,17 @@ public class Profile implements Comparable<Profile> {
 	 */
 	public static void updateProfiles() {
 		File profilesDir = DirectoryManager.atlasProfilesDir;
-		final Set<Profile> deletedProfiles = new HashSet<>();
-		deletedProfiles.addAll(profiles);
-		profilesDir.list(new FilenameFilter() {
-
-			public boolean accept(File dir, String fileName) {
-				Matcher m = PROFILE_FILENAME_PATTERN.matcher(fileName);
-				if (m.matches()) {
-					String profileName = m.group(1);
-					Profile profile = new Profile(new File(dir, fileName), profileName);
-					if (!deletedProfiles.remove(profile)) {
-						profiles.add(profile);
-					}
+		final Set<Profile> deletedProfiles = new HashSet<>(profiles);
+		profilesDir.list((dir, fileName) -> {
+			Matcher m = PROFILE_FILENAME_PATTERN.matcher(fileName);
+			if (m.matches()) {
+				String profileName = m.group(1);
+				Profile profile = new Profile(new File(dir, fileName), profileName);
+				if (!deletedProfiles.remove(profile)) {
+					profiles.add(profile);
 				}
-				return false;
 			}
+			return false;
 		});
 		for (Profile p : deletedProfiles) {
 			profiles.remove(p);

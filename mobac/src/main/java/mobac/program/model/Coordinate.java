@@ -30,8 +30,8 @@ public class Coordinate {
 		double degree = value / DEGREE;
 		double minute = (value = value % DEGREE) / MINUTE;
 		double second = (int) (value %= MINUTE) / SECOND;
-		double milisecond = (int) (value %= SECOND) / MILISECOND;
-		return degree + minute / 60d + second / 3600d + milisecond / 3600000d;
+		double millisecond = (int) (value %= SECOND) / MILISECOND;
+		return degree + minute / 60d + second / 3600d + millisecond / 3600000d;
 	}
 
 	public static final int MILISECOND = 1, SECOND = MILISECOND * 1000, MINUTE = SECOND * 60, DEGREE = MINUTE * 60;

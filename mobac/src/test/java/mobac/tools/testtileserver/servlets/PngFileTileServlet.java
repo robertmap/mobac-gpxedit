@@ -43,13 +43,11 @@ public class PngFileTileServlet extends AbstractTileServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		try {
-			String image = IMAGE_NAMES[imageNum];
-			InputStream in = this.getClass().getResourceAsStream("images/" + image);
+		String image = IMAGE_NAMES[imageNum];
+		try (InputStream in = this.getClass().getResourceAsStream("images/" + image)) {
 			fileContent = new byte[in.available()];
 			in.read(fileContent);
-			in.close();
-			log.info("Static png file " + image + " loaded successfully");
+			log.info("Static png file {} loaded successfully", image);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		}

@@ -82,7 +82,7 @@ public class Tools {
 
 	@MethodDescription("Encodes the <b>binaryData</b> byte array to a hexadecimal String "
 			+ "without line breaks, leading 0x and spaces")
-	public static String encodeHex(byte[] binaryData) throws DecoderException {
+	public static String encodeHex(byte[] binaryData) {
 		return Hex.encodeHexString(binaryData);
 	}
 

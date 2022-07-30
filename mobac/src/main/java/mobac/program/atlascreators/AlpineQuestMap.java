@@ -171,7 +171,7 @@ public class AlpineQuestMap extends AtlasCreator {
 		super.abortAtlasCreation();
 	}
 
-	private final void addMapHeader(final String strID, final String strName) throws IOException {
+	private void addMapHeader(final String strID, final String strName) throws IOException {
 		// version of the AQM format (internal use)
 		final String strVersion = AQM_VERSION;
 
@@ -200,7 +200,7 @@ public class AlpineQuestMap extends AtlasCreator {
 		packCreator.add(w.getBuffer().toString().getBytes(), AQM_HEADER);
 	}
 
-	private final void addLevelHeader(final MapInterface map, final Insets bounds) throws IOException {
+	private void addLevelHeader(final MapInterface map, final Insets bounds) throws IOException {
 		final int tileSize = map.getMapSource().getMapSpace().getTileSize();
 		final int xMin = bounds.left / tileSize;
 		final int xMax = bounds.right / tileSize;
@@ -245,8 +245,8 @@ public class AlpineQuestMap extends AtlasCreator {
 		final long nbTotalTiles = (256 * Math.round(Math.pow(2, map.getZoom()))) / tileSize;
 
 		// check resize or resample parameters
-		String strImageFormat = null;
-		Dimension tilesSize = null;
+		String strImageFormat;
+		Dimension tilesSize;
 
 		if (map.getParameters() != null) {
 			strImageFormat = map.getParameters().getFormat().getFileExt();
@@ -337,12 +337,12 @@ public class AlpineQuestMap extends AtlasCreator {
 		}
 	}
 
-	private final void addLevelDelimiter() throws IOException {
+	private void addLevelDelimiter() throws IOException {
 		// add empty level delimiter file
 		packCreator.add(new byte[0], AQM_LEVEL_DELIMITER);
 	}
 
-	private final void addLevelTiles() throws InterruptedException, MapCreationException {
+	private void addLevelTiles() throws InterruptedException, MapCreationException {
 		atlasProgress.initMapCreation((xMax - xMin + 1) * (yMax - yMin + 1));
 
 		// number of tiles for this zoom level
@@ -355,8 +355,17 @@ public class AlpineQuestMap extends AtlasCreator {
 		TileImageDataWriter writer;
 
 		if ((parameters != null) || (xResizeRatio != 1.0) || (yResizeRatio != 1.0)) {
+			int width;
+			int height;
+			if (parameters != null) {
+				width = parameters.getWidth();
+				height = parameters.getHeight();
+			} else {
+				width = 256;
+				height = 256;
+			}
 			// resize image
-			tileImage = new BufferedImage(parameters.getWidth(), parameters.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+			tileImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 
 			// associated graphics with affine transform
 			graphics = tileImage.createGraphics();
@@ -390,7 +399,7 @@ public class AlpineQuestMap extends AtlasCreator {
 
 						if (sourceTileData != null) {
 							// there is some data
-							if ((graphics != null) && (buffer != null) && (writer != null)) {
+							if (graphics != null && writer != null) {
 								// need to resize the tile
 								final BufferedImage tile = ImageIO.read(new ByteArrayInputStream(sourceTileData));
 								graphics.drawImage(tile, 0, 0, null);

@@ -182,7 +182,7 @@ public class SettingsGUI extends JDialog {
 		});
 	}
 
-	public static final TitledBorder createSectionBorder(String title) {
+	public static TitledBorder createSectionBorder(String title) {
 		TitledBorder tb = BorderFactory.createTitledBorder(title);
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		Border margin = new EmptyBorder(3, 3, 3, 3);
@@ -733,7 +733,7 @@ public class SettingsGUI extends JDialog {
 		s.localeCountry = locale.getCountry();
 
 		s.setAtlasOutputDirectory(atlasOutputDirectory.getText());
-		int threads = ((Integer) threadCount.getSelectedItem()).intValue();
+		int threads = (Integer) threadCount.getSelectedItem();
 		s.downloadThreadCount = threads;
 
 		s.setBandwidthLimit(((Bandwidth) bandwidth.getSelectedItem()).limit);

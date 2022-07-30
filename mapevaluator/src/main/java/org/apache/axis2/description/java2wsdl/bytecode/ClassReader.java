@@ -203,7 +203,7 @@ public class ClassReader extends ByteArrayInputStream {
 	protected void skipFully(int n) throws IOException {
 		while (n > 0) {
 			int c = (int) skip(n);
-			if (c <= 0) {
+			if (c == 0) {
 				throw new EOFException("Error looking for paramter names in bytecode: unexpected end of file");
 			}
 			n -= c;
@@ -317,8 +317,7 @@ public class ClassReader extends ByteArrayInputStream {
 		for (int i = 1; i < count; i++) {
 			int c = read();
 			cpoolIndex[i] = super.pos;
-			switch (c) // constant pool tag
-			{
+			switch (c) { // constant pool tag
 				case CONSTANT_Fieldref :
 				case CONSTANT_Methodref :
 				case CONSTANT_InterfaceMethodref :

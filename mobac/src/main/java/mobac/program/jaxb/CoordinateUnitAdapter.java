@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class CoordinateUnitAdapter extends XmlAdapter<String, CoordinateUnit> {
 
 	@Override
-	public CoordinateUnit unmarshal(String v) throws Exception {
+	public CoordinateUnit unmarshal(String v) {
 		try {
 			return CoordinateUnit.valueOf(v.trim().toUpperCase());
 		} catch (IllegalArgumentException e) {
@@ -36,7 +36,7 @@ public class CoordinateUnitAdapter extends XmlAdapter<String, CoordinateUnit> {
 	}
 
 	@Override
-	public String marshal(CoordinateUnit v) throws Exception {
+	public String marshal(CoordinateUnit v) {
 		return v.name();
 	}
 

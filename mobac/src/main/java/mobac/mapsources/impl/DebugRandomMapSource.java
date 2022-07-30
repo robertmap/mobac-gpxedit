@@ -101,8 +101,7 @@ public class DebugRandomMapSource implements MapSource {
 		}
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-			throws IOException, UnrecoverableDownloadException, InterruptedException {
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) {
 		if (image != null) {
 			return image;
 		}

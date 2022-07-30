@@ -145,7 +145,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 		}
 		TreePath curPath = getPathForLocation(event.getX(), event.getY());
 		Object o = curPath.getLastPathComponent();
-		if (o == null || !(o instanceof ToolTipProvider)) {
+		if (!(o instanceof ToolTipProvider)) {
 			return null;
 		}
 		return ((ToolTipProvider) o).getToolTip();

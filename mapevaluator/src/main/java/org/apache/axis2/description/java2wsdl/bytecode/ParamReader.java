@@ -113,7 +113,7 @@ public class ParamReader extends ClassReader {
 		int maxLocals = readShort(); // max locals
 
 		MethodInfo info = new MethodInfo(maxLocals);
-		if (methods != null && methodName != null) {
+		if (methodName != null) {
 			methods.put(methodName, info);
 		}
 
@@ -196,7 +196,7 @@ public class ParamReader extends ClassReader {
 
 	private MethodInfo getMethodInfo() {
 		MethodInfo info = null;
-		if (methods != null && methodName != null) {
+		if (methodName != null) {
 			info = methods.get(methodName);
 		}
 		return info;

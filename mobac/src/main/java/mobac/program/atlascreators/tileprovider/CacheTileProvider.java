@@ -85,11 +85,11 @@ public class CacheTileProvider implements TileProvider {
 		}
 	}
 
-	public byte[] getTileData(int layer, int x, int y) throws IOException {
+	public byte[] getTileData(int layer, int x, int y) {
 		throw new RuntimeException("Not implemented");
 	}
 
-	public byte[] getTileData(int x, int y) throws IOException {
+	public byte[] getTileData(int x, int y) {
 		throw new RuntimeException("Not implemented");
 	}
 

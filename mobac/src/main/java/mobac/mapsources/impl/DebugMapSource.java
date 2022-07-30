@@ -78,8 +78,7 @@ public class DebugMapSource implements MapSource {
 		return buf.toByteArray();
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-			throws IOException, UnrecoverableDownloadException, InterruptedException {
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) {
 		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_INDEXED, COLORMODEL);
 		Graphics2D g2 = image.createGraphics();
 		try {

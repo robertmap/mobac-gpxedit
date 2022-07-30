@@ -86,7 +86,7 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 		log.error("Map preview job rejected: " + r);
 	}
 
-	public class MapPreviewThread extends DelayedInterruptThread implements MapSourceCallerThreadInfo {
+	public static class MapPreviewThread extends DelayedInterruptThread implements MapSourceCallerThreadInfo {
 
 		public MapPreviewThread(Runnable target, String name) {
 			super(target, name);

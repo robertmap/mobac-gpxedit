@@ -24,16 +24,15 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.ParsePosition;
 
 public class CoordinateDm2Format extends NumberFormat {
 
-	protected static Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
+	private static final Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
 
-	NumberFormat degFmt;
-	NumberFormat minFmt;
-	NumberFormat minFmtParser;
+	private final NumberFormat degFmt;
+	private final NumberFormat minFmt;
+	private final NumberFormat minFmtParser;
 
 	public CoordinateDm2Format(DecimalFormatSymbols dfs) {
 		degFmt = new DecimalFormat("00°", dfs);
@@ -65,7 +64,7 @@ public class CoordinateDm2Format extends NumberFormat {
 	}
 
 	@Override
-	public Number parse(String source) throws ParseException {
+	public Number parse(String source) {
 		return parse(source, new ParsePosition(0));
 	}
 

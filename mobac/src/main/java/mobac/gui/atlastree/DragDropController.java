@@ -49,7 +49,7 @@ import java.awt.dnd.DropTargetListener;
 
 public class DragDropController {
 
-	static Logger log = LoggerFactory.getLogger(DragDropController.class);
+	private static final Logger log = LoggerFactory.getLogger(DragDropController.class);
 	JAtlasTree atlasTree;
 
 	public DragDropController(JAtlasTree atlasTree) {
@@ -71,7 +71,7 @@ public class DragDropController {
 
 		public void dragGestureRecognized(DragGestureEvent dge) {
 			TreePath path = atlasTree.getSelectionPath();
-			if ((path == null) || (path.getPathCount() <= 1)) {
+			if ((path == null) || (path.getPathCount() == 1)) {
 				// We can't move the root node or an empty selection
 				return;
 			}

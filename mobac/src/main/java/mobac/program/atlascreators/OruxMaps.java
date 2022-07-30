@@ -272,7 +272,7 @@ public class OruxMaps extends AtlasCreator {
 		return mapWriter.toString();
 	}
 
-	protected class OruxMapTileBuilder extends MapTileBuilder {
+	protected static class OruxMapTileBuilder extends MapTileBuilder {
 
 		public OruxMapTileBuilder(AtlasCreator atlasCreator, MapTileWriter mapTileWriter) {
 			super(atlasCreator, mapTileWriter, false);

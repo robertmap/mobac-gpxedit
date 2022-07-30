@@ -29,7 +29,7 @@ public class JIntCombo extends JComboBox<Integer> {
 
 	private static final long serialVersionUID = 1L;
 
-	static Logger log = LoggerFactory.getLogger(JIntCombo.class);
+	private static final Logger log = LoggerFactory.getLogger(JIntCombo.class);
 
 	protected JIntField editorComponent;
 	protected Integer defaultValue;

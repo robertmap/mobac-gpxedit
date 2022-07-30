@@ -313,7 +313,6 @@ public class AtlasThread extends Thread
 
 		ap.setZoomLevel(zoom);
 		try {
-			tileArchive = null;
 			TileProvider mapTileProvider;
 			if (!(map.getMapSource() instanceof FileBasedMapSource)) {
 				// For online maps we download the tiles first and then start creating the map

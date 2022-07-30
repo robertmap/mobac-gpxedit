@@ -211,7 +211,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 			return buf.toByteArray();
 		} catch (Exception e) {
 			throw new RuntimeException(
-					String.format("Failed to render tile %d/%d/z%d - {}", x, y, zoom, e.getMessage()), e);
+					String.format("Failed to render tile {}/{}/z{} - {}", x, y, zoom, e.getMessage()), e);
 		}
 	}
 

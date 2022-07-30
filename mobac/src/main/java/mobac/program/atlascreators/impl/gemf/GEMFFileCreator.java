@@ -167,9 +167,7 @@ public class GEMFFileCreator {
 				for (final Integer x : new TreeSet<>(dirIndex.get(source).get(zoom).keySet())) {
 
 					final List<Integer> ySet = new ArrayList<>();
-					for (final Integer y : dirIndex.get(source).get(zoom).get(x).keySet()) {
-						ySet.add(y);
-					}
+					ySet.addAll(dirIndex.get(source).get(zoom).get(x).keySet());
 
 					if (ySet.size() == 0) {
 						continue;
@@ -379,7 +377,7 @@ public class GEMFFileCreator {
 	}
 
 	// Class to represent a range of stored tiles within the archive.
-	private class GEMFRange {
+	private static class GEMFRange {
 		Integer zoom;
 		Integer xMin;
 		Integer xMax;

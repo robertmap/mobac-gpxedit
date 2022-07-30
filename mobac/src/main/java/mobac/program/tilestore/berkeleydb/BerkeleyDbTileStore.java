@@ -334,9 +334,8 @@ public class BerkeleyDbTileStore extends TileStore {
 	 * @param mapSourceName
 	 *            the store to calculate number of tiles in
 	 * @return the amount of tiles in the specified store.
-	 * @throws InterruptedException
 	 */
-	public int getNrOfTiles(String mapSourceName) throws InterruptedException {
+	public int getNrOfTiles(String mapSourceName) {
 		try {
 			File storeDir = getStoreDir(mapSourceName);
 			if (!storeDir.isDirectory()) {
@@ -568,7 +567,7 @@ public class BerkeleyDbTileStore extends TileStore {
 					10, ff, 0, 120 // alpha-green
 			};
 			IndexColorModel colorModel = new IndexColorModel(2, 2, colors, 0, true);
-			BufferedImage image = null;
+			BufferedImage image;
 			try {
 				image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
 			} catch (Throwable e) {

@@ -135,7 +135,7 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 	}
 
 	protected void createAtlas(AtlasInterface atlas, AtlasCreator atlasCreator, File customAtlasDir)
-			throws AtlasTestException, InterruptedException, IOException {
+			throws AtlasTestException, InterruptedException {
 		log.debug("Creating atlas {} using {} to \"{}\"", atlas.getName(), atlasCreator.getClass().getSimpleName(),
 				customAtlasDir);
 		AtlasThread atlasThread = new AtlasThread(atlas, atlasCreator);

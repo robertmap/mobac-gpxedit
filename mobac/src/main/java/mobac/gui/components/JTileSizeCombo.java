@@ -31,7 +31,7 @@ public class JTileSizeCombo extends JIntCombo {
 
 	static Integer DEFAULT;
 
-	static Logger log = LoggerFactory.getLogger(JTileSizeCombo.class);
+	private static final Logger log = LoggerFactory.getLogger(JTileSizeCombo.class);
 
 	static {
 		DEFAULT = 256;

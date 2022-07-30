@@ -21,7 +21,6 @@ import Acme.Serve.Serve;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +29,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
-import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Properties;
 
@@ -61,8 +59,7 @@ public class SimpleServer {
 	public static class DummyDataServlet extends HttpServlet {
 
 		@Override
-		protected void doGet(HttpServletRequest request, HttpServletResponse response)
-				throws ServletException, IOException {
+		protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 			BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_BYTE_INDEXED, COLORMODEL);
 			Graphics2D g2 = image.createGraphics();
 			try {

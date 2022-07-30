@@ -209,7 +209,11 @@ public class Utilities {
 	}
 
 	public static InputStream loadResourceAsStream(String resourcePath) throws IOException {
-		return Main.class.getResourceAsStream("resources/" + resourcePath);
+		InputStream in = Main.class.getResourceAsStream("resources/" + resourcePath);
+		if (in == null) {
+			throw new IOException("Resource does not exist: " + resourcePath);
+		}
+		return in;
 	}
 
 	public static String loadTextResource(String resourcePath) throws IOException {

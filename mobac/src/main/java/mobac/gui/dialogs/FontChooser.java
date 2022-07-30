@@ -93,9 +93,6 @@ public class FontChooser {
 	public static String encodeFont(Font font) {
 		String style;
 		switch (font.getStyle()) {
-			case Font.PLAIN :
-				style = "PLAIN";
-				break;
 			case Font.BOLD :
 				style = "BOLD";
 				break;

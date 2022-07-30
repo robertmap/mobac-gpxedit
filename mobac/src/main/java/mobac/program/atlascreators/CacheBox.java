@@ -47,12 +47,12 @@ public class CacheBox extends AtlasCreator {
 	private int nextMapOffsetIndex = 0;
 	private MapInfo activeMapInfo;
 
-	public final static int swapInt(int v) {
+	public static int swapInt(int v) {
 		return (v >>> 24) | (v << 24) | ((v << 8) & 0x00FF0000) | ((v >> 8) & 0x0000FF00);
 	}
 
-	public final static long swapLong(long v) {
-		long b1 = (v >> 0) & 0xff;
+	public static long swapLong(long v) {
+		long b1 = (v) & 0xff;
 		long b2 = (v >> 8) & 0xff;
 		long b3 = (v >> 16) & 0xff;
 		long b4 = (v >> 24) & 0xff;
@@ -61,7 +61,7 @@ public class CacheBox extends AtlasCreator {
 		long b7 = (v >> 48) & 0xff;
 		long b8 = (v >> 56) & 0xff;
 
-		return b1 << 56 | b2 << 48 | b3 << 40 | b4 << 32 | b5 << 24 | b6 << 16 | b7 << 8 | b8 << 0;
+		return b1 << 56 | b2 << 48 | b3 << 40 | b4 << 32 | b5 << 24 | b6 << 16 | b7 << 8 | b8;
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class CacheBox extends AtlasCreator {
 	}
 
 	@Override
-	public void finishAtlasCreation() throws IOException {
+	public void finishAtlasCreation() {
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class CacheBox extends AtlasCreator {
 		packRaFile.writeLong(swapLong(v));
 	}
 
-	private class MapInfo {
+	private static class MapInfo {
 
 		final MapInterface map;
 		final long indexTableOffset;

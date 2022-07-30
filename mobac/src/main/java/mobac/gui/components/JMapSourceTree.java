@@ -533,7 +533,7 @@ public class JMapSourceTree extends JTree {
 	 * with other nodes. This is used when putting a node into a tree in an
 	 * alphabetic order and placing folder nodes above other types of nodes.
 	 */
-	class ComparableTreeNode extends DefaultMutableTreeNode implements Comparable<DefaultMutableTreeNode> {
+	static class ComparableTreeNode extends DefaultMutableTreeNode implements Comparable<DefaultMutableTreeNode> {
 		private static final long serialVersionUID = 1L;
 
 		public ComparableTreeNode(MapSource mapSource) {

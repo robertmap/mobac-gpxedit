@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class OSUtilities {
 
 	public static final boolean IS_PLATFORM_OSX = isPlatformOsx();
-	static Logger log = LoggerFactory.getLogger(OSUtilities.class);
+	private static final Logger log = LoggerFactory.getLogger(OSUtilities.class);
 
 	private static boolean isPlatformOsx() {
 		String os = System.getProperty("os.name");
@@ -102,11 +102,7 @@ public class OSUtilities {
 			if (releaseFileList.size() > 1) {
 				Optional<Path> optional = releaseFileList.stream()
 						.filter(f -> f.getFileName().toString().contains("lsb")).findFirst();
-				if (optional.isPresent()) {
-					releaseFile = optional.get();
-				} else {
-					releaseFile = releaseFileList.get(0);
-				}
+				releaseFile = optional.orElseGet(() -> releaseFileList.get(0));
 			} else {
 				releaseFile = releaseFileList.get(0);
 			}

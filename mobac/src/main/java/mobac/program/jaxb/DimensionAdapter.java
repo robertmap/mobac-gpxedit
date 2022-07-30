@@ -28,7 +28,7 @@ import java.awt.Dimension;
 public class DimensionAdapter extends XmlAdapter<String, Dimension> {
 
 	@Override
-	public String marshal(Dimension dimension) throws Exception {
+	public String marshal(Dimension dimension) {
 		return dimension.width + "/" + dimension.height;
 	}
 

@@ -70,7 +70,7 @@ public class LogPreviewMap extends PreviewMap {
 	}
 
 	public static class LogEntry {
-		long time = System.currentTimeMillis();
+		final long time = System.currentTimeMillis();
 		String msg;
 	}
 

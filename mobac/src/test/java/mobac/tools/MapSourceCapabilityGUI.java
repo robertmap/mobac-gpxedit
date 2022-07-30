@@ -94,14 +94,14 @@ public class MapSourceCapabilityGUI extends JFrame {
 
 	}
 
-	private class Renderer extends DefaultTableCellRenderer {
+	private static class Renderer extends DefaultTableCellRenderer {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
 			this.setHorizontalAlignment(JLabel.CENTER);
 			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if ((value != null) && (value instanceof Boolean) && ((Boolean) value)) {
+			if ((value instanceof Boolean) && ((Boolean) value)) {
 				c.setBackground(Color.GREEN);
 			} else {
 				c.setBackground(Color.WHITE);

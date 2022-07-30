@@ -27,12 +27,12 @@ import java.awt.Font;
 public class FontAdapter extends XmlAdapter<String, Font> {
 
 	@Override
-	public Font unmarshal(String value) throws Exception {
+	public Font unmarshal(String value) {
 		return Font.decode(value);
 	}
 
 	@Override
-	public String marshal(Font font) throws Exception {
+	public String marshal(Font font) {
 		return FontChooser.encodeFont(font);
 	}
 }

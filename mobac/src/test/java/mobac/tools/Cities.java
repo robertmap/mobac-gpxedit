@@ -47,7 +47,7 @@ public class Cities {
 	private static final HashMap<Class<? extends MapSource>, EastNorthCoordinate> TEST_COORDINATES;
 
 	static {
-		TEST_COORDINATES = new HashMap<Class<? extends MapSource>, EastNorthCoordinate>();
+		TEST_COORDINATES = new HashMap<>();
 		// TEST_COORDINATES.put(GoogleMapMaker.class, Cities.BANGALORE);
 		// TEST_COORDINATES.put(Cykloatlas.class, Cities.PRAHA);
 		// TEST_COORDINATES.put(CykloatlasRelief.class, Cities.PRAHA);

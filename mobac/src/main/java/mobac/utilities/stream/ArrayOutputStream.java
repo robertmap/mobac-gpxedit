@@ -25,7 +25,7 @@ import java.io.OutputStream;
  */
 public class ArrayOutputStream extends OutputStream {
 
-	protected byte[] buf;
+	protected final byte[] buf;
 
 	protected int pos = 0;
 

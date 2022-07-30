@@ -447,18 +447,18 @@ public class TwoNavRMAP extends AtlasCreator {
 			if ((ch1 | ch2 | ch3 | ch4) < 0) {
 				throw new IOException();
 			}
-			return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
+			return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1));
 		}
 
 		private void writeIntI(int i) throws IOException {
-			write((i >>> 0) & 0xFF);
+			write((i) & 0xFF);
 			write((i >>> 8) & 0xFF);
 			write((i >>> 16) & 0xFF);
 			write((i >>> 24) & 0xFF);
 		}
 
 		private void writeLongI(long l) throws IOException {
-			write((int) (l >>> 0) & 0xFF);
+			write((int) (l) & 0xFF);
 			write((int) (l >>> 8) & 0xFF);
 			write((int) (l >>> 16) & 0xFF);
 			write((int) (l >>> 24) & 0xFF);

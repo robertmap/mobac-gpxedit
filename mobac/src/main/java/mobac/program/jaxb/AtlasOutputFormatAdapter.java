@@ -22,12 +22,12 @@ import mobac.program.model.AtlasOutputFormat;
 public class AtlasOutputFormatAdapter extends XmlAdapter<String, AtlasOutputFormat> {
 
 	@Override
-	public String marshal(AtlasOutputFormat v) throws Exception {
+	public String marshal(AtlasOutputFormat v) {
 		return v.getTypeName();
 	}
 
 	@Override
-	public AtlasOutputFormat unmarshal(String v) throws Exception {
+	public AtlasOutputFormat unmarshal(String v) {
 		return AtlasOutputFormat.getFormatByName(v);
 	}
 

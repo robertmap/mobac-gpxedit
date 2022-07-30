@@ -34,7 +34,7 @@ import java.net.SocketTimeoutException;
 
 public class DownloadJob implements Job {
 
-	static Logger log = LoggerFactory.getLogger(DownloadJob.class);
+	private static final Logger log = LoggerFactory.getLogger(DownloadJob.class);
 	final MapSource mapSource;
 	final int xValue;
 	final int yValue;

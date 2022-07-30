@@ -32,7 +32,7 @@ public class BooleanAdapter extends XmlAdapter<String, Boolean> {
 	}
 
 	@Override
-	public String marshal(Boolean v) throws Exception {
+	public String marshal(Boolean v) {
 		return Boolean.toString(v);
 	}
 

@@ -225,8 +225,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 		maxZoom = max;
 	}
 
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-			throws IOException, TileException, InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException {
 		if (!initialized.get()) {
 			initialize();
 		}

@@ -209,8 +209,7 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 
 	}
 
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-			throws IOException, TileException, InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) {
 		if (!initialized.get()) {
 			initialize();
 		}

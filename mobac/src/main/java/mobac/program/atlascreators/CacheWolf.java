@@ -71,8 +71,6 @@ public class CacheWolf extends Ozi {
 			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
-		} catch (IOException e) {
-			throw new MapCreationException(map, e);
 		} finally {
 			ctp.cleanup();
 		}
@@ -131,7 +129,7 @@ public class CacheWolf extends Ozi {
 
 	public class CWFileTileWriter implements MapTileWriter {
 
-		public CWFileTileWriter() throws IOException {
+		public CWFileTileWriter() {
 			super();
 			log.debug("Writing tiles to set folder: " + layerDir);
 		}

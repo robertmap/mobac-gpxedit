@@ -103,11 +103,10 @@ public class CustomLocalAqmMapSource implements InitializableMapSource, MapSourc
 	}
 
 	@Override
-	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod)
-			throws IOException, TileException, InterruptedException {
+	public byte[] getTileData(int zoom, int x, int y, LoadMethod loadMethod) throws IOException {
 
 		long longNbTotalTiles = Math.round(Math.pow(2, zoom));
-		Integer intNbTotalTiles = Math.toIntExact(longNbTotalTiles);
+		int intNbTotalTiles = Math.toIntExact(longNbTotalTiles);
 		int inverted_y = intNbTotalTiles - y;
 
 		return map.getByteTile(zoom, x, inverted_y);

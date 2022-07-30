@@ -28,7 +28,7 @@ public class PaperSizeAdapter extends XmlAdapter<String, PaperSize> {
 	private static final String LANDSCAPE = "_LANDSCAPE", SELECTION = "SELECTION", X = "x";
 
 	@Override
-	public PaperSize unmarshal(String value) throws Exception {
+	public PaperSize unmarshal(String value) {
 		if (value.equals(SELECTION)) {
 			return null;
 		}
@@ -48,7 +48,7 @@ public class PaperSizeAdapter extends XmlAdapter<String, PaperSize> {
 	}
 
 	@Override
-	public String marshal(PaperSize v) throws Exception {
+	public String marshal(PaperSize v) {
 		if (v == null) {
 			return SELECTION;
 		}

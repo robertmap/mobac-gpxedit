@@ -23,7 +23,6 @@ import mobac.program.tilestore.TileStoreInfo;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class DummyTileStore extends TileStore {
 
@@ -64,13 +63,12 @@ public class DummyTileStore extends TileStore {
 	}
 
 	@Override
-	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax)
-			throws InterruptedException {
+	public BufferedImage getCacheCoverage(MapSource mapSource, int zoom, Point tileNumMin, Point tileNumMax) {
 		return null;
 	}
 
 	@Override
-	public TileStoreInfo getStoreInfo(String mapSourceName) throws InterruptedException {
+	public TileStoreInfo getStoreInfo(String mapSourceName) {
 		return null;
 	}
 
@@ -88,12 +86,12 @@ public class DummyTileStore extends TileStore {
 	}
 
 	@Override
-	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) throws IOException {
+	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource) {
 	}
 
 	@Override
 	public void putTileData(byte[] tileData, int x, int y, int zoom, MapSource mapSource, long timeLastModified,
-			long timeExpires, String eTag) throws IOException {
+			long timeExpires, String eTag) {
 	}
 
 	@Override

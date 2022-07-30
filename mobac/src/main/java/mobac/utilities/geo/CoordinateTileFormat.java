@@ -28,7 +28,7 @@ import java.text.ParsePosition;
 
 public class CoordinateTileFormat extends NumberFormat {
 
-	protected static Logger log = LoggerFactory.getLogger(CoordinateTileFormat.class);
+	private static final Logger log = LoggerFactory.getLogger(CoordinateTileFormat.class);
 
 	private final boolean isLongitude;
 

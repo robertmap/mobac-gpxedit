@@ -29,7 +29,7 @@ public class JMapSizeCombo extends JIntCombo {
 	static final Vector<Integer> MAP_SIZE_VALUES;
 	static final Integer DEFAULT;
 	private static final long serialVersionUID = 1L;
-	static Logger log = LoggerFactory.getLogger(JMapSizeCombo.class);
+	private static final Logger log = LoggerFactory.getLogger(JMapSizeCombo.class);
 
 	static {
 		// Sizes from 1024 to 32768

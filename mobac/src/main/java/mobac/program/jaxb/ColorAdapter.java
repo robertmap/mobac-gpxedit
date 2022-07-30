@@ -43,7 +43,7 @@ public class ColorAdapter extends XmlAdapter<String, Color> {
 	}
 
 	@Override
-	public String marshal(Color color) throws Exception {
+	public String marshal(Color color) {
 		if (color.getAlpha() == 255) {
 			return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 		} else {

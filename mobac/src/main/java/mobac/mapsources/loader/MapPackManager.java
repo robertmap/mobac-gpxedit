@@ -409,7 +409,7 @@ public class MapPackManager {
 				log.error("Failed to generate md5sum of " + mapPackFile, e);
 			}
 		}
-		return outdatedMappacks.toArray(new String[outdatedMappacks.size()]);
+		return outdatedMappacks.toArray(String[]::new);
 	}
 
 	/**

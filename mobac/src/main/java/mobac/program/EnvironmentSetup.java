@@ -44,7 +44,7 @@ import java.util.Locale;
  */
 public class EnvironmentSetup {
 
-	public static Logger log = LoggerFactory.getLogger(EnvironmentSetup.class);
+	private static final Logger log = LoggerFactory.getLogger(EnvironmentSetup.class);
 	private static boolean FIRST_START = false;
 
 	public static void checkMemory() {

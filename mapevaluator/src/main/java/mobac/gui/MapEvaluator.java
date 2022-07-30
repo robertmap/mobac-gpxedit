@@ -57,7 +57,7 @@ public class MapEvaluator extends JFrame {
 	private final LineNumberedPaper mapSourceEditor;
 	private final CustomMapSourceLoader xmlLoader;
 	private final MapSource defaultOsmMapSource;
-	protected Logger log;
+	protected final Logger log;
 	private File chooserDir;
 
 	private File loadedFile;

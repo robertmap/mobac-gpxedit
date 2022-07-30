@@ -238,7 +238,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		}
 	}
 
-	private class TileFormatComboModel extends AbstractListModel<TileImageFormat>
+	private static class TileFormatComboModel extends AbstractListModel<TileImageFormat>
 			implements
 				ComboBoxModel<TileImageFormat> {
 

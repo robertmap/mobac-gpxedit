@@ -173,8 +173,7 @@ public class CustomLocalImageFileMapSource
 		return value > 0 ? (int) Math.ceil(value) : (int) Math.floor(value);
 	}
 
-	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod)
-			throws IOException, TileException, InterruptedException {
+	public BufferedImage getTileImage(int zoom, int x, int y, LoadMethod loadMethod) throws IOException {
 		if (!initialized) {
 			initialize();
 		}

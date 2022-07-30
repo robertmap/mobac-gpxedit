@@ -133,7 +133,7 @@ public class CustomMapSourceLoader {
 	}
 
 	public MapSource loadCustomMapSource(File mapSourceFile)
-			throws MapSourceCreateException, JAXBException, IOException, SAXException {
+			throws MapSourceCreateException, JAXBException, IOException {
 
 		List<String> elementFilter = new LinkedList<>();
 		try {
@@ -165,8 +165,7 @@ public class CustomMapSourceLoader {
 		}
 	}
 
-	public MapSource loadCustomMapSource(InputStream in)
-			throws MapSourceCreateException, SAXException, IOException, JAXBException {
+	public MapSource loadCustomMapSource(InputStream in) throws MapSourceCreateException, JAXBException {
 		return internalLoadMapSource(in, null, null);
 	}
 

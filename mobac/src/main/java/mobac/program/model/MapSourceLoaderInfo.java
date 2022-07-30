@@ -99,7 +99,7 @@ public class MapSourceLoaderInfo {
 		if (pathList.isEmpty()) {
 			return null;
 		}
-		return pathList.toArray(new String[pathList.size()]);
+		return pathList.toArray(String[]::new);
 	}
 
 	public enum LoaderType {

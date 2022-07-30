@@ -28,7 +28,7 @@ import java.util.Vector;
 public class PolygonAdapter extends XmlAdapter<PolygonType, Polygon> {
 
 	@Override
-	public PolygonType marshal(Polygon polygon) throws Exception {
+	public PolygonType marshal(Polygon polygon) {
 		Vector<Point> points = new Vector<>(polygon.npoints);
 		for (int i = 0; i < polygon.npoints; i++) {
 			Point p = new Point(polygon.xpoints[i], polygon.ypoints[i]);
@@ -38,7 +38,7 @@ public class PolygonAdapter extends XmlAdapter<PolygonType, Polygon> {
 	}
 
 	@Override
-	public Polygon unmarshal(PolygonType value) throws Exception {
+	public Polygon unmarshal(PolygonType value) {
 		int nPoints = value.points.size();
 		int[] xPoints = new int[nPoints];
 		int[] yPoints = new int[nPoints];

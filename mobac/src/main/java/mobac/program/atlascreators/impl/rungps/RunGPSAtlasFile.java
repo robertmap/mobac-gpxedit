@@ -154,13 +154,11 @@ public class RunGPSAtlasFile {
 	public void addData(List<Integer> hierarchy, byte[] data, int length) throws IOException {
 		cacheOutStream.write(data, 0, length);
 
-		List<Integer> posHierarchy = new ArrayList<Integer>();
-		posHierarchy.addAll(hierarchy);
+		List<Integer> posHierarchy = new ArrayList<>(hierarchy);
 		posHierarchy.add(1); // position
 		setValue(posHierarchy, positionInCacheFile);
 
-		List<Integer> lenHierarchy = new ArrayList<Integer>();
-		lenHierarchy.addAll(hierarchy);
+		List<Integer> lenHierarchy = new ArrayList<>(hierarchy);
 		lenHierarchy.add(2); // size
 		setValue(lenHierarchy, length);
 
@@ -173,15 +171,13 @@ public class RunGPSAtlasFile {
 	}
 
 	public byte[] getData(List<Integer> keyHierarchy) throws IOException {
-		ArrayList<Integer> posHierarchy = new ArrayList<Integer>();
-		posHierarchy.addAll(keyHierarchy);
+		ArrayList<Integer> posHierarchy = new ArrayList<>(keyHierarchy);
 		posHierarchy.add(1); // position
 		long indexPosition = getValue(posHierarchy);
 		if (indexPosition == -1) {
 			return null;
 		}
-		ArrayList<Integer> sizeHierarchy = new ArrayList<Integer>();
-		sizeHierarchy.addAll(keyHierarchy);
+		ArrayList<Integer> sizeHierarchy = new ArrayList<>(keyHierarchy);
 		sizeHierarchy.add(2); // size
 		int size = (int) getValue(sizeHierarchy);
 		if (size == -1) {

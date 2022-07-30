@@ -27,8 +27,8 @@ import javax.swing.event.TreeModelListener;
 
 public class AtlasModelListener implements TreeModelListener {
 
-	JAtlasTree atlasTree;
-	JProfilesPanel profilesPanel;
+	final JAtlasTree atlasTree;
+	final JProfilesPanel profilesPanel;
 
 	public AtlasModelListener(JAtlasTree atlasTree, JProfilesPanel profilesPanel) {
 		super();

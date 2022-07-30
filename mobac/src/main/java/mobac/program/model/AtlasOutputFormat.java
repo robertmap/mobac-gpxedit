@@ -81,7 +81,7 @@ import java.util.Vector;
 public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 
 	public static final AtlasOutputFormat TILESTORE = createByClass(TileStoreDownload.class);
-	public static List<AtlasOutputFormat> FORMATS;
+	public static final List<AtlasOutputFormat> FORMATS;
 
 	static {
 		FORMATS = new ArrayList<AtlasOutputFormat>(40);
