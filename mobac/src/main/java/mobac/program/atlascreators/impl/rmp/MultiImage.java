@@ -51,8 +51,7 @@ public class MultiImage {
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height) throws MapCreationException {
-		if (log.isTraceEnabled())
-			log.trace(String.format("getSubImage %d %d %s", width, height, area));
+		log.trace("getSubImage {} {} {}", width, height, area);
 
 		MapSpace mapSpace = mapSource.getMapSpace();
 		int tilesize = mapSpace.getTileSize();
@@ -89,8 +88,8 @@ public class MultiImage {
 	}
 
 	protected static class TileKey {
-		int x;
-		int y;
+		final int x;
+		final int y;
 
 		public TileKey(int x, int y) {
 			this.x = x;

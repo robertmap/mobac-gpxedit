@@ -186,8 +186,7 @@ public class TrekBuddy extends AtlasCreator {
 					if (sourceTileData != null) {
 						mapTileWriter.writeTile(tilex, tiley, tileType, sourceTileData);
 					} else {
-						log.trace(String.format("Tile x=%d y=%d not found in tile archive - creating default", tilex,
-								tiley));
+						log.trace("Tile x={} y={} not found in tile archive - creating default", tilex, tiley);
 						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
 					}
 				} catch (IOException e) {

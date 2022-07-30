@@ -193,7 +193,7 @@ public abstract class PaperAtlas extends AtlasCreator {
 			atlasProgress.initMapCreation(ROWS * COLS * 2);
 			for (int row = 0; row < ROWS; row++) {
 				for (int col = 0; col < COLS; col++) {
-					log.trace(String.format("cal=%d row=%d", col, row));
+					log.trace("cal={} row={}", col, row);
 
 					// Choose image
 					Dimension size;

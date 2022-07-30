@@ -87,10 +87,11 @@ public class Maplorer extends AtlasCreator {
 
 			// Select the tile creator instance based on whether tile image
 			// parameters has been set or not
-			if (parameters != null)
+			if (parameters != null) {
 				createCustomTiles();
-			else
+			} else {
 				createTiles();
+			}
 
 			mapTileWriter.finalizeMap();
 		} catch (MapCreationException e) {
@@ -129,8 +130,7 @@ public class Maplorer extends AtlasCreator {
 					if (sourceTileData != null) {
 						mapTileWriter.writeTile(tilex, tiley, tileType, sourceTileData);
 					} else {
-						log.trace(String.format("Tile x=%d y=%d not found in tile archive - creating default", tilex,
-								tiley));
+						log.trace("Tile x={} y={} not found in tile archive - creating default", tilex, tiley);
 						mapTileWriter.writeTile(tilex, tiley, tileType, emptyTileData);
 					}
 				} catch (IOException e) {
@@ -146,17 +146,20 @@ public class Maplorer extends AtlasCreator {
 
 		File setFolder;
 
-		int tileHeight = 256;
-		int tileWidth = 256;
+		final int tileHeight;
+		final int tileWidth;
 
 		public FileTileWriter() throws IOException {
 			super();
 			setFolder = mapFolder; // don't need an extra sub folder for MAPLORER maps
-			log.debug("Writing tiles to set folder: " + setFolder);
+			log.debug("Writing tiles to set folder: {}", setFolder);
 
 			if (parameters != null) {
 				tileHeight = parameters.getHeight();
 				tileWidth = parameters.getWidth();
+			} else {
+				tileHeight = 256;
+				tileWidth = 256;
 			}
 		}
 

@@ -363,8 +363,8 @@ public class TwoNavRMAP extends AtlasCreator {
 		}
 
 		private byte[] getTileData(TileImageDataWriter writer, ZoomLevel source, int x, int y) throws IOException {
-			log.trace(String.format("Shrinking jpegs (%d,%d,%d - %d,%d,%d)", source.index, x, y, source.index,
-					(x + 1 < source.xTiles) ? x + 1 : x, (y + 1 < source.yTiles) ? y + 1 : y));
+			log.trace("Shrinking jpegs ({},{},{} - {},{},{})", source.index, x, y, source.index,
+					(x + 1 < source.xTiles) ? x + 1 : x, (y + 1 < source.yTiles) ? y + 1 : y);
 			BufferedImage bi11 = loadJpegAtOffset(source.jpegOffsets[x][y]);
 			BufferedImage bi21 = (x + 1 < source.xTiles) ? loadJpegAtOffset(source.jpegOffsets[x + 1][y]) : null;
 			BufferedImage bi12 = (y + 1 < source.yTiles) ? loadJpegAtOffset(source.jpegOffsets[x][y + 1]) : null;
@@ -406,23 +406,21 @@ public class TwoNavRMAP extends AtlasCreator {
 						jpegOffsets[x][y] = rmapFile.getFilePointer();
 						byte[] tileData = getTileData(writer, source, 2 * x, 2 * y);
 						rmapFile.seek(jpegOffsets[x][y]);
-						log.trace(String.format("Writing shrunken jpeg (%d,%d,%d) at offset %d", index, x, y,
-								jpegOffsets[x][y]));
+						log.trace("Writing shrunken jpeg ({},{},{}) at offset {}", index, x, y, jpegOffsets[x][y]);
 						rmapFile.writeIntI(7);
 						rmapFile.writeIntI(tileData.length);
 						rmapFile.write(tileData);
-						tileData = null;
 					}
 				}
 			} catch (Exception e) {
-				log.error("Failed generating ZoomLevel " + index + ": " + e.getMessage());
+				log.error("Failed generating ZoomLevel {}: {}", index, e.getMessage());
 			}
 		}
 	}
 
 	private class RmapFile extends RandomAccessFile {
 
-		private String name = "";
+		private final String name;
 		private int width = 0;
 		private int height = 0;
 		private int tileWidth = 0;
@@ -498,7 +496,7 @@ public class TwoNavRMAP extends AtlasCreator {
 			} else {
 				seek(mapDataOffset);
 			}
-			log.trace("Writing MAP data at offset %d" + mapDataOffset);
+			log.trace("Writing MAP data at offset {}", mapDataOffset);
 			StringBuffer sbMap = new StringBuffer();
 			sbMap.append("CompeGPS MAP File\r\n");
 			sbMap.append("<Header>\r\n");
