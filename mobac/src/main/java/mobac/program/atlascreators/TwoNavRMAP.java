@@ -137,14 +137,14 @@ public class TwoNavRMAP extends AtlasCreator {
 			}
 		}
 
-		log.trace("rmap width  = " + rmapFile.width);
-		log.trace("rmap height = " + rmapFile.height);
+		log.trace("rmap width  = {}", rmapFile.width);
+		log.trace("rmap height = {}", rmapFile.height);
 
 		rmapFile.tileWidth = layer.getMap(DefaultMap).getTileSize().width;
 		rmapFile.tileHeight = layer.getMap(DefaultMap).getTileSize().height;
 
-		log.trace("rmap tileWidth  = " + rmapFile.tileWidth);
-		log.trace("rmap tileHeight = " + rmapFile.tileHeight);
+		log.trace("rmap tileWidth  = {}", rmapFile.tileWidth);
+		log.trace("rmap tileHeight = {}", rmapFile.tileHeight);
 
 		MapSpace mapSpace = layer.getMap(DefaultMap).getMapSource().getMapSpace();
 		rmapFile.longitudeMin = mapSpace.cXToLon(layer.getMap(DefaultMap).getMinTileCoordinate().x,

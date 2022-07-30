@@ -67,7 +67,7 @@ public abstract class AbstractSQLite extends AtlasCreator implements RequiresSQL
 			throws IOException, AtlasTestException, InterruptedException {
 		super.startAtlasCreation(atlas, customAtlasDir);
 		databaseFile = new File(atlasDir, getDatabaseFileName());
-		log.debug("SQLite Database file: " + databaseFile);
+		log.debug("SQLite Database file: {}", databaseFile);
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public abstract class AbstractSQLite extends AtlasCreator implements RequiresSQL
 
 							batchTileCount++;
 							if ((heapAvailable < HEAP_MIN) || (batchTileCount >= MAX_BATCH_SIZE)) {
-								log.trace("Executing batch containing " + batchTileCount + " tiles");
+								log.trace("Executing batch containing {} tiles", batchTileCount);
 								prepStmt.executeBatch();
 								prepStmt.clearBatch();
 								System.gc();
@@ -129,9 +129,10 @@ public abstract class AbstractSQLite extends AtlasCreator implements RequiresSQL
 			prepStmt.close();
 			prepStmt = null;
 			System.gc();
-			if (tilesWritten > 0)
+			if (tilesWritten > 0) {
 				updateTileMetaInfo();
-			log.trace("Final commit containing " + batchTileCount + " tiles");
+			}
+			log.trace("Final commit containing {} tiles", batchTileCount);
 			conn.commit();
 			atlasProgress.setMapCreationProgress(maxMapProgress);
 		} catch (SQLException e) {

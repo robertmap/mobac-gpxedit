@@ -41,10 +41,11 @@ public class TrekBuddyTared extends TrekBuddy {
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
 				String mapFileName = layer.getName() + "/" + map.getName() + "/" + map.getName() + ".map";
-				if (mapFileName.length() > 100)
+				if (mapFileName.length() > 100) {
 					throw new AtlasTestException("Layer and map name too long for Trekbuddy Tar format!\n" + mapFileName
 							+ "\n\nCurrent length: " + mapFileName.length()
 							+ " characters\nMaximum length: 100 characters", map);
+				}
 			}
 		}
 	}
@@ -55,12 +56,13 @@ public class TrekBuddyTared extends TrekBuddy {
 	}
 
 	private void createAtlasTarArchive(String name) {
-		log.trace("Creating cr.tar for atlas in dir \"" + atlasDir.getPath() + "\"");
+		log.trace("Creating cr.tar for atlas in dir \"{}\"", atlasDir.getPath());
 
 		File[] atlasLayerDirs = Utilities.listSubDirectories(atlasDir);
-		List<File> atlasMapDirs = new LinkedList<File>();
-		for (File dir : atlasLayerDirs)
+		List<File> atlasMapDirs = new LinkedList<>();
+		for (File dir : atlasLayerDirs) {
 			Utilities.addSubDirectories(atlasMapDirs, dir, 0);
+		}
 
 		File crFile = new File(atlasDir, name + ".tar");
 		try (TarArchive ta = new TarArchive(crFile, atlasDir)) {

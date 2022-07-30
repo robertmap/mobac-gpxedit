@@ -94,7 +94,7 @@ public class MapSourceCapabilityDetector {
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
 		byte[] digest = md5.digest(content);
 		String hexDigest = getHexString(digest);
-		// log.debug("content MD5 : " + hexDigest);
+		// log.debug("content MD5 : {}", hexDigest);
 		if (hexDigest.equals(eTag))
 			log.debug("eTag content          : md5 hex string");
 		String quotedHexDigest = "\"" + hexDigest + "\"";
@@ -118,8 +118,9 @@ public class MapSourceCapabilityDetector {
 		for (Map.Entry<String, List<String>> entry : c.getHeaderFields().entrySet()) {
 			String key = entry.getKey();
 			for (String elem : entry.getValue()) {
-				if (key != null)
+				if (key != null) {
 					log.debug(key + " = ");
+				}
 				log.debug(elem);
 			}
 		}
@@ -207,7 +208,7 @@ public class MapSourceCapabilityDetector {
 
 	public void testMapSource() {
 		try {
-			log.debug("Testing " + mapSource.toString());
+			log.debug("Testing {}", mapSource);
 
 			MapSpace mapSpace = mapSource.getMapSpace();
 			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
@@ -215,16 +216,17 @@ public class MapSourceCapabilityDetector {
 
 			c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
 			url = c.getURL();
-			log.trace("Sample url: " + c.getURL());
+			log.trace("Sample url: {}", c.getURL());
 			log.trace("Connecting...");
 			c.setReadTimeout(10000);
 			Settings settings = Settings.getInstance();
 			c.addRequestProperty("User-agent", settings.getUserAgent());
 			c.setRequestProperty("Accept", settings.getHttpAccept());
 			c.connect();
-			log.debug("Connection established - response HTTP " + c.getResponseCode());
-			if (c.getResponseCode() != 200)
+			log.debug("Connection established - response HTTP {}", c.getResponseCode());
+			if (c.getResponseCode() != 200) {
 				return;
+			}
 
 			// printHeaders();
 

@@ -80,7 +80,7 @@ public class MemoryTileCache implements NotificationListener {
 	 * minimum of 25 cached tiles.
 	 */
 	public void handleNotification(Notification notification, Object handback) {
-		log.trace("Memory notification: " + notification.toString());
+		log.trace("Memory notification: {}", notification);
 		if (!MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED.equals(notification.getType())) {
 			return;
 		}
@@ -90,7 +90,7 @@ public class MemoryTileCache implements NotificationListener {
 			if (lruTiles.getElementCount() <= count_half) {
 				return;
 			}
-			log.warn("memory low - freeing cached tiles: " + lruTiles.getElementCount() + " -> " + count_half);
+			log.warn("memory low - freeing cached tiles: {} -> {}", lruTiles.getElementCount(), count_half);
 			try {
 				while (lruTiles.getElementCount() > count_half) {
 					removeEntry(lruTiles.getLastElement());

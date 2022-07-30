@@ -90,7 +90,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 		super.initLayerCreation(layer);
 		databaseFile = new File(oruxMapsMainDir, DATABASE_FILENAME);
-		log.debug("SQLite Database file: " + databaseFile);
+		log.debug("SQLite Database file: {}", databaseFile);
 		otrk2MapsContent = new StringBuilder();
 		try {
 			conn = getConnection();

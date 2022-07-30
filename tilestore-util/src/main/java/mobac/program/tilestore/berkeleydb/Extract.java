@@ -37,7 +37,7 @@ public class Extract implements Runnable {
 			try {
 				TileDbEntry entry = cursor.next();
 				while (entry != null) {
-					Main.log.trace("Extracting " + entry.shortInfo());
+					Main.log.trace("Extracting {}", entry.shortInfo());
 					String pattern = "{$z}/{$x}/{$y}.{$ext}";
 					String fileName = MapSourceTools.formatMapUrl(pattern, entry.getZoom(), entry.getX(), entry.getY());
 					byte[] data = entry.getData();

@@ -49,7 +49,7 @@ public class DownloadJobProducerThread extends Thread {
 			while (jobEnumerator.hasMoreElements()) {
 				Job job = jobEnumerator.nextElement();
 				downloadJobDispatcher.addJob(job);
-				log.trace("Job added: " + job);
+				log.trace("Job added: {}", job);
 			}
 			log.debug("All download jobs has been generated");
 		} catch (InterruptedException e) {

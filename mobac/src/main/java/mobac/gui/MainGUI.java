@@ -221,7 +221,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 		GUIExceptionHandler.registerForCurrentThread();
 		setTitle(ProgramInfo.getCompleteTitle());
 
-		log.trace("Creating main dialog - " + getTitle());
+		log.trace("Creating main dialog - {}", getTitle());
 		setResizable(true);
 		Dimension dScreen = Toolkit.getDefaultToolkit().getScreenSize();
 		setMinimumSize(new Dimension(Math.min(800, dScreen.width), Math.min(590, dScreen.height)));

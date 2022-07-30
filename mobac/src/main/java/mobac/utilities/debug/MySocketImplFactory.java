@@ -138,160 +138,172 @@ public class MySocketImplFactory implements SocketImplFactory {
 				InvocationTargetException {
 			si = (SocketImpl) constructor.newInstance();
 			socketId = si.hashCode();
-			log.trace("[" + socketId + "] new SocketImpl created");
+			log.trace("[{}] new SocketImpl created", socketId);
 		}
 
 		@Override
 		protected void accept(SocketImpl s) throws IOException {
-			log.trace("[" + socketId + "] accept(...)");
+			log.trace("[{}] accept(...)", socketId);
 			try {
 				accept.invoke(si, s);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected int available() throws IOException {
-			// log.trace("[" + socketId + "] available()");
+			// log.trace("[{}] available()", socketId);
 			try {
 				return ((Integer) bind.invoke(si)).intValue();
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void bind(InetAddress host, int port) throws IOException {
-			log.trace("[" + socketId + "] bind()");
+			log.trace("[{}] bind()", socketId);
 			try {
 				bind.invoke(si, host, port);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void close() throws IOException {
-			log.trace("[" + socketId + "] close()");
+			log.trace("[{}] close()", socketId);
 			try {
 				close.invoke(si);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void connect(InetAddress address, int port) throws IOException {
-			log.trace("[" + socketId + "] connect1(..)");
+			log.trace("[{}] connect1(..)", socketId);
 			try {
 				connect1.invoke(si, address, port);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void connect(SocketAddress address, int timeout) throws IOException {
-			log.trace("[" + socketId + "] connect2(..)");
+			log.trace("[{}] connect2(..)", socketId);
 			try {
 				connect2.invoke(si, address, timeout);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void connect(String host, int port) throws IOException {
-			log.trace("[" + socketId + "] connect3(..)");
+			log.trace("[{}] connect3(..)", socketId);
 			try {
 				connect3.invoke(si, host, port);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void create(boolean stream) throws IOException {
-			log.trace("[" + socketId + "] create(..)");
+			log.trace("[{}] create(..)", socketId);
 			try {
 				create.invoke(si, stream);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected InputStream getInputStream() throws IOException {
-			// log.trace("[" + socketId + "] getInputStream()");
+			// log.trace("[{}] getInputStream(..)", socketId);
 			try {
 				return (InputStream) getInputStream.invoke(si);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		public Object getOption(int optID) throws SocketException {
-			// log.trace("[" + socketId + "] getOption(..)");
+			// log.trace("[{}] getOption(..)", socketId);
 			return si.getOption(optID);
 		}
 
 		@Override
 		protected OutputStream getOutputStream() throws IOException {
-			// log.trace("[" + socketId + "] getOutputStream()");
+			// log.trace("[{}] getOutputStream(..)", socketId);
 			try {
 				return (OutputStream) getOutputStream.invoke(si);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void listen(int backlog) throws IOException {
-			log.trace("[" + socketId + "] listen(..)");
+			log.trace("[{}] listen(..)", socketId);
 			try {
 				listen.invoke(si, backlog);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		@Override
 		protected void sendUrgentData(int data) throws IOException {
-			// log.trace("[" + socketId + "] sendUrgentData");
+			// log.trace("[{}] sendUrgentData(..)", socketId);
 			try {
 				sendUrgentData.invoke(si, data);
 			} catch (Exception e) {
-				if (e instanceof IOException)
+				if (e instanceof IOException) {
 					throw (IOException) e;
+				}
 				throw new RuntimeException(e);
 			}
 		}
 
 		public void setOption(int optID, Object value) throws SocketException {
-			// log.trace("[" + socketId + "] setOption");
+			// log.trace("[{}] setOption(..)", socketId);
 			si.setOption(optID, value);
 		}
 

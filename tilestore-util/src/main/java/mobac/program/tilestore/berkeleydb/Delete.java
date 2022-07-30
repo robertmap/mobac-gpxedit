@@ -86,13 +86,13 @@ public class Delete implements Runnable {
 							continue cursorLoop;
 						}
 					}
-					Main.log.trace("Deleting " + entry);
+					Main.log.trace("Deleting {}", entry);
 					cursor.delete();
 				}
 			} finally {
 				cursor.close();
 			}
-			Main.log.info("Tile store entry count: " + db.entryCount() + " (after deleting)");
+			Main.log.info("Tile store entry count: {} (after deleting)", db.entryCount());
 		} catch (Exception e) {
 			Main.log.error("Deleting of tiles failed", e);
 		}

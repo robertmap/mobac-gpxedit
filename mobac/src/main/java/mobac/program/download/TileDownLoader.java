@@ -85,9 +85,9 @@ public class TileDownLoader {
 			boolean expired = isTileExpired(tile);
 			if (tile != null) {
 				if (expired) {
-					log.trace("Expired: " + mapSource.getName() + " " + tile);
+					log.trace("Expired: {} {}", mapSource.getName(), tile);
 				} else {
-					log.trace("Tile of map source " + mapSource.getName() + " used from tilestore");
+					log.trace("Tile of map source {} used from tilestore", mapSource.getName());
 					byte[] data = tile.getData();
 					notifyCachedTileUsed(data.length);
 					return data;
@@ -159,7 +159,7 @@ public class TileDownLoader {
 					"Tile x=" + x + " y=" + y + " zoom=" + zoom + " is not a valid tile in map source " + mapSource);
 		}
 
-		log.trace("Downloading " + conn.getURL());
+		log.trace("Downloading {}", conn.getURL());
 
 		mapSource.prepareConnection(conn);
 		conn.connect();
@@ -201,8 +201,7 @@ public class TileDownLoader {
 			case ETag : {
 				boolean unchanged = hasTileETag(tile, mapSource);
 				if (unchanged) {
-					if (log.isTraceEnabled())
-						log.trace("Data unchanged on server (eTag): " + mapSource + " " + tile);
+					log.trace("Data unchanged on server (eTag): {} {}", mapSource, tile);
 					return null;
 				}
 				break;
@@ -210,8 +209,7 @@ public class TileDownLoader {
 			case LastModified : {
 				boolean isNewer = isTileNewer(tile, mapSource);
 				if (!isNewer) {
-					if (log.isTraceEnabled())
-						log.trace("Data unchanged on server (LastModified): " + mapSource + " " + tile);
+					log.trace("Data unchanged on server (LastModified): {} {}", mapSource, tile);
 					return null;
 				}
 				break;
@@ -219,12 +217,11 @@ public class TileDownLoader {
 			default :
 		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(zoom, x, y);
-		if (conn == null)
+		if (conn == null) {
 			throw new UnrecoverableDownloadException(
 					"Tile x=" + x + " y=" + y + " zoom=" + zoom + " is not a valid tile in map source " + mapSource);
-
-		if (log.isTraceEnabled())
-			log.trace(String.format("Checking %s %s", mapSource.getName(), tile));
+		}
+		log.trace("Checking {} {}", mapSource.getName(), tile);
 
 		mapSource.prepareConnection(conn);
 
@@ -408,10 +405,12 @@ public class TileDownLoader {
 	protected static void checkContentLength(HttpURLConnection conn, byte[] data)
 			throws UnrecoverableDownloadException {
 		int len = conn.getContentLength();
-		if (len < 0)
+		if (len < 0) {
 			return;
-		if (data.length != len)
+		}
+		if (data.length != len) {
 			throw new UnrecoverableDownloadException("Content length is not as declared by the server: retrived="
 					+ data.length + " bytes  expected-content-length=" + len + " bytes");
+		}
 	}
 }

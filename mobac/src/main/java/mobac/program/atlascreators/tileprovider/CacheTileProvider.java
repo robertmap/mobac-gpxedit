@@ -24,6 +24,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -32,220 +34,225 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class CacheTileProvider implements TileProvider {
 
-	/**
-	 * Counter for identifying the different threads
-	 */
-	private static int PRELOADER_THREAD_NUM = 1;
-	protected final TileProvider tileProvider;
-	private final Logger log = LoggerFactory.getLogger(CacheTileProvider.class);
-	private final Hashtable<CacheKey, SRCachedTile> cache;
-	private PreLoadThread preLoader = new PreLoadThread();
+    /**
+     * Counter for identifying the different threads
+     */
+    private static int PRELOADER_THREAD_NUM = 1;
+    protected final TileProvider tileProvider;
+    private final Logger log = LoggerFactory.getLogger(CacheTileProvider.class);
+    private final Map<CacheKey, SRCachedTile> cache = new ConcurrentHashMap<>(500);
+    private PreLoadThread preLoader = new PreLoadThread();
 
-	public CacheTileProvider(TileProvider tileProvider) {
-		this.tileProvider = tileProvider;
-		cache = new Hashtable<CacheKey, SRCachedTile>(500);
-		preLoader.start();
-	}
+    public CacheTileProvider(TileProvider tileProvider) {
+        this.tileProvider = tileProvider;
+        preLoader.start();
+    }
 
-	public boolean preferTileImageUsage() {
-		return true;
-	}
+    public boolean preferTileImageUsage() {
+        return true;
+    }
 
-	public BufferedImage getTileImage(int x, int y) throws IOException {
-		SRCachedTile cachedTile = cache.get(new CacheKey(x, y));
-		BufferedImage image = null;
-		if (cachedTile != null) {
-			CachedTile tile = cachedTile.get();
-			if (tile != null) {
-				if (tile.loaded)
-					log.trace(String.format("Cache hit: x=%d y=%d", x, y));
-				image = tile.getImage();
-				if (!tile.nextLoadJobCreated) {
-					// log.debug(String.format("Preload job added : x=%d y=%d l=%d",
-					// x + 1, y, layer));
-					preloadTile(new CachedTile(new CacheKey(x + 1, y)));
-					tile.nextLoadJobCreated = true;
-				}
-			}
-		}
-		if (image == null) {
-			log.trace(String.format("Cache miss: x=%d y=%d", x, y));
-			// log.debug(String.format("Preload job added : x=%d y=%d l=%d", x +
-			// 1, y, layer));
-			preloadTile(new CachedTile(new CacheKey(x + 1, y)));
-			image = internalGetTileImage(x, y);
-		}
-		return image;
-	}
+    public BufferedImage getTileImage(int x, int y) throws IOException {
+        SRCachedTile cachedTile = cache.get(new CacheKey(x, y));
+        BufferedImage image = null;
+        if (cachedTile != null) {
+            CachedTile tile = cachedTile.get();
+            if (tile != null) {
+                if (tile.loaded) {
+                    log.trace("Cache hit: x={} y={}", x, y);
+                }
+                image = tile.getImage();
+                if (!tile.nextLoadJobCreated) {
+                    // log.debug(String.format("Preload job added : x=%d y=%d l=%d",
+                    // x + 1, y, layer));
+                    preloadTile(new CachedTile(new CacheKey(x + 1, y)));
+                    tile.nextLoadJobCreated = true;
+                }
+            }
+        }
+        if (image == null) {
+            log.trace("Cache miss: x={}} y={}}", x, y);
+            // log.debug(String.format("Preload job added : x=%d y=%d l=%d", x +
+            // 1, y, layer));
+            preloadTile(new CachedTile(new CacheKey(x + 1, y)));
+            image = internalGetTileImage(x, y);
+        }
+        return image;
+    }
 
-	protected BufferedImage internalGetTileImage(int x, int y) throws IOException {
-		synchronized (tileProvider) {
-			return tileProvider.getTileImage(x, y);
-		}
-	}
+    protected BufferedImage internalGetTileImage(int x, int y) throws IOException {
+        synchronized (tileProvider) {
+            return tileProvider.getTileImage(x, y);
+        }
+    }
 
-	public byte[] getTileData(int layer, int x, int y) throws IOException {
-		throw new RuntimeException("Not implemented");
-	}
+    public byte[] getTileData(int layer, int x, int y) throws IOException {
+        throw new RuntimeException("Not implemented");
+    }
 
-	public byte[] getTileData(int x, int y) throws IOException {
-		throw new RuntimeException("Not implemented");
-	}
+    public byte[] getTileData(int x, int y) throws IOException {
+        throw new RuntimeException("Not implemented");
+    }
 
-	public MapSource getMapSource() {
-		return tileProvider.getMapSource();
-	}
+    public MapSource getMapSource() {
+        return tileProvider.getMapSource();
+    }
 
-	private void preloadTile(CachedTile tile) {
-		if (preLoader.queue.remainingCapacity() < 1) {
-			// Preloader thread is too slow
-			log.trace("Preloading rejected: " + tile.key);
-			return;
-		}
-		if (cache.get(tile.key) != null)
-			return;
-		try {
-			preLoader.queue.add(tile);
-			cache.put(tile.key, new SRCachedTile(tile));
-		} catch (IllegalStateException e) {
-			// Queue is "full"
-			log.trace("Preloading rejected: " + tile.key);
-		}
-	}
+    private void preloadTile(CachedTile tile) {
+        if (preLoader.queue.remainingCapacity() < 1) {
+            // Preloader thread is too slow
+            log.trace("Preloading rejected: {}", tile.key);
+            return;
+        }
+        if (cache.get(tile.key) != null) {
+            return;
+        }
+        try {
+            preLoader.queue.add(tile);
+            cache.put(tile.key, new SRCachedTile(tile));
+        } catch (IllegalStateException e) {
+            // Queue is "full"
+            log.trace("Preloading rejected: {}", tile.key);
+        }
+    }
 
-	public void cleanup() {
-		try {
-			cache.clear();
-			if (preLoader != null) {
-				preLoader.interrupt();
-				preLoader = null;
-			}
-		} catch (Throwable t) {
-			log.error("", t);
-		}
-	}
+    public void cleanup() {
+        try {
+            cache.clear();
+            if (preLoader != null) {
+                preLoader.interrupt();
+                preLoader = null;
+            }
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("deprecation")
-	protected void finalize() throws Throwable {
-		cleanup();
-		super.finalize();
-	}
+    @Override
+    @SuppressWarnings("deprecation")
+    protected void finalize() throws Throwable {
+        cleanup();
+        super.finalize();
+    }
 
-	private static class SRCachedTile extends SoftReference<CachedTile> {
+    private static class SRCachedTile extends SoftReference<CachedTile> {
 
-		public SRCachedTile(CachedTile referent) {
-			super(referent);
-		}
+        public SRCachedTile(CachedTile referent) {
+            super(referent);
+        }
 
-	}
+    }
 
-	private static class CacheKey {
-		int x;
-		int y;
+    private static class CacheKey {
+        int x;
+        int y;
 
-		public CacheKey(int x, int y) {
-			super();
-			this.x = x;
-			this.y = y;
-		}
+        public CacheKey(int x, int y) {
+            super();
+            this.x = x;
+            this.y = y;
+        }
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + x;
-			result = prime * result + y;
-			return result;
-		}
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + x;
+            result = prime * result + y;
+            return result;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			CacheKey other = (CacheKey) obj;
-			if (x != other.x)
-				return false;
-			return y == other.y;
-		}
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            CacheKey other = (CacheKey) obj;
+            if (x != other.x)
+                return false;
+            return y == other.y;
+        }
 
-		@Override
-		public String toString() {
-			return "CacheKey [x=" + x + ", y=" + y + "]";
-		}
+        @Override
+        public String toString() {
+            return "CacheKey [x=" + x + ", y=" + y + "]";
+        }
 
-	}
+    }
 
-	private class PreLoadThread extends Thread {
+    private class PreLoadThread extends Thread {
 
-		private LinkedBlockingQueue<CachedTile> queue = null;
+        /**
+         * pre-loading more than 20 tiles doesn't make much sense
+         */
+        private final LinkedBlockingQueue<CachedTile> queue = new LinkedBlockingQueue<>(20);
 
-		public PreLoadThread() {
-			super("ImagePreLoadThread" + (PRELOADER_THREAD_NUM++));
-			log.debug("Image pre-loader thread started");
-			// pre-loading more than 20 tiles doesn't make much sense
-			queue = new LinkedBlockingQueue<CachedTile>(20);
-		}
+        public PreLoadThread() {
+            super("ImagePreLoadThread" + (PRELOADER_THREAD_NUM++));
+            setDaemon(true);
+        }
 
-		@Override
-		public void run() {
-			CachedTile tile;
-			try {
-				while (true) {
-					tile = queue.take();
-					if (tile != null && !tile.loaded) {
-						// log.trace("Loading image async: " + tile);
-						tile.loadImage();
-					}
-				}
-			} catch (InterruptedException e) {
-				log.debug("Image pre-loader thread terminated");
-			}
-		}
+        @Override
+        public void run() {
+            log.debug("Image pre-loader thread started");
+            CachedTile tile;
+            try {
+                while (true) {
+                    tile = queue.take();
+                    if (tile != null && !tile.loaded) {
+                        // log.trace("Loading image async: " + tile);
+                        tile.loadImage();
+                    }
+                }
+            } catch (InterruptedException e) {
+                log.debug("Image pre-loader thread terminated");
+            }
+        }
 
-	}
+    }
 
-	private class CachedTile {
+    private class CachedTile {
 
-		CacheKey key;
-		boolean loaded = false;
-		boolean nextLoadJobCreated = false;
-		private BufferedImage image;
-		private IOException loadException = null;
+        final CacheKey key;
+        boolean loaded = false;
+        boolean nextLoadJobCreated = false;
+        private BufferedImage image;
+        private IOException loadException = null;
 
-		public CachedTile(CacheKey key) {
-			super();
-			this.key = key;
-			image = null;
-		}
+        public CachedTile(CacheKey key) {
+            super();
+            this.key = key;
+            image = null;
+        }
 
-		public synchronized void loadImage() {
-			try {
-				image = internalGetTileImage(key.x, key.y);
-			} catch (IOException e) {
-				loadException = e;
-			} catch (Exception e) {
-				loadException = new IOException(e);
-			}
-			loaded = true;
-		}
+        public synchronized void loadImage() {
+            try {
+                image = internalGetTileImage(key.x, key.y);
+            } catch (IOException e) {
+                loadException = e;
+            } catch (Exception e) {
+                loadException = new IOException(e);
+            }
+            loaded = true;
+        }
 
-		public synchronized BufferedImage getImage() throws IOException {
-			if (!loaded)
-				loadImage();
-			if (loadException != null)
-				throw loadException;
-			return image;
-		}
+        public synchronized BufferedImage getImage() throws IOException {
+            if (!loaded) {
+                loadImage();
+            }
+            if (loadException != null) {
+                throw loadException;
+            }
+            return image;
+        }
 
-		@Override
-		public String toString() {
-			return "CachedTile [key=" + key + ", loaded=" + loaded + ", nextLoadJobCreated=" + nextLoadJobCreated + "]";
-		}
+        @Override
+        public String toString() {
+            return "CachedTile [key=" + key + ", loaded=" + loaded + ", nextLoadJobCreated=" + nextLoadJobCreated + "]";
+        }
 
-	}
+    }
 }

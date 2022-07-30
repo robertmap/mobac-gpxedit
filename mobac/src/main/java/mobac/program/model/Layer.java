@@ -85,9 +85,8 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	public void addMapsAutocut(String mapNameBase, MapSource mapSource, Point minTileCoordinate,
 			Point maxTileCoordinate, int zoom, TileImageParameters parameters, int maxMapSize, int overlapTiles)
 			throws InvalidNameException {
-		log.trace("Adding new map(s): \"" + mapNameBase + "\" " + mapSource + " zoom=" + zoom + " min="
-				+ minTileCoordinate.x + "/" + minTileCoordinate.y + " max=" + maxTileCoordinate.x + "/"
-				+ maxTileCoordinate.y);
+		log.trace("Adding new map(s): \"{}\" {} zoom={} min={}/{} max={}/{}", mapNameBase, mapSource, zoom,
+				minTileCoordinate.x, minTileCoordinate.y, maxTileCoordinate.x, maxTileCoordinate.y);
 
 		int tileSize = mapSource.getMapSpace().getTileSize();
 
@@ -98,10 +97,11 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		maxTileCoordinate.y += tileSize - 1 - (maxTileCoordinate.y % tileSize);
 
 		Dimension tileDimension;
-		if (parameters == null)
+		if (parameters == null) {
 			tileDimension = new Dimension(tileSize, tileSize);
-		else
+		} else {
 			tileDimension = parameters.getDimension();
+		}
 		// We adapt the max map size to the tile size so that we do
 		// not get ugly cutted/incomplete tiles at the borders
 		Dimension maxMapDimension = new Dimension(maxMapSize, maxMapSize);
@@ -170,9 +170,10 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		newName = newName.trim();
 		if (atlasInterface != null) {
 			for (LayerInterface layer : atlasInterface) {
-				if ((layer != this) && newName.equals(layer.getName()))
+				if ((layer != this) && newName.equals(layer.getName())) {
 					throw new InvalidNameException("There is already a layer named \"" + newName
 							+ "\" in this atlas.\nLayer names have to unique within an atlas.");
+				}
 			}
 		}
 		this.name = newName;
@@ -185,8 +186,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 
 	public long calculateTilesToDownload() {
 		long result = 0;
-		for (MapInterface map : maps)
+		for (MapInterface map : maps) {
 			result += map.calculateTilesToDownload();
+		}
 		return result;
 	}
 
@@ -273,14 +275,17 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 	}
 
 	public boolean checkData() {
-		if (atlasInterface == null)
+		if (atlasInterface == null) {
 			return true;
-		if (name == null)
+		}
+		if (name == null) {
 			return true;
+		}
 		// Check for duplicate map names
 		HashSet<String> names = new HashSet<String>(maps.size());
-		for (MapInterface map : maps)
+		for (MapInterface map : maps) {
 			names.add(map.getName());
+		}
 		return names.size() < maps.size(); // at least one duplicate name found
 	}
 
@@ -292,8 +297,9 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 		Layer layer = new Layer();
 		layer.atlasInterface = atlas;
 		layer.name = name;
-		for (MapInterface map : maps)
+		for (MapInterface map : maps) {
 			layer.maps.add(map.deepClone(layer));
+		}
 		return layer;
 	}
 

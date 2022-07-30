@@ -52,7 +52,7 @@ public class IntelliJMapPackLoader {
 		}
 		boolean result = mapSourceCounter > 0;
 		if (result) {
-			log.info("Loaded " + mapSourceCounter + " map sources");
+			log.info("Loaded {} map sources", mapSourceCounter);
 		}
 		return result;
 	}

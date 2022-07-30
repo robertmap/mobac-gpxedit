@@ -78,15 +78,15 @@ public class DeleteTiles implements Runnable {
 
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
-			Main.log.info("Tile store entry count: " + db.entryCount() + " (before deleting)");
+			Main.log.info("Tile store entry count: {} (before deleting)", db.entryCount());
 			PrimaryIndex<TileDbKey, TileDbEntry> tileIndex = db.getTileIndex();
 			for (TileDbKey key : tileKeys) {
 				if (!tileIndex.delete(key)) {
-					Main.log.trace("Failed to delete " + key);
+					Main.log.trace("Failed to delete {}", key);
 				}
 			}
 			db.purge();
-			Main.log.info("Tile store entry count: " + db.entryCount() + " (after deleting)");
+			Main.log.info("Tile store entry count: {} (after deleting)", db.entryCount());
 		} catch (Exception e) {
 			Main.log.error("Deleting of tiles failed", e);
 		}

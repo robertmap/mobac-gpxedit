@@ -169,15 +169,16 @@ public class MapSourceCapabilityDetector {
 
 			c = mapSource.getTileUrlConnection(zoom, tilex, tiley);
 			url = c.getURL();
-			log.trace("Sample url: " + c.getURL());
+			log.trace("Sample url: {}", c.getURL());
 			log.trace("Connecting...");
 			c.setReadTimeout(3000);
 			c.setRequestProperty("User-agent", ProgramInfo.getUserAgent());
 			c.setRequestProperty("Accept", Settings.getInstance().getHttpAccept());
 			c.connect();
 			log.debug("Connection established - response HTTP " + c.getResponseCode());
-			if (c.getResponseCode() != 200)
+			if (c.getResponseCode() != 200) {
 				return;
+			}
 
 			// printHeaders();
 

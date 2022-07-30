@@ -27,21 +27,21 @@ public class Merge implements Runnable {
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		try (TileDatabase dbSource = tileStore.new TileDatabase("Source", sourceDir)) {
 			try (TileDatabase dbDest = tileStore.new TileDatabase("Destination", destDir)) {
-				Main.log.info("Source tile store entry count: " + dbSource.entryCount());
-				Main.log.info("Destination tile store entry count: " + dbSource.entryCount() + " (before merging)");
+				Main.log.info("Source tile store entry count: {}", dbSource.entryCount());
+				Main.log.info("Destination tile store entry count: {} (before merging)", dbSource.entryCount());
 				dbDest.purge();
 				EntityCursor<TileDbEntry> cursor = dbSource.getTileIndex().entities();
 				try {
 					TileDbEntry entry = cursor.next();
 					while (entry != null) {
-						Main.log.trace("Adding " + entry);
+						Main.log.trace("Adding {}", entry);
 						dbDest.put(entry);
 						entry = cursor.next();
 					}
 				} finally {
 					cursor.close();
 				}
-				Main.log.info("Destination tile store entry count: " + dbSource.entryCount() + " (after merging)");
+				Main.log.info("Destination tile store entry count: {} (after merging)", dbSource.entryCount());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

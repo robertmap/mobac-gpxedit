@@ -78,7 +78,7 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 		synchronized (this) {
 			id = WORKER_THREAD_ID++;
 		}
-		log.trace("New map preview worker thread created with id=" + id);
+		log.trace("New map preview worker thread created with id={}", id);
 		return new MapPreviewThread(r, "Map preview thread " + id);
 	}
 

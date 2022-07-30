@@ -118,16 +118,16 @@ public class CustomMapSourceLoader {
 			try {
 				MapSource customMapSource = loadCustomMapSource(f);
 				if (customMapSource == null) {
-					log.info("Ignoring xml file \"" + f.getName() + "\" - not a custom MOBAC XML map file");
+					log.info("Ignoring xml file \"{}\" - not a custom MOBAC XML map file", f.getName());
 					continue; // an element to be ignored
 				}
 				if (!(customMapSource instanceof FileBasedMapSource) && customMapSource.getTileImageType() == null) {
-					log.warn("A problem occurred while loading \"" + f.getName()
-							+ "\": tileType is null - some atlas formats will produce an error!");
+					log.warn("A problem occurred while loading \"{}\": tileType is null - "
+							+ "some atlas formats will produce an error!", f.getName());
 				}
 				mapSourcesManager.addMapSource(customMapSource);
 			} catch (Exception e) {
-				log.error("failed to load custom map source \"" + f.getName() + "\": " + e.getMessage(), e);
+				log.error("failed to load custom map source \"{}\": {}", f.getName(), e.getMessage(), e);
 			}
 		}
 	}
@@ -240,10 +240,9 @@ public class CustomMapSourceLoader {
 		}
 		customMapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.XML, loaderInfoFile));
 		if (loaderInfoFile != null) {
-			log.trace(
-					"Custom map source loaded: " + customMapSource + " from file \"" + loaderInfoFile.getName() + "\"");
+			log.trace("Custom map source loaded: {} from file \"{}\"", customMapSource, loaderInfoFile.getName());
 		} else {
-			log.trace("Custom map source loaded: " + customMapSource);
+			log.trace("Custom map source loaded: {}", customMapSource);
 		}
 		return customMapSource;
 	}
@@ -275,7 +274,7 @@ public class CustomMapSourceLoader {
 		}
 
 		((ReloadableMapSource<MapSource>) mapSource).applyChangesFrom(updatedMapSource);
-		log.debug("Map source reloaded: \"" + loaderInfo.getSourceFile() + "\"");
+		log.debug("Map source reloaded: \"{}\"", loaderInfo.getSourceFile());
 
 		return true;
 	}

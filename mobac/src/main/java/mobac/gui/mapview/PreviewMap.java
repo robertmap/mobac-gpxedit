@@ -136,7 +136,7 @@ public class PreviewMap extends JMapViewer {
 		if (newMapSource == null || (!force && newMapSource.equals(mapSource))) {
 			return;
 		}
-		log.trace("Preview map source changed from " + mapSource + " to " + newMapSource);
+		log.trace("Preview map source changed from {} to {}", mapSource, newMapSource);
 		super.setMapSource(newMapSource);
 		if (mapEventListeners == null) {
 			return;
@@ -147,10 +147,11 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	protected void zoomChanged(int oldZoom) {
-		log.trace("Preview map zoom changed from " + oldZoom + " to " + zoom);
+		log.trace("Preview map zoom changed from {} to {}", oldZoom, zoom);
 		if (mapEventListeners != null)
-			for (MapEventListener listener : mapEventListeners)
+			for (MapEventListener listener : mapEventListeners) {
 				listener.zoomChanged(zoom);
+			}
 		updateGridValues();
 	}
 
@@ -329,9 +330,10 @@ public class PreviewMap extends JMapViewer {
 	}
 
 	public void zoomTo(MapSelection ms) {
-		if (!ms.isAreaSelected())
+		if (!ms.isAreaSelected()) {
 			return;
-		log.trace("Setting selection to: " + ms);
+		}
+		log.trace("Setting selection to: {}", ms);
 		Point max = ms.getBottomRightPixelCoordinate(MAX_ZOOM);
 		Point min = ms.getTopLeftPixelCoordinate(MAX_ZOOM);
 		setDisplayToFitPixelCoordinates(max.x, max.y, min.x, min.y);
@@ -344,7 +346,7 @@ public class PreviewMap extends JMapViewer {
 	 * @param notifyListeners
 	 */
 	public void setSelectionAndZoomTo(MapSelection ms, boolean notifyListeners) {
-		log.trace("Setting selection to: " + ms);
+		log.trace("Setting selection to: {}", ms);
 		Point max = ms.getBottomRightPixelCoordinate(MAX_ZOOM);
 		Point min = ms.getTopLeftPixelCoordinate(MAX_ZOOM);
 		setDisplayToFitPixelCoordinates(max.x, max.y, min.x, min.y);
