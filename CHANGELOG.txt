@@ -10,7 +10,7 @@
  - = Features that has been removed
 
 =======
-2.3
+2.3.0 (2022-08-11)
  ~ Mapsforge library updated to version 0.18
  ! Fixed PNG 4bit/8bit tile processing
  ! Fixed problems with the used Berkeley DB JE on systems with Turkish locale
@@ -19,7 +19,6 @@
  + Added image format WEBP as tile type including detection on download
  + Alpine Quest Map files (.aqm) can be used as local map source
      <localTileSQLite>
-
 
 2.2.3.2 (2022-05-15)
  ! Fixed StackOverflowError when opening settings dialog (#372)
