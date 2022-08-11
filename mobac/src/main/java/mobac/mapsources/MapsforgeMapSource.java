@@ -34,6 +34,7 @@ import org.mapsforge.core.graphics.GraphicFactory;
 import org.mapsforge.core.graphics.TileBitmap;
 import org.mapsforge.core.mapelements.MapElementContainer;
 import org.mapsforge.core.model.Tile;
+import org.mapsforge.core.util.Parameters;
 import org.mapsforge.map.awt.graphics.AwtGraphicFactory;
 import org.mapsforge.map.datastore.MultiMapDataStore;
 import org.mapsforge.map.datastore.MultiMapDataStore.DataPolicy;
@@ -73,6 +74,10 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 	private static final Logger LOG = LoggerFactory.getLogger(MapsforgeMapSource.class);
 
 	private static final String name = "MapsforgeWorld";
+
+	static {
+		Parameters.VALIDATE_COORDINATES = false;
+	}
 
 	protected MapSourceLoaderInfo loaderInfo = null;
 	protected List<File> mapFileList = new ArrayList<>();
