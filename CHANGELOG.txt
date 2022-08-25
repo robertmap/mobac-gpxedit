@@ -10,6 +10,10 @@
  - = Features that has been removed
 
 =======
+2.3.1
+ ! Mapsforge: VALIDATE_COORDINATES=false to avoid problems at the borders of
+     the world
+
 2.3.0 (2022-08-11)
  ~ Mapsforge library updated to version 0.18
  ! Fixed PNG 4bit/8bit tile processing
