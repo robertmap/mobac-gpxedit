@@ -31,7 +31,7 @@ import java.io.IOException;
 public class ShowReadme implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
-		File readme = new File(DirectoryManager.programDir, "README.HTM");
+		File readme = new File(DirectoryManager.programDir, "README.html");
 		if (!readme.isFile()) {
 			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
 					I18nUtils.localizedStringForKey("msg_no_found_readme_file"),
