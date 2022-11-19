@@ -37,7 +37,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 @XmlRootElement
 public class MapPolygon extends Map {
@@ -119,8 +119,8 @@ public class MapPolygon extends Map {
 			area.add(new Area(p));
 		}
 		PathIterator pi = area.getPathIterator(null);
-		ArrayList<Integer> xPoints = new ArrayList<Integer>(100);
-		ArrayList<Integer> yPoints = new ArrayList<Integer>(100);
+		List<Integer> xPoints = new ArrayList<>(100);
+		List<Integer> yPoints = new ArrayList<>(100);
 		double[] coords = new double[6];
 		while (!pi.isDone()) {
 			int type = pi.currentSegment(coords);
@@ -132,8 +132,7 @@ public class MapPolygon extends Map {
 					yPoints.add((int) coords[1]);
 					break;
 				default :
-					Logging.LOG.warn("Area to polygon conversion: unexpected segment type found: " + type + " "
-							+ Arrays.toString(coords));
+					Logging.LOG.warn("Area to polygon conversion: unexpected segment type found: {} {}", type, coords);
 			}
 			pi.next();
 		}
