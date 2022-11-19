@@ -36,8 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -45,8 +43,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
@@ -68,9 +64,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(JMapViewer.class);
-	public List<MapLayer> mapLayers;
-	protected TileLoader tileLoader;
-	protected MemoryTileCache tileCache;
+
+	public final List<MapLayer> mapLayers;
+	protected final TileLoader tileLoader;
+	protected final MemoryTileCache tileCache;
+
 	protected MapSource mapSource;
 	protected boolean usePlaceHolderTiles = true;
 	protected boolean mapMarkersVisible;
@@ -91,12 +89,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected JButton zoomInButton;
 	protected JButton zoomOutButton;
 
-	protected JobDispatcher jobDispatcher;
+	protected final JobDispatcher jobDispatcher;
 
 	public JMapViewer(MapSource defaultMapSource, int downloadThreadCount) {
 		super();
-		mapTileLayers = new LinkedList<MapTileLayer>();
-		mapLayers = new LinkedList<MapLayer>();
+		mapTileLayers = new LinkedList<>();
+		mapLayers = new LinkedList<>();
 		tileLoader = new TileLoader(this);
 		tileCache = new MemoryTileCache();
 		jobDispatcher = JobDispatcher.getInstance();
@@ -113,11 +111,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		zoomSlider.setOrientation(JSlider.VERTICAL);
 		zoomSlider.setBounds(10, 10, 30, 150);
 		zoomSlider.setOpaque(false);
-		zoomSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				setZoom(zoomSlider.getValue());
-			}
-		});
+		zoomSlider.addChangeListener(e -> setZoom(zoomSlider.getValue()));
 		add(zoomSlider);
 		int size = 18;
 		try {
@@ -129,12 +123,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			zoomInButton.setMargin(new Insets(0, 0, 0, 0));
 		}
 		zoomInButton.setBounds(4, 155, size, size);
-		zoomInButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				zoomIn();
-			}
-		});
+		zoomInButton.addActionListener(e -> zoomIn());
 		add(zoomInButton);
 		try {
 			ImageIcon icon = Utilities.loadResourceImageIcon("minus.png");
@@ -145,12 +134,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			zoomOutButton.setMargin(new Insets(0, 0, 0, 0));
 		}
 		zoomOutButton.setBounds(8 + size, 155, size, size);
-		zoomOutButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				zoomOut();
-			}
-		});
+		zoomOutButton.addActionListener(e -> zoomOut());
 		add(zoomOutButton);
 	}
 
