@@ -25,7 +25,7 @@ import java.awt.Dimension;
 
 public class MessageDialogs {
 
-	public static void showErrorMessage(Component parentComponent, String message, String title) {
+	public static void showErrorMessage(Component parentComponent, String message) {
 		JLabel label = new JLabel("<html>" + message + "<html>");
 		int maxWidth = 400;
 		Dimension size = label.getPreferredSize();
