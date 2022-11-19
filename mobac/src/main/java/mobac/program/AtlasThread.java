@@ -223,8 +223,9 @@ public class AtlasThread extends Thread
 
 		Settings s = Settings.getInstance();
 
-		downloadJobDispatcher = new JobDispatcher(this, s.downloadThreadCount, pauseResumeHandler, ap);
-		try {
+		try (JobDispatcher downloadJobDispatcher = new JobDispatcher(this, s.downloadThreadCount, pauseResumeHandler,
+				ap)) {
+			this.downloadJobDispatcher = downloadJobDispatcher;
 			for (LayerInterface layer : atlas) {
 				atlasCreator.initLayerCreation(layer);
 				for (MapInterface map : layer) {
@@ -267,7 +268,7 @@ public class AtlasThread extends Thread
 			if (djp != null) {
 				djp.cancel();
 			}
-			downloadJobDispatcher.terminateAllWorkerThreads();
+			this.downloadJobDispatcher = null;
 			if (!atlasCreator.isAborted()) {
 				atlasCreator.finishAtlasCreation();
 			}
@@ -436,13 +437,14 @@ public class AtlasThread extends Thread
 			if (djp_ != null) {
 				djp_.cancel();
 			}
-			if (downloadJobDispatcher != null) {
-				downloadJobDispatcher.terminateAllWorkerThreads();
+			JobDispatcher dispatcher = downloadJobDispatcher;
+			if (dispatcher != null) {
+				dispatcher.terminateAllWorkerThreads();
 			}
 			pauseResumeHandler.resume();
 			this.interrupt();
 		} catch (Exception e) {
-			LOG.error("Exception thrown in stopDownload()" + e.getMessage());
+			LOG.error("Exception thrown in stopDownload(): {}", e.getMessage());
 		}
 	}
 

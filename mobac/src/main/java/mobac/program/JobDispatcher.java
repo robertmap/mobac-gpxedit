@@ -31,7 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Additionally, the job queue containing the unprocessed tile download jobs can
  * be accessed via this class.
  */
-public class JobDispatcher {
+public class JobDispatcher implements AutoCloseable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JobDispatcher.class);
 
@@ -55,10 +55,8 @@ public class JobDispatcher {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	protected void finalize() throws Throwable {
+	public void close() {
 		terminateAllWorkerThreads();
-		super.finalize();
 	}
 
 	public void terminateAllWorkerThreads() {
