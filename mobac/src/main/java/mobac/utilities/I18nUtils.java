@@ -73,7 +73,11 @@ public class I18nUtils {
 		Settings settings = Settings.getInstance();
 		Locale locale = null;
 		if (settings != null) {
-			locale = new Locale(settings.localeLanguage, settings.localeCountry);
+			Locale.Builder localeBuilder = new Locale.Builder().setLanguage(settings.localeLanguage);
+			if (settings.localeCountry != null && !settings.localeCountry.trim().isEmpty()) {
+				localeBuilder.setRegion(settings.localeCountry);
+			}
+			locale = localeBuilder.build();
 		} else {
 			locale = Locale.getDefault();
 		}

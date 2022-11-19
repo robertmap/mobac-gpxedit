@@ -32,6 +32,7 @@ import mobac.program.interfaces.MapSource;
 import mobac.program.model.MapSourcesListModel;
 import mobac.program.model.ProxyType;
 import mobac.program.model.Settings;
+import mobac.program.model.SupportedLocale;
 import mobac.program.model.UnitSystem;
 import mobac.program.tilestore.TileStore;
 import mobac.utilities.GBC;
@@ -104,7 +105,7 @@ public class SettingsGUI extends JDialog {
 	private final SettingsGUIWgsGrid display;
 	private JComboBox<UnitSystem> unitSystem;
 
-	private JComboBox<SupportLocale> languageCombo;
+	private JComboBox<SupportedLocale> languageCombo;
 
 	private JButton mapSourcesOnlineUpdate;
 	private JTextField osmHikingTicket;
@@ -267,12 +268,12 @@ public class SettingsGUI extends JDialog {
 		// Language Panel
 		JPanel languagePanel = new JPanel(new GridBagLayout());
 		languagePanel.setBorder(createSectionBorder(I18nUtils.localizedStringForKey("set_display_language")));
-		languageCombo = new JComboBox<>(SupportLocale.values());
+		languageCombo = new JComboBox<>(SupportedLocale.values());
 		languageCombo.setToolTipText(I18nUtils.localizedStringForKey("set_display_language_choose_tips"));
 		languageCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				Locale locale = ((SupportLocale) languageCombo.getSelectedItem()).locale;
+				Locale locale = ((SupportedLocale) languageCombo.getSelectedItem()).getLocale();
 				String currentLocaleStr = "" + settings.localeLanguage + settings.localeCountry;
 				String LocaleStr = "" + locale.getLanguage() + locale.getCountry();
 				if (!currentLocaleStr.equals(LocaleStr) && isVisible()) {
@@ -676,7 +677,7 @@ public class SettingsGUI extends JDialog {
 		tileStoreTab.tileStoreEnabled.setSelected(s.tileStoreEnabled);
 
 		// language
-		languageCombo.setSelectedItem(SupportLocale.localeOf(s.localeLanguage, s.localeCountry));
+		languageCombo.setSelectedItem(SupportedLocale.localeOf(s.localeLanguage, s.localeCountry));
 
 		mapSize.setValue(s.maxMapSize);
 		mapOverlapTiles.setValue(s.mapOverlapTiles);
@@ -728,7 +729,7 @@ public class SettingsGUI extends JDialog {
 		s.maxMapSize = mapSize.getValue();
 		s.mapOverlapTiles = (Integer) mapOverlapTiles.getValue();
 
-		Locale locale = ((SupportLocale) languageCombo.getSelectedItem()).locale;
+		Locale locale = ((SupportedLocale) languageCombo.getSelectedItem()).getLocale();
 		s.localeLanguage = locale.getLanguage();
 		s.localeCountry = locale.getCountry();
 
@@ -848,37 +849,6 @@ public class SettingsGUI extends JDialog {
 		@Override
 		public String toString() {
 			return description;
-		}
-	}
-
-	private enum SupportLocale {
-		SupportLocaleEn(new Locale("en"), "English"), // default
-		SupportLocaleFrFR(new Locale("fr", "FR"), "Français"), // French
-		SupportLocaleRuRu(new Locale("ru", "RU"), "Russian"), // Russian
-		SupportLocaleJaJP(new Locale("ja", "JP"), "日本語"), // Japanese
-		SupportLocaleZhCN(new Locale("zh", "CN"), "简体中文"), // Chinese (simplified)
-		SupportLocaleZhTW(new Locale("zh", "TW"), "繁體中文"); // Chinese (Taiwan)
-
-		private final Locale locale;
-		private final String displayName;
-
-		SupportLocale(Locale locale, String displayName) {
-			this.locale = locale;
-			this.displayName = displayName;
-		}
-
-		public static SupportLocale localeOf(String lang, String contry) {
-			for (SupportLocale l : SupportLocale.values()) {
-				if (l.locale.getLanguage().equals(lang) && l.locale.getCountry().equals(contry)) {
-					return l;
-				}
-			}
-			return SupportLocaleEn;
-		}
-
-		@Override
-		public String toString() {
-			return displayName;
 		}
 	}
 

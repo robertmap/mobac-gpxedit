@@ -176,19 +176,16 @@ public class Settings {
 		mainWindow.collapsedPanels.add("Gpx");
 
 		Locale defaultLocale = Locale.getDefault();
-		if (defaultLocale.equals(new Locale("zh", "CN"))) {
-			localeLanguage = "zh";
-			localeCountry = "CN";
-		} else if (defaultLocale.equals(new Locale("zh", "TW"))) {
-			localeLanguage = "zh";
-			localeCountry = "TW";
-		} else if (defaultLocale.equals(new Locale("ja", "JP"))) {
-			localeLanguage = "ja";
-			localeCountry = "JP";
-		} else if (defaultLocale.equals(new Locale("fr", "FR"))) {
-			localeLanguage = "fr";
-			localeCountry = "FR";
-		} else {
+		boolean localeFound = false;
+		for (SupportedLocale l : SupportedLocale.values()) {
+			if (defaultLocale.equals(l.getLocale())) {
+				localeLanguage = l.getLocale().getLanguage();
+				localeCountry = l.getLocale().getCountry();
+				localeFound = true;
+				break;
+			}
+		}
+		if (!localeFound) {
 			localeLanguage = "en";
 			localeCountry = "";
 		}
