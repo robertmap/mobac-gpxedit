@@ -80,7 +80,7 @@ public class MobacTrustManager implements X509TrustManager {
 			}
 		}
 		if (defaultTm == null) {
-			throw new RuntimeException("Failed to get default Trustmanager");
+			throw new RuntimeException("Failed to get default TrustManager");
 		}
 		defaultTrustManager = defaultTm;
 	}
@@ -128,7 +128,7 @@ public class MobacTrustManager implements X509TrustManager {
 			defaultTrustManager.checkServerTrusted(chain, authType);
 		} catch (CertificateException e) {
 			X509Certificate cert = chain[0]; // get the leaf certificate
-			log.error("SSL error: " + e.getMessage());
+			log.error("SSL error: {}", e.getMessage());
 			synchronized (this) {
 				String pubKeySha256Hash = getPublicKeySha256Hash(cert);
 				if (isCertificateTrusted(pubKeySha256Hash)) {
@@ -136,7 +136,7 @@ public class MobacTrustManager implements X509TrustManager {
 				}
 				// TODO: Add GUI for manually adding this certificate as trusted.
 				String message = "Untrusted certificate encountered: publicKeyHash=\"" + pubKeySha256Hash
-						+ "\"; certificate issued for " + cert.getSubjectDN();
+						+ "\"; certificate issued for " + cert.getSubjectX500Principal();
 				throw new CertificateException(message);
 			}
 		}
