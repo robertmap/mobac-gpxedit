@@ -67,15 +67,12 @@ public class Maplorer extends AtlasCreator {
 	protected void createCustomTiles() throws InterruptedException, MapCreationException {
 		log.debug("Starting map creation using custom parameters: " + parameters);
 
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
+		try (CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider)) {
 			mapDlTileProvider = ctp;
 
 			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
 		}
 	}
 

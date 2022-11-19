@@ -164,8 +164,7 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
+		try (CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider)) {
 			mapDlTileProvider = ctp;
 			MapTileWriter mtw = new OruxMapTileWriterDB();
 			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, mtw);
@@ -175,8 +174,6 @@ public class OruxMapsSqlite extends OruxMaps implements RequiresSQLite {
 			mtw.finalizeMap();
 		} catch (IOException e) {
 			throw new MapCreationException(map, e);
-		} finally {
-			ctp.cleanup();
 		}
 	}
 

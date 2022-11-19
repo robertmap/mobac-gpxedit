@@ -31,7 +31,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * A tile cache with speculative loading on a separate thread. Usually this
  * decreases map generation time on multi-core systems.
  */
-public class CacheTileProvider implements TileProvider {
+public class CacheTileProvider implements TileProvider, AutoCloseable {
 
 	/**
 	 * Counter for identifying the different threads
@@ -128,10 +128,8 @@ public class CacheTileProvider implements TileProvider {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	protected void finalize() throws Throwable {
+	public void close() {
 		cleanup();
-		super.finalize();
 	}
 
 	private static class SRCachedTile extends SoftReference<CachedTile> {

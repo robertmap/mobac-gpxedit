@@ -93,16 +93,13 @@ public class NFComPass extends AtlasCreator {
 			throw new MapCreationException(map, e);
 		}
 		createKalFile(map);
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
+		try (CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider)) {
 			mapDlTileProvider = ctp;
 
 			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, new TileImagePngDataWriterBuilder(),
 					new NFCompassTileWriter(), true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
 		}
 
 	}

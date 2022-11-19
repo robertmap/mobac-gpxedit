@@ -64,15 +64,12 @@ public class CacheWolf extends Ozi {
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		MapTileWriter mapTileWriter;
 
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
+		try (CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider)) {
 			mapDlTileProvider = ctp;
 			mapTileWriter = new CWFileTileWriter();
 			MapTileBuilder mapTileBuilder = new MapTileBuilder(this, mapTileWriter, true);
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
 		}
 	}
 

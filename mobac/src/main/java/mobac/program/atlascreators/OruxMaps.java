@@ -168,15 +168,12 @@ public class OruxMaps extends AtlasCreator {
 
 	protected void createTiles() throws InterruptedException, MapCreationException {
 
-		CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider);
-		try {
+		try (CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider)) {
 			mapDlTileProvider = ctp;
 
 			OruxMapTileBuilder mapTileBuilder = new OruxMapTileBuilder(this, new OruxMapTileWriter());
 			atlasProgress.initMapCreation(mapTileBuilder.getCustomTileCount());
 			mapTileBuilder.createTiles();
-		} finally {
-			ctp.cleanup();
 		}
 	}
 
