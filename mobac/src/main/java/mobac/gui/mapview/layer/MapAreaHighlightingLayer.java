@@ -69,8 +69,7 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 		tree.getModel().addTreeModelListener(this);
 	}
 
-	public static void removeHighlightingLayers() {
-		PreviewMap previewMap = MainGUI.getMainGUI().previewMap;
+	public static void removeHighlightingLayers(PreviewMap previewMap) {
 		Iterator<MapLayer> mapLayers = previewMap.mapLayers.iterator();
 		MapLayer ml;
 		while (mapLayers.hasNext()) {

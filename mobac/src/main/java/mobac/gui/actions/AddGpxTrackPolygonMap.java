@@ -56,8 +56,6 @@ import java.util.List;
 
 public class AddGpxTrackPolygonMap implements ActionListener {
 
-	public static final AddGpxTrackPolygonMap INSTANCE = new AddGpxTrackPolygonMap();
-
 	private MapAreaHighlightingLayer msl = null;
 
 	public void actionPerformed(ActionEvent event) {
@@ -158,20 +156,17 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 			}
 		};
 		final JButton previewButton = new JButton(I18nUtils.localizedStringForKey("dlg_gpx_track_select_preview"));
-		previewButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int distance = slider.getValue();
-				MapPolygon maxZoomMap = MapPolygon.createTrackEnclosure(null, "Dummy", mapSource, maxZoom, trackPoints,
-						distance, customTileParameters);
-				if (msl == null) {
-					msl = new MapAreaHighlightingLayer(maxZoomMap);
-					mg.previewMap.mapLayers.add(msl);
-				}
+		previewButton.addActionListener(e -> {
+			int distance = slider.getValue();
+			MapPolygon maxZoomMap = MapPolygon.createTrackEnclosure(null, "Dummy", mapSource, maxZoom, trackPoints,
+					distance, customTileParameters);
+			if (msl == null) {
+				msl = new MapAreaHighlightingLayer(maxZoomMap);
+				mg.previewMap.mapLayers.add(msl);
+			} else {
 				msl.setObject(maxZoomMap);
-				mg.previewMap.repaint();
 			}
+			mg.previewMap.repaint();
 		});
 
 		cl.stateChanged(null);

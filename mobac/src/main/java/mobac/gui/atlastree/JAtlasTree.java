@@ -279,10 +279,10 @@ public class JAtlasTree extends JTree implements Autoscroll {
 				cbmi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (displaySelectedMapArea) {
-							MapAreaHighlightingLayer.removeHighlightingLayers();
+							MapAreaHighlightingLayer.removeHighlightingLayers(mapView);
 						} else {
 							mapView.setSelectionByTileCoordinate(null, null, false);
-							MapAreaHighlightingLayer.removeHighlightingLayers();
+							MapAreaHighlightingLayer.removeHighlightingLayers(mapView);
 							mapView.mapLayers.add(msl);
 						}
 						displaySelectedMapArea = !displaySelectedMapArea;

@@ -85,7 +85,7 @@ public class Map
 
 	protected void calculateRuntimeValues() {
 		if (mapSource == null) {
-			throw new RuntimeException("The map source of map " + name + " is unknown to MOBAC");
+			throw new RuntimeException("The map source of map \"" + name + "\" is unknown to MOBAC");
 		}
 		if (parameters == null) {
 			int tileSize = mapSource.getMapSpace().getTileSize();
