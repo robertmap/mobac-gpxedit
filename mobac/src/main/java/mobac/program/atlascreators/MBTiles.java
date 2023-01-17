@@ -37,7 +37,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 
 /**
- * https://github.com/mapbox/mbtiles-spec/tree/master/1.3
+ * https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
  */
 @AtlasCreatorName(value = "MBTiles SQLite")
 public class MBTiles extends RMapsSQLite {
@@ -51,10 +51,10 @@ public class MBTiles extends RMapsSQLite {
 
 	private boolean initialized = false;
 
-	private double boundsLatMin;
-	private double boundsLatMax;
-	private double boundsLonMin;
-	private double boundsLonMax;
+	private double boundsBottom;
+	private double boundsTop;
+	private double boundsLeft;
+	private double boundsRight;
 
 	private int minZoom;
 
@@ -122,10 +122,10 @@ public class MBTiles extends RMapsSQLite {
 			stat.executeUpdate(TABLE_METADATA);
 			stat.executeUpdate(INDEX_METADATA);
 		}
-		boundsLatMin = Double.POSITIVE_INFINITY;
-		boundsLatMax = Double.NEGATIVE_INFINITY;
-		boundsLonMin = Double.POSITIVE_INFINITY;
-		boundsLonMax = Double.NEGATIVE_INFINITY;
+		boundsBottom = Double.NEGATIVE_INFINITY;
+		boundsTop = Double.POSITIVE_INFINITY;
+		boundsLeft = Double.NEGATIVE_INFINITY;
+		boundsRight = Double.POSITIVE_INFINITY;
 		minZoom = Integer.MAX_VALUE;
 		maxZoom = 0;
 	}
@@ -138,10 +138,10 @@ public class MBTiles extends RMapsSQLite {
 		double lat1 = ms.cYToLat(map.getMinTileCoordinate().y, zoom);
 		double lat2 = ms.cYToLat(map.getMaxTileCoordinate().y, zoom);
 
-		boundsLatMin = Math.min(boundsLatMin, Math.min(lat1, lat2));
-		boundsLatMax = Math.max(boundsLatMax, Math.max(lat1, lat2));
-		boundsLonMin = Math.min(boundsLonMin, Math.min(lon1, lon2));
-		boundsLonMax = Math.max(boundsLonMax, Math.max(lon1, lon2));
+		boundsBottom = Math.max(boundsBottom, Math.min(lat1, lat2));
+		boundsTop = Math.min(boundsTop, Math.max(lat1, lat2));
+		boundsLeft = Math.max(boundsLeft, Math.min(lon1, lon2));
+		boundsRight = Math.min(boundsRight, Math.max(lon1, lon2));
 
 		minZoom = Math.min(minZoom, map.getZoom());
 		maxZoom = Math.max(maxZoom, map.getZoom());
@@ -150,38 +150,54 @@ public class MBTiles extends RMapsSQLite {
 	@Override
 	public void finishAtlasCreation() throws IOException, InterruptedException {
 		try (PreparedStatement st = conn.prepareStatement(INSERT_METADATA)) {
-			st.setString(1, "bounds");
-			st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLonMin, boundsLatMin,
-					boundsLonMax, boundsLatMax));
-			st.execute();
 
-			st.setString(1, "maxzoom");
-			st.setString(2, Integer.toString(maxZoom));
-			st.execute();
-
-			st.setString(1, "minzoom");
-			st.setString(2, Integer.toString(minZoom));
-			st.execute();
-
+			// name (string): The human-readable name of the tileset.
 			st.setString(1, "name");
 			st.setString(2, atlas.getName());
 			st.execute();
 
+			// format (string): The file format of the tile data: pbf, jpg, png, webp, or an
+			// IETF media type for other formats.
+			st.setString(1, "format");
+			st.setString(2, atlasTileImageType.getFileExt());
+			st.execute();
+
+			// bounds (string of comma-separated numbers): The maximum extent of the
+			// rendered map area. Bounds must define an area covered by all zoom levels. The
+			// bounds are represented as WGS 84 latitude and longitude values, in the
+			// OpenLayers Bounds format (left, bottom,
+			st.setString(1, "bounds");
+			st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLeft, boundsBottom, boundsRight,
+					boundsTop));
+			st.execute();
+
+			// (number): The highest zoom level for which the tileset provides data
+			st.setString(1, "maxzoom");
+			st.setString(2, Integer.toString(maxZoom));
+			st.execute();
+
+			// (number): The highest zoom level for which the tileset provides data
+			st.setString(1, "minzoom");
+			st.setString(2, Integer.toString(minZoom));
+			st.execute();
+
+			// type (string): overlay or baselayer
 			st.setString(1, "type");
 			st.setString(2, "baselayer");
 			st.execute();
 
+			// version (number): The version of the tileset. This refers to a revision of
+			// the tileset itself, not of the MBTiles specification.
 			st.setString(1, "version");
 			st.setString(2, "1.3");
 			st.execute();
 
+			// description (string): A description of the tileset's content.
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			st.setString(1, "description");
 			st.setString(2, atlas.getName() + " created on " + sdf.format(new Date()) + " by MOBAC");
 			st.execute();
-			st.setString(1, "format");
-			st.setString(2, atlasTileImageType.getFileExt());
-			st.execute();
+
 			conn.commit();
 		} catch (SQLException e) {
 			throw new IOException(e);

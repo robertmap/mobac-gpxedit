@@ -10,10 +10,12 @@
  - = Features that has been removed
 
 =======
-2.3.1
+2.3.1 (2023-??-??)
  ! Mapsforge: VALIDATE_COORDINATES=false to avoid problems at the borders of
      the world
  ! "Show Readme" menu command fixed (#380)
+ ! MBTiles bounds changed to match the specification: "Bounds must define an
+     area covered by all zoom levels."
 
 2.3.0 (2022-08-11)
  ~ Mapsforge library updated to version 0.18
