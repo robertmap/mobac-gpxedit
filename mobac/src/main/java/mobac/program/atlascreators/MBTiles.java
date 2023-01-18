@@ -165,11 +165,13 @@ public class MBTiles extends RMapsSQLite {
 			// bounds (string of comma-separated numbers): The maximum extent of the
 			// rendered map area. Bounds must define an area covered by all zoom levels. The
 			// bounds are represented as WGS 84 latitude and longitude values, in the
-			// OpenLayers Bounds format (left, bottom,
-			st.setString(1, "bounds");
-			st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLeft, boundsBottom, boundsRight,
-					boundsTop));
-			st.execute();
+			// OpenLayers Bounds format (left, bottom, right, top).
+			if (boundsLeft < boundsRight && boundsTop > boundsBottom) {
+				st.setString(1, "bounds");
+				st.setString(2, String.format(Locale.ENGLISH, "%.3f,%.3f,%.3f,%.3f", boundsLeft, boundsBottom,
+						boundsRight, boundsTop));
+				st.execute();
+			}
 
 			// (number): The highest zoom level for which the tileset provides data
 			st.setString(1, "maxzoom");
