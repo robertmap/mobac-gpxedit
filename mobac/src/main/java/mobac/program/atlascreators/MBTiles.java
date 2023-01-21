@@ -42,7 +42,7 @@ import java.util.Locale;
 @AtlasCreatorName(value = "MBTiles SQLite")
 public class MBTiles extends RMapsSQLite {
 
-	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (tile_column,tile_row,zoom_level,tile_data) VALUES (?,?,?,?)";
+	private static final String INSERT_TILES = "INSERT or REPLACE INTO tiles (tile_column,tile_row,zoom_level,tile_data) VALUES (?,?,?,?)";
 	private static final String TABLE_TILES = "CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);";
 	private static final String INDEX_TILES = "CREATE UNIQUE INDEX IF NOT EXISTS tiles_idx on tiles (zoom_level, tile_column, tile_row)";
 	private static final String TABLE_METADATA = "CREATE TABLE IF NOT EXISTS metadata (name text, value text);";
@@ -209,7 +209,7 @@ public class MBTiles extends RMapsSQLite {
 
 	@Override
 	protected String getTileInsertSQL() {
-		return INSERT_SQL;
+		return INSERT_TILES;
 	}
 
 	@Override
