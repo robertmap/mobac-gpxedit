@@ -44,7 +44,7 @@ public class MBTiles extends RMapsSQLite {
 
 	private static final String INSERT_SQL = "INSERT or REPLACE INTO tiles (tile_column,tile_row,zoom_level,tile_data) VALUES (?,?,?,?)";
 	private static final String TABLE_TILES = "CREATE TABLE IF NOT EXISTS tiles (zoom_level integer, tile_column integer, tile_row integer, tile_data blob);";
-	private static final String INDEX_TILES = "CREATE INDEX IF NOT EXISTS tiles_idx on tiles (zoom_level, tile_column, tile_row)";
+	private static final String INDEX_TILES = "CREATE UNIQUE INDEX IF NOT EXISTS tiles_idx on tiles (zoom_level, tile_column, tile_row)";
 	private static final String TABLE_METADATA = "CREATE TABLE IF NOT EXISTS metadata (name text, value text);";
 	private static final String INSERT_METADATA = "INSERT INTO metadata (name,value) VALUES (?,?);";
 	private static final String INDEX_METADATA = "CREATE UNIQUE INDEX IF NOT EXISTS metadata_idx  ON metadata (name);";

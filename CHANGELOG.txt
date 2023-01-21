@@ -10,6 +10,9 @@
  - = Features that has been removed
 
 =======
+2.3.2 (2023-??-??)
+ ! MBTiles: prevent duplicate tiles in mbtiles database
+
 2.3.1 (2023-01-18)
  ! Mapsforge: VALIDATE_COORDINATES=false to avoid problems at the borders of
      the world
