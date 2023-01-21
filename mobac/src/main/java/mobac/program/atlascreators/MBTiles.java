@@ -178,7 +178,7 @@ public class MBTiles extends RMapsSQLite {
 			st.setString(2, Integer.toString(maxZoom));
 			st.execute();
 
-			// (number): The highest zoom level for which the tileset provides data
+			// (number): The lowest zoom level for which the tileset provides data
 			st.setString(1, "minzoom");
 			st.setString(2, Integer.toString(minZoom));
 			st.execute();
