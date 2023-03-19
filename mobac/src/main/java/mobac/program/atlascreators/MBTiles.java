@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
@@ -72,8 +74,15 @@ public class MBTiles extends RMapsSQLite {
 		EnumSet<TileImageType> allowed = EnumSet.of(TileImageType.JPG, TileImageType.PNG);
 		// Test of output format - only jpg xor png is allowed
 		TileImageType tit = null;
+		Set<Integer> zoomSet = new TreeSet<>();
 		for (LayerInterface layer : atlas) {
 			for (MapInterface map : layer) {
+				if (!zoomSet.add(map.getZoom())) {
+					throw new AtlasTestException(
+							String.format("Map source format incompatible - multiple maps exists for zoom level %d. "
+									+ "Only one map per zoom level allowed", map.getZoom()),
+							map);
+				}
 				TileImageParameters parameters = map.getParameters();
 				TileImageType currentTit;
 				if (parameters == null) {

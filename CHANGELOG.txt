@@ -12,6 +12,7 @@
 =======
 2.3.2 (2023-??-??)
  ! MBTiles: prevent duplicate tiles in mbtiles database
+ ! MBTiles: atlases are now restricted to one map per zoom level
 
 2.3.1 (2023-01-18)
  ! Mapsforge: VALIDATE_COORDINATES=false to avoid problems at the borders of
