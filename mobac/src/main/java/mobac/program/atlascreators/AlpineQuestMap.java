@@ -34,6 +34,7 @@ import mobac.program.model.TileImageParameters.Name;
 import mobac.utilities.I18nUtils;
 import mobac.utilities.Utilities;
 import mobac.utilities.stream.ArrayOutputStream;
+import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.Dimension;
@@ -116,7 +117,7 @@ public class AlpineQuestMap extends AtlasCreator {
 
 		if (layer.getMapCount() > 0) {
 			// create the file
-			this.filePack = new File(atlasDir + "/" + layer.getName() + ".AQM");
+			this.filePack = new File(atlasDir, layer.getName() + ".AQM");
 			this.packCreator = new FlatPackCreator(filePack);
 			this.lastZoomLevel = -1;
 
@@ -125,7 +126,7 @@ public class AlpineQuestMap extends AtlasCreator {
 
 			// add level headers
 			for (int i = 0; i < layer.getMapCount(); i++) {
-				// needed to merge splitted maps due to map size (map split not needed by AQM
+				// needed to merge split maps due to map size (map split not needed by AQM
 				// format)
 				Insets bounds = new Insets(layer.getMap(i).getMinTileCoordinate().y,
 						layer.getMap(i).getMinTileCoordinate().x, layer.getMap(i).getMaxTileCoordinate().y,
@@ -184,20 +185,22 @@ public class AlpineQuestMap extends AtlasCreator {
 		// name of the person that created the map (displayed to user)
 		final String strCreator = "";
 
-		StringWriter w = new StringWriter();
-		w.write("[map]\n");
-		w.write("id = " + strID + "\n");
-		w.write("name = " + strName + "\n");
-		w.write("version = " + strVersion + "\n");
-		w.write("date = " + strDate + "\n");
-		w.write("creator = " + strCreator + "\n");
-		w.write("software = " + strSoftware + "\n");
-		w.write("\n");
-		w.flush();
-		w.close();
+		String headerStr;
+		try (StringWriter w = new StringWriter()) {
+			w.write("[map]\n");
+			w.write("id = " + strID + "\n");
+			w.write("name = " + strName + "\n");
+			w.write("version = " + strVersion + "\n");
+			w.write("date = " + strDate + "\n");
+			w.write("creator = " + strCreator + "\n");
+			w.write("software = " + strSoftware + "\n");
+			w.write("\n");
+			w.flush();
+			headerStr = w.getBuffer().toString();
+		}
 
 		// add the metadata file into map
-		packCreator.add(w.getBuffer().toString().getBytes(), AQM_HEADER);
+		packCreator.add(headerStr.getBytes(StandardCharsets.ISO_8859_1), AQM_HEADER);
 	}
 
 	private void addLevelHeader(final MapInterface map, final Insets bounds) throws IOException {
@@ -261,33 +264,35 @@ public class AlpineQuestMap extends AtlasCreator {
 		}
 
 		// write metadata
-		StringWriter w = new StringWriter();
-		w.write("[level]\n");
-		w.write("id = " + strID + "\n");
-		w.write("name = " + strName + "\n");
-		w.write("scale = " + strScale + "\n");
-		w.write("datasource = " + strDataSource + "\n");
-		w.write("copyright = " + strCopyright + "\n");
-		w.write("projection = " + strProjection + "\n");
-		w.write("geoid = " + strGeoid + "\n");
-		w.write("xtsize = " + (int) tilesSize.getWidth() + "\n");
-		w.write("ytsize = " + (int) tilesSize.getHeight() + "\n");
-		w.write("xtratio = " + (nbTotalTiles / 360.0) + "\n");
-		w.write("ytratio = " + (nbTotalTiles / 360.0) + "\n");
-		w.write("xtoffset = " + (nbTotalTiles / 2.0) + "\n");
-		w.write("ytoffset = " + (nbTotalTiles / 2.0) + "\n");
-		w.write("xtmin = " + xMin + "\n");
-		w.write("xtmax = " + xMax + "\n");
-		w.write("ytmin = " + (nbTotalTiles - yMax) + "\n");
-		w.write("ytmax = " + (nbTotalTiles - yMin) + "\n");
-		w.write("background = " + "#FFFFFF" + "\n");
-		w.write("imgformat = " + strImageFormat + "\n");
-		w.write("\n");
-		w.flush();
-		w.close();
+		String metaDataStr;
+		try (StringWriter w = new StringWriter()) {
+			w.write("[level]\n");
+			w.write("id = " + strID + "\n");
+			w.write("name = " + strName + "\n");
+			w.write("scale = " + strScale + "\n");
+			w.write("datasource = " + strDataSource + "\n");
+			w.write("copyright = " + strCopyright + "\n");
+			w.write("projection = " + strProjection + "\n");
+			w.write("geoid = " + strGeoid + "\n");
+			w.write("xtsize = " + (int) tilesSize.getWidth() + "\n");
+			w.write("ytsize = " + (int) tilesSize.getHeight() + "\n");
+			w.write("xtratio = " + (nbTotalTiles / 360.0) + "\n");
+			w.write("ytratio = " + (nbTotalTiles / 360.0) + "\n");
+			w.write("xtoffset = " + (nbTotalTiles / 2.0) + "\n");
+			w.write("ytoffset = " + (nbTotalTiles / 2.0) + "\n");
+			w.write("xtmin = " + xMin + "\n");
+			w.write("xtmax = " + xMax + "\n");
+			w.write("ytmin = " + (nbTotalTiles - yMax) + "\n");
+			w.write("ytmax = " + (nbTotalTiles - yMin) + "\n");
+			w.write("background = " + "#FFFFFF" + "\n");
+			w.write("imgformat = " + strImageFormat + "\n");
+			w.write("\n");
+			w.flush();
+			metaDataStr = w.toString();
+		}
 
 		// add the metadata file into map
-		packCreator.add(w.toString().getBytes(StandardCharsets.ISO_8859_1), AQM_LEVEL);
+		packCreator.add(metaDataStr.getBytes(StandardCharsets.ISO_8859_1), AQM_LEVEL);
 	}
 
 	@Override
@@ -425,9 +430,7 @@ public class AlpineQuestMap extends AtlasCreator {
 				}
 			}
 		} finally {
-			if (writer != null) {
-				writer.close();
-			}
+			IOUtils.closeQuietly(writer);
 		}
 	}
 

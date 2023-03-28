@@ -20,11 +20,12 @@ import mobac.program.model.TileImageType;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public interface TileImageDataWriter extends AutoCloseable {
+public interface TileImageDataWriter extends AutoCloseable, Closeable {
 
 	/**
 	 * Processes the <code>image</code> according to the implementation of this

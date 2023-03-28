@@ -18,6 +18,7 @@ package mobac.program.atlascreators;
 
 import mobac.exceptions.AtlasTestException;
 import mobac.exceptions.MapCreationException;
+import mobac.mapsources.mapspace.MercatorPower2MapSpace;
 import mobac.program.ProgramInfo;
 import mobac.program.annotations.AtlasCreatorName;
 import mobac.program.annotations.SupportedParameters;
@@ -75,7 +76,7 @@ public class GeoPackage extends AbstractSQLite {
 
 	private static final String INSERT_TILE = "INSERT INTO tiles "
 			+ "(zoom_level, tile_column, tile_row, tile_data) VALUES (?, ?, ?, ?)";
-	double minLon, minLat, maxLat, maxLon;
+	private double minLon, minLat, maxLat, maxLon;
 	private boolean atlasInitialized = false;
 
 	public GeoPackage() {
@@ -84,7 +85,7 @@ public class GeoPackage extends AbstractSQLite {
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
-		return true;
+		return MercatorPower2MapSpace.INSTANCE_256.equals(mapSource.getMapSpace());
 	}
 
 	@Override
@@ -166,7 +167,7 @@ public class GeoPackage extends AbstractSQLite {
 	@Override
 	protected void createTiles() throws InterruptedException, MapCreationException {
 		super.createTiles();
-		String sql = "INSERT INTO gpkg_tile_matrix " + "VALUES('tiles',?,?,?,256,256,?,?)";
+		String sql = "INSERT INTO gpkg_tile_matrix VALUES('tiles',?,?,?,256,256,?,?)";
 		try (PreparedStatement prepStmt = conn.prepareStatement(sql)) {
 			prepStmt.setInt(1, map.getZoom());
 			prepStmt.setInt(2, xMax - xMin + 1); // matrix_width
@@ -187,9 +188,9 @@ public class GeoPackage extends AbstractSQLite {
 	}
 
 	private double latToMetersY(double lat) {
-		double meters_y = Math.log(Math.tan((90 + lat) * Math.PI / 360.0)) / (Math.PI / 180.0);
-		meters_y = meters_y * Math.PI * 6378137.0 / 180.0;
-		return meters_y;
+		double metersY = Math.log(Math.tan((90 + lat) * Math.PI / 360.0)) / (Math.PI / 180.0);
+		metersY = metersY * Math.PI * 6378137.0 / 180.0;
+		return metersY;
 	}
 
 	@Override
@@ -204,31 +205,31 @@ public class GeoPackage extends AbstractSQLite {
 		double min_x = lonToMetersX(minLon);
 		double max_x = lonToMetersX(maxLon);
 
-		Statement stat = conn.createStatement();
-		stat.execute("DELETE FROM gpkg_contents;");
-		stat.execute("DELETE FROM gpkg_tile_matrix_set;");
-		stat.close();
+		try (Statement stat = conn.createStatement()) {
+			stat.execute("DELETE FROM gpkg_contents;");
+			stat.execute("DELETE FROM gpkg_tile_matrix_set;");
+		}
 
-		PreparedStatement prepStmt;
-		prepStmt = conn.prepareStatement("INSERT INTO gpkg_contents "
+		String sql1 = "INSERT INTO gpkg_contents "
 				+ "(rowid, table_name, data_type, identifier, description, min_x, min_y, max_x, max_y,srs_id) "
-				+ "VALUES (1,'tiles','tiles','Raster Tiles',?,?,?,?,?,3857)");
+				+ "VALUES (1,'tiles','tiles','Raster Tiles',?,?,?,?,?,3857)";
+		try (PreparedStatement prepStmt = conn.prepareStatement(sql1)) {
+			prepStmt.setString(1, "created by " + ProgramInfo.getCompleteTitle());
+			prepStmt.setDouble(2, min_x); // min_x
+			prepStmt.setDouble(3, min_y); // min_y
+			prepStmt.setDouble(4, max_x); // max_x
+			prepStmt.setDouble(5, max_y); // max_y
+			prepStmt.executeUpdate();
+		}
 
-		prepStmt.setString(1, "created by " + ProgramInfo.getCompleteTitle());
-		prepStmt.setDouble(2, min_x); // min_x
-		prepStmt.setDouble(3, min_y); // min_y
-		prepStmt.setDouble(4, max_x); // max_x
-		prepStmt.setDouble(5, max_y); // max_y
-		prepStmt.executeUpdate();
-		prepStmt.close();
-
-		prepStmt = conn.prepareStatement("INSERT INTO gpkg_tile_matrix_set VALUES('tiles',3857,?,?,?,?)");
-		prepStmt.setDouble(1, min_x); // min_x
-		prepStmt.setDouble(2, min_y); // min_y
-		prepStmt.setDouble(3, max_x); // max_x
-		prepStmt.setDouble(4, max_y); // max_y
-		prepStmt.executeUpdate();
-		prepStmt.close();
+		String sql2 = "INSERT INTO gpkg_tile_matrix_set VALUES('tiles',3857,?,?,?,?)";
+		try (PreparedStatement prepStmt = conn.prepareStatement(sql2)) {
+			prepStmt.setDouble(1, min_x); // min_x
+			prepStmt.setDouble(2, min_y); // min_y
+			prepStmt.setDouble(3, max_x); // max_x
+			prepStmt.setDouble(4, max_y); // max_y
+			prepStmt.executeUpdate();
+		}
 		conn.commit();
 	}
 
