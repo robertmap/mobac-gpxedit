@@ -126,11 +126,11 @@ public class CustomWmsMapSource extends CustomMapSource {
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		if (coordinateUnit == CoordinateUnit.METER) {
 			String coordinateSystemParameter;
-			if ("1.1.1".equals(version)) {
-				coordinateSystemParameter = "&SRS=" + coordinateSystem;
-			} else {
+			if ("1.3.0".equals(version)) {
 				// version 1.3.0 expected
 				coordinateSystemParameter = "&CRS=" + coordinateSystem;
+			} else {
+				coordinateSystemParameter = "&SRS=" + coordinateSystem;
 			}
 			String url = this.url + "REQUEST=GetMap" + "&LAYERS=" + layers + coordinateSystemParameter + "&VERSION="
 					+ version + "&FORMAT=image/" + tileType.getMimeType() + "&BBOX="
