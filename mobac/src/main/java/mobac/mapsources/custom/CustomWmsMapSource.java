@@ -53,6 +53,7 @@ public class CustomWmsMapSource extends CustomMapSource {
 	 */
 	@XmlElement(required = true, name = "coordinatesystem", defaultValue = "EPSG:4326")
 	private String coordinateSystem = "EPSG:4326";
+
 	/**
 	 * coordinateunit is:
 	 * <ul>
@@ -98,19 +99,23 @@ public class CustomWmsMapSource extends CustomMapSource {
 	 * "WGS 84 / Pseudo-Mercator" (EPSG:3857) - "GOOGLE" (EPSG:900913) - "Popular
 	 * Visualization CRS / Mercator" (EPSG:3785)
 	 */
-	private static String MercatorTileEdges(int x, int y, int zoom) {
-		return d2s(lon2mercator(tile2lon(x, zoom))) + "," + // west (m)
-				d2s(lat2mercator(tile2lat(y + 1, zoom))) + "," + // south (m)
-				d2s(lon2mercator(tile2lon(x + 1, zoom))) + "," + // east (m)
-				d2s(lat2mercator(tile2lat(y, zoom))); // north (m)
+	private static String mercatorTileEdges(int x, int y, int zoom) {
+		return d2s(lon2mercator(tile2lon(x, zoom)), zoom) + "," + // west (m)
+				d2s(lat2mercator(tile2lat(y + 1, zoom)), zoom) + "," + // south (m)
+				d2s(lon2mercator(tile2lon(x + 1, zoom)), zoom) + "," + // east (m)
+				d2s(lat2mercator(tile2lat(y, zoom)), zoom); // north (m)
 	}
 
 	/**
 	 * Double to String - prevents scientific notation
 	 */
-	private static String d2s(double value) {
+	private static String d2s(double value, int zoom) {
 		DecimalFormat df = new DecimalFormat("#", DECIMAL_FORMAT_SYMBOLS_ENGLISH);
-		df.setMaximumFractionDigits(8);
+		int digits = 4;
+		if (zoom > 10) {
+			digits = 8;
+		}
+		df.setMaximumFractionDigits(digits);
 		return df.format(value);
 	}
 
@@ -124,9 +129,10 @@ public class CustomWmsMapSource extends CustomMapSource {
 
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
+		boolean version130 = "1.3.0".equals(version);
 		if (coordinateUnit == CoordinateUnit.METER) {
 			String coordinateSystemParameter;
-			if ("1.3.0".equals(version)) {
+			if (version130) {
 				// version 1.3.0 expected
 				coordinateSystemParameter = "&CRS=" + coordinateSystem;
 			} else {
@@ -134,17 +140,17 @@ public class CustomWmsMapSource extends CustomMapSource {
 			}
 			String url = this.url + "REQUEST=GetMap" + "&LAYERS=" + layers + coordinateSystemParameter + "&VERSION="
 					+ version + "&FORMAT=image/" + tileType.getMimeType() + "&BBOX="
-					+ MercatorTileEdges(tilex, tiley, zoom) + "&WIDTH=256&HEIGHT=256" + additionalParameters;
+					+ mercatorTileEdges(tilex, tiley, zoom) + "&WIDTH=256&HEIGHT=256" + additionalParameters;
 			return url;
 		}
 		double[] coords = MapSourceTools.calculateLatLon(this, zoom, tilex, tiley);
-		String lonMin = d2s(coords[0]);
-		String latMin = d2s(coords[1]);
-		String lonMax = d2s(coords[2]);
-		String latMax = d2s(coords[3]);
+		String lonMin = d2s(coords[0], zoom);
+		String latMin = d2s(coords[1], zoom);
+		String lonMax = d2s(coords[2], zoom);
+		String latMax = d2s(coords[3], zoom);
 		String url = this.url + "REQUEST=GetMap" + "&LAYERS=" + layers + "&VERSION=" + version + "&FORMAT=image/"
 				+ tileType.getMimeType();
-		if ("1.3.0".equals(version)) {
+		if (version130) {
 			// version 1.3.0 expected
 			url += "&CRS=" + coordinateSystem + "&BBOX=" + latMin + "," + lonMin + "," + latMax + "," + lonMax;
 		} else {
