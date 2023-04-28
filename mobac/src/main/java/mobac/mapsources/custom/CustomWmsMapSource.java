@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.mapsources.custom;
 
+import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -66,6 +67,13 @@ public class CustomWmsMapSource extends CustomMapSource {
 	 */
 	@XmlElement(required = false, name = "aditionalparameters")
 	private String additionalParameters = "";
+
+	protected void afterUnmarshal(Unmarshaller u, Object parent) {
+		if (!"1.3.0".equals(version) && !"1.1.1".equals(version)) {
+			log.warn("Unsupported WMS version found in map \"{}\": {}. MOBAC has only been tested "
+					+ "with WMS version 1.1.1 and 1.3.0", getName(), version);
+		}
+	}
 
 	private static double tile2lon(int x, int z) {
 		return x / Math.pow(2.0, z) * 360.0 - 180;
@@ -136,11 +144,11 @@ public class CustomWmsMapSource extends CustomMapSource {
 		String latMax = d2s(coords[3]);
 		String url = this.url + "REQUEST=GetMap" + "&LAYERS=" + layers + "&VERSION=" + version + "&FORMAT=image/"
 				+ tileType.getMimeType();
-		if ("1.1.1".equals(version)) {
-			url += "&SRS=" + coordinateSystem + "&BBOX=" + lonMin + "," + latMin + "," + lonMax + "," + latMax;
-		} else {
+		if ("1.3.0".equals(version)) {
 			// version 1.3.0 expected
 			url += "&CRS=" + coordinateSystem + "&BBOX=" + latMin + "," + lonMin + "," + latMax + "," + lonMax;
+		} else {
+			url += "&SRS=" + coordinateSystem + "&BBOX=" + lonMin + "," + latMin + "," + lonMax + "," + latMax;
 		}
 		url += "&WIDTH=256&HEIGHT=256" + additionalParameters;
 		return url;
