@@ -27,6 +27,8 @@ public interface HttpMapSource extends MapSource {
 	 */
 	TileUpdate getTileUpdate();
 
+	String getTileUrl(int zoom, int tilex, int tiley);
+
 	/**
 	 * Constructs the tile url connection. If necessary the url connection can be
 	 * prepared with cookies or other http specific headers which are required by

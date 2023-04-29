@@ -1,7 +1,7 @@
 package mobac.gui.mapview;
 
 import mobac.gui.mapview.layer.MapGridLayer;
-import mobac.mapsources.AbstractHttpMapSource;
+import mobac.program.interfaces.HttpMapSource;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -120,8 +120,8 @@ public class LogPreviewMap extends PreviewMap {
 			drawStringBG(g, "y=" + tiley, gx + 4, gy += 16);
 			String tileUrl = null;
 			try {
-				if (mapSource instanceof AbstractHttpMapSource) {
-					tileUrl = ((AbstractHttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
+				if (mapSource instanceof HttpMapSource) {
+					tileUrl = ((HttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				}
 				if (tileUrl != null) {
 					URL url = new URL(tileUrl);
