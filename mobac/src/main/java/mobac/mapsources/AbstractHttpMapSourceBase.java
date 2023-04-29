@@ -18,6 +18,7 @@ package mobac.mapsources;
 
 import mobac.program.download.MobacSSLHelper;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.model.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,9 @@ public abstract class AbstractHttpMapSourceBase implements HttpMapSource {
 			connection.setRequestProperty("User-agent", settings.getUserAgent());
 		}
 		connection.setRequestProperty("Accept", settings.getHttpAccept());
+		if (Thread.currentThread() instanceof MapSourceListener) {
+			((MapSourceListener) Thread.currentThread()).tileDownloadStarted(connection.getURL().toString());
+		}
 	}
 
 	protected SSLSocketFactory getSslSocketFactory() {
