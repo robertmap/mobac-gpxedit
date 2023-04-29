@@ -2,6 +2,9 @@ package mobac.gui.mapview;
 
 import mobac.gui.mapview.layer.MapGridLayer;
 import mobac.program.interfaces.HttpMapSource;
+import mobac.program.interfaces.MapSourceListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -13,6 +16,8 @@ import java.util.NoSuchElementException;
 import java.util.TimerTask;
 
 public class LogPreviewMap extends PreviewMap {
+
+	private static final Logger LOG = LoggerFactory.getLogger(LogPreviewMap.class);
 
 	private final LinkedList<LogEntry> logLines = new LinkedList<>();
 	private final Font logFont = new Font("Sans Serif", Font.BOLD, 14);
@@ -27,6 +32,22 @@ public class LogPreviewMap extends PreviewMap {
 		setTileGridVisible(true);
 		setTileGridVisible(true);
 		// timer.schedule(new LogRemoverTimerTask(), 0, 500);
+		jobDispatcher.addMapSourceListener(new MapSourceListener() {
+			@Override
+			public void tileDownloadStarted(String tileUrl) {
+				addLog("Downloading " + tileUrl);
+			}
+
+			@Override
+			public void tileDownloaded(int size) {
+
+			}
+
+			@Override
+			public void tileLoadedFromCache(int size) {
+
+			}
+		});
 	}
 
 	@Override
@@ -59,6 +80,7 @@ public class LogPreviewMap extends PreviewMap {
 	}
 
 	public void addLog(String msg) {
+		LOG.debug(msg);
 		LogEntry entry = new LogEntry();
 		entry.msg = msg;
 		synchronized (logLines) {

@@ -32,8 +32,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
@@ -110,135 +108,112 @@ public class MapEvaluator extends JFrame {
 
 		button = new JButton("Load Template", Utilities.loadResourceImageIcon("new-icon.png"));
 		button.setToolTipText("Reset custom code editor to one of several templates");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				try {
-					String[] options = {"Empty", "OpenStreetMap Mapnik"};
-					int a = JOptionPane.showOptionDialog(MapEvaluator.this, "Please select an template",
-							"Select template", 0, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-					String code = "";
-					switch (a) {
-						case (0) :
-							code = Utilities.loadTextResource("bsh/empty.bsh");
-							break;
-						case (1) :
-							code = Utilities.loadTextResource("bsh/osm.bsh");
-							break;
-					}
-
-					mapSourceEditor.setText(code);
-				} catch (IOException e) {
-					log.error("", e);
-				}
-			}
-		});
+		button.addActionListener((event) -> loadTemplate());
 		toolBar.add(button);
 
 		button = new JButton("Load", Utilities.loadResourceImageIcon("open-icon.png"));
 		button.setToolTipText("Load custom map source from file");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				try {
-					final JFileChooser fc = getMapSourceFileChooser(false);
-					int returnVal = fc.showOpenDialog(MapEvaluator.this);
-					if (returnVal != JFileChooser.APPROVE_OPTION) {
-						return;
-					}
-					chooserDir = fc.getSelectedFile().getParentFile();
-					List<String> lines = Files.readAllLines(fc.getSelectedFile().toPath(), StandardCharsets.UTF_8);
-					StringWriter sw = new StringWriter();
-					for (String s : lines) {
-						sw.write(s);
-						sw.write("\n");
-					}
-					mapSourceEditor.setText(sw.toString());
-					loadedFile = fc.getSelectedFile();
-				} catch (IOException e) {
-					log.error("", e);
-					JOptionPane.showMessageDialog(MapEvaluator.this, "Error reading code from file:\n" + e.getMessage(),
-							"Loading failed", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
+		button.addActionListener((event) -> loadMapSource());
 		toolBar.add(button);
 
 		button = new JButton("Save", Utilities.loadResourceImageIcon("save-icon.png"));
 		button.setToolTipText("Save custom map source to file");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				final JFileChooser fc = getMapSourceFileChooser(true);
-				int returnVal = fc.showOpenDialog(MapEvaluator.this);
-				if (returnVal != JFileChooser.APPROVE_OPTION) {
-					return;
-				}
-				chooserDir = fc.getSelectedFile().getParentFile();
-				try (BufferedWriter bw = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream(fc.getSelectedFile()), StandardCharsets.UTF_8))) {
-					bw.write(mapSourceEditor.getText());
-				} catch (IOException e) {
-					log.error("", e);
-					JOptionPane.showMessageDialog(MapEvaluator.this, "Error writing code to disk:\n" + e.getMessage(),
-							"Saving failed", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
+		button.addActionListener((event) -> saveMapSource());
 		toolBar.add(button);
 
 		button = new JButton("Execute code", Utilities.loadResourceImageIcon("check-icon.png"));
 		button.setToolTipText("Switch to custom map source (as defined by the custom code)");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				executeCode();
-			}
-		});
+		button.addActionListener((event) -> executeCode());
 		toolBar.add(button);
 
 		button = new JButton("OSM", Utilities.loadResourceImageIcon("osm-icon.png"));
 		button.setToolTipText("Switch back to predefined OpenStreetMap mapsource");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-
-				previewMap.setMapSource(defaultOsmMapSource);
-			}
-		});
+		button.addActionListener((event) -> previewMap.setMapSource(defaultOsmMapSource));
 		toolBar.add(button);
 		button = new JButton("Toggle tile info", Utilities.loadResourceImageIcon("info-icon.png"));
 		button.setToolTipText("Show/hide tile info");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				previewMap.setTileGridVisible(!previewMap.isTileGridVisible());
-			}
-		});
+		button.addActionListener((event) -> previewMap.setTileGridVisible(!previewMap.isTileGridVisible()));
 		toolBar.add(button);
 
 		button = new JButton("Test Capabilities", Utilities.loadResourceImageIcon("capabilities-icon.png"));
 		button.setToolTipText("<html>Test the tile-update capabilities for the current map<br>"
 				+ "using the current center of the map as test point</html>");
-		button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				testCapabilities();
-			}
-		});
+		button.addActionListener((event) -> testCapabilities());
 		toolBar.add(button);
+
+		// button = new JButton("Log");
+		// button.setToolTipText("Show Log");
+		// button.addActionListener((event) -> showLog());
+		// toolBar.add(button);
 
 		button = new JButton("Help", Utilities.loadResourceImageIcon("help-icon.png"));
 		button.setToolTipText("Show help dialog");
 		button.addActionListener(new HelpAction());
 		toolBar.add(button);
+	}
+
+	private void showLog() {
+
+	}
+	private void loadTemplate() {
+		try {
+			String[] options = {"Empty", "OpenStreetMap Mapnik"};
+			int a = JOptionPane.showOptionDialog(MapEvaluator.this, "Please select an template", "Select template", 0,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			String code = "";
+			switch (a) {
+				case (0) :
+					code = Utilities.loadTextResource("bsh/empty.bsh");
+					break;
+				case (1) :
+					code = Utilities.loadTextResource("bsh/osm.bsh");
+					break;
+			}
+
+			mapSourceEditor.setText(code);
+		} catch (IOException e) {
+			log.error("", e);
+		}
+	}
+
+	private void loadMapSource() {
+		try {
+			final JFileChooser fc = getMapSourceFileChooser(false);
+			int returnVal = fc.showOpenDialog(MapEvaluator.this);
+			if (returnVal != JFileChooser.APPROVE_OPTION) {
+				return;
+			}
+			chooserDir = fc.getSelectedFile().getParentFile();
+			List<String> lines = Files.readAllLines(fc.getSelectedFile().toPath(), StandardCharsets.UTF_8);
+			StringWriter sw = new StringWriter();
+			for (String s : lines) {
+				sw.write(s);
+				sw.write("\n");
+			}
+			mapSourceEditor.setText(sw.toString());
+			loadedFile = fc.getSelectedFile();
+		} catch (IOException e) {
+			log.error("", e);
+			JOptionPane.showMessageDialog(MapEvaluator.this, "Error reading code from file:\n" + e.getMessage(),
+					"Loading failed", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void saveMapSource() {
+		final JFileChooser fc = getMapSourceFileChooser(true);
+		int returnVal = fc.showOpenDialog(MapEvaluator.this);
+		if (returnVal != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+		chooserDir = fc.getSelectedFile().getParentFile();
+		try (BufferedWriter bw = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(fc.getSelectedFile()), StandardCharsets.UTF_8))) {
+			bw.write(mapSourceEditor.getText());
+		} catch (IOException e) {
+			log.error("", e);
+			JOptionPane.showMessageDialog(MapEvaluator.this, "Error writing code to disk:\n" + e.getMessage(),
+					"Saving failed", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private JFileChooser getMapSourceFileChooser(boolean save) {
@@ -266,33 +241,29 @@ public class MapEvaluator extends JFrame {
 		final EastNorthCoordinate coordinate = previewMap.getCenterCoordinate();
 
 		final List<MapSourceCapabilityDetector> result = new ArrayList<>();
-		Runnable r = new Runnable() {
+		Runnable r = () -> {
 
-			@Override
-			public void run() {
-				MapSourceCapabilityGUI gui = null;
-				try {
-					gui = new MapSourceCapabilityGUI(result);
-					gui.setWorkerThread(Thread.currentThread());
-					gui.setVisible(true);
-					for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
-						MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource,
-								coordinate, zoom);
-						if (!gui.isVisible()) {
-							return;
-						}
-						mstd.testMapSource();
-						result.add(mstd);
-						gui.refresh();
-						Utilities.checkForInterruption();
+			MapSourceCapabilityGUI gui = null;
+			try {
+				gui = new MapSourceCapabilityGUI(result);
+				gui.setWorkerThread(Thread.currentThread());
+				gui.setVisible(true);
+				for (int zoom = mapSource.getMinZoom(); zoom < mapSource.getMaxZoom(); zoom++) {
+					MapSourceCapabilityDetector mstd = new MapSourceCapabilityDetector((HttpMapSource) mapSource,
+							coordinate, zoom);
+					if (!gui.isVisible()) {
+						return;
 					}
-					gui.toFront();
-				} catch (InterruptedException e) {
-				} finally {
-					gui.workerFinished();
+					mstd.testMapSource();
+					result.add(mstd);
+					gui.refresh();
+					Utilities.checkForInterruption();
 				}
+				gui.toFront();
+			} catch (InterruptedException e) {
+			} finally {
+				gui.workerFinished();
 			}
-
 		};
 		new Thread(r).start();
 	}

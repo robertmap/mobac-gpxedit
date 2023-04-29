@@ -64,9 +64,9 @@ public class AtlasThread extends Thread
 	private static int threadNum = 0;
 	private File customAtlasDir = null;
 	private boolean quitMobacAfterAtlasCreation = false;
-	private DownloadJobProducerThread djp = null;
+	private DownloadJobProducerThread downloadJobProducerThread = null;
 	private JobDispatcher downloadJobDispatcher;
-	private final AtlasProgress ap; // The GUI showing the progress
+	private final AtlasProgress atlasProgress; // The GUI showing the progress
 	private final AtlasInterface atlas;
 	private AtlasCreator atlasCreator = null;
 	private final PauseResumeHandler pauseResumeHandler;
@@ -86,7 +86,7 @@ public class AtlasThread extends Thread
 
 	public AtlasThread(AtlasInterface atlas, AtlasCreator atlasCreator) throws AtlasTestException {
 		super("AtlasThread " + getNextThreadNum());
-		ap = new AtlasProgress(this);
+		atlasProgress = new AtlasProgress(this);
 		this.atlas = atlas;
 		this.atlasCreator = atlasCreator;
 		testAtlas();
@@ -144,7 +144,7 @@ public class AtlasThread extends Thread
 		if (customAtlasDir != null) {
 			LOG.debug("Target directory: {}", customAtlasDir);
 		}
-		ap.setDownloadControllerListener(this);
+		atlasProgress.setDownloadControllerListener(this);
 		try {
 			createAtlas();
 			LOG.info("Atlas creation finished");
@@ -162,7 +162,7 @@ public class AtlasThread extends Thread
 					}
 					JOptionPane.showMessageDialog(null, message,
 							I18nUtils.localizedStringForKey("msg_out_of_memory_title"), JOptionPane.ERROR_MESSAGE);
-					ap.closeWindow();
+					atlasProgress.closeWindow();
 				}
 			});
 			LOG.error("Out of memory: ", e);
@@ -171,7 +171,7 @@ public class AtlasThread extends Thread
 				public void run() {
 					JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_atlas_download_abort"),
 							I18nUtils.localizedStringForKey("Information"), JOptionPane.INFORMATION_MESSAGE);
-					ap.closeWindow();
+					atlasProgress.closeWindow();
 				}
 			});
 			LOG.info("Atlas creation was interrupted by user");
@@ -218,13 +218,13 @@ public class AtlasThread extends Thread
 			return;
 		}
 
-		ap.initAtlas(atlas);
-		ap.setVisible(true);
+		atlasProgress.initAtlas(atlas);
+		atlasProgress.setVisible(true);
 
 		Settings s = Settings.getInstance();
 
 		try (JobDispatcher downloadJobDispatcher = new JobDispatcher(this, s.downloadThreadCount, pauseResumeHandler,
-				ap)) {
+				atlasProgress)) {
 			this.downloadJobDispatcher = downloadJobDispatcher;
 			for (LayerInterface layer : atlas) {
 				atlasCreator.initLayerCreation(layer);
@@ -265,14 +265,14 @@ public class AtlasThread extends Thread
 			throw e;
 		} finally {
 			// In case of an abort: Stop create new download jobs
-			if (djp != null) {
-				djp.cancel();
+			if (downloadJobProducerThread != null) {
+				downloadJobProducerThread.cancel();
 			}
 			this.downloadJobDispatcher = null;
 			if (!atlasCreator.isAborted()) {
 				atlasCreator.finishAtlasCreation();
 			}
-			ap.atlasCreationFinished();
+			atlasProgress.atlasCreationFinished();
 		}
 
 	}
@@ -291,7 +291,7 @@ public class AtlasThread extends Thread
 		jobsRetryError = 0;
 		jobsPermanentError = 0;
 
-		ap.initMapDownload(map);
+		atlasProgress.initMapDownload(map);
 
 		if (map.getMapSource() instanceof InitializableMapSource) {
 			((InitializableMapSource) map.getMapSource()).initialize();
@@ -312,7 +312,7 @@ public class AtlasThread extends Thread
 
 		final int tileCount = (int) map.calculateTilesToDownload();
 
-		ap.setZoomLevel(zoom);
+		atlasProgress.setZoomLevel(zoom);
 		try {
 			TileProvider mapTileProvider;
 			if (!(map.getMapSource() instanceof FileBasedMapSource)) {
@@ -330,20 +330,20 @@ public class AtlasThread extends Thread
 					LOG.debug("Downloading to tile store only");
 				}
 
-				djp = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive,
+				downloadJobProducerThread = new DownloadJobProducerThread(this, downloadJobDispatcher, tileArchive,
 						(DownloadableElement) map);
 
 				boolean failedMessageAnswered = false;
 
-				while (djp.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
+				while (downloadJobProducerThread.isAlive() || (downloadJobDispatcher.getWaitingJobCount() > 0)
 						|| downloadJobDispatcher.isAtLeastOneWorkerActive()) {
 					Thread.sleep(500);
-					if (!failedMessageAnswered && (jobsRetryError > 50) && !ap.ignoreDownloadErrors()) {
+					if (!failedMessageAnswered && (jobsRetryError > 50) && !atlasProgress.ignoreDownloadErrors()) {
 						pauseResumeHandler.pause();
 						String[] answers = new String[]{I18nUtils.localizedStringForKey("Continue"),
 								I18nUtils.localizedStringForKey("Retry"), I18nUtils.localizedStringForKey("Skip"),
 								I18nUtils.localizedStringForKey("Abort")};
-						int answer = JOptionPane.showOptionDialog(ap,
+						int answer = JOptionPane.showOptionDialog(atlasProgress,
 								I18nUtils.localizedStringForKey("dlg_download_errors_todo_msg"),
 								I18nUtils.localizedStringForKey("dlg_download_errors_todo"), 0,
 								JOptionPane.QUESTION_MESSAGE, null, answers, answers[0]);
@@ -353,8 +353,8 @@ public class AtlasThread extends Thread
 								pauseResumeHandler.resume();
 								break;
 							case 1 : // Retry
-								djp.cancel();
-								djp = null;
+								downloadJobProducerThread.cancel();
+								downloadJobProducerThread = null;
 								downloadJobDispatcher.cancelOutstandingJobs();
 								return false;
 							case 2 : // Skip
@@ -367,17 +367,17 @@ public class AtlasThread extends Thread
 						}
 					}
 				}
-				djp = null;
+				downloadJobProducerThread = null;
 				LOG.debug("All download jobs has been completed!");
 				if (tileArchive != null) {
 					tileArchive.writeEndofArchive();
 					tileArchive.close();
 					tileIndex = tileArchive.getTarIndex();
-					if (tileIndex.size() < tileCount && !ap.ignoreDownloadErrors()) {
+					if (tileIndex.size() < tileCount && !atlasProgress.ignoreDownloadErrors()) {
 						int missing = tileCount - tileIndex.size();
 						LOG.debug("Expected tile count: {} downloaded tile count: {} missing: {}", tileCount,
 								tileIndex.size(), missing);
-						int answer = JOptionPane.showConfirmDialog(ap,
+						int answer = JOptionPane.showConfirmDialog(atlasProgress,
 								String.format(I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile_msg"),
 										missing),
 								I18nUtils.localizedStringForKey("dlg_download_errors_missing_tile"),
@@ -433,7 +433,7 @@ public class AtlasThread extends Thread
 	 */
 	public void abortAtlasCreation() {
 		try {
-			DownloadJobProducerThread djp_ = djp;
+			DownloadJobProducerThread djp_ = downloadJobProducerThread;
 			if (djp_ != null) {
 				djp_.cancel();
 			}
@@ -458,11 +458,11 @@ public class AtlasThread extends Thread
 
 	public void jobFinishedSuccessfully(int bytesDownloaded) {
 		synchronized (this) {
-			ap.incMapDownloadProgress();
+			atlasProgress.incMapDownloadProgress();
 			activeDownloads--;
 			jobsCompleted++;
 		}
-		ap.updateGUI();
+		atlasProgress.updateGUI();
 	}
 
 	public void jobFinishedWithError(boolean retry) {
@@ -472,14 +472,14 @@ public class AtlasThread extends Thread
 				jobsRetryError++;
 			} else {
 				jobsPermanentError++;
-				ap.incMapDownloadProgress();
+				atlasProgress.incMapDownloadProgress();
 			}
 		}
-		if (!ap.ignoreDownloadErrors()) {
+		if (!atlasProgress.ignoreDownloadErrors()) {
 			Toolkit.getDefaultToolkit().beep();
 		}
-		ap.setErrorCounter(jobsRetryError, jobsPermanentError);
-		ap.updateGUI();
+		atlasProgress.setErrorCounter(jobsRetryError, jobsPermanentError);
+		atlasProgress.updateGUI();
 	}
 
 	public int getMaxDownloadRetries() {
@@ -487,7 +487,7 @@ public class AtlasThread extends Thread
 	}
 
 	public AtlasProgress getAtlasProgress() {
-		return ap;
+		return atlasProgress;
 	}
 
 	public File getCustomAtlasDir() {

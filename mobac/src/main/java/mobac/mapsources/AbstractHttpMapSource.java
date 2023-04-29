@@ -78,7 +78,9 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 	}
 
 	protected void prepareTileUrlConnection(HttpURLConnection conn) {
-		// Derived classes may override this method
+		if (Thread.currentThread() instanceof MapSourceListener) {
+			((MapSourceListener) Thread.currentThread()).tileDownloadStarted(conn.getURL().toString());
+		}
 	}
 
 	public abstract String getTileUrl(int zoom, int tilex, int tiley);

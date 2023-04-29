@@ -19,10 +19,14 @@ package mobac.gui.mapview;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import mobac.program.interfaces.MapSourceCallerThreadInfo;
+import mobac.program.interfaces.MapSourceListener;
 import mobac.program.tilestore.berkeleydb.DelayedInterruptThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -46,6 +50,7 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 	private static final int WORKER_THREAD_TIMEOUT = 30;
 	private final BlockingQueue<Runnable> jobQueue;
 	private final ThreadPoolExecutor executor;
+	private final List<MapSourceListener> mapSourceListeners = Collections.synchronizedList(new LinkedList<>());
 	private int WORKER_THREAD_ID = 1;
 
 	private JobDispatcher() {
@@ -86,7 +91,17 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 		log.error("Map preview job rejected: " + r);
 	}
 
-	public static class MapPreviewThread extends DelayedInterruptThread implements MapSourceCallerThreadInfo {
+	public void addMapSourceListener(MapSourceListener listener) {
+		mapSourceListeners.add(listener);
+	}
+	public boolean removeMapSourceListener(MapSourceListener listener) {
+		return mapSourceListeners.remove(listener);
+	}
+
+	public class MapPreviewThread extends DelayedInterruptThread
+			implements
+				MapSourceCallerThreadInfo,
+				MapSourceListener {
 
 		public MapPreviewThread(Runnable target, String name) {
 			super(target, name);
@@ -97,5 +112,25 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 			return true;
 		}
 
+		@Override
+		public void tileDownloadStarted(String tileUrl) {
+			for (MapSourceListener listener : mapSourceListeners) {
+				listener.tileDownloadStarted(tileUrl);
+			}
+		}
+
+		@Override
+		public void tileDownloaded(int size) {
+			for (MapSourceListener listener : mapSourceListeners) {
+				listener.tileDownloaded(size);
+			}
+		}
+
+		@Override
+		public void tileLoadedFromCache(int size) {
+			for (MapSourceListener listener : mapSourceListeners) {
+				listener.tileLoadedFromCache(size);
+			}
+		}
 	}
 }

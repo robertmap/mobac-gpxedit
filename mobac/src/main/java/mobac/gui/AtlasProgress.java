@@ -404,6 +404,10 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		updateGUI();
 	}
 
+	@Override
+	public void tileDownloadStarted(String tileUrl) {
+	}
+
 	private String formatTime(long longSeconds) {
 		String timeString = "";
 

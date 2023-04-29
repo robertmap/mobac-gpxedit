@@ -201,6 +201,11 @@ public class JobDispatcher implements AutoCloseable {
 			mapSourceListener.tileLoadedFromCache(size);
 		}
 
+		@Override
+		public void tileDownloadStarted(String tileUrl) {
+			mapSourceListener.tileDownloadStarted(tileUrl);
+		}
+
 		public AtlasThread getAtlasThread() {
 			return JobDispatcher.this.atlasThread;
 		}
