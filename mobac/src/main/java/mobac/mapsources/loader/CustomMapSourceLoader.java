@@ -103,12 +103,7 @@ public class CustomMapSourceLoader {
 		 *
 		 * See https://sourceforge.net/p/mobac/bugs/294/
 		 */
-		Collections.sort(customMapSourceFiles, new Comparator<File>() {
-			@Override
-			public int compare(File f1, File f2) {
-				return f1.getName().compareTo(f2.getName());
-			}
-		});
+		Collections.sort(customMapSourceFiles, (f1,f2) -> f1.getName().compareTo(f2.getName()));
 		return customMapSourceFiles;
 	}
 
