@@ -181,8 +181,6 @@ public class CustomMapSourceLoader {
 	 */
 	protected MapSource internalLoadMapSource(InputStream in, final File loaderInfoFile,
 			Collection<String> elementFilter) throws MapSourceCreateException, JAXBException {
-		MapSource customMapSource;
-
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 
 		unmarshaller.setEventHandler(event -> {
@@ -232,6 +230,7 @@ public class CustomMapSourceLoader {
 		} else {
 			o = unmarshaller.unmarshal(in);
 		}
+		MapSource customMapSource;
 		if (o instanceof WrappedMapSource) {
 			customMapSource = ((WrappedMapSource) o).getMapSource();
 		} else {

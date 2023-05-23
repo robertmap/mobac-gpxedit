@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.TreeSet;
@@ -84,7 +83,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			}
 			File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();
 			if (mapSourcesDir == null) {
-				throw new RuntimeException("Map sources directory is unset");
+				throw new RuntimeException("Map sources directory is not set");
 			}
 			if (!mapSourcesDir.isDirectory()) {
 				JOptionPane.showMessageDialog(null,
@@ -102,6 +101,9 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 			} catch (Exception e) {
 				throw new RuntimeException("Failed to load map packs: " + e.getMessage(), e);
 			}
+
+			// Always load custom BSH map sources first. This allows to use them in custom
+			// multi-layer map sources.
 			BeanShellMapSourceLoader bsmsl = new BeanShellMapSourceLoader(this, mapSourcesDir);
 			bsmsl.loadBeanShellMapSources();
 
@@ -111,7 +113,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		} finally {
 			// If no map sources are available load the simple map source which shows the
 			// informative message
-			if (allMapSources.size() == 0) {
+			if (allMapSources.isEmpty()) {
 				addMapSource(new SimpleMapSource());
 			}
 		}
@@ -174,13 +176,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	@Override
 	public Vector<MapSource> getAllLayerMapSources() {
 		Vector<MapSource> all = getAllMapSources();
-		TreeSet<MapSource> uniqueSources = new TreeSet<>(new Comparator<MapSource>() {
-
-			public int compare(MapSource o1, MapSource o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-
-		});
+		TreeSet<MapSource> uniqueSources = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
 		for (MapSource ms : all) {
 			if (ms instanceof AbstractMultiLayerMapSource) {
 				for (MapSource lms : ((AbstractMultiLayerMapSource) ms)) {
@@ -190,13 +186,13 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				uniqueSources.add(ms);
 			}
 		}
-		Vector<MapSource> result = new Vector<MapSource>(uniqueSources);
+		Vector<MapSource> result = new Vector<>(uniqueSources);
 		return result;
 	}
 
 	@Override
 	public Vector<MapSource> getEnabledOrderedMapSources() {
-		Vector<MapSource> mapSources = new Vector<MapSource>(allMapSources.size());
+		Vector<MapSource> mapSources = new Vector<>(allMapSources.size());
 
 		Vector<String> enabledMapSources = Settings.getInstance().mapSourcesEnabled;
 		TreeSet<String> notEnabledMapSources = new TreeSet<>(allMapSources.keySet());
@@ -207,7 +203,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				mapSources.add(ms);
 			}
 		}
-		// remove all disabled map sources so we get those that are neither enabled nor
+		// remove all disabled map sources, so we get those that are neither enabled nor
 		// disabled
 		notEnabledMapSources.removeAll(Settings.getInstance().mapSourcesDisabled);
 		for (String mapSourceName : notEnabledMapSources) {
@@ -216,7 +212,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				mapSources.add(ms);
 			}
 		}
-		if (mapSources.size() == 0) {
+		if (mapSources.isEmpty()) {
 			mapSources.add(new SimpleMapSource());
 		}
 		return mapSources;
