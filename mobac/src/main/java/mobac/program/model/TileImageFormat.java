@@ -76,6 +76,7 @@ public enum TileImageFormat {
 	JPEG90(new TileImageJpegDataWriterBuilder(0.90), "lp_tile_param_image_fmt_jpg_q90"), //
 	JPEG85(new TileImageJpegDataWriterBuilder(0.85), "lp_tile_param_image_fmt_jpg_q85"), //
 	JPEG80(new TileImageJpegDataWriterBuilder(0.80), "lp_tile_param_image_fmt_jpg_q80"), //
+	JPEG75(new TileImageJpegDataWriterBuilder(0.75), "lp_tile_param_image_fmt_jpg_q75"), //
 	JPEG70(new TileImageJpegDataWriterBuilder(0.70), "lp_tile_param_image_fmt_jpg_q70"), //
 	JPEG60(new TileImageJpegDataWriterBuilder(0.60), "lp_tile_param_image_fmt_jpg_q60"), //
 	JPEG50(new TileImageJpegDataWriterBuilder(0.50), "lp_tile_param_image_fmt_jpg_q50"); //
