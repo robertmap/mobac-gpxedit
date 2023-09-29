@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,7 +102,7 @@ public class CustomMapSourceLoader {
 		 *
 		 * See https://sourceforge.net/p/mobac/bugs/294/
 		 */
-		Collections.sort(customMapSourceFiles, (f1,f2) -> f1.getName().compareTo(f2.getName()));
+		Collections.sort(customMapSourceFiles, (f1, f2) -> f1.getName().compareTo(f2.getName()));
 		return customMapSourceFiles;
 	}
 
