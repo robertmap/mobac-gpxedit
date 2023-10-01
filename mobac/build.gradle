@@ -91,6 +91,7 @@ launch4j {
     icon = "${projectDir}/launch4j/mobac.ico"
     downloadUrl = "https://mobac.sourceforge.io/OpenJDK/"
     jreMinVersion = '1.11.0'
+    requires64Bit = true
     dontWrapJar = true
     libraryDir = ""
     copyConfigurable = [] //["${project.buildDir}/libs/Mobile_Atlas_Creator.jar"]
