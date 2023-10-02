@@ -17,5 +17,7 @@ jar{
     manifest {
         attributes "Main-Class": "mobac.StartMapEvaluator"
         attributes "Class-Path": "Mobile_Atlas_Creator.jar"
+        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.http'
+        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.https'
     }
 }

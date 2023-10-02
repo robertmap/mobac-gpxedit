@@ -10,6 +10,9 @@
  - = Features that has been removed
 
 =======
+2.3.3 (2023-??-??)
+ ! BSH map sources: fixed Cannot access method addRequestProperty (#383)
+
 2.3.2 (2023-09-29)
  ! MBTiles: prevent duplicate tiles in mbtiles database
  ! MBTiles: atlases are now restricted to one map per zoom level

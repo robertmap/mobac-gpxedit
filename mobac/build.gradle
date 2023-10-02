@@ -50,16 +50,20 @@ jar {
     println("SVN revision $svnRevision")
 
     manifest {
-        attributes "Main-Class": "mobac.StartMOBAC"
-        attributes "Version": project.rootProject.version
-        attributes "SVN-Revision": "$svnRevision"
+        attributes 'Main-Class': 'mobac.StartMOBAC'
+        attributes 'Version': project.rootProject.version
+        attributes 'SVN-Revision': svnRevision
+        attributes 'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date())
 
         // This entry is required by jaxb-runtime to work properly on Java 16+ - otherwise you will encounter
         // java.lang.NullPointerException: Cannot invoke "java.lang.reflect.Method.invoke(Object, Object[])" because
         // "com.sun.xml.bind.v2.runtime.reflect.opt.Injector.defineClass" is null
-        attributes "Multi-Release": "true"
+        attributes 'Multi-Release': 'true'
+
+        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.http'
+        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.https'
     }
-    getArchiveBaseName().set("Mobile_Atlas_Creator")
+    getArchiveBaseName().set('Mobile_Atlas_Creator')
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }

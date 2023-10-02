@@ -31,6 +31,8 @@ import mobac.program.interfaces.ReloadableMapSource;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.awt.Color;
@@ -50,6 +52,8 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 
 	private static final String AH_ERROR = "Sourced file: inline evaluation of: "
 			+ "``addHeaders(conn);'' : Command not found: addHeaders( sun.net.www.protocol.http.HttpURLConnection )";
+
+	private static final Logger LOG = LoggerFactory.getLogger(BeanShellHttpMapSource.class);
 
 	private static int NUM = 0;
 
@@ -83,6 +87,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 
 	protected void prepareInterpreter(String code) throws EvalError {
 		interpreter = new Interpreter();
+		interpreter.set("LOG", LOG);
 
 		interpreter.eval("import mobac.program.interfaces.HttpMapSource.TileUpdate;");
 		interpreter.eval("import java.net.HttpURLConnection;");
