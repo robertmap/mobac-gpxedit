@@ -55,7 +55,7 @@ import java.util.TreeSet;
  */
 public class GEMFFileCreator {
 	private static final long FILE_SIZE_LIMIT = 1 * 1024 * 1024 * 1024; // 1GB
-	private static final int FILE_COPY_BUFFER_SIZE = 1024;
+	private static final int FILE_COPY_BUFFER_SIZE = 8192;
 
 	private static final int VERSION = 4;
 	private static final int TILE_SIZE = 256;
@@ -169,14 +169,14 @@ public class GEMFFileCreator {
 					final List<Integer> ySet = new ArrayList<>();
 					ySet.addAll(dirIndex.get(source).get(zoom).get(x).keySet());
 
-					if (ySet.size() == 0) {
+					if (ySet.isEmpty()) {
 						continue;
 					}
 
 					Collections.sort(ySet);
 
 					if (!ySets.containsKey(ySet)) {
-						ySets.put(ySet, new ArrayList<Integer>());
+						ySets.put(ySet, new ArrayList<>());
 					}
 
 					ySets.get(ySet).add(x);
@@ -187,16 +187,16 @@ public class GEMFFileCreator {
 
 				for (final List<Integer> ySet : ySets.keySet()) {
 
-					final TreeSet<Integer> xList = new TreeSet<Integer>(ySets.get(ySet));
+					final TreeSet<Integer> xList = new TreeSet<>(ySets.get(ySet));
 
-					List<Integer> xSet = new ArrayList<Integer>();
+					List<Integer> xSet = new ArrayList<>();
 					for (int i = xList.first(); i < xList.last() + 1; ++i) {
 						if (xList.contains(i)) {
 							xSet.add(i);
 						} else {
 							if (xSet.size() > 0) {
 								xSets.put(ySet, xSet);
-								xSet = new ArrayList<Integer>();
+								xSet = new ArrayList<>();
 							}
 						}
 					}
@@ -270,106 +270,104 @@ public class GEMFFileCreator {
 		final long headerSize = offset;
 
 		RandomAccessFile gemfFile = new RandomAccessFile(pLocation, "rw");
+		try {
 
-		// Write version header
-		gemfFile.writeInt(VERSION);
+			// Write version header
+			gemfFile.writeInt(VERSION);
 
-		// Write file size header
-		gemfFile.writeInt(TILE_SIZE);
+			// Write file size header
+			gemfFile.writeInt(TILE_SIZE);
 
-		// Write number of sources
-		gemfFile.writeInt(sourceIndex.size());
+			// Write number of sources
+			gemfFile.writeInt(sourceIndex.size());
 
-		// Write source list
-		for (final String source : sourceIndex.keySet()) {
-			gemfFile.writeInt(sourceIndex.get(source));
-			gemfFile.writeInt(source.length());
-			gemfFile.write(source.getBytes());
-		}
+			// Write source list
+			for (final String source : sourceIndex.keySet()) {
+				gemfFile.writeInt(sourceIndex.get(source));
+				gemfFile.writeInt(source.length());
+				gemfFile.write(source.getBytes());
+			}
 
-		// Write number of ranges
-		gemfFile.writeInt(ranges.size());
+			// Write number of ranges
+			gemfFile.writeInt(ranges.size());
 
-		// Write range objects
-		for (final GEMFRange range : ranges) {
-			gemfFile.writeInt(range.zoom);
-			gemfFile.writeInt(range.xMin);
-			gemfFile.writeInt(range.xMax);
-			gemfFile.writeInt(range.yMin);
-			gemfFile.writeInt(range.yMax);
-			gemfFile.writeInt(range.sourceIndex);
-			gemfFile.writeLong(range.offset);
-		}
+			// Write range objects
+			for (final GEMFRange range : ranges) {
+				gemfFile.writeInt(range.zoom);
+				gemfFile.writeInt(range.xMin);
+				gemfFile.writeInt(range.xMax);
+				gemfFile.writeInt(range.yMin);
+				gemfFile.writeInt(range.yMax);
+				gemfFile.writeInt(range.sourceIndex);
+				gemfFile.writeLong(range.offset);
+			}
 
-		// Write file offset list
-		for (final GEMFRange range : ranges) {
-			for (int x = range.xMin; x < range.xMax + 1; ++x) {
-				for (int y = range.yMin; y < range.yMax + 1; ++y) {
-					gemfFile.writeLong(offset);
+			// Write file offset list
+			for (final GEMFRange range : ranges) {
+				for (int x = range.xMin; x < range.xMax + 1; ++x) {
+					for (int y = range.yMin; y < range.yMax + 1; ++y) {
+						gemfFile.writeLong(offset);
 
-					long fileSize = 0;
-					try {
-						fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y)
-								.length();
-					} catch (NullPointerException e) {
-						// dont' do anything here. Error will be logged later.
+						long fileSize = 0;
+						try {
+							fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y)
+									.length();
+						} catch (NullPointerException e) {
+							// dont' do anything here. Error will be logged later.
+						}
+						gemfFile.writeInt((int) fileSize);
+						offset += fileSize;
 					}
-					gemfFile.writeInt((int) fileSize);
-					offset += fileSize;
 				}
 			}
-		}
 
-		//
-		// Write tiles
-		//
+			//
+			// Write tiles
+			//
 
-		final byte[] buf = new byte[FILE_COPY_BUFFER_SIZE];
+			final byte[] buf = new byte[FILE_COPY_BUFFER_SIZE];
 
-		long currentOffset = headerSize;
-		int fileIndex = 0;
+			long currentOffset = headerSize;
+			int fileIndex = 0;
 
-		for (final GEMFRange range : ranges) {
-			for (int x = range.xMin; x < range.xMax + 1; ++x) {
-				for (int y = range.yMin; y < range.yMax + 1; ++y) {
+			for (final GEMFRange range : ranges) {
+				for (int x = range.xMin; x < range.xMax + 1; ++x) {
+					for (int y = range.yMin; y < range.yMax + 1; ++y) {
 
-					long fileSize = 0;
-					try {
-						fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y)
-								.length();
-					} catch (NullPointerException e) {
-						// don't do anything here. Error will be logged later.
-					}
-
-					if (currentOffset + fileSize > FILE_SIZE_LIMIT) {
-						gemfFile.close();
-						++fileIndex;
-						gemfFile = new RandomAccessFile(pLocation + "-" + fileIndex, "rw");
-						currentOffset = 0;
-					} else {
-						currentOffset += fileSize;
-					}
-
-					try {
-						final FileInputStream tile = new FileInputStream(
-								dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y));
-
-						int read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
-						while (read != -1) {
-							gemfFile.write(buf, 0, read);
-							read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
+						long fileSize = 0;
+						try {
+							fileSize = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y)
+									.length();
+						} catch (NullPointerException e) {
+							// don't do anything here. Error will be logged later.
 						}
 
-						tile.close();
-					} catch (Exception e) {
-						log.warn("Please check that all required Tiles have been downloaded correctly. "
-								+ "I am missing tile for x=" + x + ", y=" + y + ", z=" + range.zoom);
+						if (currentOffset + fileSize > FILE_SIZE_LIMIT) {
+							gemfFile.close();
+							++fileIndex;
+							gemfFile = new RandomAccessFile(pLocation + "-" + fileIndex, "rw");
+							currentOffset = 0;
+						} else {
+							currentOffset += fileSize;
+						}
+
+						File tileFile = dirIndex.get(indexSource.get(range.sourceIndex)).get(range.zoom).get(x).get(y);
+						try (FileInputStream tile = new FileInputStream(tileFile)) {
+							int read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
+							while (read != -1) {
+								gemfFile.write(buf, 0, read);
+								read = tile.read(buf, 0, FILE_COPY_BUFFER_SIZE);
+							}
+						} catch (Exception e) {
+							log.warn("Please check that all required Tiles have been downloaded correctly. "
+									+ "I am missing tile for x=" + x + ", y=" + y + ", z=" + range.zoom);
+						}
 					}
 				}
 			}
+		} finally {
+			gemfFile.close();
 		}
-
-		gemfFile.close();
 
 		// Complete construction of GEMFFile object
 		// openFiles();
