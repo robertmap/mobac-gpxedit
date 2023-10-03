@@ -41,7 +41,7 @@ public class OsmdroidGEMF extends OSMTracker {
 
 	@Override
 	public void finishAtlasCreation() throws IOException, InterruptedException {
-		List<File> tileFolders = new LinkedList<File>();
+		List<File> tileFolders = new LinkedList<>();
 		tileFolders.add(mapDir);
 
 		String gemfLocation = new File(atlasDir, atlas.getName() + GEMF_FILE_EXTENSION).toString();
