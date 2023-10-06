@@ -224,13 +224,13 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 			statement.setInt(2, x);
 			statement.setInt(3, y);
 			if (log.isTraceEnabled()) {
-				log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+				log.trace("Loading tile z={} x={} y={}", zoom, x, y);
 			}
 			if (statement.execute()) {
 				try (ResultSet rs = statement.getResultSet()) {
 					if (!rs.next()) {
 						if (log.isDebugEnabled()) {
-							log.debug(String.format("Tile in database not found: z=%d x=%d y=%d", zoom, x, y));
+							log.debug("Tile in database not found: z={} x={} y={}", zoom, x, y);
 						}
 						return null;
 					}
