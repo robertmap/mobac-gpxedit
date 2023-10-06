@@ -237,8 +237,8 @@ public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 					return rs.getBytes(1);
 				}
 			}
-		} catch (SQLException e) {
-			log.error("", e);
+		} catch (Exception e) {
+			log.error("Failed to load tile z={} x={} y={} of map {}", zoom, x, y, name, e);
 		}
 		return null;
 	}
