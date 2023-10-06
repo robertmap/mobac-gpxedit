@@ -140,9 +140,9 @@ public abstract class AbstractMultiLayerMapSource implements InitializableMapSou
 			int maxSize = mapSpace.getTileSize();
 			for (MapSource layerMapSource : mapSources) {
 				BufferedImage layerImage = layerMapSource.getTileImage(zoom, x, y, loadMethod);
-				layerImages.add(layerImage);
 				if (layerImage != null) {
 					log.debug("Multi layer image loaded: " + layerMapSource + " " + x + " " + y + " " + zoom);
+					layerImages.add(layerImage);
 					int size = layerImage.getWidth();
 					if (size > maxSize) {
 						maxSize = size;
