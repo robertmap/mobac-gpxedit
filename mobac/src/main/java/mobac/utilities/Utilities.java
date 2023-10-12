@@ -618,6 +618,9 @@ public class Utilities {
 	 * @return parsed svn revision
 	 */
 	public static int parseSVNRevision(String revision) {
+		if (revision == null) {
+			return -1;
+		}
 		revision = revision.trim();
 		int index = revision.lastIndexOf(':');
 		if (index >= 0) {
