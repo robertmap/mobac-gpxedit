@@ -60,8 +60,7 @@ jar {
         // "com.sun.xml.bind.v2.runtime.reflect.opt.Injector.defineClass" is null
         attributes 'Multi-Release': 'true'
 
-        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.http'
-        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.https'
+        attributes 'Add-Exports': 'java.base/sun.net.www.protocol.http java.base/sun.net.www.protocol.https'
     }
     getArchiveBaseName().set('Mobile_Atlas_Creator')
     from {
