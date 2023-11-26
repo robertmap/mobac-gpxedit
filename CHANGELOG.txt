@@ -13,6 +13,7 @@
 2.3.3 (2023-10-13)
  ! BSH map sources: fixed Cannot access method addRequestProperty when using
    Java 17+ (#383)
+ ~ Custom map sources: validate map source names for disallowed characters
 
 2.3.2 (2023-09-29)
  ! MBTiles: prevent duplicate tiles in mbtiles database
