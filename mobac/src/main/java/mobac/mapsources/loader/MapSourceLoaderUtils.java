@@ -22,6 +22,9 @@ import java.nio.file.Paths;
 
 public class MapSourceLoaderUtils {
 	public static void testMapSourceName(String name) throws RuntimeException {
+		if (name == null || name.trim().isEmpty()) {
+			throw new RuntimeException("Custom map name missing");
+		}
 		Path p;
 		try {
 			p = Paths.get(name); // validate name

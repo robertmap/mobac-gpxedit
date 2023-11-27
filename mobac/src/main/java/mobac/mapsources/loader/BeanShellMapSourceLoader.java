@@ -46,7 +46,7 @@ public class BeanShellMapSourceLoader {
 			try {
 				BeanShellHttpMapSource mapSource = BeanShellHttpMapSource.load(f);
 				MapSourceLoaderUtils.testMapSourceName(mapSource.getName());
-				log.trace("BeanShell map source loaded: " + mapSource + " from file \"" + f.getName() + "\"");
+				log.trace("BeanShell map source loaded: {} from file \"{}\"", mapSource, f.getName());
 				mapSource.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.BSH, f));
 				mapSourcesManager.addMapSource(mapSource);
 			} catch (Exception e) {

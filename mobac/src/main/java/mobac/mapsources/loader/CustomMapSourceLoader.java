@@ -135,10 +135,8 @@ public class CustomMapSourceLoader {
 					log.warn("A problem occurred while loading \"{}\": tileType is null - "
 							+ "some atlas formats will produce an error!", f.getName());
 				}
-				if (customMapSource.getName() == null || customMapSource.getName().trim().isEmpty()) {
-					throw new RuntimeException("Custom map name missing");
-				}
 				MapSourceLoaderUtils.testMapSourceName(customMapSource.getName());
+				mapSourcesManager.addMapSource(customMapSource);
 			} catch (Exception e) {
 				log.error("Failed to load custom map source \"{}\": {}", f.getName(), e.getMessage(), e);
 				String errorMsg = "Failed to load custom map source \"" + f.getName() + "\":\n" + e.getMessage();
