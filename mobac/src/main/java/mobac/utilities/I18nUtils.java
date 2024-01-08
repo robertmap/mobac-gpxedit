@@ -81,14 +81,15 @@ public class I18nUtils {
 		} else {
 			locale = Locale.getDefault();
 		}
+		UTF8Control utf8Control = new UTF8Control();
 		localizationBundle = (MyResourceBundle) ResourceBundle.getBundle("mobac.resources.text.localize", locale,
-				new UTF8Control());
+				utf8Control);
 		if (!FALLBACK_LOCALE.equals(locale)) {
 			// Not sure why we have to load and set the fallback resource manually, but this
 			// way it works...
 			if (localizationFallbackBundle == null) {
 				localizationFallbackBundle = (MyResourceBundle) ResourceBundle
-						.getBundle("mobac.resources.text.localize", FALLBACK_LOCALE, new UTF8Control());
+						.getBundle("mobac.resources.text.localize", FALLBACK_LOCALE, utf8Control);
 			}
 			// Check if the current bundle is the fallback bundle. Only set parent if this
 			// is not the fallback bundle,
