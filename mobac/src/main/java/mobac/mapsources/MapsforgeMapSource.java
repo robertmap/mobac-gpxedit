@@ -150,25 +150,20 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 
 	protected void loadExternalRenderTheme(File xmlRenderThemeFile) throws FileNotFoundException {
 
-		XmlRenderThemeMenuCallback callBack = new XmlRenderThemeMenuCallback() {
+		XmlRenderThemeMenuCallback callBack = styleMenu -> {
+			renderThemeStyleMenu = styleMenu;
+			String id = styleMenu.getDefaultValue();
+			XmlRenderThemeStyleLayer baseLayer = styleMenu.getLayer(id);
+			Set<String> result = baseLayer.getCategories();
 
-			@Override
-			public Set<String> getCategories(XmlRenderThemeStyleMenu styleMenu) {
-				renderThemeStyleMenu = styleMenu;
-				String id = styleMenu.getDefaultValue();
-				XmlRenderThemeStyleLayer baseLayer = styleMenu.getLayer(id);
-				Set<String> result = baseLayer.getCategories();
-
-				for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays()) {
-					LOG.trace("Overlay {} enabled: {}", overlay.getId(), overlay.isEnabled());
-					if (overlay.isEnabled()) {
-						result.addAll(overlay.getCategories());
-					}
+			for (XmlRenderThemeStyleLayer overlay : baseLayer.getOverlays()) {
+				LOG.trace("Overlay {} enabled: {}", overlay.getId(), overlay.isEnabled());
+				if (overlay.isEnabled()) {
+					result.addAll(overlay.getCategories());
 				}
-
-				return result;
 			}
 
+			return result;
 		};
 		this.xmlRenderTheme = new ExternalRenderTheme(xmlRenderThemeFile, callBack);
 	}
@@ -216,7 +211,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 			return buf.toByteArray();
 		} catch (Exception e) {
 			throw new RuntimeException(
-					String.format("Failed to render tile {}/{}/z{} - {}", x, y, zoom, e.getMessage()), e);
+					String.format("Failed to render tile %d/%d/z%d - %s", x, y, zoom, e.getMessage()), e);
 		}
 	}
 
@@ -273,7 +268,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 	}
 
 	/**
-	 * Clone the Mapforge map source but clear the label cache. This prevents
+	 * Clone the Mapsforge map source but clear the label cache. This prevents
 	 * rendering problems with defect labels.
 	 * <p>
 	 * This method is executed while creating a deep clone of an {@link Atlas}
