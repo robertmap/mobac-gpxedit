@@ -45,6 +45,27 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * Load tile images from one large calibrated image. The input image format is
+ * everything what ImageIO can read. The image has to be in standard Mercator
+ * projection.
+ *
+ * The box* entries have to be filled with a lat/lon WGS 84 coordinate (deg
+ * -90.0 to +90.0) of the boundaries.
+ *
+ * <pre>
+ *     <localImageFile>
+ *         <name>Custom local image file atlas</name>
+ *         <minZoom>4</minZoom>
+ *         <maxZoom>14</maxZoom>
+ *         <imageFile>path/to/the/imagefile.png</imageFile>
+ *         <boxNorth></boxNorth>
+ *         <boxEast></boxEast>
+ *         <boxSouth></boxSouth>
+ *         <boxWest></boxWest>
+ *     </localImageFile>
+ * </pre>
+ */
 @XmlRootElement(name = "localImageFile")
 public class CustomLocalImageFileMapSource
 		implements
@@ -52,16 +73,21 @@ public class CustomLocalImageFileMapSource
 			ReloadableMapSource<CustomLocalImageFileMapSource> {
 
 	private static final Logger log = LoggerFactory.getLogger(CustomLocalImageFileMapSource.class);
-	BufferedImage fullImage = null;
+	private volatile BufferedImage fullImage = null;
 	private MapSourceLoaderInfo loaderInfo = null;
+
 	@XmlElement(required = true, nillable = false)
 	private double boxNorth = 90.0;
+
 	@XmlElement(required = true, nillable = false)
 	private double boxSouth = -90.0;
+
 	@XmlElement(required = true, nillable = false)
 	private double boxEast = 180.0;
+
 	@XmlElement(required = true, nillable = false)
 	private double boxWest = -180.0;
+
 	private MapSpace mapSpace = MapSpaceFactory.getInstance(256, true);
 	private boolean initialized = false;
 	private TileImageType tileImageType = null;
@@ -178,16 +204,18 @@ public class CustomLocalImageFileMapSource
 			initialize();
 		}
 
-		if (log.isTraceEnabled()) {
-			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
-		}
+		log.trace("Loading tile z={} x={} y={}", zoom, x, y);
 
 		BufferedImage image = null;
 		Graphics2D g2 = null;
 
 		try {
 			if (fullImage == null) {
-				fullImage = ImageIO.read(imageFile);
+				synchronized (this) {
+					if (fullImage == null) {
+						fullImage = ImageIO.read(imageFile);
+					}
+				}
 			}
 			int imageWidth = fullImage.getWidth();
 			int imageHeight = fullImage.getHeight();
@@ -249,7 +277,7 @@ public class CustomLocalImageFileMapSource
 
 			}
 		} catch (FileNotFoundException e) {
-			log.debug("Map image file not found: " + imageFile.getAbsolutePath());
+			log.debug("Map image file not found: {}", imageFile.getAbsolutePath());
 		} finally {
 			if (g2 != null) {
 				g2.dispose();
