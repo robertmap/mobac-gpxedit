@@ -13,7 +13,7 @@
 # Besides the default system variables MOBAC defines two own variables: 
 #
 # ${home}
-# user home directory, e.g. /home/username/ on Linux or C:\Users\username\ on Win Vista/7
+# user home directory, e.g. /home/username/ on Linux or C:\Users\username\ on Windows
 #
 # ${mobac-prog}  
 # directory where MOBAC (or to be detailed Mobile_Atlas_Creator.jar) has been installed into
