@@ -170,14 +170,19 @@ public class DirectoryManager {
 	 */
 	private static File getProgramDir() {
 		Path path = null;
-		try {
-			path = Utilities.getClassLocation(DirectoryManager.class);
-		} catch (Exception e) {
-			System.err.println("Unable to get program directory: " + e.getMessage());
-			return currentDir;
+		String envProgDir = System.getenv("MOBAC-PROGRAM-DIR");
+		if (envProgDir != null) {
+			path = Paths.get(envProgDir);
+		} else {
+			try {
+				path = Utilities.getClassLocation(DirectoryManager.class);
+			} catch (Exception e) {
+				System.err.println("Unable to get program directory: " + e.getMessage());
+				return currentDir;
+			}
 		}
 		if (Files.isRegularFile(path)) {
-			// Class is executed from inside of a JAR
+			// Class is executed from inside a JAR
 			String pathStr = path.getParent().toString();
 			String intellijMobacRunPath = Paths.get("mobac", "mobac", "build", "libs").toString();
 			if (pathStr.endsWith(intellijMobacRunPath)) {
