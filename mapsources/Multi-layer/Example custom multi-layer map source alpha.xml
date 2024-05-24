@@ -28,7 +28,7 @@ opacity alpha value.
             <name>OSMPublicTransport</name>
         </mapSource>
         <mapSource>
-            <name>4uMaps</name>
+            <name>HikebikemapTiles</name>
         </mapSource>
     </layers>
 </customMultiLayerMapSource>
