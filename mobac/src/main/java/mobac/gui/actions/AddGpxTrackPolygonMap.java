@@ -137,7 +137,7 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 		final TileImageParameters customTileParameters = mg.getSelectedTileImageParameters();
 
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.setPreferredSize(new Dimension(300, 100));
+		panel.setPreferredSize(new Dimension(400, 100));
 		final JLabel label = new JLabel("");
 		final JDistanceSlider slider = new JDistanceSlider(mapSource.getMapSpace(), maxZoom, centerY, unitSystem, 5,
 				500);
@@ -146,13 +146,14 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 			public void stateChanged(ChangeEvent e) {
 				double d = mapSpace.horizontalDistance(maxZoom, centerY, slider.getValue());
 				d *= unitSystem.earthRadius * unitSystem.unitFactor;
-				String unitName = unitSystem.unitSmall;
+				String value;
 				if (d > unitSystem.unitFactor) {
 					d /= unitSystem.unitFactor;
-					unitName = unitSystem.unitLarge;
+					value = String.format("%.1f %s", d, unitSystem.unitLarge);
+				} else {
+					value = String.format("%d %s", (int) d, unitSystem.unitSmall);
 				}
-				label.setText(String.format(I18nUtils.localizedStringForKey("dlg_gpx_track_select_distance"), ((int) d),
-						unitName));
+				label.setText(String.format(I18nUtils.localizedStringForKey("dlg_gpx_track_select_distance"), value));
 			}
 		};
 		final JButton previewButton = new JButton(I18nUtils.localizedStringForKey("dlg_gpx_track_select_preview"));
@@ -169,10 +170,23 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 			mg.previewMap.repaint();
 		});
 
+		JButton sliderMinChange = new JButton("<");
+		sliderMinChange.setBorderPainted(false);
+		sliderMinChange.setMaximumSize(new Dimension(10, 10));
+		sliderMinChange.addActionListener((e) -> slider.changeMinimum());
+		JButton sliderMaxChange = new JButton(">");
+		sliderMaxChange.setMaximumSize(new Dimension(10, 10));
+		sliderMaxChange.setBorderPainted(false);
+		sliderMaxChange.addActionListener((e) -> slider.changeMaximum());
+
 		cl.stateChanged(null);
 		slider.addChangeListener(cl);
 		panel.add(label, BorderLayout.NORTH);
-		panel.add(slider, BorderLayout.CENTER);
+		JPanel sliderPanel = new JPanel(new BorderLayout());
+		sliderPanel.add(slider, BorderLayout.CENTER);
+		sliderPanel.add(sliderMinChange, BorderLayout.WEST);
+		sliderPanel.add(sliderMaxChange, BorderLayout.EAST);
+		panel.add(sliderPanel, BorderLayout.CENTER);
 		panel.add(previewButton, BorderLayout.SOUTH);
 
 		int result = JOptionPane.showConfirmDialog(mg, panel,

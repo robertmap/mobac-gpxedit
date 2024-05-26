@@ -10,6 +10,9 @@
  - = Features that has been removed
 
 =======
+2.3.4 (20??-??-??)
+ + Dialog "Select distance around track" allows to increase the slider range
+
 2.3.3 (2023-10-13)
  ! BSH map sources: fixed Cannot access method addRequestProperty when using
    Java 17+ (#383)

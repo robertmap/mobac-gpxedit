@@ -27,8 +27,25 @@ public class JDistanceSlider extends JSlider {
 
 	private static final long serialVersionUID = 1L;
 
+	private final MapSpace mapSpace;
+	private final int zoom;
+	private final int y;
+	private final UnitSystem unit;
+
 	public JDistanceSlider(MapSpace mapSpace, int zoom, int y, UnitSystem unit, int pixelMin, int pixelMax) {
 		super(pixelMin, pixelMax);
+		this.mapSpace = mapSpace;
+		this.zoom = zoom;
+		this.y = y;
+		this.unit = unit;
+		updateLableTable();
+		setPaintTicks(true);
+		setPaintLabels(true);
+	}
+
+	private void updateLableTable() {
+		int pixelMin = this.getMinimum();
+		int pixelMax = this.getMaximum();
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
 
 		int diff4 = (pixelMax - pixelMin) / 4;
@@ -39,15 +56,28 @@ public class JDistanceSlider extends JSlider {
 			String label;
 			if (distance > unit.unitFactor) {
 				distance /= unit.unitFactor;
-				label = String.format("%2.0f %s", distance, unit.unitLarge);
+				label = String.format("%2.1f %s", distance, unit.unitLarge);
 			} else {
 				label = String.format("%2.0f %s", distance, unit.unitSmall);
 			}
 			labelTable.put(i, new JLabel(label));
 		}
-		setPaintTicks(true);
-		setMajorTickSpacing(diff4);
 		setLabelTable(labelTable);
-		setPaintLabels(true);
+		setMajorTickSpacing(diff4);
+		revalidate();
+	}
+
+	public void changeMinimum() {
+		int min = getMinimum();
+		if (min <= 0) {
+			return;
+		}
+		setMinimum(getMinimum() / 2);
+		updateLableTable();
+	}
+
+	public void changeMaximum() {
+		setMaximum(getMaximum() * 2);
+		updateLableTable();
 	}
 }
