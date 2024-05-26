@@ -25,18 +25,22 @@ import mobac.gui.mapview.JMapViewer;
 import mobac.gui.mapview.interfaces.MapLayer;
 import mobac.gui.panels.JGpxPanel;
 import mobac.program.interfaces.MapSpace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.io.File;
+import java.math.BigDecimal;
 
 /**
  * A {@link MapLayer} displaying the content of a loaded GPX file in a
  * {@link JMapViewer} instance.
  */
 public class GpxLayer implements MapLayer {
+	private static final Logger log = LoggerFactory.getLogger(GpxLayer.class);
 
 	private static final int POINT_RADIUS = 4;
 	private static final int POINT_DIAMETER = 2 * POINT_RADIUS;
@@ -126,6 +130,12 @@ public class GpxLayer implements MapLayer {
 
 	private boolean paintTrack(final WptType point, Color color, final Graphics2D g, MapSpace mapSpace, int zoom,
 			int minX, int minY, int maxX, int maxY) {
+		BigDecimal lon = point.getLon();
+		BigDecimal lat = point.getLat();
+		if (lon == null | lat == null) {
+			log.error("Ignoring defect track point: {}", point);
+			return false;
+		}
 		// Absolute map space coordinates
 		int xAbs = mapSpace.cLonToX(point.getLon().doubleValue(), zoom);
 		int yAbs = mapSpace.cLatToY(point.getLat().doubleValue(), zoom);
