@@ -120,7 +120,12 @@ public class TestTileServer extends Serve {
 		server.addServlet("/", new JpgTileGeneratorServlet(90));
 
 		stopOtherTileServer(port);
-		server.serve();
+        try {
+            server.init();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        server.serve();
 	}
 
 	public void start() {
