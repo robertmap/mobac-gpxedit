@@ -111,7 +111,7 @@ public class TileLoader {
 				tile.setErrorImage();
 				tile.setErrorMessage("TLS error: " + e.getMessage());
 			} catch (DownloadFailedException e) {
-				log.warn("Downloading of " + tile + " failed: " + e.getMessage());
+				log.warn("Downloading of {} failed: {}", tile,  e.getMessage());
 				if (e.isTypeImage()) {
 					tile.setErrorImage(e.getResponseData());
 				} else {
@@ -119,7 +119,11 @@ public class TileLoader {
 					tile.setErrorMessage(e.generateResponseErrorText());
 				}
 			} catch (IOException e) {
-				log.warn("Downloading of {} failed: {}", tile, e.getMessage());
+				if (log.isTraceEnabled()) {
+					log.warn("Downloading of {} failed: {}", tile, e.getMessage(), e);
+				} else {
+					log.warn("Downloading of {} failed: {}", tile, e.getMessage());
+				}
 				tile.setErrorImage();
 				tile.setErrorMessage(e.getClass().getSimpleName() + "\n" + e.getMessage());
 			} catch (Exception e) {
