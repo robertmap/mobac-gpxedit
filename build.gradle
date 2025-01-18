@@ -92,7 +92,7 @@ task distSrcArchive(type: Zip) {
         include "logback.xml"
         include "gpl.txt"
         include "README.html"
-        include "README-DEV.html"
+        include "README-DEV.md"
         include "CHANGELOG.txt"
         include "start.sh"
         include "world.map"
