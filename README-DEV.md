@@ -4,15 +4,15 @@ Welcome to the developer documentation of Mobile Atlas Creator (MOBAC). First pl
 
 ## Table of contents
 
-*   [Code access](#CodeAccess)
-*   [Building Mobile Atlas Creator](#BuildingMOBAC)
-*   [MOBAC in IntelliJ](#Intellij)
-*   [Guidelines for publishing custom builds/releases](#GuidelinesCustomReleases)
-*   [Map sources and map packs](#MapPacks)
-*   [Developing a custom map pack](#CustomMapPack)
-    *   [Building the map pack](#MapPackBuilding)
-*   [Source code overview - important packages](#ImportantPackages)
-*   [Participation](#Participation)
+*   [Code access](#code-access)
+*   [Building Mobile Atlas Creator](#building-mobile-atlas-creator)
+*   [MOBAC in IntelliJ](#mobac-in-intellij)
+*   [Guidelines for publishing custom builds and releases](#guidelines-for-publishing-custom-builds-and-releases)
+*   [Map sources and map packs](#map-sources-and-map-packs)
+*   [Developing a custom map pack](#developing-a-custom-map-pack)
+    *   [Building the map pack](#building-the-map-pack)
+*   [Source code overview - important packages](#source-code-overview---important-packages)
+*   [Participation](#participation)
 
 ## Code access
 
@@ -37,7 +37,7 @@ If you want to compile MOBAC, an installation of Java Development Tools (JDK) is
 
 The main class for starting MOBAC in IntelliJ is in module mobac-run class mobac.StartMOBACdev
 
-## Guidelines for publishing custom builds/releases
+## Guidelines for publishing custom builds and releases
 
 If you modify Mobile Atlas Creator and you want to publish it yourself please consider the following guidelines:
 
