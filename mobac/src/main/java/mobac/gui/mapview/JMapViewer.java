@@ -510,10 +510,14 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
 	public void setMapSource(MapSource newMapSource) {
 		if (newMapSource.getMaxZoom() > MAX_ZOOM) {
-			throw new RuntimeException("Maximum zoom level too high");
+			throw new RuntimeException(String.format(
+					"Invalid maximum zoom level defined in map source %s is %d - maximum allowed zoom: %d",
+					newMapSource.getName(), newMapSource.getMaxZoom(), MAX_ZOOM));
 		}
 		if (newMapSource.getMinZoom() < MIN_ZOOM) {
-			throw new RuntimeException("Minimum zoom level too low");
+			throw new RuntimeException(String.format(
+					"Invalid minimum zoom level defined in map source %s is %d - minimum allowed zoom: %d",
+					newMapSource.getName(), newMapSource.getMinZoom(), MIN_ZOOM));
 		}
 		this.mapSource = newMapSource;
 		zoomSlider.setMinimum(newMapSource.getMinZoom());
