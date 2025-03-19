@@ -30,6 +30,7 @@ import mobac.program.interfaces.MapSpace;
 import mobac.program.interfaces.ReloadableMapSource;
 import mobac.program.jaxb.ColorAdapter;
 import mobac.program.model.TileImageType;
+import mobac.utilities.Utilities;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -176,7 +176,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 		HttpURLConnection conn = null;
 		try {
 			String url = getTileUrl(zoom, tilex, tiley);
-			conn = (HttpURLConnection) new URL(url).openConnection();
+			conn = Utilities.openURL(url);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {

@@ -226,7 +226,7 @@ public class MapPackManager {
 
 		// Proxy p = new Proxy(Type.HTTP,
 		// InetSocketAddress.createUnresolved("localhost", 8888));
-		HttpURLConnection conn = (HttpURLConnection) new URL(updateUrl).openConnection();
+		HttpURLConnection conn = Utilities.openURL(updateUrl);
 		try {
 			conn.setInstanceFollowRedirects(false);
 			if (md5eTag != null) {

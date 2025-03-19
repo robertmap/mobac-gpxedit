@@ -71,7 +71,7 @@ public class ExternalToolDef implements ActionListener {
 			MapSelection mapSel = gui.getMapSelectionCoordinates();
 			int[] zooms = gui.getSelectedZoomLevels().getZoomLevels();
 			for (ToolParameters param : parameters) {
-				String add = "";
+				String add;
 				switch (param) {
 					case MAX_LAT :
 						if (mapSelNull(mapSel)) {

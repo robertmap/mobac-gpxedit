@@ -39,6 +39,7 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
+import mobac.utilities.Utilities;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.SSLSocketFactory;
@@ -48,7 +49,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -159,7 +159,7 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 		if (url == null) {
 			return null;
 		}
-		return (HttpURLConnection) new URL(url).openConnection();
+		return Utilities.openURL(url);
 	}
 
 	public String getTileUrl(int zoom, int tilex, int tiley) {

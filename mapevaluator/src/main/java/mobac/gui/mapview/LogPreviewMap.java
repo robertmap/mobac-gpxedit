@@ -3,6 +3,7 @@ package mobac.gui.mapview;
 import mobac.gui.mapview.layer.MapGridLayer;
 import mobac.program.interfaces.HttpMapSource;
 import mobac.program.interfaces.MapSourceListener;
+import mobac.utilities.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +147,7 @@ public class LogPreviewMap extends PreviewMap {
 					tileUrl = ((HttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				}
 				if (tileUrl != null) {
-					URL url = new URL(tileUrl);
+					URL url = Utilities.parseURL(tileUrl);
 					drawUrl(g, "host=" + url.getHost(), gx + 4, gy += 16, tileSize);
 					drawUrl(g, url.getPath(), gx + 4, gy += 16, tileSize);
 

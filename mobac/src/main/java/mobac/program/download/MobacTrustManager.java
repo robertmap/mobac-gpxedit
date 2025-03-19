@@ -17,6 +17,7 @@
 package mobac.program.download;
 
 import mobac.exceptions.NotImplementedException;
+import mobac.utilities.Utilities;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class MobacTrustManager implements X509TrustManager {
 
 	public static String getServerPublicKeyHash(String serverUrl)
 			throws IOException, KeyManagementException, NoSuchAlgorithmException {
-		URL url = new URL(serverUrl);
+		URL url = Utilities.parseURL(serverUrl);
 
 		SSLContext sslcontext = SSLContext.getInstance("TLS");
 		GetPublicKeyHashTrustManager trustManager = new GetPublicKeyHashTrustManager();

@@ -14,7 +14,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,9 +36,8 @@ public class MapSourceUrlUpdater {
 	 * @throws IOException
 	 */
 	public static List<String> extractImgSrcList(String url, String regex) throws IOException {
-		LinkedList<String> list = new LinkedList<String>();
-		URL u = new URL(url);
-		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+		LinkedList<String> list = new LinkedList<>();
+		HttpURLConnection conn = Utilities.openURL(url);
 		conn.addRequestProperty("Accept", ACCEPT);
 
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -90,8 +88,7 @@ public class MapSourceUrlUpdater {
 	 * @throws IOException
 	 */
 	public static String loadDocument(String url, Charset charset) throws IOException {
-		URL u = new URL(url);
-		HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+		HttpURLConnection conn = Utilities.openURL(url);
 		conn.addRequestProperty("Accept", ACCEPT);
 
 		byte[] data = Utilities.getInputBytes(conn.getInputStream());

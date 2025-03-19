@@ -16,11 +16,12 @@
  ******************************************************************************/
 package featuretests;
 
+import mobac.utilities.Utilities;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.SecureRandom;
 
 public class SimpleHttpClient implements Runnable {
@@ -53,7 +54,7 @@ public class SimpleHttpClient implements Runnable {
 
 	public void load() throws IOException {
 		String url = String.format("http://localhost/tile?x=%d&y=%d&z=8", RND.nextInt(1000), RND.nextInt(1000));
-		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		HttpURLConnection conn = Utilities.openURL(url);
 		conn.setConnectTimeout(5000);
 		conn.setReadTimeout(5000);
 		conn.connect();

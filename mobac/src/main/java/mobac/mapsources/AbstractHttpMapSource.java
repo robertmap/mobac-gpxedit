@@ -28,6 +28,7 @@ import mobac.program.model.MapSourceLoaderInfo;
 import mobac.program.model.TileImageType;
 import mobac.program.tilestore.TileStore;
 import mobac.program.tilestore.TileStoreEntry;
+import mobac.utilities.Utilities;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -35,7 +36,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Abstract base class for HTTP based non-custom map sources.
@@ -72,7 +72,7 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 		if (url == null) {
 			return null;
 		}
-		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		HttpURLConnection conn = Utilities.openURL(url);
 		prepareTileUrlConnection(conn);
 		return conn;
 	}

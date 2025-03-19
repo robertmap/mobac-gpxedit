@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -206,6 +207,14 @@ public class Utilities {
 			}
 		}
 		return true;
+	}
+
+	public static URL parseURL(String url) throws MalformedURLException {
+		return new URL(url);
+	}
+
+	public static HttpURLConnection openURL(String url) throws IOException {
+		return (HttpURLConnection) new URL(url).openConnection();
 	}
 
 	public static InputStream loadResourceAsStream(String resourcePath) throws IOException {
@@ -575,7 +584,7 @@ public class Utilities {
 	}
 
 	public static byte[] downloadHttpFile(String url) throws IOException {
-		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		HttpURLConnection conn = openURL(url);
 		int responseCode = conn.getResponseCode();
 		if (responseCode != HttpURLConnection.HTTP_OK) {
 			throw new IOException("Invalid HTTP response: " + responseCode + " for url " + conn.getURL());

@@ -44,12 +44,12 @@ public class SimpleServer {
 	static SecureRandom RND = new SecureRandom();
 
 	public static void main(String[] args) {
-        try {
-            run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			run();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void run() throws IOException {
 		Properties properties = new Properties();
 
@@ -61,8 +61,8 @@ public class SimpleServer {
 		Serve tjws = new Serve(properties, System.out);
 
 		tjws.addServlet("/", new DummyDataServlet());
-        tjws.init();
-        tjws.serve();
+		tjws.init();
+		tjws.serve();
 	}
 
 	public static class DummyDataServlet extends HttpServlet {

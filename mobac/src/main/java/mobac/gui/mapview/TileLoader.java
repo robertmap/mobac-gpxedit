@@ -111,7 +111,7 @@ public class TileLoader {
 				tile.setErrorImage();
 				tile.setErrorMessage("TLS error: " + e.getMessage());
 			} catch (DownloadFailedException e) {
-				log.warn("Downloading of {} failed: {}", tile,  e.getMessage());
+				log.warn("Downloading of {} failed: {}", tile, e.getMessage());
 				if (e.isTypeImage()) {
 					tile.setErrorImage(e.getResponseData());
 				} else {

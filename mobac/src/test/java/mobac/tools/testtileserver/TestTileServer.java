@@ -22,6 +22,7 @@ import mobac.tools.testtileserver.servlets.JpgTileGeneratorServlet;
 import mobac.tools.testtileserver.servlets.PngFileTileServlet;
 import mobac.tools.testtileserver.servlets.PngTileGeneratorServlet;
 import mobac.tools.testtileserver.servlets.ShutdownServlet;
+import mobac.utilities.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -68,8 +68,7 @@ public class TestTileServer extends Serve {
 
 	public static void stopOtherTileServer(int port) {
 		try {
-			HttpURLConnection c = (HttpURLConnection) new URL("http://127.0.0.1:" + port + "/shutdown")
-					.openConnection();
+			HttpURLConnection c = Utilities.openURL("http://127.0.0.1:" + port + "/shutdown");
 			c.setConnectTimeout(100);
 			c.setRequestMethod("DELETE");
 			c.connect();
@@ -120,12 +119,12 @@ public class TestTileServer extends Serve {
 		server.addServlet("/", new JpgTileGeneratorServlet(90));
 
 		stopOtherTileServer(port);
-        try {
-            server.init();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        server.serve();
+		try {
+			server.init();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		server.serve();
 	}
 
 	public void start() {
