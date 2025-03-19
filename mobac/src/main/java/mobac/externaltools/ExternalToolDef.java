@@ -50,7 +50,7 @@ public class ExternalToolDef implements ActionListener {
 	public boolean debug = false;
 
 	@XmlList
-	public List<ToolParameters> parameters = new ArrayList<ToolParameters>();
+	public List<ToolParameters> parameters = new ArrayList<>();
 
 	private boolean mapSelNull(MapSelection mapSel) {
 		if (mapSel != null) {
@@ -141,7 +141,7 @@ public class ExternalToolDef implements ActionListener {
 					return;
 				}
 			}
-			log.debug("Executing " + executeCommand);
+			log.debug("Executing {}", executeCommand);
 			Runtime.getRuntime().exec(executeCommand);
 		} catch (Exception e1) {
 			GUIExceptionHandler.processException(e1);
