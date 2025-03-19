@@ -156,13 +156,6 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 		}
 	}
 
-	@Override
-	@SuppressWarnings("deprecation")
-	protected void finalize() throws Throwable {
-		unregisterTreeListener();
-		super.finalize();
-	}
-
 	public void treeNodesChanged(TreeModelEvent e) {
 		MainGUI.getMainGUI().previewMap.repaint();
 	}
@@ -186,5 +179,4 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 	public void setObject(AtlasObject object) {
 		this.object = object;
 	}
-
 }
