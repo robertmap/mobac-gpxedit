@@ -43,54 +43,38 @@ import java.util.ArrayList;
  */
 public enum TileImageFormat {
 
-	// PNG("PNG", new TileImagePngDataWriter()), //
-	// PNG8Bit(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_png_8bit"),
-	// new TileImagePng8DataWriter()), //
-	// PNG4Bit(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_png_4bit"),
-	// new TileImagePng4DataWriter()), //
-	// JPEG100(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q100"),
-	// new TileImageJpegDataWriter(1.00)), //
-	// JPEG99(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q99"), new
-	// TileImageJpegDataWriter(0.99)), //
-	// JPEG95(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q100"), new
-	// TileImageJpegDataWriter(0.95)), //
-	// JPEG90(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q90"), new
-	// TileImageJpegDataWriter(0.90)), //
-	// JPEG85(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q85"), new
-	// TileImageJpegDataWriter(0.85)), //
-	// JPEG80(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q80"), new
-	// TileImageJpegDataWriter(0.80)), //
-	// JPEG70(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q70"), new
-	// TileImageJpegDataWriter(0.70)), //
-	// JPEG60(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q60"), new
-	// TileImageJpegDataWriter(0.60)), //
-	// JPEG50(MainGUI.localizedStringForKey("lp_tile_param_image_fmt_jpg_q50"), new
-	// TileImageJpegDataWriter(0.50)); //
-
 	PNG(new TileImagePngDataWriterBuilder(), "lp_tile_param_image_fmt_png"), //
 	PNG8Bit(new TileImagePng8DataWriterBuilder(), "lp_tile_param_image_fmt_png_8bit"), //
 	PNG4Bit(new TileImagePng4DataWriterBuilder(), "lp_tile_param_image_fmt_png_4bit"), //
-	JPEG100(new TileImageJpegDataWriterBuilder(1.00), "lp_tile_param_image_fmt_jpg_q100"), //
-	JPEG99(new TileImageJpegDataWriterBuilder(0.99), "lp_tile_param_image_fmt_jpg_q99"), //
-	JPEG95(new TileImageJpegDataWriterBuilder(0.95), "lp_tile_param_image_fmt_jpg_q95"), //
-	JPEG90(new TileImageJpegDataWriterBuilder(0.90), "lp_tile_param_image_fmt_jpg_q90"), //
-	JPEG85(new TileImageJpegDataWriterBuilder(0.85), "lp_tile_param_image_fmt_jpg_q85"), //
-	JPEG80(new TileImageJpegDataWriterBuilder(0.80), "lp_tile_param_image_fmt_jpg_q80"), //
-	JPEG75(new TileImageJpegDataWriterBuilder(0.75), "lp_tile_param_image_fmt_jpg_q75"), //
-	JPEG70(new TileImageJpegDataWriterBuilder(0.70), "lp_tile_param_image_fmt_jpg_q70"), //
-	JPEG60(new TileImageJpegDataWriterBuilder(0.60), "lp_tile_param_image_fmt_jpg_q60"), //
-	JPEG50(new TileImageJpegDataWriterBuilder(0.50), "lp_tile_param_image_fmt_jpg_q50"); //
+	JPEG100(new TileImageJpegDataWriterBuilder(1.00), "lp_tile_param_image_fmt_jpg", 100), //
+	JPEG99(new TileImageJpegDataWriterBuilder(0.99), "lp_tile_param_image_fmt_jpg", 99), //
+	JPEG95(new TileImageJpegDataWriterBuilder(0.95), "lp_tile_param_image_fmt_jpg", 95), //
+	JPEG90(new TileImageJpegDataWriterBuilder(0.90), "lp_tile_param_image_fmt_jpg", 90), //
+	JPEG85(new TileImageJpegDataWriterBuilder(0.85), "lp_tile_param_image_fmt_jpg", 85), //
+	JPEG80(new TileImageJpegDataWriterBuilder(0.80), "lp_tile_param_image_fmt_jpg", 80), //
+	JPEG75(new TileImageJpegDataWriterBuilder(0.75), "lp_tile_param_image_fmt_jpg", 75), //
+	JPEG70(new TileImageJpegDataWriterBuilder(0.70), "lp_tile_param_image_fmt_jpg", 70), //
+	JPEG60(new TileImageJpegDataWriterBuilder(0.60), "lp_tile_param_image_fmt_jpg", 60), //
+	JPEG50(new TileImageJpegDataWriterBuilder(0.50), "lp_tile_param_image_fmt_jpg", 50), //
+	JPEG40(new TileImageJpegDataWriterBuilder(0.40), "lp_tile_param_image_fmt_jpg", 40), //
+	JPEG30(new TileImageJpegDataWriterBuilder(0.30), "lp_tile_param_image_fmt_jpg", 30); //
 
 	// private final String description;
 
 	private final TileImageDataWriterBuilder dataWriterBuilder;
 
-	private final String translationKey;
+	private final String name;
 
 	TileImageFormat(TileImageDataWriterBuilder dataWriterBuilder, String translationKey) {
 		// this.description = description;
 		this.dataWriterBuilder = dataWriterBuilder;
-		this.translationKey = translationKey;
+		this.name = I18nUtils.localizedStringForKey(translationKey);
+	}
+
+	TileImageFormat(TileImageDataWriterBuilder dataWriterBuilder, String translationKey, int value) {
+		// this.description = description;
+		this.dataWriterBuilder = dataWriterBuilder;
+		this.name = I18nUtils.localizedStringForKey(translationKey, value);
 	}
 
 	public static TileImageFormat[] getPngFormats() {
@@ -115,7 +99,7 @@ public enum TileImageFormat {
 
 	@Override
 	public String toString() {
-		return I18nUtils.localizedStringForKey(translationKey);
+		return name;
 	}
 
 	public TileImageDataWriterBuilder getDataWriterBuilder() {
