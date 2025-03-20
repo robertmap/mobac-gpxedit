@@ -63,18 +63,18 @@ public enum TileImageFormat {
 
 	private final TileImageDataWriterBuilder dataWriterBuilder;
 
-	private final String name;
+	private final String displayText;
 
 	TileImageFormat(TileImageDataWriterBuilder dataWriterBuilder, String translationKey) {
 		// this.description = description;
 		this.dataWriterBuilder = dataWriterBuilder;
-		this.name = I18nUtils.localizedStringForKey(translationKey);
+		this.displayText = I18nUtils.localizedStringForKey(translationKey);
 	}
 
 	TileImageFormat(TileImageDataWriterBuilder dataWriterBuilder, String translationKey, int value) {
 		// this.description = description;
 		this.dataWriterBuilder = dataWriterBuilder;
-		this.name = I18nUtils.localizedStringForKey(translationKey, value);
+		this.displayText = I18nUtils.localizedStringForKey(translationKey, value);
 	}
 
 	public static TileImageFormat[] getPngFormats() {
@@ -85,7 +85,7 @@ public enum TileImageFormat {
 		return getFormats(TileImageType.JPG);
 	}
 
-	protected static TileImageFormat[] getFormats(TileImageType tileImageType) {
+	private static TileImageFormat[] getFormats(TileImageType tileImageType) {
 		ArrayList<TileImageFormat> list = new ArrayList<TileImageFormat>();
 		for (TileImageFormat format : values()) {
 			if (tileImageType.equals(format.getType())) {
@@ -99,7 +99,7 @@ public enum TileImageFormat {
 
 	@Override
 	public String toString() {
-		return name;
+		return displayText;
 	}
 
 	public TileImageDataWriterBuilder getDataWriterBuilder() {
