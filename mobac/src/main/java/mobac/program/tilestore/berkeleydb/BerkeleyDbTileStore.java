@@ -630,7 +630,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			try {
 				t.pauseInterrupt();
 				try {
-					log.debug("Closing tile store db \"" + mapSourceName + "\"");
+					log.debug("Closing tile store db \"{}\"", mapSourceName);
 					if (store != null) {
 						store.close();
 					}

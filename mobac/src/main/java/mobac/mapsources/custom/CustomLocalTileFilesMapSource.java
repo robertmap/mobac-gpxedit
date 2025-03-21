@@ -160,7 +160,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 							}
 							tileImageType = TileImageType.getTileImageType(parts[1]);
 							fileSyntax = syntax;
-							log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
+							log.debug("Detected file syntax: {} tileImageType={}", fileSyntax, tileImageType);
 							throw new RuntimeException("break");
 						}
 					});
@@ -244,7 +244,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 		try {
 			return Utilities.getFileBytes(file);
 		} catch (FileNotFoundException e) {
-			log.debug("Map tile file not found: \"" + file.getAbsolutePath() + "\"");
+			log.debug("Map tile file not found: \"{}\"", file.getAbsolutePath());
 			return null;
 		}
 	}

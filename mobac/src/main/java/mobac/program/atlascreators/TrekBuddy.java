@@ -154,7 +154,7 @@ public class TrekBuddy extends AtlasCreator {
 	 * @throws MapCreationException
 	 */
 	protected void createCustomTiles() throws InterruptedException, MapCreationException {
-		log.debug("Starting map creation using custom parameters: " + parameters);
+		log.debug("Starting map creation using custom parameters: {}", parameters);
 
 		try (CacheTileProvider ctp = new CacheTileProvider(mapDlTileProvider)) {
 			mapDlTileProvider = ctp;

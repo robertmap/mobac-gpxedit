@@ -142,9 +142,9 @@ public class MapTileBuilder {
 		int xAbsPos = xStart;
 		int yAbsPos = yStart;
 
-		log.trace("tile size: " + realWidth + " * " + realHeight);
-		log.trace("X: from " + xStart + " to " + xEnd);
-		log.trace("Y: from " + yStart + " to " + yEnd);
+		log.trace("tile size: {}*{}", realWidth, realHeight);
+		log.trace("X: from {} to {}", xStart, xEnd);
+		log.trace("Y: from {} to {}", yStart, yEnd);
 
 		// We don't work with large images, therefore we can disable the (file)
 		// cache of ImageIO. This will speed up the creation process a bit

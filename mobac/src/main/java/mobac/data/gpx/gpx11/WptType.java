@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * wpt represents a waypoint, point of interest, or named feature on a map.
@@ -516,4 +517,13 @@ public class WptType implements GpxPoint {
 		this.lon = value;
 	}
 
+	@Override
+	public String toString() {
+		return new StringJoiner(", ", WptType.class.getSimpleName() + "[", "]").add("ele=" + ele).add("time=" + time)
+				.add("magvar=" + magvar).add("geoidheight=" + geoidheight).add("name='" + name + "'")
+				.add("cmt='" + cmt + "'").add("desc='" + desc + "'").add("src='" + src + "'").add("link=" + link)
+				.add("sym='" + sym + "'").add("type='" + type + "'").add("fix='" + fix + "'").add("sat=" + sat)
+				.add("hdop=" + hdop).add("vdop=" + vdop).add("pdop=" + pdop).add("ageofdgpsdata=" + ageofdgpsdata)
+				.add("dgpsid=" + dgpsid).add("extensions=" + extensions).add("lat=" + lat).add("lon=" + lon).toString();
+	}
 }

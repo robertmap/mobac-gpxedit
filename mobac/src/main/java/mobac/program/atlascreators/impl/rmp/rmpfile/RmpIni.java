@@ -55,7 +55,7 @@ public class RmpIni extends GeneralRmpFileEntry {
 
 		for (i = 0; i < count; i++) {
 			String layerName = RmpTools.buildTileName(layername, i);
-			log.trace("layer name: " + layerName);
+			log.trace("layer name: {}", layerName);
 			ps.print(i + "=" + layerName + "\r\n");
 		}
 		ps.flush();

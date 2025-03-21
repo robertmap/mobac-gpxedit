@@ -256,7 +256,7 @@ public class TileDownLoader {
 				TileStore.getInstance().putTile(tile, mapSource);
 			}
 			if (log.isTraceEnabled()) {
-				log.trace("Data unchanged on server: " + mapSource + " " + tile);
+				log.trace("Data unchanged on server: {} {}", mapSource, tile);
 			}
 			return null;
 		}
@@ -328,8 +328,8 @@ public class TileDownLoader {
 			byte[] errData;
 			try (InputStream errorIn = conn.getErrorStream()) {
 				errData = Utilities.getInputBytes(errorIn);
-				log.trace("Retrieved " + errData.length + " error bytes for a HTTP " + conn.getResponseCode() + " from "
-						+ conn.getURL());
+				log.trace("Retrieved {} error bytes for a HTTP {} from {}", errData.length, conn.getResponseCode(),
+						conn.getURL());
 
 			} catch (Exception e1) {
 				log.debug("Error retrieving error stream content: " + e1);
@@ -337,7 +337,7 @@ public class TileDownLoader {
 			}
 			throw new DownloadFailedException(conn, errData, e);
 		}
-		log.trace("Retrieved " + data.length + " bytes for a HTTP " + conn.getResponseCode());
+		log.trace("Retrieved {} bytes for a HTTP {}", data.length, conn.getResponseCode());
 		if (data.length == 0) {
 			return null;
 		}
@@ -351,8 +351,7 @@ public class TileDownLoader {
 	protected static boolean isTileNewer(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		long oldLastModified = tile.getTimeLastModified();
 		if (oldLastModified <= 0) {
-			log.warn(
-					"Tile age comparison not possible: " + "tile in tilestore does not contain lastModified attribute");
+			log.warn("Tile age comparison not possible: tile in tilestore does not contain lastModified attribute");
 			return true;
 		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());
@@ -368,7 +367,7 @@ public class TileDownLoader {
 	protected static boolean hasTileETag(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		String eTag = tile.geteTag();
 		if (eTag == null || eTag.length() == 0) {
-			log.warn("ETag check not possible: " + "tile in tilestore does not contain ETag attribute");
+			log.warn("ETag check not possible: tile in tilestore does not contain ETag attribute");
 			return true;
 		}
 		HttpURLConnection conn = mapSource.getTileUrlConnection(tile.getZoom(), tile.getX(), tile.getY());

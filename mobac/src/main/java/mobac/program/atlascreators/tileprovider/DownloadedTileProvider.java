@@ -43,7 +43,7 @@ public class DownloadedTileProvider implements TileProvider {
 	}
 
 	public byte[] getTileData(int x, int y) throws IOException {
-		log.trace("Reading tile x=" + x + " y=" + y);
+		log.trace("Reading tile x={} y={}", x, y);
 		return tarIndex.getEntryContent(String.format(TILE_FILENAME_PATTERN, x, y));
 	}
 

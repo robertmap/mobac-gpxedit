@@ -176,7 +176,7 @@ public abstract class PaperAtlas extends AtlasCreator {
 
 			// for invalid tileScale
 			if (tileImageScale != 2) {
-				log.debug("invalid tile Scale for Paper Atlas " + tileImageScale);
+				log.debug("invalid tile Scale for Paper Atlas {}", tileImageScale);
 				tileImageScale = 1;
 			}
 		} catch (IOException e) {

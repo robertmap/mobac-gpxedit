@@ -57,7 +57,7 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 			throw new NullPointerException("Unable to create a JPEG image writer");
 		}
 		jpegImageWriter.addIIOWriteWarningListener(ImageWriterWarningListener.INSTANCE);
-		log.debug("Used JPEG image writer: " + jpegImageWriter.getClass().getName());
+		log.debug("Used JPEG image writer: {}", jpegImageWriter.getClass().getName());
 		iwp = jpegImageWriter.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 		iwp.setCompressionQuality(jpegCompressionLevel);

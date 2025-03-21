@@ -73,7 +73,7 @@ public class GarminCustom extends GoogleEarthOverlay {
 					data = buf.toByteArray();
 					break;
 				} catch (IOException e) {
-					log.trace("Image size too large, increasing compression to " + c);
+					log.trace("Image size too large, increasing compression to {}", c);
 				}
 				builder.setJpegCompressionLevel(c / 100f);
 			}

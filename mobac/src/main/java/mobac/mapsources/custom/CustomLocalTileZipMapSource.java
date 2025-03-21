@@ -90,7 +90,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
-					log.debug("Opening zip file " + zipFile.getAbsolutePath());
+					log.debug("Opening zip file {}", zipFile.getAbsolutePath());
 					zips.add(new ZipFile(zipFile));
 					log.debug("Zip file open completed");
 				} catch (Exception e) {
@@ -176,7 +176,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 				syntax += "." + parts[2];
 			}
 			fileSyntax = syntax;
-			log.debug("Detected file syntax: " + fileSyntax + " tileImageType=" + tileImageType);
+			log.debug("Detected file syntax: {} tileImageType={}", fileSyntax, tileImageType);
 			break;
 		}
 	}
@@ -262,7 +262,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 				}
 			}
 		}
-		log.debug("Map tile file not found in zip files: " + fileName);
+		log.debug("Map tile file not found in zip files: {}", fileName);
 		return null;
 	}
 

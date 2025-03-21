@@ -144,7 +144,7 @@ public class MapPackManager {
 
 	public void loadMapPacks(MapSourcesManager mapSourcesManager) throws IOException, CertificateException {
 		List<File> mapPacks = getAllMapPackFiles();
-		log.debug("loading " + mapPacks.size() + " map packs");
+		log.debug("loading {} map packs", mapPacks.size());
 		for (File mapPackFile : mapPacks) {
 			File oldMapPackFile = new File(mapPackFile.getAbsolutePath() + ".old");
 			try {
@@ -204,7 +204,7 @@ public class MapPackManager {
 				MapSource ms = iterator.next();
 				ms.setLoaderInfo(new MapSourceLoaderInfo(LoaderType.MAPPACK, mapPackFile, rev));
 				mapSourcesManager.addMapSource(ms);
-				log.trace("Loaded map source: " + ms + " (name: " + ms.getName() + ")");
+				log.trace("Loaded map source: {} (name: {})", ms, ms.getName());
 			} catch (Error e) {
 				urlCl = null;
 				throw new MapSourceCreateException(
@@ -216,7 +216,7 @@ public class MapPackManager {
 
 	public String downloadMD5SumList() throws IOException, UpdateFailedException {
 		String md5eTag = Settings.getInstance().mapSourcesUpdate.etag;
-		log.debug("Last md5 eTag: " + md5eTag);
+		log.debug("Last md5 eTag: {}", md5eTag);
 		String updateUrl = System.getProperty("mobac.updateurl");
 		if (updateUrl == null) {
 			throw new RuntimeException("Update url not present");
@@ -311,7 +311,7 @@ public class MapPackManager {
 					Utilities.deleteFile(newMapPackFile);
 					continue;
 				}
-				log.debug("Verification of map pack \"" + mapPack + "\" passed successfully");
+				log.debug("Verification of map pack \"{}\" passed successfully", mapPack);
 
 				// Check if the downloaded version is newer
 				int newRev = getMapPackRevision(newMapPackFile);
@@ -394,7 +394,7 @@ public class MapPackManager {
 			}
 			if (!mapPackFile.isFile()) {
 				outdatedMappacks.add(filename);
-				log.debug("local map pack file missing: " + filename);
+				log.debug("local map pack file missing: {}", filename);
 				continue;
 			}
 			try {
@@ -402,11 +402,10 @@ public class MapPackManager {
 				if (localmd5.equals(md5)) {
 					continue; // No change in map pack
 				}
-				log.debug(
-						"Found outdated map pack: \"" + filename + "\" local md5: " + localmd5 + " remote md5: " + md5);
+				log.debug("Found outdated map pack: \"{}\" local md5: {} remote md5: {}", filename, localmd5, md5);
 				outdatedMappacks.add(filename);
 			} catch (Exception e) {
-				log.error("Failed to generate md5sum of " + mapPackFile, e);
+				log.error("Failed to generate md5sum of {}", mapPackFile, e);
 			}
 		}
 		return outdatedMappacks.toArray(String[]::new);
@@ -444,12 +443,14 @@ public class MapPackManager {
 				}
 				// name = name.replaceAll("\\\\", "/");
 				byte[] digest = md5.digest(data);
-				log.trace("Hashsum " + Hex.encodeHexString(digest) + " includes \"" + name + "\"");
+				if (log.isTraceEnabled()) {
+					log.trace("Hashsum " + Hex.encodeHexString(digest) + " includes \"" + name + "\"");
+				}
 				md5Total.update(digest);
 				md5Total.update(name.getBytes());
 			}
 			String md5sum = Hex.encodeHexString(md5Total.digest());
-			log.trace("md5sum of " + mapPackFile.getName() + ": " + md5sum);
+			log.trace("md5sum of {}: {}", mapPackFile.getName(), md5sum);
 			return md5sum;
 		}
 	}

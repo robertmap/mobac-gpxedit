@@ -71,7 +71,7 @@ public abstract class AbstractTileServlet extends HttpServlet {
 			String url = request.getRequestURL() + request.getQueryString();
 			byte[] digest = md5.digest(url.getBytes());
 			int hash = Math.abs(digest[4] % 100);
-			log.debug(url + " -> " + hash + ">" + errorRate + "?");
+			log.debug("{} -> {}>{}?", url, hash, errorRate);
 			if (hash > errorRate) {
 				return false;
 			}

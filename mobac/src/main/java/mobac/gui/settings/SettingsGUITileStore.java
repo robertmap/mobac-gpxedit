@@ -149,7 +149,7 @@ public class SettingsGUITileStore extends JPanel {
 				if (storeName == null) {
 					LOG.debug("Updating tilestore information in background");
 				} else {
-					LOG.debug("Updating tilestore information for \"" + storeName + "\" in background");
+					LOG.debug("Updating tilestore information for \"{}\" in background", storeName);
 				}
 				updateTileStoreInfoPanel(storeName);
 				LOG.debug("Updating tilestore information finished");

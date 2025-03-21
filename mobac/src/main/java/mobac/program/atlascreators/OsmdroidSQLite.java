@@ -117,7 +117,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 						long heapAvailable = heapMaxSize - r.totalMemory() + r.freeMemory();
 
 						if ((heapAvailable < HEAP_MIN) || (batchTileCount >= MAX_BATCH_SIZE)) {
-							log.trace("Executing batch containing " + batchTileCount + " tiles");
+							log.trace("Executing batch containing {} tiles", batchTileCount);
 							prep.executeBatch();
 							prep.clearBatch();
 							System.gc();

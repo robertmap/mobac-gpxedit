@@ -52,7 +52,7 @@ public class TarIndex {
 		TarHeader th = new TarHeader();
 		th.read(buf);
 		int fileSize = th.getFileSizeInt();
-		log.trace("reading file " + entryName + " off=" + off + " size=" + fileSize);
+		log.trace("reading file {} off={} size={}", entryName, off, fileSize);
 		byte[] data = new byte[fileSize];
 		tarRAFile.readFully(data);
 		return data;

@@ -255,7 +255,7 @@ public class MapSourceCapabilityDetector {
 			} else {
 				contentType += " (unverified)";
 			}
-			log.debug("Image format          : " + contentType);
+			log.debug("Image format          : {}", contentType);
 
 			String eTag = c.getHeaderField("ETag");
 			Utilities.checkForInterruption();

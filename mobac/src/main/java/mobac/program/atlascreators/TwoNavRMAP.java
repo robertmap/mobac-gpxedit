@@ -157,10 +157,10 @@ public class TwoNavRMAP extends AtlasCreator {
 		rmapFile.latitudeMax = mapSpace.cYToLat(layer.getMap(DefaultMap).getMinTileCoordinate().y,
 				layer.getMap(DefaultMap).getZoom());
 
-		log.trace("rmap longitudeMin = " + rmapFile.longitudeMin);
-		log.trace("rmap longitudeMax = " + rmapFile.longitudeMax);
-		log.trace("rmap latitudeMin = " + rmapFile.latitudeMin);
-		log.trace("rmap latitudeMax = " + rmapFile.latitudeMax);
+		log.trace("rmap longitudeMin = {}", rmapFile.longitudeMin);
+		log.trace("rmap longitudeMax = {}", rmapFile.longitudeMax);
+		log.trace("rmap latitudeMin = {}", rmapFile.latitudeMin);
+		log.trace("rmap latitudeMax = {}", rmapFile.latitudeMax);
 
 		double width = rmapFile.width;
 		double height = rmapFile.height;
@@ -171,7 +171,7 @@ public class TwoNavRMAP extends AtlasCreator {
 			count++;
 		}
 
-		log.trace("rmap zoomLevels count = " + count);
+		log.trace("rmap zoomLevels count = {}", count);
 
 		rmapFile.zoomLevels = new ZoomLevel[count];
 		width = rmapFile.width;

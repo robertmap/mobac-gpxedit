@@ -165,7 +165,7 @@ public class MapSourceCapabilityDetector {
 
 	public void testMapSource() {
 		try {
-			log.debug("Testing " + mapSource.toString());
+			log.debug("Testing {}", mapSource);
 
 			MapSpace mapSpace = mapSource.getMapSpace();
 			int tilex = mapSpace.cLonToX(coordinate.lon, zoom) / mapSpace.getTileSize();
@@ -179,7 +179,7 @@ public class MapSourceCapabilityDetector {
 			c.setRequestProperty("User-agent", ProgramInfo.getUserAgent());
 			c.setRequestProperty("Accept", Settings.getInstance().getHttpAccept());
 			c.connect();
-			log.debug("Connection established - response HTTP " + c.getResponseCode());
+			log.debug("Connection established - response HTTP {}", c.getResponseCode());
 			if (c.getResponseCode() != 200) {
 				return;
 			}
@@ -203,7 +203,7 @@ public class MapSourceCapabilityDetector {
 			} else {
 				contentType += " (unverified)";
 			}
-			log.debug("Image format          : " + contentType);
+			log.debug("Image format          : {}", contentType);
 
 			String eTag = c.getHeaderField("ETag");
 			eTagPresent = (eTag != null);

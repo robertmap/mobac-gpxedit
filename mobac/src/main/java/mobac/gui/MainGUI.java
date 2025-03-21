@@ -1166,7 +1166,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 			if (g == null) {
 				return;
 			}
-			log.debug("Selected grid zoom combo box item has changed: " + g.getZoom());
+			log.debug("Selected grid zoom combo box item has changed: {}", g.getZoom());
 			previewMap.setGridZoom(g.getZoom());
 			repaint();
 			previewMap.updateMapSelection();

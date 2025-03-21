@@ -187,10 +187,10 @@ public class RmpWriter {
 		RmpTools.writeValue(cout, entries.size(), 4);
 
 		/* --- Write the directory --- */
-		log.debug("Writing directory: " + entries.size() + " entries");
+		log.debug("Writing directory: {} entries", entries.size());
 		for (EntryInfo entryInfo : entries) {
 
-			log.trace("Entry: " + entryInfo);
+			log.trace("Entry: {}", entryInfo);
 			/* --- Write directory entry --- */
 			RmpTools.writeFixedString(cout, entryInfo.name, 9);
 			RmpTools.writeFixedString(cout, entryInfo.extendsion, 7);

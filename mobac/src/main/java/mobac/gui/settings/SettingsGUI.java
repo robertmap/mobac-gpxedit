@@ -510,7 +510,7 @@ public class SettingsGUI extends JDialog {
 		mapSize.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				LOG.trace("Map size: " + mapSize.getValue());
+				LOG.trace("Map size: {}", mapSize.getValue());
 			}
 		});
 
