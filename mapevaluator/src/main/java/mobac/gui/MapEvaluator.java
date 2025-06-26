@@ -54,7 +54,7 @@ public class MapEvaluator extends JFrame {
 	private final JSplitPane splitPane;
 	private final LineNumberedPaper mapSourceEditor;
 	private final CustomMapSourceLoader xmlLoader;
-	private final MapSource defaultOsmMapSource;
+	private final MapSource referenceMapSource;
 	protected final Logger log;
 	private File chooserDir;
 
@@ -72,7 +72,14 @@ public class MapEvaluator extends JFrame {
 		// previewMap.setMapMarkerVisible(true);
 		// previewMap.addMapMarker(new ReferenceMapMarker(Color.RED, 1, 2));
 
-		defaultOsmMapSource = MapSourcesManager.getInstance().getDefaultMapSource();
+		MapSourcesManager manager = MapSourcesManager.getInstance();
+
+		MapSource reference = manager.getSourceByName("mapevaluator-reference");
+		if (reference != null) {
+			referenceMapSource = reference;
+		} else {
+			referenceMapSource = manager.getDefaultMapSource();
+		}
 
 		chooserDir = DirectoryManager.mapSourcesDir;
 
@@ -126,9 +133,9 @@ public class MapEvaluator extends JFrame {
 		button.addActionListener((event) -> executeCode());
 		toolBar.add(button);
 
-		button = new JButton("OSM", Utilities.loadResourceImageIcon("osm-icon.png"));
-		button.setToolTipText("Switch back to predefined OpenStreetMap mapsource");
-		button.addActionListener((event) -> previewMap.setMapSource(defaultOsmMapSource));
+		button = new JButton("Reference", Utilities.loadResourceImageIcon("osm-icon.png"));
+		button.setToolTipText("Switch to reference map source");
+		button.addActionListener((event) -> previewMap.setMapSource(referenceMapSource));
 		toolBar.add(button);
 		button = new JButton("Toggle tile info", Utilities.loadResourceImageIcon("info-icon.png"));
 		button.setToolTipText("Show/hide tile info");
@@ -155,6 +162,7 @@ public class MapEvaluator extends JFrame {
 	private void showLog() {
 
 	}
+
 	private void loadTemplate() {
 		try {
 			String[] options = {"Empty", "OpenStreetMap Mapnik"};

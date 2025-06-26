@@ -19,7 +19,6 @@ public class StartMapEvaluator {
 		ProgramInfo.initialize();
 		// Logging.configureConsoleLogging(Level.TRACE, Logging.ADVANCED_LAYOUT);
 		DirectoryManager.initialize();
-		// MapEvaluatorMapSourcesManager.initialitze();
 		DefaultMapSourcesManager.initialize();
 		try {
 			if (Settings.FILE.isFile()) {
