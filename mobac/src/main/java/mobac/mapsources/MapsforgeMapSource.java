@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class MapsforgeMapSource implements MapSource, FileBasedMapSource, RefreshableMapSource, CloneableMapSource {
@@ -89,7 +90,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 	protected RenderThemeFuture renderThemeFuture;
 	protected XmlRenderThemeStyleMenu renderThemeStyleMenu;
 	protected MapsForgeCache labelInfoCache = new MapsForgeCache();
-	protected TileBasedLabelStore tileBasedLabelStore = new MyTileBasedLabelStore(1000);
+	protected TileBasedLabelStore tileBasedLabelStore = new MyTileBasedLabelStore(10000);
 	@XmlElement(defaultValue = "false")
 	protected boolean transparent = false;
 	@XmlElement(defaultValue = "1.0")
@@ -278,7 +279,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 	public MapsforgeMapSource clone() throws CloneNotSupportedException {
 		MapsforgeMapSource mapSource = (MapsforgeMapSource) super.clone();
 		mapSource.labelInfoCache = new MapsForgeCache();
-		mapSource.tileBasedLabelStore = new MyTileBasedLabelStore(1000);
+		mapSource.tileBasedLabelStore = new MyTileBasedLabelStore(10000);
 		reinitialize();
 		return mapSource;
 	}
@@ -335,6 +336,8 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 
 	private static class MyTileBasedLabelStore extends TileBasedLabelStore {
 
+		private boolean capacityWarningShown = false;
+
 		public MyTileBasedLabelStore(int capacity) {
 			super(capacity);
 		}
@@ -344,5 +347,14 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 			return super.getVisibleItems(upperLeft, lowerRight);
 		}
 
+		@Override
+		protected boolean removeEldestEntry(Entry<Tile, List<MapElementContainer>> eldest) {
+			boolean result = super.removeEldestEntry(eldest);
+			if (result && !capacityWarningShown) {
+				capacityWarningShown = true;
+				LOG.warn("Capacity of label cache reached");
+			}
+			return result;
+		}
 	}
 }
