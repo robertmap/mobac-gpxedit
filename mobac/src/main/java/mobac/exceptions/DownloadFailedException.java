@@ -18,7 +18,7 @@ package mobac.exceptions;
 
 import mobac.utilities.HtmlStrip;
 import mobac.utilities.imageio.ImageFormatDetector;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class DownloadFailedException extends IOException {
 			String payload = "";
 
 			if (responseData != null
-					&& StringUtils.startsWithAny(contentType, "text/", "application/xml", "application/json")) {
+					&& Strings.CI.startsWithAny(contentType, "text/", "application/xml", "application/json")) {
 				Matcher charsetMatcher = CHARSET.matcher(contentType);
 				Charset contentCharset = StandardCharsets.UTF_8;
 				try {

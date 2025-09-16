@@ -55,7 +55,7 @@ public class SelectedZoomLevels {
 	}
 
 	public List<Integer> getZoomLevelList() {
-		return new ArrayList<Integer>(zoomLevels);
+		return new ArrayList<>(zoomLevels);
 	}
 
 	public int getZoomLevelCount() {

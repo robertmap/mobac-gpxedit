@@ -27,14 +27,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.Dialog.ModalityType;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class FontChooser {
 
@@ -57,17 +53,13 @@ public class FontChooser {
 		jLabelPreview.setBorder(
 				BorderFactory.createTitledBorder(I18nUtils.localizedStringForKey("dlg_font_choose_preview")));
 
-		jButtonOK.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				wasCanceled = false;
-				jDialog.setVisible(false);
-			}
+		jButtonOK.addActionListener((e) -> {
+			wasCanceled = false;
+			jDialog.setVisible(false);
 		});
 
-		jButtonCancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jDialog.setVisible(false);
-			}
+		jButtonCancel.addActionListener((e) -> {
+			jDialog.setVisible(false);
 		});
 
 		JPanel buttonPane = new JPanel();
@@ -115,18 +107,17 @@ public class FontChooser {
 		jScrollPane.setColumnHeaderView(jLabel);
 		return jScrollPane;
 	}
+
 	private final JList<String> jListName = createJList(FONT_NAMES);
 
 	private <E> JList<E> createJList(E[] objects) {
-		JList<E> jList = new JList<E>(objects);
+		JList<E> jList = new JList<>(objects);
 		jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jList.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting()) {
-					Font font = getFont();
-					jLabelPreview.setFont(font);
-					jLabelPreview.setText(encodeFont(font));
-				}
+		jList.addListSelectionListener((e) -> {
+			if (!e.getValueIsAdjusting()) {
+				Font font = getFont();
+				jLabelPreview.setFont(font);
+				jLabelPreview.setText(encodeFont(font));
 			}
 		});
 		return jList;
@@ -156,6 +147,7 @@ public class FontChooser {
 		jListStyle.setSelectedIndex(font.getStyle());
 		jListSize.setSelectedValue(font.getSize(), true);
 	}
+
 	private final JList<String> jListStyle = createJList(STYLES);
 
 	public void show() {

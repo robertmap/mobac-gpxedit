@@ -153,26 +153,22 @@ public class AtlasThread extends Thread
 			}
 		} catch (OutOfMemoryError e) {
 			System.gc();
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					String message = I18nUtils.localizedStringForKey("msg_out_of_memory_head");
-					int maxMem = Utilities.getJavaMaxHeapMB();
-					if (maxMem > 0) {
-						message += String.format(I18nUtils.localizedStringForKey("msg_out_of_memory_detail"), maxMem);
-					}
-					JOptionPane.showMessageDialog(null, message,
-							I18nUtils.localizedStringForKey("msg_out_of_memory_title"), JOptionPane.ERROR_MESSAGE);
-					atlasProgress.closeWindow();
+			SwingUtilities.invokeLater(() -> {
+				String message = I18nUtils.localizedStringForKey("msg_out_of_memory_head");
+				int maxMem = Utilities.getJavaMaxHeapMB();
+				if (maxMem > 0) {
+					message += String.format(I18nUtils.localizedStringForKey("msg_out_of_memory_detail"), maxMem);
 				}
+				JOptionPane.showMessageDialog(null, message, I18nUtils.localizedStringForKey("msg_out_of_memory_title"),
+						JOptionPane.ERROR_MESSAGE);
+				atlasProgress.closeWindow();
 			});
 			LOG.error("Out of memory: ", e);
 		} catch (InterruptedException e) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_atlas_download_abort"),
-							I18nUtils.localizedStringForKey("Information"), JOptionPane.INFORMATION_MESSAGE);
-					atlasProgress.closeWindow();
-				}
+			SwingUtilities.invokeLater(() -> {
+				JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_atlas_download_abort"),
+						I18nUtils.localizedStringForKey("Information"), JOptionPane.INFORMATION_MESSAGE);
+				atlasProgress.closeWindow();
 			});
 			LOG.info("Atlas creation was interrupted by user");
 		} catch (Exception e) {
@@ -257,10 +253,7 @@ public class AtlasThread extends Thread
 				}
 				atlasCreator.finishLayerCreation();
 			}
-		} catch (InterruptedException e) {
-			atlasCreator.abortAtlasCreation();
-			throw e;
-		} catch (Error e) {
+		} catch (InterruptedException | Error e) {
 			atlasCreator.abortAtlasCreation();
 			throw e;
 		} finally {

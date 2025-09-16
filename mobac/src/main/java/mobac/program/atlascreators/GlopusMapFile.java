@@ -82,9 +82,7 @@ public class GlopusMapFile extends TrekBuddy {
 			} else {
 				createTiles();
 			}
-		} catch (MapCreationException e) {
-			throw e;
-		} catch (InterruptedException e) {
+		} catch (MapCreationException | InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);
@@ -134,7 +132,7 @@ public class GlopusMapFile extends TrekBuddy {
 		public GlopusTileWriter(LayerInterface layer) {
 			super();
 			this.layer = layer;
-			tiles = new LinkedList<GlopusTile>();
+			tiles = new LinkedList<>();
 		}
 
 		public void initMap() {

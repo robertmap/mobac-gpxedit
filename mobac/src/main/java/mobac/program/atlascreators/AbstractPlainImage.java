@@ -66,9 +66,7 @@ public abstract class AbstractPlainImage extends AtlasCreator {
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			createImage();
-		} catch (InterruptedException e) {
-			throw e;
-		} catch (MapCreationException e) {
+		} catch (InterruptedException | MapCreationException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);

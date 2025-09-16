@@ -121,7 +121,7 @@ public class Atlas implements AtlasInterface, ToolTipProvider, TreeNode {
 			return true;
 		}
 		// Check for duplicate layer names
-		HashSet<String> names = new HashSet<String>(layers.size());
+		HashSet<String> names = new HashSet<>(layers.size());
 		for (LayerInterface layer : layers) {
 			names.add(layer.getName());
 		}

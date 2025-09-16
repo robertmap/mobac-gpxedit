@@ -132,9 +132,7 @@ public class OsmdroidSQLite extends AtlasCreator implements RequiresSQLite {
 			prep.executeBatch();
 			conn.setAutoCommit(true);
 			atlasProgress.setMapCreationProgress(maxMapProgress);
-		} catch (SQLException e) {
-			throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
-		} catch (IOException e) {
+		} catch (SQLException | IOException e) {
 			throw new MapCreationException("Error writing tile image: " + e.getMessage(), map, e);
 		}
 	}

@@ -32,7 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -218,7 +217,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 					sb.append("\n");
 
 					Throwable[] sup = t.getSuppressed();
-					if (sup != null && sup.length > 0) {
+					if (sup != null) {
 						for (Throwable st : sup) {
 							sb.append("    Suppressed: ");
 							sb.append(st.toString());
@@ -251,17 +250,14 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 			text.setOpaque(true);
 			text.setBackground(UIManager.getColor("JFrame.background"));
 			text.setEditable(false);
-			text.addHyperlinkListener(new HyperlinkListener() {
-
-				public void hyperlinkUpdate(HyperlinkEvent e) {
-					if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
-						return;
-					}
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI());
-					} catch (Exception e1) {
-						log.error("", e1);
-					}
+			text.addHyperlinkListener((e) -> {
+				if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+					return;
+				}
+				try {
+					Desktop.getDesktop().browse(e.getURL().toURI());
+				} catch (Exception e1) {
+					log.error("", e1);
 				}
 			});
 			panel.add(text, BorderLayout.NORTH);

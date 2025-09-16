@@ -27,8 +27,6 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -46,12 +44,9 @@ public class Help extends JFrame implements WindowListener {
 		JLabel text = new JLabel();
 		JButton closeButton = new JButton(I18nUtils.localizedStringForKey("Close"));
 		closeButton.setDefaultCapable(true);
-		closeButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				dispose();
-			}
+		closeButton.addActionListener(() -> {
+			setVisible(false);
+			dispose();
 		});
 
 		try (InputStream in = I18nUtils.getI18nResourceAsStream("resources/text/help_dialog", "html")) {

@@ -173,7 +173,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 
 	@Override
 	public synchronized HttpURLConnection getTileUrlConnection(int zoom, int tilex, int tiley) throws IOException {
-		HttpURLConnection conn = null;
+		HttpURLConnection conn;
 		try {
 			String url = getTileUrl(zoom, tilex, tiley);
 			conn = Utilities.openURL(url);

@@ -63,11 +63,8 @@ import static mobac.utilities.imageio.PngConstants.TEXT;
 public class Png4BitWriter {
 
 	public static void writeImage(File file, BufferedImage image) throws IOException {
-		FileOutputStream out = new FileOutputStream(file);
-		try {
+		try (FileOutputStream out = new FileOutputStream(file)) {
 			writeImage(out, image);
-		} finally {
-			out.close();
 		}
 	}
 

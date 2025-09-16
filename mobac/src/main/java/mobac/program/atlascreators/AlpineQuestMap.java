@@ -420,7 +420,7 @@ public class AlpineQuestMap extends AtlasCreator {
 								}
 							}
 
-							packCreator.add(sourceTileData, "" + x + "_" + (nbTotalTiles - y)); // y tiles count began
+							packCreator.add(sourceTileData, x + "_" + (nbTotalTiles - y)); // y tiles count began
 							// by
 							// bottom in AQM
 						}

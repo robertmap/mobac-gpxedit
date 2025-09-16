@@ -54,7 +54,7 @@ public class JobDispatcher implements ThreadFactory, RejectedExecutionHandler {
 	private int WORKER_THREAD_ID = 1;
 
 	private JobDispatcher() {
-		jobQueue = new LinkedBlockingQueue<Runnable>();
+		jobQueue = new LinkedBlockingQueue<>();
 		executor = new ThreadPoolExecutor(WORKER_THREAD_MAX_COUNT, WORKER_THREAD_MAX_COUNT, WORKER_THREAD_TIMEOUT,
 				TimeUnit.SECONDS, jobQueue, this, this);
 		executor.allowCoreThreadTimeOut(true);

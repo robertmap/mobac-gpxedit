@@ -84,7 +84,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 	public static final List<AtlasOutputFormat> FORMATS;
 
 	static {
-		FORMATS = new ArrayList<AtlasOutputFormat>(40);
+		FORMATS = new ArrayList<>(40);
 		FORMATS.add(createByClass(AFTrack.class));
 		FORMATS.add(createByClass(AlpineQuestMap.class));
 		FORMATS.add(createByClass(AndNav.class));
@@ -148,7 +148,7 @@ public class AtlasOutputFormat implements Comparable<AtlasOutputFormat> {
 	}
 
 	public static Vector<AtlasOutputFormat> getFormatsAsVector() {
-		return new Vector<AtlasOutputFormat>(FORMATS);
+		return new Vector<>(FORMATS);
 	}
 
 	public static AtlasOutputFormat getFormatByName(String Name) {

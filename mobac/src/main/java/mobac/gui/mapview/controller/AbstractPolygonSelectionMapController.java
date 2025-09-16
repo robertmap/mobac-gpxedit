@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public abstract class AbstractPolygonSelectionMapController extends JMapController {
 
 	protected boolean finished = false;
-	protected ArrayList<Point> polygonPoints = new ArrayList<Point>();
+	protected ArrayList<Point> polygonPoints = new ArrayList<>();
 	protected PolygonSelectionLayer mapLayer = null;
 
 	public AbstractPolygonSelectionMapController(PreviewMap map) {
@@ -38,7 +38,7 @@ public abstract class AbstractPolygonSelectionMapController extends JMapControll
 	}
 
 	public void reset() {
-		polygonPoints = new ArrayList<Point>();
+		polygonPoints = new ArrayList<>();
 		finished = false;
 	}
 

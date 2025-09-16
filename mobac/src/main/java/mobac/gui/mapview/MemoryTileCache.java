@@ -59,7 +59,7 @@ public class MemoryTileCache implements NotificationListener {
 
 	public MemoryTileCache() {
 		log = LoggerFactory.getLogger(this.getClass());
-		hashtable = new Hashtable<String, CacheEntry>(cacheSize);
+		hashtable = new Hashtable<>(cacheSize);
 		lruTiles = new CacheLinkedListElement();
 
 		cacheSize = 500;

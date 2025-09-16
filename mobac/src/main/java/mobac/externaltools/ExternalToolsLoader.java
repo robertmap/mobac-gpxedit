@@ -51,7 +51,7 @@ public class ExternalToolsLoader {
 				return false;
 			}
 			File[] files = dir.listFiles(new FileExtFilter(".xml"));
-			tools = new LinkedList<ExternalToolDef>();
+			tools = new LinkedList<>();
 			for (File f : files) {
 				tools.add(loadFile(f));
 			}

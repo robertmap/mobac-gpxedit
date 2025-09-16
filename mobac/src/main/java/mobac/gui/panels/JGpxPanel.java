@@ -94,7 +94,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 
 		tree.addMouseListener(new GpxTreeListener());
 
-		openedFiles = new ArrayList<String>();
+		openedFiles = new ArrayList<>();
 
 		GBC eol = GBC.eol().fill(GBC.HORIZONTAL);
 		GBC std = GBC.std().fill(GBC.HORIZONTAL);
@@ -251,7 +251,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 	public void resetModel() {
 		rootNode = new DefaultMutableTreeNode(I18nUtils.localizedStringForKey("rp_gpx_default_node_name"));
 		model.setRoot(rootNode);
-		openedFiles = new ArrayList<String>();
+		openedFiles = new ArrayList<>();
 	}
 
 	public DefaultTreeModel getTreeModel() {

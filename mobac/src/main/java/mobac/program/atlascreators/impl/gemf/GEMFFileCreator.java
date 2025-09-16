@@ -126,14 +126,11 @@ public class GEMFFileCreator {
 
 					final LinkedHashMap<Integer, File> yList = new LinkedHashMap<>();
 					for (final File yFile : xDir.listFiles()) {
-
+                        String numberStr = yFile.getName().substring(0, yFile.getName().indexOf('.'));
 						try {
-							Integer.parseInt(yFile.getName().substring(0, yFile.getName().indexOf('.')));
-						} catch (final NumberFormatException e) {
-							continue;
+                            yList.put(Integer.parseInt(numberStr), yFile);
+						} catch (NumberFormatException e) {
 						}
-
-						yList.put(Integer.parseInt(yFile.getName().substring(0, yFile.getName().indexOf('.'))), yFile);
 					}
 
 					xList.put(Integer.valueOf(xDir.getName()), yList);
@@ -156,7 +153,7 @@ public class GEMFFileCreator {
 		}
 
 		// Create the range objects
-		final List<GEMFRange> ranges = new ArrayList<GEMFRange>();
+		final List<GEMFRange> ranges = new ArrayList<>();
 
 		for (final String source : dirIndex.keySet()) {
 			for (final Integer zoom : dirIndex.get(source).keySet()) {

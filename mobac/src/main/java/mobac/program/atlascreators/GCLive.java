@@ -257,7 +257,7 @@ public class GCLive extends AtlasCreator {
 			super();
 			this.mapDir = mapDir;
 			Utilities.mkDir(mapDir);
-			headerEntries = new ArrayList<GCHeaderEntry>(MAX_TILES);
+			headerEntries = new ArrayList<>(MAX_TILES);
 			prepareDataFile();
 		}
 

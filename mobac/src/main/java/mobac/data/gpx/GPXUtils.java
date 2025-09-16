@@ -23,13 +23,18 @@ import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.util.JAXBResult;
 import mobac.data.gpx.gpx11.Gpx;
 import mobac.utilities.Utilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +42,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 
 public class GPXUtils {
+	private static final Logger log = LoggerFactory.getLogger(GPXUtils.class);
 
 	public static Gpx loadGpxFile(File f) throws JAXBException {
 		// Create GPX 1.1 JAXB context
@@ -50,6 +57,16 @@ public class GPXUtils {
 			factory.setNamespaceAware(true);
 			DocumentBuilder loader = factory.newDocumentBuilder();
 			Document document = loader.parse(is);
+			if (log.isTraceEnabled()) {
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+				StreamResult result = new StreamResult(new StringWriter());
+				DOMSource source = new DOMSource(document);
+				transformer.transform(source, result);
+				String xmlString = result.getWriter().toString();
+				log.trace("Loaded GPX document DOM:\n{}", xmlString);
+			}
 			String namespace = document.getDocumentElement().getNamespaceURI();
 			if ("http://www.topografix.com/GPX/1/1".equals(namespace)) {
 				return (Gpx) unmarshaller.unmarshal(document);

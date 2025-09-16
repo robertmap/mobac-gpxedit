@@ -141,30 +141,26 @@ public class GpxLoad implements ActionListener {
 					// iterate over files to load
 					for (final File file : files) {
 						counter++;
-						SwingUtilities.invokeLater(new Runnable() {
-							public void run() {
-								progressBar.setValue(counter);
-								progressDialog.setTitle(
-										"Processing " + counter + " of " + files.length + " <" + file.getName() + ">");
-							}
+						SwingUtilities.invokeLater(() -> {
+							progressBar.setValue(counter);
+							progressDialog.setTitle(
+									"Processing " + counter + " of " + files.length + " <" + file.getName() + ">");
 						});
 						doLoad(file, progressDialog);
 					}
 				} catch (RuntimeException e) {
 					log.error(e.getMessage(), e);
 				} finally {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							// close progress dialog
-							mainGUI.previewMap.repaint();
-							mainGUI.setCursor(Cursor.getDefaultCursor());
-							if (progressDialog != null) {
-								progressDialog.setVisible(false);
-								progressDialog.dispose();
-							}
-							mainGUI.setEnabled(true);
-							mainGUI.toFront();
+					SwingUtilities.invokeLater(() -> {
+						// close progress dialog
+						mainGUI.previewMap.repaint();
+						mainGUI.setCursor(Cursor.getDefaultCursor());
+						if (progressDialog != null) {
+							progressDialog.setVisible(false);
+							progressDialog.dispose();
 						}
+						mainGUI.setEnabled(true);
+						mainGUI.toFront();
 					});
 				}
 			}

@@ -282,7 +282,7 @@ public class Layer implements LayerInterface, TreeNode, ToolTipProvider, Capabil
 			return true;
 		}
 		// Check for duplicate map names
-		HashSet<String> names = new HashSet<String>(maps.size());
+		HashSet<String> names = new HashSet<>(maps.size());
 		for (MapInterface map : maps) {
 			names.add(map.getName());
 		}

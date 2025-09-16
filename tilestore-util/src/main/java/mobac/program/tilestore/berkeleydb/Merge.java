@@ -32,16 +32,13 @@ public class Merge implements Runnable {
 				Main.log.info("Source tile store entry count: {}", dbSource.entryCount());
 				Main.log.info("Destination tile store entry count: {} (before merging)", dbSource.entryCount());
 				dbDest.purge();
-				EntityCursor<TileDbEntry> cursor = dbSource.getTileIndex().entities();
-				try {
+				try (EntityCursor<TileDbEntry> cursor = dbSource.getTileIndex().entities()) {
 					TileDbEntry entry = cursor.next();
 					while (entry != null) {
 						Main.log.trace("Adding {}", entry);
 						dbDest.put(entry);
 						entry = cursor.next();
 					}
-				} finally {
-					cursor.close();
 				}
 				Main.log.info("Destination tile store entry count: {} (after merging)", dbSource.entryCount());
 			}

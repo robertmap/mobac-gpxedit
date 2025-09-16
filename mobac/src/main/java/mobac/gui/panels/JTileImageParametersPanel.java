@@ -82,7 +82,7 @@ public class JTileImageParametersPanel extends JCollapsiblePanel {
 		tileSizeHeight.setToolTipText(I18nUtils.localizedStringForKey("lp_tile_param_height_tips"));
 
 		tileImageFormatLabel = new JLabel(I18nUtils.localizedStringForKey("lp_tile_param_image_fmt_title"));
-		tileImageFormat = new JComboBox<TileImageFormat>(new TileFormatComboModel(TileImageFormat.values()));
+		tileImageFormat = new JComboBox<>(new TileFormatComboModel(TileImageFormat.values()));
 		tileImageFormat.setMaximumRowCount(tileImageFormat.getItemCount());
 		tileImageFormat.addActionListener(new TileImageFormatListener());
 

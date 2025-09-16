@@ -77,8 +77,7 @@ public class Delete implements Runnable {
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
 			Main.log.info("Tile store entry count: " + db.entryCount() + " (before deleting)");
-			EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities();
-			try {
+			try (EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities()) {
 				TileDbEntry entry;
 				cursorLoop : while ((entry = cursor.next()) != null) {
 					for (DeleteTileFilter tf : tileFilters) {
@@ -89,8 +88,6 @@ public class Delete implements Runnable {
 					Main.log.trace("Deleting {}", entry);
 					cursor.delete();
 				}
-			} finally {
-				cursor.close();
 			}
 			Main.log.info("Tile store entry count: {} (after deleting)", db.entryCount());
 		} catch (Exception e) {
@@ -115,7 +112,7 @@ public class Delete implements Runnable {
 
 		@Override
 		public boolean canDeleteTile(TileDbEntry entry) {
-			String eTag = "" + entry.geteTag(); // Allows to filter for null value
+			String eTag = entry.geteTag(); // Allows to filter for null value
 			if (eTag.startsWith("\"") && eTag.endsWith("\"")) {
 				eTag = eTag.substring(1, eTag.length() - 1);
 			}

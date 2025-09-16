@@ -130,9 +130,7 @@ public class TrekBuddy extends AtlasCreator {
 			}
 
 			mapTileWriter.finalizeMap();
-		} catch (MapCreationException e) {
-			throw e;
-		} catch (InterruptedException e) {
+		} catch (MapCreationException | InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);

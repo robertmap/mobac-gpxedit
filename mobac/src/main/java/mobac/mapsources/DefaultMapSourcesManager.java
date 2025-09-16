@@ -165,12 +165,12 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public Vector<MapSource> getAllAvailableMapSources() {
-		return new Vector<MapSource>(allMapSources.values());
+		return new Vector<>(allMapSources.values());
 	}
 
 	@Override
 	public Vector<MapSource> getAllMapSources() {
-		return new Vector<MapSource>(allMapSources.values());
+		return new Vector<>(allMapSources.values());
 	}
 
 	@Override

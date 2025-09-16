@@ -487,8 +487,8 @@ public class TwoNavRMAP extends AtlasCreator {
 			writeLongI(mapDataOffset);
 			writeIntI(0);
 			writeIntI(zoomLevels.length);
-			for (int n = 0; n < zoomLevels.length; n++) {
-				writeLongI(zoomLevels[n].offset);
+			for (ZoomLevel z : zoomLevels) {
+				writeLongI(z.offset);
 			}
 		}
 

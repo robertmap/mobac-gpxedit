@@ -109,7 +109,7 @@ public class DeleteTiles implements Runnable {
 
 		@Override
 		public boolean canDeleteTile(TileDbEntry entry) {
-			String eTag = "" + entry.geteTag(); // Allows to filter for null value
+			String eTag =  entry.geteTag(); // Allows to filter for null value
 			return eTag.equals(eTagValue);
 		}
 

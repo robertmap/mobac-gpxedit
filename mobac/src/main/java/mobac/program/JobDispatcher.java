@@ -116,8 +116,7 @@ public class JobDispatcher implements AutoCloseable {
 	}
 
 	public boolean isAtLeastOneWorkerActive() {
-		for (int i = 0; i < workers.length; i++) {
-			WorkerThread w = workers[i];
+		for (WorkerThread w : workers) {
 			if (w != null) {
 				if ((!w.idle) && (w.getState() != Thread.State.WAITING)) {
 					return true;

@@ -49,7 +49,7 @@ public class RmpWriter {
 
 	private static final Logger log = LoggerFactory.getLogger(RmpWriter.class);
 
-	private final ArrayList<EntryInfo> entries = new ArrayList<EntryInfo>();
+	private final ArrayList<EntryInfo> entries = new ArrayList<>();
 	private final File rmpFile;
 	private final RandomAccessFile rmpOutputFile;
 	private final int projectedEntryCount;
@@ -73,7 +73,7 @@ public class RmpWriter {
 		if (rmpFile.exists()) {
 			Utilities.deleteFile(rmpFile);
 		}
-		log.debug("Writing data to " + rmpFile.getAbsolutePath());
+		log.debug("Writing data to {}", rmpFile.getAbsolutePath());
 		rmpOutputFile = new RandomAccessFile(rmpFile, "rw");
 		// Calculate offset to the directory end
 		int directoryEndOffset = projectedEntryCount * 24 + 10;
@@ -102,7 +102,7 @@ public class RmpWriter {
 		if (rmpOutputFile.getFilePointer() > MAX_FILE_SIZE) {
 			throwRmpTooLarge();
 		}
-		log.debug("Written data of entry " + entry + " bytes=" + info.length);
+		log.debug("Written data of entry {} bytes={}", entry, info.length);
 	}
 
 	public void prepareFileEntry(RmpFileEntry entry) throws IOException, InterruptedException {
@@ -111,7 +111,7 @@ public class RmpWriter {
 		info.extendsion = entry.getFileExtension();
 		long pos = rmpOutputFile.getFilePointer();
 		info.offset = pos;
-		CountingOutputStream cout = new CountingOutputStream(NullOutputStream.NULL_OUTPUT_STREAM);
+		CountingOutputStream cout = new CountingOutputStream(NullOutputStream.INSTANCE);
 		entry.writeFileContent(cout);
 		info.length = cout.getBytesWritten();
 		long newPos = pos + info.length;
@@ -123,7 +123,7 @@ public class RmpWriter {
 		}
 		rmpOutputFile.seek(newPos);
 		entries.add(info);
-		log.debug("Prepared data of entry " + entry + " bytes=" + info.length);
+		log.debug("Prepared data of entry {} bytes={}", entry, info.length);
 	}
 
 	public void writePreparedFileEntry(RmpFileEntry entry) throws IOException, InterruptedException {

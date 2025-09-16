@@ -16,7 +16,6 @@
  ******************************************************************************/
 package mobac.program.download;
 
-import mobac.exceptions.DownloadFailedException;
 import mobac.exceptions.StopAllDownloadsException;
 import mobac.exceptions.UnrecoverableDownloadException;
 import mobac.program.JobDispatcher;
@@ -28,9 +27,6 @@ import mobac.program.interfaces.MapSource.LoadMethod;
 import mobac.utilities.tar.TarIndexedArchive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 
 public class DownloadJob implements Job {
 
@@ -69,16 +65,8 @@ public class DownloadJob implements Job {
 			listener.jobFinishedWithError(false);
 			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
 					+ " failed with an unrecoverable error: " + e.getCause());
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | StopAllDownloadsException e) {
 			throw e;
-		} catch (StopAllDownloadsException e) {
-			throw e;
-		} catch (SocketTimeoutException e) {
-			processError(dispatcher, e);
-		} catch (ConnectException e) {
-			processError(dispatcher, e);
-		} catch (DownloadFailedException e) {
-			processError(dispatcher, e);
 		} catch (Exception e) {
 			processError(dispatcher, e);
 			throw e;

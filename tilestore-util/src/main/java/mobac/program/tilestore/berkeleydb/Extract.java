@@ -33,8 +33,7 @@ public class Extract implements Runnable {
 		try (TileDatabase db = tileStore.new TileDatabase("Source", sourceDir)) {
 			Main.log.info("Source tile store entry count: " + db.entryCount());
 			long count = 0;
-			EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities();
-			try {
+			try (EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities()) {
 				TileDbEntry entry = cursor.next();
 				while (entry != null) {
 					Main.log.trace("Extracting {}", entry.shortInfo());
@@ -53,8 +52,6 @@ public class Extract implements Runnable {
 					count++;
 					entry = cursor.next();
 				}
-			} finally {
-				cursor.close();
 			}
 			Main.log.info("Number of extracted tiles: " + count);
 		} catch (Exception e) {

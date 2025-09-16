@@ -37,7 +37,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
 	HashMap<K, SoftReference<V>> map;
 
 	public SoftHashMap(int initialCapacity) {
-		map = new HashMap<K, SoftReference<V>>(initialCapacity);
+		map = new HashMap<>(initialCapacity);
 	}
 
 	public V get(Object key) {
@@ -46,7 +46,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
 	}
 
 	public V put(K key, V value) {
-		SoftReference<V> ref = map.put(key, new SoftReference<V>(value));
+		SoftReference<V> ref = map.put(key, new SoftReference<>(value));
 		return (ref != null) ? ref.get() : null;
 	}
 

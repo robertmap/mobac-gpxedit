@@ -55,7 +55,7 @@ public class MapDataFileParser {
 		// System.out.println(POINT_REGEX.replace("@", K));
 		Pattern pointP = Pattern.compile(POINT_REGEX.replaceAll("\\@", K));
 		Pattern mmpllP = Pattern.compile(MMPLL_REGEX.replaceAll("\\@", K));
-		ArrayList<MapPoint> mapPoints = new ArrayList<MapPoint>();
+		ArrayList<MapPoint> mapPoints = new ArrayList<>();
 		while (line != null) {
 			String cLine = line;
 			line = br.readLine();

@@ -57,7 +57,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.Autoscroll;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -263,11 +262,9 @@ public class JAtlasTree extends JTree implements Autoscroll {
 			}
 			if (o instanceof ToolTipProvider) {
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_show_detail"));
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						ToolTipProvider ttp = (ToolTipProvider) o;
-						JOptionPane.showMessageDialog(MainGUI.getMainGUI(), ttp.getToolTip());
-					}
+				mi.addActionListener((e) -> {
+					ToolTipProvider ttp = (ToolTipProvider) o;
+					JOptionPane.showMessageDialog(MainGUI.getMainGUI(), ttp.getToolTip());
 				});
 				pm.add(mi);
 			}
@@ -276,84 +273,70 @@ public class JAtlasTree extends JTree implements Autoscroll {
 						I18nUtils.localizedStringForKey("lp_atlas_pop_menu_display_select_area"));
 				final MapAreaHighlightingLayer msl = new MapAreaHighlightingLayer(this);
 				cbmi.setSelected(displaySelectedMapArea);
-				cbmi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if (displaySelectedMapArea) {
-							MapAreaHighlightingLayer.removeHighlightingLayers(mapView);
-						} else {
-							mapView.setSelectionByTileCoordinate(null, null, false);
-							MapAreaHighlightingLayer.removeHighlightingLayers(mapView);
-							mapView.mapLayers.add(msl);
-						}
-						displaySelectedMapArea = !displaySelectedMapArea;
-						mapView.repaint();
+				cbmi.addActionListener((e) -> {
+					if (displaySelectedMapArea) {
+						MapAreaHighlightingLayer.removeHighlightingLayers(mapView);
+					} else {
+						mapView.setSelectionByTileCoordinate(null, null, false);
+						MapAreaHighlightingLayer.removeHighlightingLayers(mapView);
+						mapView.mapLayers.add(msl);
 					}
+					displaySelectedMapArea = !displaySelectedMapArea;
+					mapView.repaint();
 				});
 				pm.add(cbmi);
 			}
 			if (o instanceof MapInterface) {
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_select_map_box"));
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						MapInterface map = (MapInterface) o;
-						mapView.setMapSource(map.getMapSource());
-						mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(),
-								map.getMaxTileCoordinate(), true);
-					}
+				mi.addActionListener((e) -> {
+					MapInterface map = (MapInterface) o;
+					mapView.setMapSource(map.getMapSource());
+					mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(),
+							map.getMaxTileCoordinate(), true);
 				});
 				pm.add(mi);
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_zoom_to_map_box"));
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						MapInterface map = (MapInterface) o;
-						MapSelection ms = new MapSelection(map);
-						mapView.setMapSource(map.getMapSource());
-						mapView.setSelectionAndZoomTo(ms, true);
-						mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(),
-								map.getMaxTileCoordinate(), true);
-					}
+				mi.addActionListener((e) -> {
+					MapInterface map = (MapInterface) o;
+					MapSelection ms = new MapSelection(map);
+					mapView.setMapSource(map.getMapSource());
+					mapView.setSelectionAndZoomTo(ms, true);
+					mapView.setSelectionByTileCoordinate(map.getZoom(), map.getMinTileCoordinate(),
+							map.getMaxTileCoordinate(), true);
 				});
 				pm.add(mi);
 			}
 			if (o instanceof LayerInterface) {
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_zoom_to"));
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						LayerInterface layer = (LayerInterface) o;
-						EastNorthCoordinate max = new EastNorthCoordinate(Double.NEGATIVE_INFINITY,
-								Double.NEGATIVE_INFINITY);
-						EastNorthCoordinate min = new EastNorthCoordinate(Double.POSITIVE_INFINITY,
-								Double.POSITIVE_INFINITY);
-						for (MapInterface map : layer) {
-							MapSelection ms = new MapSelection(map);
-							EastNorthCoordinate mapMax = ms.getMax();
-							EastNorthCoordinate mapMin = ms.getMin();
-							max.lat = Math.max(max.lat, mapMax.lat);
-							max.lon = Math.max(max.lon, mapMax.lon);
-							min.lat = Math.min(min.lat, mapMin.lat);
-							min.lon = Math.min(min.lon, mapMin.lon);
-						}
-						MapSelection ms = new MapSelection(mapView.getMapSource(), max, min);
-						mapView.zoomTo(ms);
+				mi.addActionListener((e) -> {
+					LayerInterface layer = (LayerInterface) o;
+					EastNorthCoordinate max = new EastNorthCoordinate(Double.NEGATIVE_INFINITY,
+							Double.NEGATIVE_INFINITY);
+					EastNorthCoordinate min = new EastNorthCoordinate(Double.POSITIVE_INFINITY,
+							Double.POSITIVE_INFINITY);
+					for (MapInterface map : layer) {
+						MapSelection ms = new MapSelection(map);
+						EastNorthCoordinate mapMax = ms.getMax();
+						EastNorthCoordinate mapMin = ms.getMin();
+						max.lat = Math.max(max.lat, mapMax.lat);
+						max.lon = Math.max(max.lon, mapMax.lon);
+						min.lat = Math.min(min.lat, mapMin.lat);
+						min.lon = Math.min(min.lon, mapMin.lon);
 					}
+					MapSelection ms = new MapSelection(mapView.getMapSource(), max, min);
+					mapView.zoomTo(ms);
 				});
 				pm.add(mi);
 			}
 			if (o instanceof AtlasObject) {
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_rename"));
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						JAtlasTree.this.startEditingAtPath(selPath);
-					}
-				});
+				mi.addActionListener((e) -> JAtlasTree.this.startEditingAtPath(selPath));
 				pm.add(mi);
 				mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_apply_tile_process"));
-				mi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						AtlasObject atlasObject = (AtlasObject) o;
-						TileImageParameters p = MainGUI.getMainGUI().getSelectedTileImageParameters();
-						applyTileImageParameters(atlasObject, p);
-					}
+				mi.addActionListener((e) -> {
+					AtlasObject atlasObject = (AtlasObject) o;
+					TileImageParameters p = MainGUI.getMainGUI().getSelectedTileImageParameters();
+					applyTileImageParameters(atlasObject, p);
 				});
 				pm.add(mi);
 			}
@@ -368,12 +351,7 @@ public class JAtlasTree extends JTree implements Autoscroll {
 			pm.addSeparator();
 		}
 		mi = new JMenuItem(I18nUtils.localizedStringForKey("lp_atlas_pop_menu_clear_atals"));
-		mi.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				newAtlas();
-			}
-		});
+		mi.addActionListener((e) -> newAtlas());
 		pm.add(mi);
 		pm.show(this, event.getX(), event.getY());
 	}

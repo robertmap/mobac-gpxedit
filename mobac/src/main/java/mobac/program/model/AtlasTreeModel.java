@@ -41,7 +41,7 @@ public class AtlasTreeModel implements TreeModel {
 
 	protected AtlasInterface atlasInterface;
 
-	protected Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
+	protected Set<TreeModelListener> listeners = new HashSet<>();
 
 	public AtlasTreeModel() {
 		super();
@@ -107,7 +107,7 @@ public class AtlasTreeModel implements TreeModel {
 	}
 
 	public TreePath getNodePath(TreeNode node) {
-		LinkedList<TreeNode> path = new LinkedList<TreeNode>();
+		LinkedList<TreeNode> path = new LinkedList<>();
 		TreeNode n = node;
 		while (n != null) {
 			path.addFirst(n);
@@ -175,7 +175,7 @@ public class AtlasTreeModel implements TreeModel {
 			return;
 		}
 		// Check for duplicate names
-		HashSet<String> names = new HashSet<String>();
+		HashSet<String> names = new HashSet<>();
 		for (MapInterface map : source) {
 			names.add(map.getName());
 		}

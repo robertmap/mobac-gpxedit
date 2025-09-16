@@ -16,6 +16,7 @@
  ******************************************************************************/
 package mobac.tools.testtileserver.servlets;
 
+import mobac.utilities.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,10 +54,7 @@ public abstract class AbstractTileServlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e) {
-		}
+		Utilities.sleep(delay);
 		if (errorResponse(request, response)) {
 			return;
 		}

@@ -41,8 +41,8 @@ public class TileContainer {
 
 	public TileContainer(TileContainer previous) {
 		this.previous = previous;
-		tiles = new ArrayList<Tiledata>(100);
-		followUps = new ArrayList<TileContainer>();
+		tiles = new ArrayList<>(100);
+		followUps = new ArrayList<>();
 	}
 
 	/**

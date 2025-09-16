@@ -488,7 +488,7 @@ public class Utilities {
 	}
 
 	public static List<File> listSubDirectoriesRec(File dir, int maxDepth) {
-		List<File> dirList = new LinkedList<File>();
+		List<File> dirList = new LinkedList<>();
 		addSubDirectories(dirList, dir, maxDepth);
 		return dirList;
 	}
@@ -656,7 +656,7 @@ public class Utilities {
 	 * @author Maksym "elmuSSo" Kondej
 	 */
 	public static List<File> traverseFolder(File dirOrFile, DirOrFileExtFilter dirOFileExtFilter) {
-		ArrayList<File> result = new ArrayList<File>();
+		ArrayList<File> result = new ArrayList<>();
 		if (dirOrFile.isDirectory()) {
 			File[] allFiles = dirOrFile.listFiles(dirOFileExtFilter);
 			for (File innerFile : allFiles) {

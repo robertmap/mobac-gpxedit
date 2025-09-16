@@ -152,7 +152,7 @@ import java.util.List;
 public class MainGUI extends JFrame implements MapEventListener {
 
 	public static final int LEFT_PANEL_MIN_SIZE = 254;
-	public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<Image>(3);
+	public static final ArrayList<Image> MOBAC_ICONS = new ArrayList<>(3);
 	private static final long serialVersionUID = 1L;
 	private static final int LEFT_PANEL_MARGIN = 2;
 	// MP: get custom font
@@ -800,7 +800,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 	}
 
 	public void updateBookmarksMenu() {
-		LinkedList<JMenuItem> items = new LinkedList<JMenuItem>();
+		LinkedList<JMenuItem> items = new LinkedList<>();
 		for (int i = 0; i < bookmarkMenu.getMenuComponentCount(); i++) {
 			JMenuItem item = bookmarkMenu.getItem(i);
 			if (!(item instanceof JBookmarkMenuItem)) {
@@ -1127,12 +1127,11 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 				StringBuilder hint = new StringBuilder(1024);
 				hint.append(I18nUtils.localizedStringForKey("lp_zoom_total_tile_hint_head"));
-				for (int i = 0; i < zoomLevels.length; i++) {
-					int zoom = zoomLevels[i];
+				for (int zoom : zoomLevels) {
 					long[] info = ms.calculateNrOfTilesEx(zoom);
 					totalNrOfTiles += info[0];
-					hint.append(String.format(I18nUtils.localizedStringForKey("lp_zoom_total_tile_hint_row"),
-							zoomLevels[i], info[0], info[1], info[2]));
+					hint.append(String.format(I18nUtils.localizedStringForKey("lp_zoom_total_tile_hint_row"), zoom,
+							info[0], info[1], info[2]));
 					// hint.append("<br>Level " + zoomLevels[i] + ": " + info[0] + " (" + info[1] +
 					// "*" + info[2] +
 					// ")");

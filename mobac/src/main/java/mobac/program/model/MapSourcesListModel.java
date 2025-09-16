@@ -21,7 +21,6 @@ import mobac.program.interfaces.MapSource;
 import javax.swing.AbstractListModel;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Vector;
 
 public class MapSourcesListModel extends AbstractListModel<MapSource> {
@@ -29,7 +28,7 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	ArrayList<MapSource> mapSources;
 
 	public MapSourcesListModel(Vector<MapSource> source) {
-		this.mapSources = new ArrayList<MapSource>(source);
+		this.mapSources = new ArrayList<>(source);
 	}
 
 	public MapSource getElementAt(int index) {
@@ -41,7 +40,7 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	}
 
 	public Vector<MapSource> getVector() {
-		return new Vector<MapSource>(mapSources);
+		return new Vector<>(mapSources);
 	}
 
 	public MapSource removeElement(int index) {
@@ -75,13 +74,7 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	}
 
 	public void sort() {
-		Collections.sort(mapSources, new Comparator<MapSource>() {
-
-			public int compare(MapSource o1, MapSource o2) {
-				return o1.toString().compareTo(o2.toString());
-			}
-
-		});
+		Collections.sort(mapSources, (o1, o2) -> o1.toString().compareTo(o2.toString()));
 		fireContentsChanged(mapSources, 0, mapSources.size());
 	}
 }

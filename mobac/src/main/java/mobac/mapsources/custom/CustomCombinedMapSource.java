@@ -45,7 +45,7 @@ public class CustomCombinedMapSource implements InitializableMapSource {
 			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
 			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
 			@XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
-	protected ArrayList<MapSource> regionalMapSource = new ArrayList<MapSource>();
+	protected ArrayList<MapSource> regionalMapSource = new ArrayList<>();
 
 	@XmlElementWrapper(name = "baseMapSource")
 	@XmlElements({@XmlElement(name = "customMapSource", type = CustomMapSource.class),
@@ -56,7 +56,7 @@ public class CustomCombinedMapSource implements InitializableMapSource {
 			@XmlElement(name = "localTileFiles", type = CustomLocalTileFilesMapSource.class),
 			@XmlElement(name = "localTileZip", type = CustomLocalTileZipMapSource.class),
 			@XmlElement(name = "localImageFile", type = CustomLocalImageFileMapSource.class)})
-	protected ArrayList<MapSource> baseMapSource = new ArrayList<MapSource>();
+	protected ArrayList<MapSource> baseMapSource = new ArrayList<>();
 
 	@XmlElement
 	protected String name;

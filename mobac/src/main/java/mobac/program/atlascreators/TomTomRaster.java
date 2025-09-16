@@ -93,9 +93,7 @@ public class TomTomRaster extends AtlasCreator {
 	public void createMap() throws MapCreationException, InterruptedException {
 		try {
 			createImage();
-		} catch (InterruptedException e) {
-			throw e;
-		} catch (MapCreationException e) {
+		} catch (MapCreationException | InterruptedException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new MapCreationException(map, e);
@@ -182,12 +180,9 @@ public class TomTomRaster extends AtlasCreator {
 			writer.processImage(tileImage, buf);
 			String imageFileName = map.getName() + "." + writer.getType();
 			File imageFile = new File(layerDir, imageFileName);
-			FileOutputStream fout = new FileOutputStream(imageFile);
-			try {
+			try (FileOutputStream fout = new FileOutputStream(imageFile)) {
 				fout.write(buf.toByteArray());
 				fout.flush();
-			} finally {
-				fout.close();
 			}
 			writeSatFile(imageFileName, tileImage.getWidth(), tileImage.getHeight());
 		} catch (Exception e) {

@@ -372,13 +372,13 @@ public class MapPackManager {
 	 * @return Array of filenames of map packs which are outdated
 	 */
 	public String[] searchForOutdatedMapPacks(String md5sumList) throws UpdateFailedException {
-		ArrayList<String> outdatedMappacks = new ArrayList<String>();
+		ArrayList<String> outdatedMappacks = new ArrayList<>();
 		String[] md5s = md5sumList.split("[\\n\\r]+");
 		Pattern linePattern = Pattern.compile("([0-9a-f]{32}) (mp-[\\w]+\\.jar)");
 
 		for (String line : md5s) {
 			line = line.trim();
-			if (line.length() == 0) {
+			if (line.isEmpty()) {
 				continue;
 			}
 			Matcher m = linePattern.matcher(line);

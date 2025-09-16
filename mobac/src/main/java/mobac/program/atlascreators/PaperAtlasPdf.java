@@ -53,9 +53,7 @@ public class PaperAtlasPdf extends PaperAtlas {
 		try {
 			pdfFile.createNewFile();
 			pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
-		} catch (IOException e) {
-			throw new MapCreationException(map, e);
-		} catch (DocumentException e) {
+		} catch (IOException | DocumentException e) {
 			throw new MapCreationException(map, e);
 		}
 		pdfWriter.setCompressionLevel(s.compression);
@@ -103,9 +101,7 @@ public class PaperAtlasPdf extends PaperAtlas {
 		Image iTextImage;
 		try {
 			iTextImage = Image.getInstance(image, Color.WHITE);
-		} catch (BadElementException e) {
-			throw new MapCreationException(map, e);
-		} catch (IOException e) {
+		} catch (BadElementException | IOException e) {
 			throw new MapCreationException(map, e);
 		}
 		iTextImage.setCompressionLevel(s.compression);

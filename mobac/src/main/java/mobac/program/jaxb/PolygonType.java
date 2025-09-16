@@ -29,7 +29,7 @@ public class PolygonType {
 	public Vector<Point> points;
 
 	protected PolygonType() {
-		points = new Vector<Point>(20);
+		points = new Vector<>(20);
 	}
 
 	public PolygonType(Vector<Point> points) {

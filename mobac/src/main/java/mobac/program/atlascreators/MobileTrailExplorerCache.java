@@ -49,7 +49,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 
 	protected DataOutputStream cacheOutStream = null;
 	protected long lastTileOffset = 0;
-	protected Set<String> availableTileList = new HashSet<String>();
+	protected Set<String> availableTileList = new HashSet<>();
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {

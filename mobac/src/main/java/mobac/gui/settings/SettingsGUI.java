@@ -274,8 +274,8 @@ public class SettingsGUI extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				Locale locale = ((SupportedLocale) languageCombo.getSelectedItem()).getLocale();
-				String currentLocaleStr = "" + settings.localeLanguage + settings.localeCountry;
-				String LocaleStr = "" + locale.getLanguage() + locale.getCountry();
+				String currentLocaleStr = settings.localeLanguage + settings.localeCountry;
+				String LocaleStr = locale.getLanguage() + locale.getCountry();
 				if (!currentLocaleStr.equals(LocaleStr) && isVisible()) {
 					settings.localeLanguage = locale.getLanguage();
 					settings.localeCountry = locale.getCountry();
@@ -300,7 +300,7 @@ public class SettingsGUI extends JDialog {
 
 								Runtime r = Runtime.getRuntime();
 								long maxMem = r.maxMemory();
-								final ArrayList<String> command = new ArrayList<String>();
+								final ArrayList<String> command = new ArrayList<>();
 								command.add(javaBin);
 								command.add("-jar");
 								command.add("-Xms64m");
@@ -747,13 +747,13 @@ public class SettingsGUI extends JDialog {
 
 		s.applyProxySettings();
 
-		Vector<String> disabledMaps = new Vector<String>();
+		Vector<String> disabledMaps = new Vector<>();
 		for (MapSource ms : disabledMapSourcesModel.getVector()) {
 			disabledMaps.add(ms.getName());
 		}
 		s.mapSourcesDisabled = disabledMaps;
 
-		Vector<String> enabledMaps = new Vector<String>();
+		Vector<String> enabledMaps = new Vector<>();
 		for (MapSource ms : enabledMapSourcesModel.getVector()) {
 			enabledMaps.add(ms.getName());
 		}

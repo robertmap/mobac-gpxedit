@@ -48,7 +48,7 @@ public class RmpLayer {
 	 * Constructor
 	 */
 	public RmpLayer(AtlasCreator atlasCreator) {
-		tiles = new LinkedList<Tiledata>();
+		tiles = new LinkedList<>();
 		this.atlasCreator = atlasCreator;
 	}
 

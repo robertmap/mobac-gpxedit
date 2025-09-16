@@ -54,7 +54,7 @@ public class MapSourcesTestSuite extends TestSuite {
 		super();
 		HttpURLConnection.setFollowRedirects(false);
 		log = LoggerFactory.getLogger(MapSourcesTestSuite.class);
-		testedMapSources = new HashSet<String>();
+		testedMapSources = new HashSet<>();
 		DefaultMapSourcesManager.initialize();
 		Settings.load();
 		for (MapSource mapSource : MapSourcesManager.getInstance().getAllMapSources()) {

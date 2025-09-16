@@ -36,7 +36,7 @@ public class JTimeSlider extends JSlider {
 	private static final int MAX = 31000;
 
 	static {
-		LABEL_TABLE = new Hashtable<Integer, JLabel>();
+		LABEL_TABLE = new Hashtable<>();
 		int hour = timeToSliderValue(TimeUnit.HOURS.toMillis(1));
 		int day = timeToSliderValue(TimeUnit.DAYS.toMillis(1));
 		int month = timeToSliderValue(TimeUnit.DAYS.toMillis(31));

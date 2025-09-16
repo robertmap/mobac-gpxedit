@@ -81,7 +81,7 @@ public class PtsegType {
 	 */
 	public List<PtType> getPt() {
 		if (pt == null) {
-			pt = new ArrayList<PtType>();
+			pt = new ArrayList<>();
 		}
 		return this.pt;
 	}

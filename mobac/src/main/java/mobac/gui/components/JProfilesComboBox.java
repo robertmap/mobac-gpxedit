@@ -38,7 +38,7 @@ public class JProfilesComboBox extends JComboBox<Profile> {
 	}
 
 	public void loadProfilesList() {
-		setModel(new DefaultComboBoxModel<Profile>(Profile.getProfiles()));
+		setModel(new DefaultComboBoxModel<>(Profile.getProfiles()));
 		setSelectedIndex(-1);
 	}
 

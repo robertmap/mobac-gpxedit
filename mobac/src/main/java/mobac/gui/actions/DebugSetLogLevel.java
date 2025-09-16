@@ -34,9 +34,9 @@ public class DebugSetLogLevel implements ActionListener {
 		JMenuItem menuItem = (JMenuItem) event.getSource();
 		root.setLevel(Level.toLevel(menuItem.getName()));
 		JMenu menu = MainGUI.getMainGUI().logLevelMenu;
-		Component[] c = menu.getMenuComponents();
-		for (int i = 0; i < c.length; i++) {
-			((JMenuItem) c[i]).setSelected(c[i] == menuItem);
+
+		for (Component c : menu.getMenuComponents()) {
+			((JMenuItem) c).setSelected(c == menuItem);
 		}
 	}
 }

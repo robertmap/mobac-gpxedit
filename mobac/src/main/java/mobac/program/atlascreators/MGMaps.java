@@ -81,13 +81,10 @@ public class MGMaps extends AtlasCreator {
 		super.startAtlasCreation(atlas, customAtlasDir);
 
 		File cache_conf = new File(atlasDir, "cache.conf");
-		PrintWriter pw = new PrintWriter(new FileWriter(cache_conf));
-		try {
+		try (PrintWriter pw = new PrintWriter(new FileWriter(cache_conf))) {
 			pw.println("version=3");
 			pw.println("tiles_per_file=" + TILES_PER_FILE);
 			pw.println("hash_size=1");
-		} finally {
-			pw.close();
 		}
 	}
 

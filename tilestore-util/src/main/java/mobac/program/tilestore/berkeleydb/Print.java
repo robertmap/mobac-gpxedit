@@ -40,15 +40,12 @@ public class Print implements Runnable {
 	public void run() {
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
-			EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities();
-			try {
+			try (EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities()) {
 				TileDbEntry entry = cursor.next();
 				while (entry != null) {
 					System.out.println(entry);
 					entry = cursor.next();
 				}
-			} finally {
-				cursor.close();
 			}
 			System.out.println("Tile store entry count: " + db.entryCount());
 		} catch (Exception e) {

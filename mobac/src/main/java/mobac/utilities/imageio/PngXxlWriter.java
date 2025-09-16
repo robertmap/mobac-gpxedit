@@ -162,8 +162,7 @@ public class PngXxlWriter {
 			} else if (db instanceof DataBufferInt) {
 				int[] intLine = ((DataBufferInt) db).getData();
 				int c = 0;
-				for (int i = 0; i < intLine.length; i++) {
-					int pixel = intLine[i];
+				for (int pixel : intLine) {
 					curLine[c++] = (byte) (pixel >> 16 & 0xFF);
 					curLine[c++] = (byte) (pixel >> 8 & 0xFF);
 					curLine[c++] = (byte) (pixel & 0xFF);

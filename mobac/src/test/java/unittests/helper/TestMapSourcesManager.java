@@ -45,7 +45,7 @@ public class TestMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public Vector<MapSource> getAllMapSources() {
-		Vector<MapSource> v = new Vector<MapSource>(1);
+		Vector<MapSource> v = new Vector<>(1);
 		v.add(theMapSource);
 		return v;
 	}
@@ -67,7 +67,7 @@ public class TestMapSourcesManager extends MapSourcesManager {
 
 	@Override
 	public Vector<MapSource> getDisabledMapSources() {
-		return new Vector<MapSource>();
+		return new Vector<>();
 	}
 
 	@Override

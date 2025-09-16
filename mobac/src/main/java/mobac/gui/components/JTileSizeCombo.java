@@ -35,7 +35,7 @@ public class JTileSizeCombo extends JIntCombo {
 
 	static {
 		DEFAULT = 256;
-		TILE_SIZE_VALUES = new Vector<Integer>();
+		TILE_SIZE_VALUES = new Vector<>();
 		TILE_SIZE_VALUES.addElement(64);
 		TILE_SIZE_VALUES.addElement(128);
 		TILE_SIZE_VALUES.addElement(DEFAULT);

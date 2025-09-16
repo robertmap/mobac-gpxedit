@@ -47,7 +47,7 @@ public class MultiImage {
 		this.tileProvider = tileProvider;
 		this.zoom = map.getZoom();
 		this.map = map;
-		cache = new SoftHashMap<TileKey, MobacTile>(400);
+		cache = new SoftHashMap<>(400);
 	}
 
 	public BufferedImage getSubImage(BoundingRect area, int width, int height) throws MapCreationException {

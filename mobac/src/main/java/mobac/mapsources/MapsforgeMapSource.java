@@ -48,11 +48,11 @@ import org.mapsforge.map.model.common.Observer;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.reader.header.MapFileException;
 import org.mapsforge.map.rendertheme.ExternalRenderTheme;
-import org.mapsforge.map.rendertheme.InternalRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderTheme;
 import org.mapsforge.map.rendertheme.XmlRenderThemeMenuCallback;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleLayer;
 import org.mapsforge.map.rendertheme.XmlRenderThemeStyleMenu;
+import org.mapsforge.map.rendertheme.internal.MapsforgeThemes;
 import org.mapsforge.map.rendertheme.rule.RenderThemeFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +104,7 @@ public class MapsforgeMapSource implements MapSource, FileBasedMapSource, Refres
 	public MapsforgeMapSource(String mapFileName) {
 		mapFileList.add(new File(mapFileName));
 		displayModel = new DisplayModel();
-		xmlRenderTheme = InternalRenderTheme.OSMARENDER;
+		xmlRenderTheme = MapsforgeThemes.OSMARENDER;
 	}
 
 	@Override

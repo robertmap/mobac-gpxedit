@@ -77,10 +77,9 @@ public class TileImageJpegDataWriter implements TileImageDataWriter {
 	}
 
 	public static boolean performOpenJDKJpegTest() {
-		try {
-			TileImageJpegDataWriter writer = new TileImageJpegDataWriter(0.99d);
+		try (TileImageJpegDataWriter writer = new TileImageJpegDataWriter(0.99d)) {
 			BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
-			writer.processImage(image, NullOutputStream.NULL_OUTPUT_STREAM);
+			writer.processImage(image, NullOutputStream.INSTANCE);
 			return true;
 		} catch (Exception e) {
 			log.debug("Jpeg test failed", e);

@@ -78,7 +78,7 @@ public class RunGPSAtlasFile {
 		}
 
 		try {
-			List<Integer> hierarchy = new ArrayList<Integer>();
+			List<Integer> hierarchy = new ArrayList<>();
 			for (;;) {
 				p = path.indexOf('/');
 				if (p > 0) {
@@ -290,7 +290,7 @@ public class RunGPSAtlasFile {
 			List<RAINode> children = getChildren();
 			StringBuilder sb = new StringBuilder();
 			if (key != -1) { // not for root
-				path += "" + key + "/";
+				path += key + "/";
 				if (value != -1L) {
 					sb.append(path).append('=').append(value).append("\n");
 
@@ -306,7 +306,7 @@ public class RunGPSAtlasFile {
 		List<RAINode> getChildren() throws IOException {
 			// currentIndexPos is now at fathers node index pos or -1
 
-			List<RAINode> children = new ArrayList<RAINode>();
+			List<RAINode> children = new ArrayList<>();
 
 			int indexPos = child;
 

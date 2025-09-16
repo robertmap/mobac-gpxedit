@@ -54,7 +54,7 @@ import java.util.Set;
 public class RunGPSAtlas extends AtlasCreator {
 
 	protected RunGPSAtlasFile atlasIndex = null;
-	protected Set<String> availableTileList = new HashSet<String>();
+	protected Set<String> availableTileList = new HashSet<>();
 	protected int minZoom, maxZoom;
 
 	@Override
@@ -154,7 +154,7 @@ public class RunGPSAtlas extends AtlasCreator {
 			return false;
 		}
 
-		ArrayList<Integer> hierarchy = new ArrayList<Integer>();
+		ArrayList<Integer> hierarchy = new ArrayList<>();
 		hierarchy.add(zoom);
 		hierarchy.add(x);
 		hierarchy.add(y);

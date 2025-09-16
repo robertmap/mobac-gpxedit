@@ -49,7 +49,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -423,14 +422,11 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 		synchronized (tileDbMap) {
 			List<TileDatabase> list = new ArrayList<>(tileDbMap.values());
-			Collections.sort(list, new Comparator<TileDatabase>() {
-
-				public int compare(TileDatabase o1, TileDatabase o2) {
-					if (o1.lastAccess == o2.lastAccess) {
-						return 0;
-					}
-					return (o1.lastAccess < o2.lastAccess) ? -1 : 1;
+			Collections.sort(list, (o1, o2) -> {
+				if (o1.lastAccess == o2.lastAccess) {
+					return 0;
 				}
+				return (o1.lastAccess < o2.lastAccess) ? -1 : 1;
 			});
 			for (int i = 0; i < list.size() - 2; i++) {
 				list.get(i).close();
