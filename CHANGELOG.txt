@@ -12,10 +12,13 @@
 =======
 2.3.4 (20??-??-??)
  + Dialog "Select distance around track" allows to increase the slider range
+ ~ BSH map sources: updated BSH library to 3.0.0 snapshot ensure compatibility
+     with latest Java versions
+ ~ Mapsforge library updated to version 0.26.1
 
 2.3.3 (2023-10-13)
  ! BSH map sources: fixed Cannot access method addRequestProperty when using
-   Java 17+ (#383)
+     Java 17+ (#383)
  ~ Custom map sources: validate map source names for disallowed characters
  - Map source "4uMaps" removed (service discontinued)
 
@@ -86,7 +89,7 @@
 
 2.2.0 (2021-04-10)
  ! MOBAC build system changed to Gradle
- + Support for ARM based MacOS systems (SQLite library)
+ + Support for ARM based macOS systems (SQLite library)
  - Support for 32bit systems dropped
  ! fixed Jaxb problem causing a NullPointerException with defineClass
      is null (#355)
@@ -108,7 +111,7 @@
 2.1.3 (2020-04-13)
  ! Custom map sources with UTF-8 characters now loaded correctly on platforms 
     with a different default encoding than UTF-8 (fix for #324)
- ! NullPointerException when creating an Magellan RMP (fix for #325)
+ ! NullPointerException when creating atlas Magellan RMP (fix for #325)
  + New map sources (covering Spain): Instituto Geográfico Nacional (IGN)
     WMTS Base/MTM/PNOA (ortho)    
  + Measurement ruler on preview map added (patch #45)
@@ -164,7 +167,7 @@
  ~ Mapsforge library updated to version 0.7.0
  ! Fixed multi-threading problem for MapsForge maps (truncated labels)
  ~ Updated xerial sqlite-jdbc library to version 3.8.11.2
- ! Fixed: Mapsforge cusom map <textScale> did not had an effect
+ ! Fixed: Mapsforge cusom map <textScale> had no effect
  + New: Mapsforge custom map property <userScaleFactor>
  - MapQuest map source deleted (map not available anymore)
  + Custom Mapsforge Map: Multiple map files (<mapFile> elements) are now 
@@ -260,7 +263,7 @@
  + View 512x512 map tile images for retina display (patch by miocool) 
 
 1.9.11 (2013-02-19)
- ! Bugfix for servers that send case insensitive content-types
+ ! Bugfix for servers that send case-insensitive content-types
  ! Bugfix OruxMapsSQlite final commit was missing (patch #30)
  + New map sources: USGS National Map Base/Satellite/Satellite+/Vector/Topo
  ! Bugfix Garmin Custom Map: Removed possibility to set output format to PNG  
@@ -278,7 +281,7 @@
  + Custom XML map: <invertYCoordinate> now works in simple XML map, too 
  + Loading multiple GPX files at once into MOBAC (based on patch by heckie) 
  ! Bugfix NullPointerException when aborting atlas download fixed (#3568849)
- + Automatically splitted maps because of the specified maximum map size can 
+ + Automatically split maps because of the specified maximum map size can
     now overlap 1-5 tiles 
 
 1.9.8 (2012-07-05)
@@ -324,7 +327,7 @@
 1.9.3 (2011-12-01)
  + Custom map source from local tiles XML schema changed: 
     new <sourceType> values: DIR_ZOOM_X_Y, DIR_ZOOM_Y_X, QUADKEY
-    removed flipXYDirs (use <sourceType>DIR_ZOOM_Y_X</sourceType> instead
+    removed flipXYDirs (use <sourceType>DIR_ZOOM_Y_X</sourceType> instead)
  ! Custom map source from ZIPs: Handling for atlas types with two file 
     extensions fixed
  ! Bugfix Osmdroid SQlite: PRIMARY KEY must be unique (#3438206)
@@ -387,7 +390,7 @@
  ~ Changed polygon selection behavior - selection stays now after adding it 
  
 1.9 beta 4 (2011-05-02)
- ~ Problem loading tile image type for custom map sources (ends up for TrekBuddy 
+ ~ Problem loading tile image type for custom map sources: ends up for TrekBuddy
     atlas format in an NullPointerException like in bug #3290976
  ~ Settings dialog now lists all tile stores - not only the stores of loaded map 
     sources
@@ -498,12 +501,12 @@
  ~ Map sources are now packed into "MapPacks" which can be updated 
     without changing the main MOBAC program
  ~ Custom map sources are moved from settings.xml into separate xml files
-    in the "mapsources" sub-directory
+    in the "mapsources" subdirectory
  ~ XML structure of multi-layer custom maps sources has changed
  + Multi-layer maps can now contain map sources that come with MOBAC
     This allows to combine existing map sources with new overlays.
  + BeanShell map sources can be used if placed in the "mapsources" 
-    sub-directory
+    subdirectory
  + All direcories used by MOBAC can be pre-configured via file 
     directories.ini in the MOBAC program directory
  + CustomMap: new parameter: ignoreErrors and backGroundColor can have
@@ -596,7 +599,7 @@
  + Atlas output directory can be specified via settings dialog
  + AndNav and OSMTracker: Tile format conversion (JPG <->PNG) implemented
     including color reduction
- ~ Docelu.pl can update it's base URL like the Google map sources do
+ ~ Docelu.pl can update its base URL like the Google map sources do
  ~ Pause/resume button now works while map creation (not only while download)
  + New experimental map source: Turaterkep (Hungary hiking)
     Uses tiles of size 512x512 (not supported by all atlas formats)        
@@ -752,7 +755,7 @@
     "Zoom levels (..)") now shows the breakdown of the number of tiles
     to the different zoom levels including the area calculation   
  ~ Exceptions that occur while downloading/creating an atlas are now displayed
-    in an dialog showing detailed information about the system and the exception
+    in a dialog showing detailed information about the system and the exception
  ~ Updated Google Maps url & removed "Galileo" appendix
  ~ New experimental implementation for creating tile of custom size. 
     Disdvantage: Much slower that the algorithm before
@@ -767,7 +770,7 @@
  + HTTP Proxy (host & port) can be specified via GUI
  + Added information about amount of tiles and total size for each tile source store 
     in Settings window.
- + Multithreaded download of tiles implemented (number of parallel download threads
+ + Multithreaded download of tiles implemented: number of parallel download threads
     changeable via settings dialog
  ~ Tile download system now reuses HTTP connections for HTTP 1.1 servers instead of 
     opening a new TCP connection for each tile  
@@ -799,8 +802,8 @@
  + Added possibility to set map size in atlas. Giving the possibility to create 
     large atlases 
   
- ! Fixed the non working setting tile store enabled. It was always enabled, 
-    despite of what was written in the settings file
+ ! Fixed the non-working setting tile store enabled. It was always enabled,
+    in spite of what was written in the settings file
  ! Fixed (hopefully) the generation of mixed up atlases at some Linux operating 
     system(s).
  ! Fixed bugs related to defect profiles in profiles.xml file by adding some 
