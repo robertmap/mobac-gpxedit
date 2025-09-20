@@ -116,12 +116,12 @@ public class RefreshCustomMapsources implements ActionListener {
 					status = "reloaded";
 				}
 				if (dataRefreshed) {
-					if (status.length() > 0) {
+					if (!status.isEmpty()) {
 						status += " & ";
 					}
 					status += "data refreshed";
 				}
-				if (status.length() == 0) {
+				if (status.isEmpty()) {
 					status = "unchanged";
 				}
 				entries.add(new ReloadTableEntry(mapSource.getName(), relPath, status, false));

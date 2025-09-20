@@ -350,13 +350,11 @@ public class MainGUI extends JFrame implements MapEventListener {
 		wgsGridCheckBox.setForeground(labelForegroundColor);
 		wgsGridCheckBox.setToolTipText(I18nUtils.localizedStringForKey("map_ctrl_wgs_grid_tips"));
 		wgsGridCheckBox.setMargin(new Insets(0, 0, 0, 0));
-		wgsGridCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				boolean enabled = wgsGridCheckBox.isSelected();
-				Settings.getInstance().wgsGrid.enabled = enabled;
-				wgsGridCombo.setVisible(enabled);
-				previewMap.repaint();
-			}
+		wgsGridCheckBox.addActionListener((e) -> {
+			boolean enabled = wgsGridCheckBox.isSelected();
+			Settings.getInstance().wgsGrid.enabled = enabled;
+			wgsGridCombo.setVisible(enabled);
+			previewMap.repaint();
 		});
 
 		// WGS Grid combo
@@ -365,12 +363,9 @@ public class MainGUI extends JFrame implements MapEventListener {
 		wgsGridCombo.setVisible(s.enabled);
 		wgsGridCombo.setSelectedItem(s.density);
 		wgsGridCombo.setToolTipText(I18nUtils.localizedStringForKey("map_ctrl_wgs_grid_density_tips"));
-		wgsGridCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				WgsDensity d = (WgsDensity) wgsGridCombo.getSelectedItem();
-				Settings.getInstance().wgsGrid.density = d;
-				previewMap.repaint();
-			}
+		wgsGridCombo.addActionListener((e) -> {
+			Settings.getInstance().wgsGrid.density = (WgsDensity) wgsGridCombo.getSelectedItem();
+			previewMap.repaint();
 		});
 
 		// ruler. measuring tool
@@ -382,28 +377,20 @@ public class MainGUI extends JFrame implements MapEventListener {
 		rulerCheckBox.setBackground(checkboxBackgroundColor);
 		rulerCheckBox.setForeground(labelForegroundColor);
 		rulerCheckBox.setMargin(new Insets(0, 0, 0, 0));
-		rulerCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (rulerCheckBox.isSelected()) {
-					previewMap.runRuler("start");
-					rulerButtonClear.setVisible(previewMap.isMeasuring);
-				} else {
-					previewMap.runRuler("exit");
-					rulerButtonClear.setVisible(false);
-				}
+		rulerCheckBox.addActionListener((e) -> {
+			if (rulerCheckBox.isSelected()) {
+				previewMap.runRuler("start");
+				rulerButtonClear.setVisible(previewMap.isMeasuring);
+			} else {
+				previewMap.runRuler("exit");
+				rulerButtonClear.setVisible(false);
 			}
 		});
 
 		rulerButtonClear = new JButton();
 		rulerButtonClear.setVisible(false);
 		rulerButtonClear.setText(I18nUtils.localizedStringForKey("map_ctrl_ruler_clear"));
-		rulerButtonClear.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				previewMap.runRuler("clear");
-			}
-		});
+		rulerButtonClear.addActionListener((e) -> previewMap.runRuler("clear"));
 
 		// map source tree
 		mapSourceTree = new JMapSourceTree(MapSourcesManager.getInstance().getEnabledOrderedMapSources());
@@ -1235,11 +1222,7 @@ public class MainGUI extends JFrame implements MapEventListener {
 
 		@Override
 		public void windowOpened(WindowEvent e) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					previewMap.setEnabled(true);
-				}
-			});
+			SwingUtilities.invokeLater(() -> previewMap.setEnabled(true));
 		}
 
 		public void windowClosing(WindowEvent event) {

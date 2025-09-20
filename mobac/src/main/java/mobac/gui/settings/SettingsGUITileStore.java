@@ -111,11 +111,9 @@ public class SettingsGUITileStore extends JPanel {
 					info.size = size;
 					final String mapTileCountText = (count < 0) ? "??" : Integer.toString(count);
 					final String mapTileSizeText = Utilities.formatBytes(size);
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
-							info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
-						}
+					SwingUtilities.invokeLater(() -> {
+						info.countLabel.setText("<html><b>" + mapTileCountText + "</b></html>");
+						info.sizeLabel.setText("<html><b>" + mapTileSizeText + "</b></html>");
 					});
 				} else {
 					count = info.count;
@@ -126,11 +124,9 @@ public class SettingsGUITileStore extends JPanel {
 			}
 			final String totalTileCountText = "<html><b>" + totalTileCount + "</b></html>";
 			final String totalTileSizeText = "<html><b>" + Utilities.formatBytes(totalTileSize) + "</b></html>";
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					totalTileCountLabel.setText(totalTileCountText);
-					totalTileSizeLabel.setText(totalTileSizeText);
-				}
+			SwingUtilities.invokeLater(() -> {
+				totalTileCountLabel.setText(totalTileCountText);
+				totalTileSizeLabel.setText(totalTileSizeText);
 			});
 		} catch (InterruptedException e) {
 			LOG.debug("Tile store information retrieval was canceled");

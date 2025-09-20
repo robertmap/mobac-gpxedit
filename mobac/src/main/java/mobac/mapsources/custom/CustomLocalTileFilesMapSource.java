@@ -220,7 +220,7 @@ public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 			return null;
 		}
 		if (log.isTraceEnabled()) {
-			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+			log.trace("Loading tile z={} x={} y={}", zoom, x, y);
 		}
 
 		if (invertYCoordinate) {

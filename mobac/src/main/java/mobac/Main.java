@@ -72,13 +72,11 @@ public class Main {
 			EnvironmentSetup.upgrade();
 			cmdAction.runBeforeMainGUI();
 			if (cmdAction.showMainGUI()) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Logging.LOG.debug("Starting GUI");
-						MainGUI.createMainGui();
-						SplashFrame.hideFrame();
-						cmdAction.runMainGUI();
-					}
+				SwingUtilities.invokeLater(() -> {
+					Logging.LOG.debug("Starting GUI");
+					MainGUI.createMainGui();
+					SplashFrame.hideFrame();
+					cmdAction.runMainGUI();
 				});
 			}
 		} catch (Throwable t) {

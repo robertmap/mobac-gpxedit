@@ -98,7 +98,7 @@ public class AFTrack extends OSMTracker {
 				try (OutputStreamWriter writer = new OutputStreamWriter(bout)) {
 					Collections.sort(zoomLevel);
 					for (Integer zoom : zoomLevel) {
-						writer.append(String.format("zoom=%d\r\n", zoom.intValue()));
+						writer.append(String.format("zoom=%d\r\n", zoom));
 					}
 					writer.append(String.format("minx=%d\r\n", min.x));
 					writer.append(String.format("maxx=%d\r\n", max.x));

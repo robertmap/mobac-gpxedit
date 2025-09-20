@@ -58,9 +58,7 @@ public class FontChooser {
 			jDialog.setVisible(false);
 		});
 
-		jButtonCancel.addActionListener((e) -> {
-			jDialog.setVisible(false);
-		});
+		jButtonCancel.addActionListener((e) -> jDialog.setVisible(false));
 
 		JPanel buttonPane = new JPanel();
 		buttonPane.add(jButtonOK);

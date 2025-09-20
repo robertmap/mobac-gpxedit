@@ -109,7 +109,7 @@ public class EnvironmentSetup {
 				FIRST_START = true;
 				Settings.save();
 			} catch (Exception e) {
-				log.error("Error while creating settings.xml: " + e.getMessage(), e);
+				log.error("Error while creating settings.xml: {}", e.getMessage(), e);
 				String[] options = {"Exit", "Show error report"};
 				int a = JOptionPane.showOptionDialog(null, "Could not create file settings.xml - program will exit.",
 						"Error", 0, JOptionPane.ERROR_MESSAGE, null, options, options[0]);

@@ -128,7 +128,7 @@ public class CacheWolf extends Ozi {
 
 		public CWFileTileWriter() {
 			super();
-			log.debug("Writing tiles to set folder: " + layerDir);
+			log.debug("Writing tiles to set folder: {}", layerDir);
 		}
 
 		public void writeTile(int tilex, int tiley, String imageFormat, byte[] tileData) throws IOException {

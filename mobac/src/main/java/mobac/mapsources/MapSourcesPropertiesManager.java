@@ -45,19 +45,12 @@ public class MapSourcesPropertiesManager {
 			log.error("Failed to load mapsources.properties", e);
 		}
 		if (!SHUTDOWN_HOOK_REGISTERED) {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-
-				@Override
-				public void run() {
-					save();
-				}
-
-			});
+			Runtime.getRuntime().addShutdownHook(new Thread(MapSourcesPropertiesManager::save));
 		}
 	}
 
 	public static void save() {
-		if (PROPERTIES.size() == 0) {
+		if (PROPERTIES.isEmpty()) {
 			return;
 		}
 		File mapSourcesDir = Settings.getInstance().getMapSourcesDirectory();

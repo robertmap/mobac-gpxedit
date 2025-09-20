@@ -20,8 +20,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.ValidationEvent;
-import jakarta.xml.bind.ValidationEventHandler;
 import jakarta.xml.bind.ValidationEventLocator;
 import mobac.exceptions.AbortedByUserException;
 import mobac.gui.panels.JProfilesPanel;
@@ -195,40 +193,36 @@ public class Profile implements Comparable<Profile> {
 		JAXBContext context = JAXBContext.newInstance(Atlas.class);
 		Unmarshaller um = context.createUnmarshaller();
 		AtomicBoolean loadAborted = new AtomicBoolean(false);
-		um.setEventHandler(new ValidationEventHandler() {
-
-			public boolean handleEvent(ValidationEvent event) {
-				ValidationEventLocator loc = event.getLocator();
-				String fileName = file.getName();
-				String message = event.getMessage();
-				if (message == null) {
-					// No message - try to find an error message in the linked Exceptions
-					Throwable ex = event.getLinkedException();
-					while (ex instanceof InvocationTargetException) {
-						ex = ex.getCause();
-					}
-					if (ex != null) {
-						message = ex.getMessage();
-					} else {
-						message = "?";
-					}
+		um.setEventHandler((event) -> {
+			ValidationEventLocator loc = event.getLocator();
+			String fileName = file.getName();
+			String message = event.getMessage();
+			if (message == null) {
+				// No message - try to find an error message in the linked Exceptions
+				Throwable ex = event.getLinkedException();
+				while (ex instanceof InvocationTargetException) {
+					ex = ex.getCause();
 				}
-				int ret = JOptionPane.showConfirmDialog(null,
-						String.format(I18nUtils.localizedStringForKey("msg_error_load_atlas_profile"), message,
-								fileName, loc.getLineNumber(), loc.getColumnNumber()),
-						I18nUtils.localizedStringForKey("msg_error_load_atlas_profile_title"),
-						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-				log.error(event.toString());
-				boolean continueLoading = (ret == JOptionPane.YES_OPTION);
-				if (!continueLoading) {
-					loadAborted.set(true);
+				if (ex != null) {
+					message = ex.getMessage();
+				} else {
+					message = "?";
 				}
-				return continueLoading;
 			}
+			int ret = JOptionPane.showConfirmDialog(null,
+					String.format(I18nUtils.localizedStringForKey("msg_error_load_atlas_profile"), message, fileName,
+							loc.getLineNumber(), loc.getColumnNumber()),
+					I18nUtils.localizedStringForKey("msg_error_load_atlas_profile_title"),
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+			log.error(event.toString());
+			boolean continueLoading = (ret == JOptionPane.YES_OPTION);
+			if (!continueLoading) {
+				loadAborted.set(true);
+			}
+			return continueLoading;
 		});
 		try {
-			AtlasInterface newAtlas = (AtlasInterface) um.unmarshal(file);
-			return newAtlas;
+			return (AtlasInterface) um.unmarshal(file);
 		} catch (Exception e) {
 			if (loadAborted.get()) {
 				throw new AbortedByUserException();

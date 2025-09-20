@@ -51,7 +51,7 @@ public class Ruler {
 	}
 
 	public void remove() {
-		if (segments.size() > 0) {
+		if (!segments.isEmpty()) {
 			segments.remove(segments.size() - 1);
 		}
 	}

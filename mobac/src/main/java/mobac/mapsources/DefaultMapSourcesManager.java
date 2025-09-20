@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.TreeSet;
@@ -176,7 +177,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 	@Override
 	public Vector<MapSource> getAllLayerMapSources() {
 		Vector<MapSource> all = getAllMapSources();
-		TreeSet<MapSource> uniqueSources = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
+		TreeSet<MapSource> uniqueSources = new TreeSet<>(Comparator.comparing(MapSource::getName));
 		for (MapSource ms : all) {
 			if (ms instanceof AbstractMultiLayerMapSource) {
 				for (MapSource lms : ((AbstractMultiLayerMapSource) ms)) {
@@ -186,8 +187,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 				uniqueSources.add(ms);
 			}
 		}
-		Vector<MapSource> result = new Vector<>(uniqueSources);
-		return result;
+		return new Vector<>(uniqueSources);
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 
 		Vector<String> enabledMapSources = Settings.getInstance().mapSourcesEnabled;
 		TreeSet<String> notEnabledMapSources = new TreeSet<>(allMapSources.keySet());
-		notEnabledMapSources.removeAll(enabledMapSources);
+		enabledMapSources.forEach(notEnabledMapSources::remove);
 		for (String mapSourceName : enabledMapSources) {
 			MapSource ms = getSourceByName(mapSourceName);
 			if (ms != null) {
@@ -205,7 +205,7 @@ public class DefaultMapSourcesManager extends MapSourcesManager {
 		}
 		// remove all disabled map sources, so we get those that are neither enabled nor
 		// disabled
-		notEnabledMapSources.removeAll(Settings.getInstance().mapSourcesDisabled);
+		Settings.getInstance().mapSourcesDisabled.forEach(notEnabledMapSources::remove);
 		for (String mapSourceName : notEnabledMapSources) {
 			MapSource ms = getSourceByName(mapSourceName);
 			if (ms != null) {

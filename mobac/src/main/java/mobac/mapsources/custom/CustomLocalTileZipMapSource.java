@@ -114,7 +114,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 	public void reinitialize() {
 		try {
 			openZipFile();
-			if (zips.size() == 0) {
+			if (zips.isEmpty()) {
 				return;
 			}
 			switch (sourceType) {
@@ -233,7 +233,7 @@ public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 			return null;
 		}
 		if (log.isTraceEnabled()) {
-			log.trace(String.format("Loading tile z=%d x=%d y=%d", zoom, x, y));
+			log.trace("Loading tile z={} x={} y={}", zoom, x, y);
 		}
 
 		if (invertYCoordinate) {

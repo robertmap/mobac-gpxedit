@@ -83,7 +83,7 @@ public class DirectoryManager {
 				return expandCommandLine(dirCfg);
 			}
 		} catch (Exception e) {
-			Logging.LOG.error("Error reading directory configuration: " + e.getMessage(), e);
+			Logging.LOG.error("Error reading directory configuration: {}", e.getMessage(), e);
 			JOptionPane
 					.showMessageDialog(null,
 							"<html><p>Failed to load directory.ini - entry \"" + propertyName + "\":<p><p>"

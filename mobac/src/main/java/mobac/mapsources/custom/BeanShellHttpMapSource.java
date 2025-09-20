@@ -104,7 +104,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 
 		o = interpreter.get("tileSize");
 		if (o != null) {
-			int tileSize = ((Integer) o).intValue();
+			int tileSize = (Integer) o;
 			mapSpace = MapSpaceFactory.getInstance(tileSize, true);
 		} else {
 			mapSpace = MercatorPower2MapSpace.INSTANCE_256;
@@ -112,14 +112,14 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 
 		o = interpreter.get("minZoom");
 		if (o != null) {
-			minZoom = ((Integer) o).intValue();
+			minZoom = (Integer) o;
 		} else {
 			minZoom = 0;
 		}
 
 		o = interpreter.get("maxZoom");
 		if (o != null) {
-			maxZoom = ((Integer) o).intValue();
+			maxZoom = (Integer) o;
 		} else {
 			maxZoom = PreviewMap.MAX_ZOOM;
 		}
@@ -141,7 +141,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 			if (o instanceof String) {
 				ignoreError = Boolean.parseBoolean((String) o);
 			} else if (o instanceof Boolean) {
-				ignoreError = ((Boolean) o).booleanValue();
+				ignoreError = (Boolean) o;
 			} else {
 				throw new EvalError("Invalid type for \"ignoreError\": " + o.getClass(), null, null);
 			}
@@ -166,8 +166,8 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 		List<String> methodNames = Arrays.asList(interpreter.getNameSpace().getMethodNames());
 		hasAddHeadersMethod = methodNames.contains("addHeaders");
 		if (!hasAddHeadersMethod) {
-			log.warn("Beanshell \"" + bshMapName + "\" (" + name
-					+ ") has no addHeaders method - addHeaders will not be called!");
+			log.warn("Beanshell \"{}\" ({}) has no addHeaders method - addHeaders will not be called!", bshMapName,
+					name);
 		}
 	}
 
@@ -190,7 +190,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 			} catch (EvalError e) {
 				String msg = e.getMessage();
 				if (!AH_ERROR.equals(msg)) {
-					log.error(e.getClass() + ": " + e.getMessage(), e);
+					log.error("{}: {}", e.getClass(), e.getMessage(), e);
 					throw new IOException(e);
 				}
 			}
@@ -210,7 +210,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 			return super.getTileImage(zoom, x, y, loadMethod);
 		} catch (Exception e) {
 			if (ignoreError) {
-				log.error("Ignored error: " + e);
+				log.error("Ignored error: {}", e.toString());
 				return null;
 			}
 			throw e;
@@ -224,7 +224,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 			return super.getTileData(zoom, x, y, loadMethod);
 		} catch (Exception e) {
 			if (ignoreError) {
-				log.error("Ignored error: " + e);
+				log.error("Ignored error: {}", e.toString());
 				return null;
 			}
 			throw e;
@@ -239,7 +239,7 @@ public class BeanShellHttpMapSource extends AbstractHttpMapSource
 		try {
 			return (String) interpreter.eval(String.format("getTileUrl(%d,%d,%d);", zoom, tilex, tiley));
 		} catch (EvalError e) {
-			log.error(e.getClass() + ": " + e.getMessage(), e);
+			log.error("{}: {}", e.getClass(), e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}

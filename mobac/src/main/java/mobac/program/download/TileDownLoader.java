@@ -366,7 +366,7 @@ public class TileDownLoader {
 
 	protected static boolean hasTileETag(TileStoreEntry tile, HttpMapSource mapSource) throws IOException {
 		String eTag = tile.geteTag();
-		if (eTag == null || eTag.length() == 0) {
+		if (eTag == null || eTag.isEmpty()) {
 			log.warn("ETag check not possible: tile in tilestore does not contain ETag attribute");
 			return true;
 		}
@@ -374,7 +374,7 @@ public class TileDownLoader {
 		conn.setRequestMethod("HEAD");
 		conn.setRequestProperty("Accept", Settings.getInstance().getHttpAccept());
 		String onlineETag = conn.getHeaderField("ETag");
-		if (onlineETag == null || onlineETag.length() == 0) {
+		if (onlineETag == null || onlineETag.isEmpty()) {
 			return true;
 		}
 		return (onlineETag.equals(eTag));

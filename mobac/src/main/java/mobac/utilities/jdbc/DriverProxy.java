@@ -45,8 +45,8 @@ public class DriverProxy implements Driver {
 			InvocationTargetException, NoSuchMethodException, SecurityException {
 		Class<Driver> c = (Class<Driver>) classLoader.loadClass(className);
 		driver = c.getConstructor().newInstance();
-		log.info("SQL driver loaded: v" + driver.getMajorVersion() + "." + driver.getMinorVersion() + " ["
-				+ driver.getClass().getName() + "]");
+		log.info("SQL driver loaded: v{}.{} [{}]", driver.getMajorVersion(), driver.getMinorVersion(),
+				driver.getClass().getName());
 	}
 
 	public static void loadSQLDriver(String className, ClassLoader classLoader)

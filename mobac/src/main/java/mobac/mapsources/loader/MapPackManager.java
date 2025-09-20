@@ -294,7 +294,7 @@ public class MapPackManager {
 		if (md5sumList == null) {
 			return 0; // no new md5 file available
 		}
-		if (md5sumList.length() == 0) {
+		if (md5sumList.isEmpty()) {
 			return -1; // empty file means - outdated version
 		}
 		int updateCount = 0;

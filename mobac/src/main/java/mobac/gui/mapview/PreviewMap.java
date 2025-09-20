@@ -300,7 +300,7 @@ public class PreviewMap extends JMapViewer {
 		ScaleBar.paintScaleBar(this, g, mapSource.getMapSpace(), tlc, zoom);
 
 		// if measure tool is paused, keep the path overlay
-		if (isMeasuring || ruler.segments.size() > 0) {
+		if (isMeasuring || !ruler.segments.isEmpty()) {
 			ruler.paint(this, g, tlc, zoom);
 		}
 	}
@@ -521,7 +521,7 @@ public class PreviewMap extends JMapViewer {
 
 		switch (action) {
 			case "clearkb" : // double clear disables measure mode (keyboard only)
-				if (ruler.segments.size() == 0) {
+				if (ruler.segments.isEmpty()) {
 					setIsMeasuring(false);
 				}
 			case "clear" :

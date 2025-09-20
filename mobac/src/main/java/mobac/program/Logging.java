@@ -106,7 +106,7 @@ public class Logging {
 		return false;
 	}
 
-	private static FileAppender createFileLogger(Path logFile, Level levelFilter) {
+	private static FileAppender<ILoggingEvent> createFileLogger(Path logFile, Level levelFilter) {
 		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 		PatternLayoutEncoder patternLayoutEncoder = new PatternLayoutEncoder();
 
@@ -146,7 +146,7 @@ public class Logging {
 		while (it.hasNext()) {
 			Appender<ILoggingEvent> appender = it.next();
 			if (appender instanceof FileAppender) {
-				FileAppender fileAppender = (FileAppender) appender;
+				FileAppender<ILoggingEvent> fileAppender = (FileAppender<ILoggingEvent>) appender;
 				return fileAppender.getFile();
 			}
 		}

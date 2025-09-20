@@ -104,7 +104,7 @@ public abstract class AbstractHttpMapSource extends AbstractHttpMapSourceBase {
 				log.debug("Map source has been initialized");
 			}
 		} catch (Exception e) {
-			log.error("Map source initialization failed: " + e.getMessage(), e);
+			log.error("Map source initialization failed: {}", e.getMessage(), e);
 			// TODO: inform user
 		}
 		initialized = true;

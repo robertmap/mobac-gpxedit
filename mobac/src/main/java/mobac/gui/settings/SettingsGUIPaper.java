@@ -47,10 +47,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 
 public class SettingsGUIPaper extends JPanel {
@@ -111,51 +108,31 @@ public class SettingsGUIPaper extends JPanel {
 		jSpinnerCrop.setEditor(new JSpinner.NumberEditor(jSpinnerCrop, "#0'%'"));
 		setUnitSystem(UnitSystem.Metric);
 		i18n();
-		jButtonImport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				importFromXml();
-			}
+		jButtonImport.addActionListener((e) -> importFromXml());
+		jButtonExport.addActionListener((e) -> exportToXml());
+		jButtonDefaults.addActionListener((e) -> resetToDefaults());
+		jComboBoxFormat.addActionListener((e) -> {
+			Format format = (Format) jComboBoxFormat.getSelectedItem();
+			double width = unitSystem.pointsToUnits(format.width);
+			double height = unitSystem.pointsToUnits(format.height);
+			modelWidth.setValue(width);
+			modelHeight.setValue(height);
 		});
-		jButtonExport.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportToXml();
-			}
+		jCheckBoxWgsGrid.addItemListener((e) -> {
+			boolean enabled = e.getStateChange() != ItemEvent.DESELECTED;
+			jComboBoxWgsDensity.setEnabled(enabled);
 		});
-		jButtonDefaults.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				resetToDefaults();
-			}
+		jRadioButtonCustom.addItemListener((e) -> {
+			boolean enabled = e.getStateChange() != ItemEvent.DESELECTED;
+			jLabelWidth.setEnabled(enabled);
+			jLabelHeight.setEnabled(enabled);
+			jSpinnerWidth.setEnabled(enabled);
+			jSpinnerHeight.setEnabled(enabled);
 		});
-		jComboBoxFormat.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Format format = (Format) jComboBoxFormat.getSelectedItem();
-				double width = unitSystem.pointsToUnits(format.width);
-				double height = unitSystem.pointsToUnits(format.height);
-				modelWidth.setValue(width);
-				modelHeight.setValue(height);
-			}
-		});
-		jCheckBoxWgsGrid.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				boolean enabled = e.getStateChange() != ItemEvent.DESELECTED;
-				jComboBoxWgsDensity.setEnabled(enabled);
-			}
-		});
-		jRadioButtonCustom.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				boolean enabled = e.getStateChange() != ItemEvent.DESELECTED;
-				jLabelWidth.setEnabled(enabled);
-				jLabelHeight.setEnabled(enabled);
-				jSpinnerWidth.setEnabled(enabled);
-				jSpinnerHeight.setEnabled(enabled);
-			}
-		});
-		jRadioButtonDefault.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				boolean enabled = e.getStateChange() != ItemEvent.DESELECTED;
-				jComboBoxFormat.setEnabled(enabled);
-				jCheckBoxLandscape.setEnabled(enabled);
-			}
+		jRadioButtonDefault.addItemListener((e) -> {
+			boolean enabled = e.getStateChange() != ItemEvent.DESELECTED;
+			jComboBoxFormat.setEnabled(enabled);
+			jCheckBoxLandscape.setEnabled(enabled);
 		});
 
 		ButtonGroup buttonGroup = new ButtonGroup();

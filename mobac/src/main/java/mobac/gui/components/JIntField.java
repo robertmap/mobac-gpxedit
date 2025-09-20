@@ -109,7 +109,7 @@ public class JIntField extends JTextField {
 			JIntField.this.setBackground(newC);
 			String toolTip = valid ? "" : String.format(errorText, min, max);
 			JIntField.this.setToolTipText(toolTip);
-			if (toolTip.length() > 0) {
+			if (!toolTip.isEmpty()) {
 				Utilities.showTooltipNow(JIntField.this);
 			}
 		}

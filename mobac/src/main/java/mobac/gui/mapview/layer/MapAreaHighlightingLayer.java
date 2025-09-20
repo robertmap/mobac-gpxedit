@@ -29,7 +29,6 @@ import mobac.program.model.MapPolygon;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -54,16 +53,13 @@ public class MapAreaHighlightingLayer implements MapLayer, TreeModelListener {
 		this.tree = tree;
 		object = (AtlasObject) tree.getSelectionPath().getLastPathComponent();
 		MainGUI.getMainGUI().previewMap.repaint();
-		treeListener = new TreeSelectionListener() {
-
-			public void valueChanged(TreeSelectionEvent event) {
-				try {
-					object = (AtlasObject) event.getNewLeadSelectionPath().getLastPathComponent();
-				} catch (Exception e) {
-					object = null;
-				}
-				MainGUI.getMainGUI().previewMap.repaint();
+		treeListener = (event) -> {
+			try {
+				object = (AtlasObject) event.getNewLeadSelectionPath().getLastPathComponent();
+			} catch (Exception e) {
+				object = null;
 			}
+			MainGUI.getMainGUI().previewMap.repaint();
 		};
 		tree.addTreeSelectionListener(treeListener);
 		tree.getModel().addTreeModelListener(this);

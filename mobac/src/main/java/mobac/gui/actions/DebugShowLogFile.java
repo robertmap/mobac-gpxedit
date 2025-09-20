@@ -44,7 +44,7 @@ public class DebugShowLogFile implements ActionListener {
 		}
 		File f = new File(logFile);
 		if (!f.isFile()) {
-			log.error("Log file does not exists: " + f.getAbsolutePath());
+			log.error("Log file does not exists: {}", f.getAbsolutePath());
 			JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
 					String.format(I18nUtils.localizedStringForKey("msg_no_log_file"), f.getAbsolutePath()),
 					I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);

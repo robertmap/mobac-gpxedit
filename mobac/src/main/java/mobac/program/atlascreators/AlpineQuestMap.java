@@ -215,7 +215,7 @@ public class AlpineQuestMap extends AtlasCreator {
 
 		// name of this specific map (displayed to user)
 		String strName = map.getLayer().getName();
-		if (strName == null || strName.length() == 0) {
+		if (strName == null || strName.isEmpty()) {
 			strName = I18nUtils.localizedStringForKey("Unnamed");
 		}
 

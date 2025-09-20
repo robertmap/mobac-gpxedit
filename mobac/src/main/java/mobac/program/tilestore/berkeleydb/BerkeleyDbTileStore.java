@@ -48,7 +48,6 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -186,7 +185,7 @@ public class BerkeleyDbTileStore extends TileStore {
 				return db;
 			}
 		} catch (Exception e) {
-			log.error("Error creating tile store db \"" + mapSource.getName() + "\"", e);
+			log.error("Error creating tile store db \"{}\"", mapSource.getName(), e);
 			throw new TileStoreException(e);
 		}
 	}
@@ -230,7 +229,7 @@ public class BerkeleyDbTileStore extends TileStore {
 				return db;
 			}
 		} catch (Exception e) {
-			log.error("Error creating tile store db \"" + storeName + "\"", e);
+			log.error("Error creating tile store db \"{}\"", storeName, e);
 			throw new TileStoreException(e);
 		}
 	}
@@ -422,7 +421,7 @@ public class BerkeleyDbTileStore extends TileStore {
 		}
 		synchronized (tileDbMap) {
 			List<TileDatabase> list = new ArrayList<>(tileDbMap.values());
-			Collections.sort(list, (o1, o2) -> {
+			list.sort((o1, o2) -> {
 				if (o1.lastAccess == o2.lastAccess) {
 					return 0;
 				}
@@ -567,7 +566,7 @@ public class BerkeleyDbTileStore extends TileStore {
 			try {
 				image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED, colorModel);
 			} catch (Throwable e) {
-				log.error("Failed to create coverage image: " + e);
+				log.error("Failed to create coverage image: {}", e.toString());
 				image = null;
 				System.gc();
 				return null;

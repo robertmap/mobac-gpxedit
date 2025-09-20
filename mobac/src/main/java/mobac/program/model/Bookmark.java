@@ -66,7 +66,7 @@ public class Bookmark extends EastNorthCoordinate {
 	}
 
 	public void setName(String name) {
-		if (name != null && name.trim().length() == 0) {
+		if (name != null && name.trim().isEmpty()) {
 			name = null;
 		}
 		this.name = name;

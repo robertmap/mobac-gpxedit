@@ -30,8 +30,6 @@ import javax.swing.JLabel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.concurrent.Executors;
@@ -57,12 +55,9 @@ public class WorkinprogressDialog extends JDialog implements WindowListener {
 		setLocationRelativeTo(owner);
 		addWindowListener(this);
 		JButton abort = new JButton(I18nUtils.localizedStringForKey("Abort"));
-		abort.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				log.debug("User interrupted process");
-				WorkinprogressDialog.this.close();
-			}
+		abort.addActionListener((e) -> {
+			log.debug("User interrupted process");
+			WorkinprogressDialog.this.close();
 		});
 		add(abort);
 		pack();
@@ -82,51 +77,37 @@ public class WorkinprogressDialog extends JDialog implements WindowListener {
 		final WorkinprogressDialog dlg = new WorkinprogressDialog(parentFrame,
 				I18nUtils.localizedStringForKey("dlg_progress_title"), DelayedInterruptThread.createThreadFactory());
 
-		final Thread t = new Thread() {
-
-			@Override
-			public void run() {
-				try {
-					for (int i = 0; i <= 500; i++) {
-						jl.setText(String.format(I18nUtils.localizedStringForKey("dlg_progress_count_i"), i));
-						if (Thread.currentThread().isInterrupted()) {
-							System.out.println("Aborted");
-							return;
-						}
-						Thread.sleep(25);
+		final Thread t = new Thread(() -> {
+			try {
+				for (int i = 0; i <= 500; i++) {
+					jl.setText(String.format(I18nUtils.localizedStringForKey("dlg_progress_count_i"), i));
+					if (Thread.currentThread().isInterrupted()) {
+						System.out.println("Aborted");
+						return;
 					}
-				} catch (InterruptedException e) {
-					System.out.println("Aborted");
-				} finally {
-					dlg.setVisible(false);
+					Thread.sleep(25);
 				}
+			} catch (InterruptedException e) {
+				System.out.println("Aborted");
+			} finally {
+				dlg.setVisible(false);
 			}
-
-		};
+		});
 		dlg.startWork(t);
 	}
 
 	public void startWork(final Runnable r) {
-		workerThread = threadFactory.newThread(new Runnable() {
-
-			public void run() {
-				try {
-					r.run();
-				} catch (Exception e) {
-					log.error(e.getMessage(), e);
-				} finally {
-					WorkinprogressDialog.this.close();
-					log.debug("Worker thread finished");
-				}
+		workerThread = threadFactory.newThread(() -> {
+			try {
+				r.run();
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			} finally {
+				WorkinprogressDialog.this.close();
+				log.debug("Worker thread finished");
 			}
-
 		});
-		Thread t1 = new Thread() {
-			@Override
-			public void run() {
-				setVisible(true);
-			}
-		};
+		Thread t1 = new Thread(() -> setVisible(true));
 		t1.start();
 	}
 

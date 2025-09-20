@@ -128,14 +128,7 @@ public class TestTileServer extends Serve {
 	}
 
 	public void start() {
-		Thread t = new Thread() {
-
-			@Override
-			public void run() {
-				TestTileServer.this.serve();
-			}
-
-		};
+		Thread t = new Thread(TestTileServer.this::serve);
 		t.setDaemon(true);
 		t.start();
 	}

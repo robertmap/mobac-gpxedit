@@ -251,7 +251,7 @@ public class Settings {
 	public void setUserAgent(String userAgent) {
 		if (userAgent != null) {
 			userAgent = userAgent.trim();
-			if (userAgent.length() == 0) {
+			if (userAgent.isEmpty()) {
 				userAgent = null;
 			}
 		}
@@ -290,7 +290,7 @@ public class Settings {
 	public void setHttpAccept(String httpAccept) {
 		if (httpAccept != null) {
 			httpAccept = httpAccept.trim();
-			if (httpAccept.length() == 0) {
+			if (httpAccept.isEmpty()) {
 				httpAccept = null;
 			}
 		}
@@ -424,7 +424,7 @@ public class Settings {
 	public File getMapSourcesDirectory() {
 		String mapSourcesDirCfg = directories.mapSourcesDirectory;
 		File mapSourcesDir;
-		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().length() == 0) {
+		if (mapSourcesDirCfg == null || mapSourcesDirCfg.trim().isEmpty()) {
 			mapSourcesDir = DirectoryManager.mapSourcesDir;
 		} else {
 			mapSourcesDir = new File(mapSourcesDirCfg);
@@ -446,7 +446,7 @@ public class Settings {
 	 *            otherwise set the new atlas output directory.
 	 */
 	public void setAtlasOutputDirectory(String dir) {
-		if (dir != null && dir.trim().length() == 0) {
+		if (dir != null && dir.trim().isEmpty()) {
 			dir = null;
 		}
 		directories.atlasOutputDirectory = dir;

@@ -142,7 +142,7 @@ public class AtlasTreeModel implements TreeModel {
 		try {
 			AtlasObject sel = (AtlasObject) o;
 			String newName = (String) newValue;
-			if (newName.length() == 0) {
+			if (newName.isEmpty()) {
 				return;
 			}
 			sel.setName(newName);

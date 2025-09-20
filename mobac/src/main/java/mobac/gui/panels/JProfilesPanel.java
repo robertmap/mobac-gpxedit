@@ -142,7 +142,7 @@ public class JProfilesPanel extends JCollapsiblePanel {
 				profileName = (String) selObject;
 			}
 
-			if (profileName.length() == 0) {
+			if (profileName.isEmpty()) {
 				JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("lp_atlas_profile_msg_ask_name"),
 						I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
 				return;

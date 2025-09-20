@@ -125,7 +125,7 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 	}
 
 	protected void afterUnmarshal(Unmarshaller u, Object parent) {
-		if (trustedPublicKeys.size() > 0) {
+		if (!trustedPublicKeys.isEmpty()) {
 			sslSocketFactory = MobacSSLHelper.createSSLSocketFactory(trustedPublicKeys);
 		}
 	}
@@ -194,7 +194,7 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 			return TileDownLoader.getImage(x, y, zoom, this);
 		} catch (Exception e) {
 			if (ignoreErrors) {
-				log.info("Ignored error: " + e);
+				log.info("Ignored error: {}", e.toString());
 				return null;
 			}
 			throw e;

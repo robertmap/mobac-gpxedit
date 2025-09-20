@@ -126,9 +126,9 @@ public class GEMFFileCreator {
 
 					final LinkedHashMap<Integer, File> yList = new LinkedHashMap<>();
 					for (final File yFile : xDir.listFiles()) {
-                        String numberStr = yFile.getName().substring(0, yFile.getName().indexOf('.'));
+						String numberStr = yFile.getName().substring(0, yFile.getName().indexOf('.'));
 						try {
-                            yList.put(Integer.parseInt(numberStr), yFile);
+							yList.put(Integer.parseInt(numberStr), yFile);
 						} catch (NumberFormatException e) {
 						}
 					}
@@ -163,8 +163,7 @@ public class GEMFFileCreator {
 
 				for (final Integer x : new TreeSet<>(dirIndex.get(source).get(zoom).keySet())) {
 
-					final List<Integer> ySet = new ArrayList<>();
-					ySet.addAll(dirIndex.get(source).get(zoom).get(x).keySet());
+					final List<Integer> ySet = new ArrayList<>(dirIndex.get(source).get(zoom).get(x).keySet());
 
 					if (ySet.isEmpty()) {
 						continue;
@@ -191,14 +190,14 @@ public class GEMFFileCreator {
 						if (xList.contains(i)) {
 							xSet.add(i);
 						} else {
-							if (xSet.size() > 0) {
+							if (!xSet.isEmpty()) {
 								xSets.put(ySet, xSet);
 								xSet = new ArrayList<>();
 							}
 						}
 					}
 
-					if (xSet.size() > 0) {
+					if (!xSet.isEmpty()) {
 						xSets.put(ySet, xSet);
 					}
 				}

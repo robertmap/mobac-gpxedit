@@ -44,7 +44,7 @@ public class PolygonSelectionLayer implements MapLayer {
 		g.setColor(Color.RED);
 		Point lastPoint = null;
 		List<Point> pointList = mapController.getPolygonPoints();
-		if (pointList.size() == 0) {
+		if (pointList.isEmpty()) {
 			return;
 		}
 		AffineTransform at = g.getTransform();

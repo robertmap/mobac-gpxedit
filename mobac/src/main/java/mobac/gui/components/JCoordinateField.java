@@ -55,7 +55,7 @@ public class JCoordinateField extends JTextField {
 
 	@Override
 	public Point getToolTipLocation(MouseEvent event) {
-		if (getToolTipText().length() > 0) {
+		if (!getToolTipText().isEmpty()) {
 			return super.getToolTipLocation(event);
 		} else
 		// We don't want a tool tip but Java does not allow to disable it?
@@ -161,7 +161,7 @@ public class JCoordinateField extends JTextField {
 					? ""
 					: String.format(INVALID_TEXT, numberFormat.format(min), numberFormat.format(max));
 			JCoordinateField.this.setToolTipText(toolTip);
-			if (toolTip.length() > 0) {
+			if (!toolTip.isEmpty()) {
 				Utilities.showTooltipNow(JCoordinateField.this);
 			}
 			inputIsValid = valid;

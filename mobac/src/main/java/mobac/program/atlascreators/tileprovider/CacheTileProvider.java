@@ -29,7 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * A tile cache with speculative loading on a separate thread. Usually this
- * decreases map generation time on multi-core systems.
+ * decreases map generation time on multicore systems.
  */
 public class CacheTileProvider implements TileProvider, AutoCloseable {
 
@@ -70,7 +70,7 @@ public class CacheTileProvider implements TileProvider, AutoCloseable {
 			}
 		}
 		if (image == null) {
-			log.trace("Cache miss: x={}} y={}}", x, y);
+			log.trace("Cache miss: x={} y={}", x, y);
 			// log.debug(String.format("Preload job added : x=%d y=%d l=%d", x +
 			// 1, y, layer));
 			preloadTile(new CachedTile(new CacheKey(x + 1, y)));

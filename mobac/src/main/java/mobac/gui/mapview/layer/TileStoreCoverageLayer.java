@@ -80,25 +80,22 @@ public class TileStoreCoverageLayer implements MapLayer {
 
 	private void updateCoverageImage() {
 		coverageImage = null;
-		Runnable r = new Runnable() {
-
-			public void run() {
-				try {
-					coverageImage = TileStore.getInstance().getCacheCoverage(mapSource, zoom, tileNumMin, tileNumMax);
-					if (coverageImage == null) {
-						JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
-								I18nUtils.localizedStringForKey("msg_tile_store_failed_retrieve_coverage"),
-								I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-					}
-				} catch (InterruptedException e) {
-				} catch (Exception e) {
-					GUIExceptionHandler.processException(e);
-				}
+		Runnable r = () -> {
+			try {
+				coverageImage = TileStore.getInstance().getCacheCoverage(mapSource, zoom, tileNumMin, tileNumMax);
 				if (coverageImage == null) {
-					removeCacheCoverageLayers();
+					JOptionPane.showMessageDialog(MainGUI.getMainGUI(),
+							I18nUtils.localizedStringForKey("msg_tile_store_failed_retrieve_coverage"),
+							I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
 				}
-				MainGUI.getMainGUI().previewMap.repaint();
+			} catch (InterruptedException e) {
+			} catch (Exception e) {
+				GUIExceptionHandler.processException(e);
 			}
+			if (coverageImage == null) {
+				removeCacheCoverageLayers();
+			}
+			MainGUI.getMainGUI().previewMap.repaint();
 		};
 		WorkinprogressDialog dialog = new WorkinprogressDialog(MainGUI.getMainGUI(), "Loading coverage data",
 				DelayedInterruptThread.createThreadFactory());

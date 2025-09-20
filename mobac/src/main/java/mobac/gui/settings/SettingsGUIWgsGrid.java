@@ -36,8 +36,6 @@ import javax.swing.SpinnerNumberModel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -70,15 +68,13 @@ public class SettingsGUIWgsGrid extends JPanel {
 		LOG.debug("Preparing SettingsGUIWgsGrid");
 		i18n();
 
-		jButtonFont.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				fontChooser.show();
-				if (fontChooser.wasCanceled()) {
-					return;
-				}
-				String text = FontChooser.encodeFont(fontChooser.getFont());
-				jButtonFont.setText(text);
+		jButtonFont.addActionListener((e) -> {
+			fontChooser.show();
+			if (fontChooser.wasCanceled()) {
+				return;
 			}
+			String text = FontChooser.encodeFont(fontChooser.getFont());
+			jButtonFont.setText(text);
 		});
 
 		jPanelColor.setPreferredSize(new Dimension(64, 18));

@@ -28,7 +28,7 @@ import java.text.ParsePosition;
 
 public class CoordinateDm2Format extends NumberFormat {
 
-	private static final Logger log = LoggerFactory.getLogger(CoordinateDms2Format.class);
+	private static final Logger log = LoggerFactory.getLogger(CoordinateDm2Format.class);
 
 	private final NumberFormat degFmt;
 	private final NumberFormat minFmt;

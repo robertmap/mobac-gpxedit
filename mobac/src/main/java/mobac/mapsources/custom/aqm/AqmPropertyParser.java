@@ -40,7 +40,7 @@ public class AqmPropertyParser {
 		try (BufferedReader reader = new BufferedReader(new StringReader(properties))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.trim().length() == 0 || line.startsWith("[")) {
+				if (line.trim().isEmpty() || line.startsWith("[")) {
 					continue;
 				}
 

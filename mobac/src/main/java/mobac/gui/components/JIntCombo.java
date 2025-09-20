@@ -91,7 +91,7 @@ public class JIntCombo extends JComboBox<Integer> {
 			if (entry == null) {
 				return;
 			}
-			editorComponent.setValue(((Integer) entry).intValue(), true);
+			editorComponent.setValue((Integer) entry, true);
 		}
 
 		public void removeActionListener(ActionListener l) {

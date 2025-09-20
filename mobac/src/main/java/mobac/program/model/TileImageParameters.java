@@ -75,7 +75,7 @@ public final class TileImageParameters implements Cloneable {
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
+	public Object clone() {
 		return new TileImageParameters(attr);
 	}
 

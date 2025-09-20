@@ -87,7 +87,7 @@ public class TileLoader {
 				return;
 			}
 			if (fileTilePainted) {
-				Runnable job = () -> loadOrUpdateTile();
+				Runnable job = this::loadOrUpdateTile;
 				JobDispatcher.getInstance().addJob(job);
 			} else {
 				loadOrUpdateTile();

@@ -330,7 +330,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		int y_max = getHeight();
 
 		// paint the tiles in a spiral, starting from center of the map
-		boolean painted = (mapTileLayers.size() > 0);
+		boolean painted = (!mapTileLayers.isEmpty());
 		for (MapTileLayer l : mapTileLayers) {
 			l.startPainting(mapSource);
 		}
@@ -369,11 +369,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 			// This may happen when multiple GPX files are loaded at once and in the mean
 			// time the map view is
 			// repainted.
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JMapViewer.this.repaint();
-				}
-			});
+			SwingUtilities.invokeLater(JMapViewer.this::repaint);
 		}
 
 		// outer border of the map

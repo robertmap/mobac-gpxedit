@@ -45,7 +45,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -141,20 +140,17 @@ public class AddGpxTrackPolygonMap implements ActionListener {
 		final JLabel label = new JLabel("");
 		final JDistanceSlider slider = new JDistanceSlider(mapSource.getMapSpace(), maxZoom, centerY, unitSystem, 5,
 				500);
-		ChangeListener cl = new ChangeListener() {
-
-			public void stateChanged(ChangeEvent e) {
-				double d = mapSpace.horizontalDistance(maxZoom, centerY, slider.getValue());
-				d *= unitSystem.earthRadius * unitSystem.unitFactor;
-				String value;
-				if (d > unitSystem.unitFactor) {
-					d /= unitSystem.unitFactor;
-					value = String.format("%.1f %s", d, unitSystem.unitLarge);
-				} else {
-					value = String.format("%d %s", (int) d, unitSystem.unitSmall);
-				}
-				label.setText(String.format(I18nUtils.localizedStringForKey("dlg_gpx_track_select_distance"), value));
+		ChangeListener cl = (e) -> {
+			double d = mapSpace.horizontalDistance(maxZoom, centerY, slider.getValue());
+			d *= unitSystem.earthRadius * unitSystem.unitFactor;
+			String value;
+			if (d > unitSystem.unitFactor) {
+				d /= unitSystem.unitFactor;
+				value = String.format("%.1f %s", d, unitSystem.unitLarge);
+			} else {
+				value = String.format("%d %s", (int) d, unitSystem.unitSmall);
 			}
+			label.setText(String.format(I18nUtils.localizedStringForKey("dlg_gpx_track_select_distance"), value));
 		};
 		final JButton previewButton = new JButton(I18nUtils.localizedStringForKey("dlg_gpx_track_select_preview"));
 		previewButton.addActionListener(e -> {

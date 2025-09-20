@@ -63,11 +63,9 @@ public class MapSourceCapabilityGUI extends JFrame implements ActionListener {
 	}
 
 	public void refresh() {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				table.revalidate();
-				table.repaint();
-			}
+		SwingUtilities.invokeLater(() -> {
+			table.revalidate();
+			table.repaint();
 		});
 	}
 

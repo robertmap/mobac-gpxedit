@@ -440,30 +440,28 @@ public class AtlasProgress extends JFrame implements ActionListener, MapSourceLi
 		stopUpdateTask();
 		forceUpdateGUI();
 		downloadControlListener = null;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				abortAtlasCreationButton.setEnabled(false);
+		SwingUtilities.invokeLater(() -> {
+			abortAtlasCreationButton.setEnabled(false);
 
-				if (aborted) {
-					setTitle(I18nUtils.localizedStringForKey("dlg_download_abort_title"));
-				} else {
-					setTitle(I18nUtils.localizedStringForKey("dlg_download_succeed_title"));
-				}
-				// mapInfoLabel.setText("");
-				atlasMapsDone.setText(String.format(I18nUtils.localizedStringForKey("dlg_download_map_done_count"),
-						data.currentMapNumber, data.totalNumberOfMaps));
+			if (aborted) {
+				setTitle(I18nUtils.localizedStringForKey("dlg_download_abort_title"));
+			} else {
+				setTitle(I18nUtils.localizedStringForKey("dlg_download_succeed_title"));
+			}
+			// mapInfoLabel.setText("");
+			atlasMapsDone.setText(String.format(I18nUtils.localizedStringForKey("dlg_download_map_done_count"),
+					data.currentMapNumber, data.totalNumberOfMaps));
 
-				abortAtlasCreationButton.setVisible(false);
+			abortAtlasCreationButton.setVisible(false);
 
-				dismissWindowButton
-						.setToolTipText(I18nUtils.localizedStringForKey("dlg_download_btn_close_win_tips_enable"));
-				dismissWindowButton.setVisible(true);
+			dismissWindowButton
+					.setToolTipText(I18nUtils.localizedStringForKey("dlg_download_btn_close_win_tips_enable"));
+			dismissWindowButton.setVisible(true);
 
-				if (!aborted) {
-					openProgramFolderButton.setToolTipText(
-							I18nUtils.localizedStringForKey("dlg_download_btn_open_folder_tips_enabled"));
-					openProgramFolderButton.setEnabled(true);
-				}
+			if (!aborted) {
+				openProgramFolderButton
+						.setToolTipText(I18nUtils.localizedStringForKey("dlg_download_btn_open_folder_tips_enabled"));
+				openProgramFolderButton.setEnabled(true);
 			}
 		});
 	}

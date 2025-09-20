@@ -48,7 +48,7 @@ public class WanderreitkarteAbo extends AbstractOsmMapSource {
 	@Override
 	public String getTileUrl(int zoom, int tilex, int tiley) {
 		String ticket = Settings.getInstance().osmHikingTicket;
-		if (ticket != null && ticket.length() > 0) {
+		if (ticket != null && !ticket.isEmpty()) {
 			return ABO + super.getTileUrl(zoom, tilex, tiley) + "/ticket/" + ticket;
 		}
 		return null;

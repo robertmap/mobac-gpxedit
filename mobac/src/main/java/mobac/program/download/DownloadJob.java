@@ -63,8 +63,8 @@ public class DownloadJob implements Job {
 			listener.jobFinishedSuccessfully(tileData.length);
 		} catch (UnrecoverableDownloadException e) {
 			listener.jobFinishedWithError(false);
-			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue
-					+ " failed with an unrecoverable error: " + e.getCause());
+			log.error("Download of tile z{}_x{}_y{} failed with an unrecoverable error: {}", zoomValue, xValue, yValue,
+					e.getCause());
 		} catch (InterruptedException | StopAllDownloadsException e) {
 			throw e;
 		} catch (Exception e) {
@@ -78,13 +78,13 @@ public class DownloadJob implements Job {
 		// Reschedule job to try it later again
 		if (errorCounter <= listener.getMaxDownloadRetries()) {
 			listener.jobFinishedWithError(true);
-			log.warn("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue + " failed: \"" + e.getMessage()
-					+ "\" (tries: " + errorCounter + ") - rescheduling download job");
+			log.warn("Download of tile z{}_x{}_y{} failed: {} (tries: {}) - rescheduling download job", zoomValue,
+					xValue, yValue, e.getCause(), errorCounter);
 			dispatcher.addErrorJob(this);
 		} else {
 			listener.jobFinishedWithError(false);
-			log.error("Download of tile z" + zoomValue + "_x" + xValue + "_y" + yValue + " failed again: \""
-					+ e.getMessage() + "\". Retry limit reached, " + "job will not be rescheduled (no further try)");
+			log.error("Download of tile z{}_x{}_y{} failed again: {} Retry limit reached, job will not"
+					+ " be rescheduled (no further try)", zoomValue, xValue, yValue, e.getCause());
 		}
 	}
 

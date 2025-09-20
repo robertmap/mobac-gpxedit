@@ -49,7 +49,7 @@ public class SelectedZoomLevels {
 		int[] result = new int[zoomLevels.size()];
 		int i = 0;
 		for (Integer z : zoomLevels) {
-			result[i++] = z.intValue();
+			result[i++] = z;
 		}
 		return result;
 	}

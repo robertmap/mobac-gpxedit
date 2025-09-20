@@ -53,8 +53,7 @@ public class JpgTileGeneratorServlet extends AbstractTileGeneratorServlet {
 		BufferedImage tile = generateImage(request);
 		response.setContentType("image/jpeg");
 		ServletOutputStream out = response.getOutputStream();
-		ByteArrayOutputStream bout = new ByteArrayOutputStream(32000);
-		try {
+		try (ByteArrayOutputStream bout = new ByteArrayOutputStream(32000)) {
 			synchronized (jpgWriter) {
 				jpgWriter.processImage(tile, bout);
 			}
@@ -62,7 +61,6 @@ public class JpgTileGeneratorServlet extends AbstractTileGeneratorServlet {
 			response.setContentLength(buf.length);
 			out.write(buf);
 		} finally {
-			out.close();
 			response.flushBuffer();
 		}
 	}

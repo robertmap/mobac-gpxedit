@@ -86,7 +86,7 @@ public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMap
 		}
 		this.mapFileList = newMapFileList;
 
-		if (xmlRenderThemeFileName.length() > 0) {
+		if (!xmlRenderThemeFileName.isEmpty()) {
 			File renderFile = Utilities.findFile(xmlRenderThemeFileName, mapSourceXmlDir, DirectoryManager.currentDir,
 					DirectoryManager.mapSourcesDir, DirectoryManager.mobacUserAppDataDir);
 			if (renderFile == null) {

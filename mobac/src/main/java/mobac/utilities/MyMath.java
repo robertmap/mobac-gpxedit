@@ -170,7 +170,7 @@ public class MyMath {
 	 * </pre>
 	 *
 	 * @param val
-	 * @return array containing the rounded value
+	 * @return the rounded value
 	 */
 	public static double prettyRound(double val) {
 		if (val < 1.0) {

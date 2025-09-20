@@ -367,7 +367,7 @@ public class Utilities {
 		}
 		String d = (days == 1) ? "day" : "days";
 		if (months > 0) {
-			days -= months * (365d / 12d);
+			days -= (long) (months * (365d / 12d));
 			return String.format("%d %s %d %s", months, m, days, d);
 		}
 		long hours = TimeUnit.SECONDS.toHours(x);
@@ -481,7 +481,7 @@ public class Utilities {
 	 * Lists all direct sub directories of <code>dir</code>
 	 *
 	 * @param dir
-	 * @return list of directories
+	 * @return array of directories
 	 */
 	public static File[] listSubDirectories(File dir) {
 		return dir.listFiles(new DirectoryFileFilter());
@@ -521,7 +521,7 @@ public class Utilities {
 	}
 
 	public static void setHttpProxyHost(String host) {
-		if (host != null && host.length() > 0) {
+		if (host != null && !host.isEmpty()) {
 			System.setProperty("http.proxyHost", host);
 		} else {
 			System.getProperties().remove("http.proxyHost");
@@ -529,7 +529,7 @@ public class Utilities {
 	}
 
 	public static void setHttpProxyPort(String port) {
-		if (port != null && port.length() > 0) {
+		if (port != null && !port.isEmpty()) {
 			System.setProperty("http.proxyPort", port);
 		} else {
 			System.getProperties().remove("http.proxyPort");

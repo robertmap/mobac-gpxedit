@@ -83,7 +83,7 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 
 	@Override
 	protected void runTest() throws Throwable {
-		log.info("running test \"" + getName() + "\"");
+		log.info("running test \"{}\"", getName());
 		super.runTest();
 	}
 
@@ -146,8 +146,7 @@ public abstract class AbstractAtlasCreatorTestCase extends TestCase {
 
 	@Override
 	public TestResult run() {
-		TestResult result = super.run();
-		return result;
+		return super.run();
 	}
 
 }

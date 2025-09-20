@@ -351,14 +351,14 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	}
 
 	public static void main(String[] args) {
-		while (true) {
+		for (int i = 0; i < 100; i++) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				Exception e = new RuntimeException("Test", new Exception("Inner"));
-				e.addSuppressed(new RuntimeException("Supressed"));
+				Exception e = new RuntimeException("Test_" + i, new Exception("Inner"));
+				e.addSuppressed(new RuntimeException("Suppressed"));
 				throw e;
 			} catch (Exception e) {
-				showExceptionDialog("Test 123", e);
+				showExceptionDialog("Test " + i, e);
 			} catch (Error e) {
 				showExceptionDialog(e);
 			}

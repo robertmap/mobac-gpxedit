@@ -32,15 +32,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class DebugShowMapSourceNames implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
-		ArrayList<MapSource> mapSources = new ArrayList<>(MapSourcesManager.getInstance().getAllAvailableMapSources());
-
-		Collections.sort(mapSources, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+		List<MapSource> mapSources = new ArrayList<>(MapSourcesManager.getInstance().getAllAvailableMapSources());
+		mapSources.sort(Comparator.comparing(MapSource::getName));
 		JFrame dialog = new JFrame(I18nUtils.localizedStringForKey("dlg_show_source_title"));
 		dialog.setLocationRelativeTo(MainGUI.getMainGUI());
 		dialog.setLocation(100, 40);

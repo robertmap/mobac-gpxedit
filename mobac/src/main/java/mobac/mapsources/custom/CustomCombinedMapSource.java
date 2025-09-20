@@ -73,10 +73,10 @@ public class CustomCombinedMapSource implements InitializableMapSource {
 
 	@Override
 	public void initialize() throws MapSourceInitializationException {
-		if (regionalMapSource.size() == 0) {
+		if (regionalMapSource.isEmpty()) {
 			throw new MapSourceInitializationException("Regional map missing");
 		}
-		if (baseMapSource.size() == 0) {
+		if (baseMapSource.isEmpty()) {
 			throw new MapSourceInitializationException("Base map missing");
 		}
 		if ((regionalMapSource.size() > 1) || baseMapSource.size() > 1) {

@@ -65,7 +65,7 @@ public class MapSourceUrlUpdater {
 		}
 		for (int i = 0; i < nodes.getLength(); i++) {
 			String imgUrl = nodes.item(i).getAttributes().getNamedItem("src").getNodeValue();
-			if (imgUrl != null && imgUrl.length() > 0) {
+			if (imgUrl != null && !imgUrl.isEmpty()) {
 				if (p != null) {
 					if (!p.matcher(imgUrl).matches()) {
 						continue;

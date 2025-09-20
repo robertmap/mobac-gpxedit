@@ -20,7 +20,7 @@ import mobac.program.interfaces.MapSource;
 
 import javax.swing.AbstractListModel;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 public class MapSourcesListModel extends AbstractListModel<MapSource> {
@@ -74,7 +74,7 @@ public class MapSourcesListModel extends AbstractListModel<MapSource> {
 	}
 
 	public void sort() {
-		Collections.sort(mapSources, (o1, o2) -> o1.toString().compareTo(o2.toString()));
+		mapSources.sort(Comparator.comparing(Object::toString));
 		fireContentsChanged(mapSources, 0, mapSources.size());
 	}
 }

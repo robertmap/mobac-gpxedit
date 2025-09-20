@@ -31,7 +31,7 @@ public class Extract implements Runnable {
 	public void run() {
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		try (TileDatabase db = tileStore.new TileDatabase("Source", sourceDir)) {
-			Main.log.info("Source tile store entry count: " + db.entryCount());
+			Main.log.info("Source tile store entry count: {}", db.entryCount());
 			long count = 0;
 			try (EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities()) {
 				TileDbEntry entry = cursor.next();
@@ -53,7 +53,7 @@ public class Extract implements Runnable {
 					entry = cursor.next();
 				}
 			}
-			Main.log.info("Number of extracted tiles: " + count);
+			Main.log.info("Number of extracted tiles: {}", count);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

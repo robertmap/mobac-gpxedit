@@ -64,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,7 +73,7 @@ import java.util.Set;
 public class CustomMapSourceLoader {
 
 	private static final String MOBAC_IGNORE_TAG = "mobac-ignore:";
-	private final Logger log = LoggerFactory.getLogger(MapPackManager.class);
+	private final Logger log = LoggerFactory.getLogger(CustomMapSourceLoader.class);
 	private final MapSourcesManager mapSourcesManager;
 	private final File mapSourcesDir;
 
@@ -118,7 +119,7 @@ public class CustomMapSourceLoader {
 		 *
 		 * See https://sourceforge.net/p/mobac/bugs/294/
 		 */
-		Collections.sort(customMapSourceFiles, (f1, f2) -> f1.getName().compareTo(f2.getName()));
+		customMapSourceFiles.sort(Comparator.comparing(File::getName));
 		return customMapSourceFiles;
 	}
 
@@ -172,7 +173,7 @@ public class CustomMapSourceLoader {
 
 			}
 		} catch (Exception e) {
-			log.error("Failed to load custom map source file \"" + mapSourceFile + "\": " + e);
+			log.error("Failed to load custom map source file \"{}\": {}", mapSourceFile, e.toString());
 		}
 		try (InputStream in = new FileInputStream(mapSourceFile)) {
 			return internalLoadMapSource(in, mapSourceFile, elementFilter);

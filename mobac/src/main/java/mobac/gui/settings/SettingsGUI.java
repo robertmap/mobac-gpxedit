@@ -70,7 +70,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -176,11 +175,7 @@ public class SettingsGUI extends JDialog {
 	}
 
 	public static void showSettingsDialog(final JFrame owner) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new SettingsGUI(owner);
-			}
-		});
+		SwingUtilities.invokeLater(() -> new SettingsGUI(owner));
 	}
 
 	public static TitledBorder createSectionBorder(String title) {
@@ -204,18 +199,13 @@ public class SettingsGUI extends JDialog {
 			e1.printStackTrace();
 		}
 		new SettingsGUI(null);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-
-			@Override
-			public void run() {
-				try {
-					Settings.save();
-				} catch (JAXBException e) {
-					e.printStackTrace();
-				}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				Settings.save();
+			} catch (JAXBException e) {
+				e.printStackTrace();
 			}
-
-		});
+		}));
 	}
 
 	private void createJFrame() {
@@ -270,57 +260,55 @@ public class SettingsGUI extends JDialog {
 		languagePanel.setBorder(createSectionBorder(I18nUtils.localizedStringForKey("set_display_language")));
 		languageCombo = new JComboBox<>(SupportedLocale.values());
 		languageCombo.setToolTipText(I18nUtils.localizedStringForKey("set_display_language_choose_tips"));
-		languageCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		languageCombo.addActionListener((e) -> {
 
-				Locale locale = ((SupportedLocale) languageCombo.getSelectedItem()).getLocale();
-				String currentLocaleStr = settings.localeLanguage + settings.localeCountry;
-				String LocaleStr = locale.getLanguage() + locale.getCountry();
-				if (!currentLocaleStr.equals(LocaleStr) && isVisible()) {
-					settings.localeLanguage = locale.getLanguage();
-					settings.localeCountry = locale.getCountry();
+			Locale locale = ((SupportedLocale) languageCombo.getSelectedItem()).getLocale();
+			String currentLocaleStr = settings.localeLanguage + settings.localeCountry;
+			String LocaleStr = locale.getLanguage() + locale.getCountry();
+			if (!currentLocaleStr.equals(LocaleStr) && isVisible()) {
+				settings.localeLanguage = locale.getLanguage();
+				settings.localeCountry = locale.getCountry();
 
-					int result = JOptionPane.showConfirmDialog(null,
-							I18nUtils.localizedStringForKey("set_display_language_restart_desc"),
-							I18nUtils.localizedStringForKey("set_display_language_msg_title"),
-							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					I18nUtils.updateLocalizedStringFromSettings();
-					if (result == JOptionPane.YES_OPTION) {
-						applySettings();
+				int result = JOptionPane.showConfirmDialog(null,
+						I18nUtils.localizedStringForKey("set_display_language_restart_desc"),
+						I18nUtils.localizedStringForKey("set_display_language_msg_title"), JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+				I18nUtils.updateLocalizedStringFromSettings();
+				if (result == JOptionPane.YES_OPTION) {
+					applySettings();
 
-						try {
-							final String javaBin = System.getProperty("java.home") + File.separator + "bin"
-									+ File.separator + "java";
-							final File currentJar = new File(
-									SettingsGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+					try {
+						final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator
+								+ "java";
+						final File currentJar = new File(
+								SettingsGUI.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
-							/* is it a jar file? */
-							if (currentJar.getName().endsWith(".jar")) {
-								/* Build command: java -jar application.jar */
+						/* is it a jar file? */
+						if (currentJar.getName().endsWith(".jar")) {
+							/* Build command: java -jar application.jar */
 
-								Runtime r = Runtime.getRuntime();
-								long maxMem = r.maxMemory();
-								final ArrayList<String> command = new ArrayList<>();
-								command.add(javaBin);
-								command.add("-jar");
-								command.add("-Xms64m");
-								if ((Long.MAX_VALUE == maxMem)) {
-									command.add("-Xmx1024M");
-								} else {
-									command.add("-Xmx" + (maxMem / 1048576) + "M");
-								}
-								command.add(currentJar.getPath());
-
-								LOG.debug("restarting MOBAC using the following command: \n\t"
-										+ Arrays.toString(command.toArray()));
-								final ProcessBuilder builder = new ProcessBuilder(command);
-								builder.start();
+							Runtime r = Runtime.getRuntime();
+							long maxMem = r.maxMemory();
+							final ArrayList<String> command = new ArrayList<>();
+							command.add(javaBin);
+							command.add("-jar");
+							command.add("-Xms64m");
+							if ((Long.MAX_VALUE == maxMem)) {
+								command.add("-Xmx1024M");
+							} else {
+								command.add("-Xmx" + (maxMem / 1048576) + "M");
 							}
-						} catch (Exception ex) {
+							command.add(currentJar.getPath());
 
+							LOG.debug("restarting MOBAC using the following command: \n\t"
+									+ Arrays.toString(command.toArray()));
+							final ProcessBuilder builder = new ProcessBuilder(command);
+							builder.start();
 						}
-						System.exit(0);
+					} catch (Exception ex) {
+
 					}
+					System.exit(0);
 				}
 			}
 		});
@@ -395,26 +383,20 @@ public class SettingsGUI extends JDialog {
 		toLeft.setMargin(buttonInsets);
 		toRight.setMargin(buttonInsets);
 
-		toLeft.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				int[] idx = disabledMapSources.getSelectedIndices();
-				for (int i = 0; i < idx.length; i++) {
-					MapSource ms = disabledMapSourcesModel.removeElement(idx[i] - i);
-					enabledMapSourcesModel.addElement(ms);
-				}
+		toLeft.addActionListener((e) -> {
+			int[] idx = disabledMapSources.getSelectedIndices();
+			for (int i = 0; i < idx.length; i++) {
+				MapSource ms = disabledMapSourcesModel.removeElement(idx[i] - i);
+				enabledMapSourcesModel.addElement(ms);
 			}
 		});
-		toRight.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				int[] idx = enabledMapSources.getSelectedIndices();
-				for (int i = 0; i < idx.length; i++) {
-					MapSource ms = enabledMapSourcesModel.removeElement(idx[i] - i);
-					disabledMapSourcesModel.addElement(ms);
-				}
-				disabledMapSourcesModel.sort();
+		toRight.addActionListener((e) -> {
+			int[] idx = enabledMapSources.getSelectedIndices();
+			for (int i = 0; i < idx.length; i++) {
+				MapSource ms = enabledMapSourcesModel.removeElement(idx[i] - i);
+				disabledMapSourcesModel.addElement(ms);
 			}
+			disabledMapSourcesModel.sort();
 		});
 		GBC buttonGbc = GBC.eol();
 		centerPanel.add(Box.createVerticalStrut(25), GBC.eol());
@@ -455,16 +437,13 @@ public class SettingsGUI extends JDialog {
 		JPanel backGround = createNewTab(I18nUtils.localizedStringForKey("set_tile_update_title"));
 		backGround.setLayout(new GridBagLayout());
 
-		ChangeListener sliderChangeListener = new ChangeListener() {
-
-			public void stateChanged(ChangeEvent e) {
-				JTimeSlider slider = ((JTimeSlider) e.getSource());
-				long x = slider.getTimeSecondsValue();
-				JPanel panel = (JPanel) slider.getParent();
-				TitledBorder tb = (TitledBorder) panel.getBorder();
-				tb.setTitle(panel.getName() + ": " + Utilities.formatDurationSeconds(x));
-				panel.repaint();
-			}
+		ChangeListener sliderChangeListener = (e) -> {
+			JTimeSlider slider = ((JTimeSlider) e.getSource());
+			long x = slider.getTimeSecondsValue();
+			JPanel panel = (JPanel) slider.getParent();
+			TitledBorder tb = (TitledBorder) panel.getBorder();
+			tb.setTitle(panel.getName() + ": " + Utilities.formatDurationSeconds(x));
+			panel.repaint();
 		};
 		GBC gbc_ef = GBC.eol().fill(GBC.HORIZONTAL);
 
@@ -507,12 +486,7 @@ public class SettingsGUI extends JDialog {
 		JPanel backGround = createNewTab(I18nUtils.localizedStringForKey("set_map_size_title"));
 		backGround.setLayout(new GridBagLayout());
 		mapSize = new JMapSizeCombo();
-		mapSize.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				LOG.trace("Map size: {}", mapSize.getValue());
-			}
-		});
+		mapSize.addActionListener((e) -> LOG.trace("Map size: {}", mapSize.getValue()));
 
 		JLabel mapSizeLabel = new JLabel(I18nUtils.localizedStringForKey("set_map_size_max_size_of_rect"));
 		JLabel mapSizeText = new JLabel(I18nUtils.localizedStringForKey("set_map_size_desc"));
@@ -548,17 +522,14 @@ public class SettingsGUI extends JDialog {
 				settings.getAtlasOutputDirectory()));
 		JButton selectAtlasOutputDirectory = new JButton(
 				I18nUtils.localizedStringForKey("set_directory_output_select"));
-		selectAtlasOutputDirectory.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				JDirectoryChooser dc = new JDirectoryChooser();
-				dc.setCurrentDirectory(settings.getAtlasOutputDirectory());
-				if (dc.showDialog(SettingsGUI.this, I18nUtils.localizedStringForKey(
-						"set_directory_output_select_dlg_title")) != JFileChooser.APPROVE_OPTION) {
-					return;
-				}
-				atlasOutputDirectory.setText(dc.getSelectedFile().getAbsolutePath());
+		selectAtlasOutputDirectory.addActionListener((e) -> {
+			JDirectoryChooser dc = new JDirectoryChooser();
+			dc.setCurrentDirectory(settings.getAtlasOutputDirectory());
+			if (dc.showDialog(SettingsGUI.this, I18nUtils
+					.localizedStringForKey("set_directory_output_select_dlg_title")) != JFileChooser.APPROVE_OPTION) {
+				return;
 			}
+			atlasOutputDirectory.setText(dc.getSelectedFile().getAbsolutePath());
 		});
 
 		atlasOutputDirPanel.add(atlasOutputDirectory, GBC.std().fillH());
@@ -611,20 +582,17 @@ public class SettingsGUI extends JDialog {
 		final JLabel proxyPasswordLabel = new JLabel(I18nUtils.localizedStringForKey("set_net_proxy_password"));
 		proxyPassword = new JTextField(settings.getCustomProxyPassword());
 
-		ActionListener al = new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				boolean b = ProxyType.CUSTOM.equals(proxyType.getSelectedItem());
-				boolean c = ProxyType.CUSTOM_W_AUTH.equals(proxyType.getSelectedItem());
-				proxyHost.setEnabled(b || c);
-				proxyPort.setEnabled(b || c);
-				proxyHostLabel.setEnabled(b || c);
-				proxyPortLabel.setEnabled(b || c);
-				proxyUserName.setEnabled(c);
-				proxyPassword.setEnabled(c);
-				proxyUserNameLabel.setEnabled(c);
-				proxyPasswordLabel.setEnabled(c);
-			}
+		ActionListener al = (e) -> {
+			boolean b = ProxyType.CUSTOM.equals(proxyType.getSelectedItem());
+			boolean c = ProxyType.CUSTOM_W_AUTH.equals(proxyType.getSelectedItem());
+			proxyHost.setEnabled(b || c);
+			proxyPort.setEnabled(b || c);
+			proxyHostLabel.setEnabled(b || c);
+			proxyPortLabel.setEnabled(b || c);
+			proxyUserName.setEnabled(c);
+			proxyPassword.setEnabled(c);
+			proxyUserNameLabel.setEnabled(c);
+			proxyPasswordLabel.setEnabled(c);
 		};
 		al.actionPerformed(null);
 		proxyType.addActionListener(al);
@@ -789,32 +757,23 @@ public class SettingsGUI extends JDialog {
 
 		addWindowListener(new WindowCloseListener());
 
-		okButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				applySettings();
-				// Close the dialog window
-				SettingsGUI.this.dispose();
-			}
+		okButton.addActionListener((e) -> {
+			applySettings();
+			// Close the dialog window
+			SettingsGUI.this.dispose();
 		});
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				SettingsGUI.this.dispose();
+		cancelButton.addActionListener((e) -> SettingsGUI.this.dispose());
+
+		tabbedPane.addChangeListener((e) -> {
+			if (tabbedPane.getSelectedComponent() == null) {
+				return;
 			}
-		});
-
-		tabbedPane.addChangeListener(new ChangeListener() {
-
-			public void stateChanged(ChangeEvent e) {
-				if (tabbedPane.getSelectedComponent() == null) {
-					return;
-				}
-				// First time the tile store tab is selected start updating the tile store
-				// information
-				if (tabbedPane.getSelectedComponent() == tileStoreTab) {
-					// if ("Tile store".equals(tabbedPane.getSelectedComponent().getName())) {
-					tabbedPane.removeChangeListener(this);
-					tileStoreTab.updateTileStoreInfoPanelAsync(null);
-				}
+			// First time the tile store tab is selected start updating the tile store
+			// information
+			if (tabbedPane.getSelectedComponent() == tileStoreTab) {
+				// if ("Tile store".equals(tabbedPane.getSelectedComponent().getName())) {
+				tabbedPane.removeChangeListener(this);
+				tileStoreTab.updateTileStoreInfoPanelAsync(null);
 			}
 		});
 

@@ -26,7 +26,6 @@ import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class JDropDownButton extends JButton {
@@ -44,11 +43,9 @@ public class JDropDownButton extends JButton {
 		setHorizontalAlignment(SwingConstants.LEFT);
 		setLayout(new BorderLayout());
 		add(arrowButton, BorderLayout.EAST);
-		arrowButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Rectangle r = getBounds();
-				buttonPopupMenu.show(JDropDownButton.this, r.x, r.y + r.height);
-			}
+		arrowButton.addActionListener((e) -> {
+			Rectangle r = getBounds();
+			buttonPopupMenu.show(JDropDownButton.this, r.x, r.y + r.height);
 		});
 	}
 

@@ -152,7 +152,7 @@ public class LogPreviewMap extends PreviewMap {
 					drawUrl(g, url.getPath(), gx + 4, gy += 16, tileSize);
 
 					String strQuery = url.getQuery();
-					if (strQuery != null && strQuery.length() > 0) {
+					if (strQuery != null && !strQuery.isEmpty()) {
 						drawUrl(g, "?" + strQuery, gx + 4, gy += 16, tileSize);
 					}
 				}

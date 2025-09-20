@@ -18,23 +18,26 @@ package mobac.program.model;
 
 public class Coordinate {
 
+	public static final int MILLISECOND = 1;
+	public static final int SECOND = MILLISECOND * 1000;
+	public static final int MINUTE = SECOND * 60;
+	public static final int DEGREE = MINUTE * 60;
+
 	public static int doubleToInt(double value) {
 		int degree = (int) value;
-		int minute = (int) (value = (value - degree) * 60d);
-		int second = (int) (value = (value - minute) * 60d);
-		int milisecond = (int) (value = (value - second) * 1000d);
-		return degree * DEGREE + minute * MINUTE + second * SECOND + milisecond * MILISECOND;
+		int minute = (int) ((value -= degree) * 60d);
+		int second = (int) ((value -= minute) * 60d);
+		int millisecond = (int) ((value - second) * 1000d);
+		return degree * DEGREE + minute * MINUTE + second * SECOND + millisecond * MILLISECOND;
 	}
 
 	public static double intToDouble(int value) {
-		double degree = value / DEGREE;
-		double minute = (value = value % DEGREE) / MINUTE;
-		double second = (int) (value %= MINUTE) / SECOND;
-		double millisecond = (int) (value %= SECOND) / MILISECOND;
+		double degree = (double) value / DEGREE;
+		double minute = (double) (value %= DEGREE) / MINUTE;
+		double second = (double) (value %= MINUTE) / SECOND;
+		double millisecond = (double) (value % SECOND) / MILLISECOND;
 		return degree + minute / 60d + second / 3600d + millisecond / 3600000d;
 	}
-
-	public static final int MILISECOND = 1, SECOND = MILISECOND * 1000, MINUTE = SECOND * 60, DEGREE = MINUTE * 60;
 
 	public static int getDegree(int value) {
 		return value / DEGREE;
@@ -48,8 +51,8 @@ public class Coordinate {
 		return Math.abs(value) % MINUTE / SECOND;
 	}
 
-	public static int getMilisecond(int value) {
-		return Math.abs(value) % SECOND / MILISECOND;
+	public static int getMillisecond(int value) {
+		return Math.abs(value) % SECOND / MILLISECOND;
 	}
 
 }

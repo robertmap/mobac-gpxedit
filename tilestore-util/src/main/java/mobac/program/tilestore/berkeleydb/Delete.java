@@ -76,7 +76,7 @@ public class Delete implements Runnable {
 
 		BerkeleyDbTileStore tileStore = (BerkeleyDbTileStore) TileStore.getInstance();
 		try (TileDatabase db = tileStore.new TileDatabase("Db", dbDir)) {
-			Main.log.info("Tile store entry count: " + db.entryCount() + " (before deleting)");
+			Main.log.info("Tile store entry count: {} (before deleting)", db.entryCount());
 			try (EntityCursor<TileDbEntry> cursor = db.getTileIndex().entities()) {
 				TileDbEntry entry;
 				cursorLoop : while ((entry = cursor.next()) != null) {
