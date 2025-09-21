@@ -25,10 +25,10 @@ allprojects {
             // required for javax.media:jai-core:1.1.3 and com.sun.media:jai-codec:1.1.3
             url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
         }
-        maven {
-            // beanshell bsh 3 unless there is a stable release
-            url "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+        // For locally compiled beanshell/bsh3 project:
+        // git clone https://github.com/beanshell/beanshell
+        // cd beanshell && mvn install
+        mavenLocal()
     }
     ext {
         svnRevision = "$svntools.info.revisionNumber"

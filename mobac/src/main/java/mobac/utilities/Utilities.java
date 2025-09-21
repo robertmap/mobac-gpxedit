@@ -243,6 +243,9 @@ public class Utilities {
 	 */
 	public static ImageIcon loadResourceImageIcon(String imageName) {
 		URL url = Main.class.getResource("resources/images/" + imageName);
+		if (url == null) {
+			throw new RuntimeException("resource image does no exist: " + imageName);
+		}
 		return new ImageIcon(url);
 	}
 
@@ -495,6 +498,9 @@ public class Utilities {
 
 	public static void addSubDirectories(List<File> dirList, File dir, int maxDepth) {
 		File[] subDirs = dir.listFiles(new DirectoryFileFilter());
+		if (subDirs == null) {
+			throw new RuntimeException("Failed to subfolders of " + dir);
+		}
 		for (File f : subDirs) {
 			dirList.add(f);
 			if (maxDepth > 0) {
@@ -659,6 +665,9 @@ public class Utilities {
 		ArrayList<File> result = new ArrayList<>();
 		if (dirOrFile.isDirectory()) {
 			File[] allFiles = dirOrFile.listFiles(dirOFileExtFilter);
+			if (allFiles == null) {
+				throw new RuntimeException("Failed to list files of " + dirOrFile);
+			}
 			for (File innerFile : allFiles) {
 				result.addAll(traverseFolder(innerFile, dirOFileExtFilter));
 			}

@@ -96,7 +96,7 @@ public class JIntField extends JTextField {
 			try {
 				valid = testInputValid();
 			} catch (Exception e) {
-				valid = false;
+				// nothing to do
 			}
 			if (valid != inputIsValid) {
 				setDisplayedValidMode(valid);

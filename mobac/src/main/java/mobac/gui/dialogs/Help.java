@@ -44,7 +44,7 @@ public class Help extends JFrame implements WindowListener {
 		JLabel text = new JLabel();
 		JButton closeButton = new JButton(I18nUtils.localizedStringForKey("Close"));
 		closeButton.setDefaultCapable(true);
-		closeButton.addActionListener(() -> {
+		closeButton.addActionListener((e) -> {
 			setVisible(false);
 			dispose();
 		});

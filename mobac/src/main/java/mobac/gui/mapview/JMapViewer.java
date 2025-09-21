@@ -286,8 +286,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		// }
 		super.paintComponent(g);
 
-		int iMove = 0;
-
 		int tileSize = mapSource.getMapSpace().getTileSize();
 
 		int tilex = center.x / tileSize;
@@ -311,6 +309,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 		boolean start_left = diff_left < diff_right;
 		boolean start_top = diff_top < diff_bottom;
 
+		int iMove;
 		if (start_top) {
 			if (start_left) {
 				iMove = 2;

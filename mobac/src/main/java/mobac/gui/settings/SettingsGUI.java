@@ -70,6 +70,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -764,16 +765,19 @@ public class SettingsGUI extends JDialog {
 		});
 		cancelButton.addActionListener((e) -> SettingsGUI.this.dispose());
 
-		tabbedPane.addChangeListener((e) -> {
-			if (tabbedPane.getSelectedComponent() == null) {
-				return;
-			}
-			// First time the tile store tab is selected start updating the tile store
-			// information
-			if (tabbedPane.getSelectedComponent() == tileStoreTab) {
-				// if ("Tile store".equals(tabbedPane.getSelectedComponent().getName())) {
-				tabbedPane.removeChangeListener(this);
-				tileStoreTab.updateTileStoreInfoPanelAsync(null);
+		tabbedPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (tabbedPane.getSelectedComponent() == null) {
+					return;
+				}
+				// First time the tile store tab is selected start
+				// updating the tile store information
+				if (tabbedPane.getSelectedComponent() == tileStoreTab) {
+					// if ("Tile store".equals(tabbedPane.getSelectedComponent().getName())) {
+					tabbedPane.removeChangeListener(this);
+					tileStoreTab.updateTileStoreInfoPanelAsync(null);
+				}
 			}
 		});
 
