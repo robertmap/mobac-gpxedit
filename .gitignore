@@ -1,8 +1,21 @@
 .idea/
 .run/
+.gradle/
 **/build
-
+out/
+*.log
+logback.xml
 **/.DS_Store
 
+*.zip
 keys/*.jks
 keys/*.properties
+mapsources/*.jar
+mapsources/*.xml
+mapsources/*.bsh
+mapsources-updates/
+
+atlases/
+tilestore/
+mobac-profile*.xml
+settings.xml

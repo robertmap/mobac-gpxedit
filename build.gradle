@@ -116,7 +116,7 @@ task dist {
 }
 
 /**
- * Generate MD5 file for map packs online update. This task is irreelvant for regular MOBAC users/developers
+ * Generate MD5 file for map packs online update. This task is irrelevant for regular MOBAC users/developers
  */
 task mappacksMd5 {
     var mapPackDir = "${project.projectDir}/mappacks"
