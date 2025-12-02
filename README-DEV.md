@@ -22,6 +22,10 @@ If you want to get your hands on the latest source code of Mobile Atlas Creator 
 
 There you will find the latest sources of Mobile Atlas Creator in form of a Gradle project which can be imported for example into IntelliJ. All sources, tools and build files are included in this repository. Java libraries are automatically retrieved from Maven central repository.
 
+This GIT repository only contains MOBAC source code after 27th December 2020 (first gradle based version, later released as version 2.2.0).
+Older versions designed to be compiled using Apache Ant and the code of *Trekbuddy Atlas Creator* (TAC), 
+the predecessor of MOBAC, are available in the project [Subversion repository](https://sourceforge.net/p/mobac/code/HEAD/tree/).  
+
 ## Building Mobile Atlas Creator
 
 If you want to compile MOBAC, an installation of Java Development Tools (JDK) is required. Using OpenJDK version 8 or 11 is recommended. For building MOBAC use the provided gradlew command-line script:
