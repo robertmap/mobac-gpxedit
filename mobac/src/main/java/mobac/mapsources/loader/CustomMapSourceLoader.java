@@ -18,6 +18,7 @@ package mobac.mapsources.loader;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.UnmarshalException;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEventLocator;
 import mobac.exceptions.MapSourceCreateException;
@@ -62,6 +63,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -138,6 +140,17 @@ public class CustomMapSourceLoader {
 				}
 				MapSourceLoaderUtils.testMapSourceName(customMapSource.getName());
 				mapSourcesManager.addMapSource(customMapSource);
+			} catch (UnmarshalException e) {
+                // those errors are already handled by the EventHandler in
+                // internalLoadMapSource(...)
+				Throwable t = e;
+				if (e.getCause() != null) {
+					t = t.getCause();
+					if (t instanceof InvocationTargetException && t.getCause() != null) {
+						t = t.getCause();
+					}
+				}
+				log.error("Failed to load custom map source \"{}\": {}", f.getName(), t.toString(), t);
 			} catch (Exception e) {
 				log.error("Failed to load custom map source \"{}\": {}", f.getName(), e.getMessage(), e);
 				String errorMsg = "Failed to load custom map source \"" + f.getName() + "\":\n" + e.getMessage();
