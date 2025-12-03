@@ -2,7 +2,6 @@ plugins {
 }
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'at.bxm.svntools'
 
     dependencies {
         compileOnly project(':mobac')
@@ -17,7 +16,9 @@ subprojects {
             attributes "MapPackVersion": "1"
             attributes "MapPackName": "${project.name}"
             attributes "MapPackBuild-Date": new Date().toString()
-            attributes "MapPackRevision": "$svntools.info.revisionNumber"
+            attributes "GitBranch": "$gitBranchName"
+            attributes "GitCommitHash": "$gitCommitHash"
+            attributes "GitCommitTime": "$gitCommitTime"
         }
         doLast {
             def keystore = file("${rootProject.projectDir}/keys/keystore.jks")

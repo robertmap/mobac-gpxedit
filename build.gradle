@@ -4,15 +4,36 @@ import java.security.MessageDigest
 
 plugins {
     id 'distribution'
-    id 'at.bxm.svntools' version '3.1'
     id 'org.gradle.crypto.checksum' version '1.4.0'
     id 'com.diffplug.spotless' version '6.21.0'
+    id 'org.ajoberstar.grgit' version '5.3.3'
 }
 
 group 'mobac.sourceforge.io'
 version '2.3.3'
 
-println("SVN revision $svntools.info.revisionNumber")
+
+def gitBranchName = 'N/A'
+def gitCommitHash = 'N/A'
+def gitCommitTime = 'N/A'
+
+
+try {
+    def git = grgit.open(dir: project.rootDir)
+    gitBranchName = git.branch.current().name
+    gitCommitHash = git.head().abbreviatedId
+    gitCommitTime = git.head().dateTime.format('yyyy-MM-dd HH:mm:ss')
+} catch (Exception ignored) {
+    // No .git directory or not a git repo — fail gracefully
+    logger.lifecycle("No Git repository found; using defaults.")
+}
+
+println("GIT branch $gitBranchName commit $gitCommitHash on ${gitCommitTime}")
+
+project.ext.gitBranchName = gitBranchName
+project.ext.gitCommitHash = gitCommitHash
+project.ext.gitCommitTime = gitCommitTime
+
 
 allprojects {
     repositories {
@@ -29,9 +50,6 @@ allprojects {
         // git clone https://github.com/beanshell/beanshell
         // cd beanshell && mvn install
         mavenLocal()
-    }
-    ext {
-        svnRevision = "$svntools.info.revisionNumber"
     }
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'

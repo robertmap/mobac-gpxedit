@@ -41,18 +41,21 @@ processResources {
         def targetDir = new File(sourceSets.main.output.resourcesDir, "mobac")
         targetDir.mkdirs()
         def props = new Properties()
-        props.setProperty("mobac.revision", "$svnRevision")
+        props.setProperty("mobac.gitBranchName", "$gitBranchName")
+        props.setProperty("mobac.gitHash", "$gitCommitHash")
         props.setProperty("mobac.version", project.rootProject.version.toString())
         new File(targetDir, "mobac-rev.properties").withWriter { props.store(it, null) }
     }
 }
 jar {
-    println("SVN revision $svnRevision")
+    println("GIT branch $gitBranchName commit $gitCommitHash")
 
     manifest {
         attributes 'Main-Class': 'mobac.StartMOBAC'
         attributes 'Version': project.rootProject.version
-        attributes 'SVN-Revision': svnRevision
+        attributes "GitBranch": "$gitBranchName"
+        attributes "GitCommitHash": "$gitCommitHash"
+        attributes "GitCommitTime": "$gitCommitTime"
         attributes 'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date())
 
         // This entry is required by jaxb-runtime to work properly on Java 16+ - otherwise you will encounter
