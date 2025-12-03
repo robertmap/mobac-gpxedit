@@ -43,7 +43,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -209,8 +210,8 @@ public class Utilities {
 		return true;
 	}
 
-	public static URL parseURL(String url) throws MalformedURLException {
-		return new URL(url);
+	public static URI parseURI(String url) throws URISyntaxException {
+		return new URI(url);
 	}
 
 	public static HttpURLConnection openURL(String url) throws IOException {

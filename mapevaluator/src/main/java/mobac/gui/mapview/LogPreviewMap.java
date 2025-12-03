@@ -11,7 +11,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.net.URL;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.TimerTask;
@@ -147,11 +147,11 @@ public class LogPreviewMap extends PreviewMap {
 					tileUrl = ((HttpMapSource) mapSource).getTileUrl(zoom, tilex, tiley);
 				}
 				if (tileUrl != null) {
-					URL url = Utilities.parseURL(tileUrl);
-					drawUrl(g, "host=" + url.getHost(), gx + 4, gy += 16, tileSize);
-					drawUrl(g, url.getPath(), gx + 4, gy += 16, tileSize);
+					URI uri = Utilities.parseURI(tileUrl);
+					drawUrl(g, "host=" + uri.getHost(), gx + 4, gy += 16, tileSize);
+					drawUrl(g, uri.getPath(), gx + 4, gy += 16, tileSize);
 
-					String strQuery = url.getQuery();
+					String strQuery = uri.getQuery();
 					if (strQuery != null && !strQuery.isEmpty()) {
 						drawUrl(g, "?" + strQuery, gx + 4, gy += 16, tileSize);
 					}

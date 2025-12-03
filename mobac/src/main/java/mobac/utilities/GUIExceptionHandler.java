@@ -65,6 +65,7 @@ public class GUIExceptionHandler implements Thread.UncaughtExceptionHandler, Exc
 	public static void registerForCurrentThread() {
 		Thread t = Thread.currentThread();
 		if (t.getUncaughtExceptionHandler() != INSTANCE) {
+			// Thread.getId() is deprecated. Java 19+: threadId()
 			log.trace("Registering MOBAC exception handler for thread \"{}\" [{}]", t.getName(), t.getId());
 			t.setUncaughtExceptionHandler(INSTANCE);
 		}
