@@ -45,8 +45,8 @@ public class TileLoader {
 
 	private static final Logger log = LoggerFactory.getLogger(TileLoader.class);
 
-	protected TileStore tileStore;
-	protected TileLoaderListener listener;
+	protected final TileStore tileStore;
+	protected final TileLoaderListener listener;
 
 	public TileLoader(TileLoaderListener listener) {
 		super();
@@ -62,7 +62,7 @@ public class TileLoader {
 
 		final int tilex, tiley, zoom;
 		final MapSource mapSource;
-		protected TileStoreEntry tileStoreEntry = null;
+		protected final TileStoreEntry tileStoreEntry = null;
 		Tile tile;
 		boolean fileTilePainted = false;
 

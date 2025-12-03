@@ -187,9 +187,9 @@ public class PngXxlWriter {
 	static class ImageDataChunkWriter extends OutputStream {
 
 		DeflaterOutputStream dfos;
-		DataOutputStream stream;
-		DataOutputStream out;
-		CRC32 crc = new CRC32();
+		final DataOutputStream stream;
+		final DataOutputStream out;
+		final CRC32 crc = new CRC32();
 
 		public ImageDataChunkWriter(DataOutputStream out) throws IOException {
 			this.out = out;

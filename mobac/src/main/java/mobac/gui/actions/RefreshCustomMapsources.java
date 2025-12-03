@@ -226,7 +226,7 @@ public class RefreshCustomMapsources implements ActionListener {
 		public final String name;
 		public final String relativeFilePath;
 		public final String status;
-		public boolean restartRequired;
+		public final boolean restartRequired;
 
 		public ReloadTableEntry(String name, String relativeFilePath, String status, boolean restartRequired) {
 			super();

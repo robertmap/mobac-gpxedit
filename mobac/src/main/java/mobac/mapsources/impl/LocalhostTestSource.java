@@ -21,7 +21,7 @@ import mobac.program.model.TileImageType;
 
 public class LocalhostTestSource extends AbstractHttpMapSource {
 
-	private String baseUrl;
+	private final String baseUrl;
 
 	public LocalhostTestSource(String name, TileImageType tileType) {
 		this(name, 80, tileType);

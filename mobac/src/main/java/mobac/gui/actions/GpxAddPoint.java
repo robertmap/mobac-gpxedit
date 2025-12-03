@@ -29,7 +29,7 @@ import java.awt.event.ActionListener;
 
 public class GpxAddPoint implements ActionListener {
 
-	JGpxPanel panel;
+	private final JGpxPanel panel;
 
 	private GpxMapController mapController = null;
 

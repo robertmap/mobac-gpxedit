@@ -20,8 +20,8 @@ import mobac.utilities.Utilities;
 
 public class MOBACOutOfMemoryException extends RuntimeException {
 
-	long requiredMemory;
-	long heapAvailable;
+	final long requiredMemory;
+	final long heapAvailable;
 
 	public MOBACOutOfMemoryException(long requiredMemory, String message) {
 		super(message);

@@ -41,7 +41,7 @@ public class AtlasTreeModel implements TreeModel {
 
 	protected AtlasInterface atlasInterface;
 
-	protected Set<TreeModelListener> listeners = new HashSet<>();
+	protected final Set<TreeModelListener> listeners = new HashSet<>();
 
 	public AtlasTreeModel() {
 		super();

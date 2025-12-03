@@ -259,8 +259,8 @@ public class ClassReader extends ByteArrayInputStream {
 	}
 
 	private static class NameAndType {
-		String name;
-		String type;
+		final String name;
+		final String type;
 
 		public NameAndType(String name, String type) {
 			this.name = name;

@@ -50,12 +50,12 @@ public class MemoryTileCache implements NotificationListener {
 	 */
 	protected int cacheSize = 200;
 
-	protected Hashtable<String, CacheEntry> hashtable;
+	protected final Hashtable<String, CacheEntry> hashtable;
 
 	/**
 	 * List of all tiles in their last recently used order
 	 */
-	protected CacheLinkedListElement lruTiles;
+	protected final CacheLinkedListElement lruTiles;
 
 	public MemoryTileCache() {
 		log = LoggerFactory.getLogger(this.getClass());
@@ -183,7 +183,7 @@ public class MemoryTileCache implements NotificationListener {
 	 * and {@link #prev} item in the list.
 	 */
 	protected static class CacheEntry {
-		Tile tile;
+		final Tile tile;
 
 		CacheEntry next;
 		CacheEntry prev;

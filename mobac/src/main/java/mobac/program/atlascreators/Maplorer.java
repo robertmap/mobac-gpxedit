@@ -139,7 +139,7 @@ public class Maplorer extends AtlasCreator {
 
 	public class FileTileWriter implements MapTileWriter {
 
-		File setFolder;
+		final File setFolder;
 
 		final int tileHeight;
 		final int tileWidth;

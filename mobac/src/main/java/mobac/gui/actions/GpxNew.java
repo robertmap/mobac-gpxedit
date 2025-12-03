@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
 
 public class GpxNew implements ActionListener {
 
-	JGpxPanel panel;
+	private final JGpxPanel panel;
 
 	public GpxNew(JGpxPanel panel) {
 		super();

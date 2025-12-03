@@ -8,8 +8,8 @@ import java.awt.Stroke;
 
 public class ReferenceMapMarker {
 
-	protected static Stroke CIRCLE_STROKE = new BasicStroke(5.0f);
-	protected static Stroke LINE_STROKE = new BasicStroke(1.0f);
+	protected static final Stroke CIRCLE_STROKE = new BasicStroke(5.0f);
+	protected static final Stroke LINE_STROKE = new BasicStroke(1.0f);
 
 	private final Color circleColor;
 	private final double lat;

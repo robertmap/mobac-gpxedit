@@ -49,7 +49,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 
 	protected DataOutputStream cacheOutStream = null;
 	protected long lastTileOffset = 0;
-	protected Set<String> availableTileList = new HashSet<>();
+	protected final Set<String> availableTileList = new HashSet<>();
 
 	@Override
 	public boolean testMapSource(MapSource mapSource) {
@@ -116,7 +116,7 @@ public class MobileTrailExplorerCache extends AtlasCreator {
 		String cacheKey = cache + "-" + zoom + "-" + x + "-" + y;
 
 		if (availableTileList.contains(cacheKey)) {
-			log.warn("Map tile already in cache: " + cacheKey + " -> ignoring");
+			log.warn("Map tile already in cache: {} -> ignoring", cacheKey);
 			return false;
 		}
 

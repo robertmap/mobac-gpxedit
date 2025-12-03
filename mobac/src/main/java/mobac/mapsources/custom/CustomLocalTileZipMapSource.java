@@ -51,6 +51,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "localTileZip")
 public class CustomLocalTileZipMapSource implements FileBasedMapSource {
 

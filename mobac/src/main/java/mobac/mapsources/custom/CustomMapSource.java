@@ -64,7 +64,7 @@ public class CustomMapSource extends AbstractHttpMapSourceBase implements Reload
 	 */
 	@XmlElementWrapper(name = "trustedPublicKeys")
 	@XmlElement(name = "publicKeyHash")
-	public final Set<String> trustedPublicKeys = new HashSet<>();
+	public Set<String> trustedPublicKeys = new HashSet<>();
 	@XmlElement(defaultValue = "PNG")
 	protected TileImageType tileType = TileImageType.PNG;
 	@XmlElement(required = true, nillable = false)

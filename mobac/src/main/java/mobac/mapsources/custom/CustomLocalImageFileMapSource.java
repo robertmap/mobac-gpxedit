@@ -66,6 +66,7 @@ import java.io.IOException;
  *     </localImageFile>
  * </pre>
  */
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "localImageFile")
 public class CustomLocalImageFileMapSource
 		implements

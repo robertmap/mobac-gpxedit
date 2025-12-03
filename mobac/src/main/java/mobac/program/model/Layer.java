@@ -52,6 +52,7 @@ import java.util.LinkedList;
  * smaller than the specified <code>maxMapSize</code> then there will be only
  * one map.
  */
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement
 public class Layer implements LayerInterface, TreeNode, ToolTipProvider, CapabilityDeletable {
 

@@ -70,6 +70,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+@SuppressWarnings("CanBeFinal")
 public class MapsforgeMapSource implements MapSource, FileBasedMapSource, RefreshableMapSource, CloneableMapSource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapsforgeMapSource.class);

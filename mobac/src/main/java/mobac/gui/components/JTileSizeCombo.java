@@ -27,7 +27,7 @@ public class JTileSizeCombo extends JIntCombo {
 	public static final int MIN = 50;
 	public static final int MAX = 8192;
 	private static final long serialVersionUID = 1L;
-	static Vector<Integer> TILE_SIZE_VALUES;
+	private static final Vector<Integer> TILE_SIZE_VALUES;
 
 	static Integer DEFAULT;
 

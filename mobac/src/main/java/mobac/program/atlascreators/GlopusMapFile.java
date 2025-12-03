@@ -100,11 +100,11 @@ public class GlopusMapFile extends TrekBuddy {
 	}
 
 	private static class GlopusTile {
-		byte[] data;
-		double calNLat;
-		double calWLon;
-		double calSLat;
-		double calELon;
+		final byte[] data;
+		final double calNLat;
+		final double calWLon;
+		final double calSLat;
+		final double calELon;
 
 		public GlopusTile(byte[] data, double calNLat, double calWLon, double calSLat, double calELon) {
 			super();
@@ -120,7 +120,7 @@ public class GlopusMapFile extends TrekBuddy {
 	private class GlopusTileWriter implements MapTileWriter {
 
 		final LayerInterface layer;
-		LinkedList<GlopusTile> tiles;
+		final LinkedList<GlopusTile> tiles;
 		int xCoordStart;
 		int yCoordStart;
 		int tileHeight = 256;

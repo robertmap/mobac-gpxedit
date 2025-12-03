@@ -32,6 +32,7 @@ import java.util.Locale;
  *
  * @author oruxman
  */
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement
 public class CustomWmsMapSource extends CustomMapSource {
 

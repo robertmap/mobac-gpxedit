@@ -29,6 +29,7 @@ import mobac.utilities.imageio.ImageFormatDetector;
 
 import java.net.HttpURLConnection;
 
+@SuppressWarnings("JUnitMalformedDeclaration")
 public class MapSourceTestCase extends TestCase {
 
 	private final HttpMapSource mapSource;

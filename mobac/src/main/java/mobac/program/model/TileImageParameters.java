@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.awt.Dimension;
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement
 public final class TileImageParameters implements Cloneable {
 

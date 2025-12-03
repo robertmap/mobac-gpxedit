@@ -59,10 +59,10 @@ public class PreviewMap extends JMapViewer {
 	public final Ruler ruler = new Ruler(this);
 	private final WgsGrid wgsGrid = new WgsGrid(Settings.getInstance().wgsGrid, this);
 	public boolean isMeasuring = false;
-	protected LinkedList<MapEventListener> mapEventListeners = new LinkedList<>();
-	protected JMapController mapKeyboardController;
+	protected final LinkedList<MapEventListener> mapEventListeners = new LinkedList<>();
+	protected final JMapController mapKeyboardController;
 	protected JMapController mapSelectionController;
-	protected DefaultMapController defaultMapController;
+	protected final DefaultMapController defaultMapController;
 	/**
 	 * Interactive map selection max/min pixel coordinates regarding zoom level
 	 * <code>MAX_ZOOM</code>

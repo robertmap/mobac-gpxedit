@@ -130,17 +130,20 @@ public class NFComPass extends AtlasCreator {
 	}
 
 	public class NFCompassTileWriter implements MapTileWriter {
-		int tileHeight = 256;
-		int tileWidth = 256;
+		final int tileHeight;
+		final int tileWidth;
 
-		int ff_x;
-		int ff_y;
+		final int ff_x;
+		final int ff_y;
 
 		public NFCompassTileWriter() {
 			super();
 			if (parameters != null) {
 				tileHeight = parameters.getHeight();
 				tileWidth = parameters.getWidth();
+			} else {
+				tileHeight = 256;
+				tileWidth = 256;
 			}
 			int highest_bit_x = Utilities.getHighestBitSet(tileWidth) + 2;
 			int highest_bit_y = Utilities.getHighestBitSet(tileHeight) + 2;

@@ -55,8 +55,8 @@ public class MapTileBuilder {
 	private final int yMin;
 	private final int yMax;
 	private final boolean useRealTileSize;
-	int mergedWidth;
-	int mergedHeight;
+	private final int mergedWidth;
+	private final int mergedHeight;
 	private int realWidth;
 	private int realHeight;
 	/**
@@ -256,9 +256,9 @@ public class MapTileBuilder {
 	}
 
 	private static class CachedTile {
-		BufferedImage image;
-		int xTile;
-		int yTile;
+		final BufferedImage image;
+		final int xTile;
+		final int yTile;
 
 		public CachedTile(BufferedImage image, int tile, int tile2) {
 			super();

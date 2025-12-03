@@ -260,7 +260,7 @@ public class RmpLayer {
 
 	protected class A00Entry implements RmpFileEntry {
 
-		protected String name;
+		protected final String name;
 
 		public A00Entry(String name) {
 			super();

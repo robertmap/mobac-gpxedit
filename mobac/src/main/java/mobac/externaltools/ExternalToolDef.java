@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "ExternalTool")
 public class ExternalToolDef implements ActionListener {
 

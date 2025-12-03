@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * MBTiles input http://mbtiles.org/
  */
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "localTileSQLite")
 public class CustomLocalTileSQliteMapSource implements FileBasedMapSource {
 

@@ -187,7 +187,7 @@ public class ParamReader extends ClassReader {
 	}
 
 	private static class MethodInfo {
-		String[] names;
+		final String[] names;
 
 		public MethodInfo(int maxLocals) {
 			names = new String[maxLocals];

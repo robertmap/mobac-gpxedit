@@ -44,6 +44,7 @@ import java.io.IOException;
  * ph-t@users.sourceforge.net
  */
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "localAQMfile")
 public class CustomLocalAqmMapSource implements InitializableMapSource, MapSourceInitialDisplayPosition {
 

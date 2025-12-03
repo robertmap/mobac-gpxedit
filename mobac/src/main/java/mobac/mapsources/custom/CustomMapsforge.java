@@ -37,6 +37,7 @@ import java.util.List;
 /**
  * Requires the OpenStreetMap
  */
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "mapsforge")
 public class CustomMapsforge extends MapsforgeMapSource implements ReloadableMapSource<CustomMapsforge> {
 

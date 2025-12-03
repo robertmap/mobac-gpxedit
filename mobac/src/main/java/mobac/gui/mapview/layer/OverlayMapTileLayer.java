@@ -26,8 +26,8 @@ import java.awt.Graphics;
 
 public class OverlayMapTileLayer implements MapTileLayer {
 
-	protected JMapViewer mapViewer;
-	protected MapSource mapSource;
+	protected final JMapViewer mapViewer;
+	protected final MapSource mapSource;
 
 	public OverlayMapTileLayer(JMapViewer mapViewer, MapSource tileSource) {
 		this.mapViewer = mapViewer;

@@ -50,7 +50,7 @@ import java.awt.dnd.DropTargetListener;
 public class DragDropController {
 
 	private static final Logger log = LoggerFactory.getLogger(DragDropController.class);
-	JAtlasTree atlasTree;
+	final JAtlasTree atlasTree;
 
 	public DragDropController(JAtlasTree atlasTree) {
 		super();

@@ -25,7 +25,7 @@ import java.util.Vector;
 
 public class MapSourcesListModel extends AbstractListModel<MapSource> {
 
-	ArrayList<MapSource> mapSources;
+	final ArrayList<MapSource> mapSources;
 
 	public MapSourcesListModel(Vector<MapSource> source) {
 		this.mapSources = new ArrayList<>(source);

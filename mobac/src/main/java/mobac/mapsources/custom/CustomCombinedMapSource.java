@@ -36,6 +36,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "combined")
 public class CustomCombinedMapSource implements InitializableMapSource {
 

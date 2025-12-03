@@ -272,7 +272,7 @@ public class TrekBuddy extends AtlasCreator {
 
 	private class FileTileWriter implements MapTileWriter {
 
-		File setFolder;
+		final File setFolder;
 		Writer setFileWriter;
 
 		int tileHeight = 256;
@@ -282,7 +282,7 @@ public class TrekBuddy extends AtlasCreator {
 			super();
 			setFolder = new File(mapDir, "set");
 			Utilities.mkDir(setFolder);
-			log.debug("Writing tiles to set folder: " + setFolder);
+			log.debug("Writing tiles to set folder: {}", setFolder);
 			File setFile = new File(mapDir, map.getName() + ".set");
 			if (parameters != null) {
 				tileHeight = parameters.getHeight();

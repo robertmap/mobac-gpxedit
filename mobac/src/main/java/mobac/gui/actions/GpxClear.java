@@ -30,7 +30,7 @@ import java.util.Iterator;
  */
 public class GpxClear implements ActionListener {
 
-	JGpxPanel panel;
+	private final JGpxPanel panel;
 
 	public GpxClear(JGpxPanel panel) {
 		super();

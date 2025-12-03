@@ -54,7 +54,7 @@ import java.util.Set;
 public class RunGPSAtlas extends AtlasCreator {
 
 	protected RunGPSAtlasFile atlasIndex = null;
-	protected Set<String> availableTileList = new HashSet<>();
+	protected final Set<String> availableTileList = new HashSet<>();
 	protected int minZoom, maxZoom;
 
 	@Override

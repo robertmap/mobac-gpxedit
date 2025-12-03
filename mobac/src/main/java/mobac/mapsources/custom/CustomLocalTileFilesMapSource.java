@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement(name = "localTileFiles")
 public class CustomLocalTileFilesMapSource implements FileBasedMapSource {
 

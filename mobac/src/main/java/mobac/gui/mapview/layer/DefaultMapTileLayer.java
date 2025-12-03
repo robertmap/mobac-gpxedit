@@ -26,9 +26,9 @@ import java.awt.Graphics;
 
 public class DefaultMapTileLayer implements MapTileLayer {
 
-	protected JMapViewer mapViewer;
+	protected final JMapViewer mapViewer;
 
-	protected MapSource mapSource;
+	protected final MapSource mapSource;
 
 	protected boolean usePlaceHolders;
 

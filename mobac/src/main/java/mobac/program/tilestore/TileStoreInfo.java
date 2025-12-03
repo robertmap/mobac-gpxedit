@@ -18,8 +18,8 @@ package mobac.program.tilestore;
 
 public class TileStoreInfo {
 
-	int tileCount;
-	long storeSize;
+	private final int tileCount;
+	private final long storeSize;
 
 	public TileStoreInfo(long storeSize, int tileCount) {
 		super();

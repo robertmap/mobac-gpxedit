@@ -141,8 +141,8 @@ public class CacheTileProvider implements TileProvider, AutoCloseable {
 	}
 
 	private static class CacheKey {
-		int x;
-		int y;
+		final int x;
+		final int y;
 
 		public CacheKey(int x, int y) {
 			super();

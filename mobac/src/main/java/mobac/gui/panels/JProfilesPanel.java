@@ -121,7 +121,7 @@ public class JProfilesPanel extends JCollapsiblePanel {
 
 	private class SaveAsProfileListener implements ActionListener {
 
-		JAtlasTree jAtlasTree;
+		final JAtlasTree jAtlasTree;
 
 		public SaveAsProfileListener(JAtlasTree atlasTree) {
 			super();

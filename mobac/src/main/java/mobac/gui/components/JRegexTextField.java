@@ -36,8 +36,8 @@ public class JRegexTextField extends JTextField {
 
 		private static final long serialVersionUID = 1L;
 
-		public Pattern pattern;
-		public int maxLength;
+		public final Pattern pattern;
+		public final int maxLength;
 
 		public AtlasNameDocument(String regex, int maxLength) {
 			super();

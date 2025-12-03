@@ -18,8 +18,6 @@ package mobac.program.tiledatawriter;
 
 import mobac.program.interfaces.TileImageDataWriterBuilder;
 import mobac.program.model.TileImageType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -30,12 +28,10 @@ import java.io.OutputStream;
 
 public class TileImagePngDataWriterBuilder implements TileImageDataWriterBuilder {
 
-	protected Logger log;
-
 	protected ImageWriter pngImageWriter = null;
 
 	public TileImagePngDataWriterBuilder() {
-		log = LoggerFactory.getLogger(this.getClass());
+
 	}
 
 	public TileImagePngDataWriter build() {

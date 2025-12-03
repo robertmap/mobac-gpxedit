@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.awt.Point;
 import java.util.Vector;
 
+@SuppressWarnings("CanBeFinal")
 public class PolygonType {
 
 	@XmlElement(name = "point")

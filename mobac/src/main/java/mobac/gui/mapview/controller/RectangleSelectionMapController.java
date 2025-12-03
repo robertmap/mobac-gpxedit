@@ -27,11 +27,11 @@ import java.awt.event.MouseMotionListener;
 
 /**
  * Implements the GUI logic for the preview map panel that manages the map
- * selection and actions triggered by key strokes.
+ * selection and actions triggered by keystrokes.
  */
 public class RectangleSelectionMapController extends JMapController implements MouseMotionListener, MouseListener {
 
-	protected RectangleSelectionLayer mapLayer;
+	protected final RectangleSelectionLayer mapLayer;
 	/**
 	 * start point of selection rectangle in absolute tile coordinated regarding
 	 * {@link JMapViewer#MAX_ZOOM}

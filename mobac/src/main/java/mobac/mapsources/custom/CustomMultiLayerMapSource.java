@@ -43,6 +43,7 @@ import java.util.List;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({CustomMapSource.class})
+@SuppressWarnings("CanBeFinal")
 public class CustomMultiLayerMapSource extends AbstractMultiLayerMapSource
 		implements
 			ReloadableMapSource<CustomMultiLayerMapSource> {

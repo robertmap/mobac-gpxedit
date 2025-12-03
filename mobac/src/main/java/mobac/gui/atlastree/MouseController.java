@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent;
 
 public class MouseController extends MouseAdapter {
 
-	JAtlasTree atlasTree;
+	private final JAtlasTree atlasTree;
 
 	public MouseController(JAtlasTree atlasTree) {
 		super();

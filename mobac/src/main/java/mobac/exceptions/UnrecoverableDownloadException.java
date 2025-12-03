@@ -26,8 +26,8 @@ public class UnrecoverableDownloadException extends TileException {
 
 	private static final long serialVersionUID = 1L;
 
-	public static int ERROR_CODE_NORMAL = 0;
-	public static int ERROR_CODE_CONTENT_TYPE = 1;
+	public static final int ERROR_CODE_NORMAL = 0;
+	public static final int ERROR_CODE_CONTENT_TYPE = 1;
 
 	private int errorCode = ERROR_CODE_NORMAL;
 

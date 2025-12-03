@@ -58,7 +58,7 @@ public class DebugShowMapSourceNames implements ActionListener {
 
 	static class MapSourcesTableModel extends AbstractTableModel {
 
-		List<MapSource> mapSources;
+		final List<MapSource> mapSources;
 
 		public MapSourcesTableModel(List<MapSource> mapSources) {
 			super();

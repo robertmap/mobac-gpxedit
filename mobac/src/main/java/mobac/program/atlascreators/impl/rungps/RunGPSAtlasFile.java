@@ -35,13 +35,13 @@ import java.util.List;
 public class RunGPSAtlasFile {
 
 	public final static String SUFFIX = ".ratlas";
-	RandomAccessFile raf;
-	RunGPSAtlasHeader rah = new RunGPSAtlasHeader();
-	File cacheFile;
-	OutputStream cacheOutStream = null;
-	long positionInCacheFile = 0L;
-	int offset = 0;
-	int indexLength = 0;
+	private RandomAccessFile raf;
+	private final RunGPSAtlasHeader rah = new RunGPSAtlasHeader();
+	private File cacheFile;
+	private OutputStream cacheOutStream = null;
+	private long positionInCacheFile = 0L;
+	private int offset = 0;
+	private int indexLength = 0;
 
 	public RunGPSAtlasFile(String filePath, boolean write) throws IOException {
 

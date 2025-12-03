@@ -32,7 +32,7 @@ public class JIntCombo extends JComboBox<Integer> {
 	private static final Logger log = LoggerFactory.getLogger(JIntCombo.class);
 
 	protected JIntField editorComponent;
-	protected Integer defaultValue;
+	protected final Integer defaultValue;
 
 	public JIntCombo(Vector<Integer> values, Integer defaultValue) {
 		super(values);

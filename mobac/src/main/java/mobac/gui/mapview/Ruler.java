@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class Ruler {
 	private static final Font font = new Font("SansSerif", Font.BOLD, 12);
 	private final PreviewMap map;
-	public ArrayList<Point2D.Double> segments = new ArrayList<>();
+	public final ArrayList<Point2D.Double> segments = new ArrayList<>();
 
 	public Ruler(PreviewMap map) {
 		super();

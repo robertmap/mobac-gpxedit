@@ -26,7 +26,7 @@ import java.security.SecureRandom;
 
 public class SimpleHttpClient implements Runnable {
 
-	static SecureRandom RND = new SecureRandom();
+	private static final SecureRandom RND = new SecureRandom();
 
 	public static void main(String[] args) throws InterruptedException {
 

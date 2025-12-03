@@ -73,7 +73,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	protected boolean usePlaceHolderTiles = true;
 	protected boolean mapMarkersVisible;
 	protected MapGridLayer mapGridLayer = null;
-	protected List<MapTileLayer> mapTileLayers;
+	protected final List<MapTileLayer> mapTileLayers;
 	/**
 	 * x- and y-position of the center of this map-panel on the world map denoted in
 	 * screen pixel regarding the current zoom level.
@@ -85,7 +85,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 	 */
 	protected int zoom;
 
-	protected JSlider zoomSlider = new JSlider(0, 0);
+	protected final JSlider zoomSlider = new JSlider(0, 0);
 	protected JButton zoomInButton;
 	protected JButton zoomOutButton;
 

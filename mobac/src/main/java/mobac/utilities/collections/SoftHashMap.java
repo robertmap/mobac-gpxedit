@@ -34,7 +34,7 @@ import java.util.Set;
  */
 public class SoftHashMap<K, V> implements Map<K, V> {
 
-	HashMap<K, SoftReference<V>> map;
+	final HashMap<K, SoftReference<V>> map;
 
 	public SoftHashMap(int initialCapacity) {
 		map = new HashMap<>(initialCapacity);

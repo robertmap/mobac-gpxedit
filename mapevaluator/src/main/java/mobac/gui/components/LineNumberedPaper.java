@@ -18,12 +18,12 @@ public class LineNumberedPaper extends JTextArea {
 	/**
 	 * The line number should be right justified.
 	 */
-	public static int RIGHT_JUSTIFY = 0;
+	public static final int RIGHT_JUSTIFY = 0;
 
 	/**
 	 * The line number should be left justified.
 	 */
-	public static int LEFT_JUSTIFY = 1;
+	public static final int LEFT_JUSTIFY = 1;
 
 	/**
 	 * Indicates the justification of the text of the line number.

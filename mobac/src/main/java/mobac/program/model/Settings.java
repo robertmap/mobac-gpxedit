@@ -58,6 +58,7 @@ import java.util.concurrent.TimeUnit;
 
 import static mobac.gui.MainGUI.LEFT_PANEL_MIN_SIZE;
 
+@SuppressWarnings("CanBeFinal")
 @XmlRootElement
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class Settings {
