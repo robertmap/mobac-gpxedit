@@ -1,6 +1,6 @@
 *       text=auto eol=lf
 
-*.java  text eol=crlf diff=java
+*.java  text eol=lf diff=java
 
 gradlew text eol=lf
 

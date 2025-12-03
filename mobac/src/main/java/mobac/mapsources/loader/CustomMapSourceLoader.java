@@ -141,8 +141,8 @@ public class CustomMapSourceLoader {
 				MapSourceLoaderUtils.testMapSourceName(customMapSource.getName());
 				mapSourcesManager.addMapSource(customMapSource);
 			} catch (UnmarshalException e) {
-                // those errors are already handled by the EventHandler in
-                // internalLoadMapSource(...)
+				// those errors are already handled by the EventHandler in
+				// internalLoadMapSource(...)
 				Throwable t = e;
 				if (e.getCause() != null) {
 					t = t.getCause();
