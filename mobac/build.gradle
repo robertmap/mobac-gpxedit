@@ -83,7 +83,7 @@ jar {
     exclude("org/sqlite/native/Linux-Musl/**")
     exclude("org/sqlite/native/Linux-Android/**")
     exclude("org/sqlite/native/FreeBSD/**")
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 launch4j {
