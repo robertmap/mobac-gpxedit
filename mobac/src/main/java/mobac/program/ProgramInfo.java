@@ -18,7 +18,6 @@ package mobac.program;
 
 import mobac.Main;
 import mobac.utilities.GUIExceptionHandler;
-import mobac.utilities.Utilities;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -29,41 +28,36 @@ public class ProgramInfo {
 	public static String PROG_NAME_SHORT = "MOBAC";
 
 	private static String VERSION = "unknown";
-	private static String SVN_REVISION = "unknown";
+    private static String GIT_BRANCH_NAME = "unknown";
+	private static String GIT_COMMIT_HASH;
+    private static String GIT_COMMIT_TIME;
 	private static String userAgent = "";
 
 	/**
 	 * Show or hide the detailed revision info in the main windows title
 	 */
-	private static boolean titleHideRevision = false;
+	private static boolean titleHideCommit = false;
 
 	public static void initialize() {
 
 		try (InputStream in = Main.class.getResourceAsStream("mobac.properties")) {
 			Properties props = new Properties();
 			props.load(in);
-			titleHideRevision = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
+			titleHideCommit = Boolean.parseBoolean(props.getProperty("mobac.revision.hide", "false"));
 			System.getProperties().putAll(props);
 		} catch (Exception e) {
 			String msg = "Error reading mobac.properties";
 			GUIExceptionHandler.processFatalExceptionSimpleDialog(msg, e);
 		}
 		try (InputStream in = Main.class.getResourceAsStream("mobac-rev.properties")) {
-			boolean versionSet = false;
 			if (in != null) {
 				Properties props = new Properties();
 				props.load(in);
-				String rev = props.getProperty("mobac.revision");
-				int svnRev = Utilities.parseSVNRevision(rev);
-				if (svnRev > 0) {
-					SVN_REVISION = Integer.toString(svnRev);
-					versionSet = true;
-				}
+                GIT_BRANCH_NAME = props.getProperty("mobac.gitBranchName", GIT_BRANCH_NAME);
+                GIT_COMMIT_HASH = props.getProperty("mobac.gitCommitHash");
+                GIT_COMMIT_TIME = props.getProperty("mobac.gitCommitTime");
+                GIT_BRANCH_NAME = props.getProperty("mobac.gitBranchName");
 				VERSION = props.getProperty("mobac.version", VERSION);
-			}
-			if (!versionSet) {
-				String rev = System.getProperty("mobac.revision.fallback");
-				SVN_REVISION = Utilities.parseSVNRevision(rev) + " exported";
 			}
 		} catch (Exception e) {
 			Logging.LOG.error("Error reading mobac-rev.properties", e);
@@ -79,7 +73,10 @@ public class ProgramInfo {
 	}
 
 	public static String getRevisionStr() {
-		return SVN_REVISION;
+		if (GIT_COMMIT_HASH == null) {
+            return GIT_BRANCH_NAME;
+        }
+        return String.format("%s (%s)", GIT_COMMIT_HASH, GIT_BRANCH_NAME);
 	}
 
 	public static String getVersionTitle() {
@@ -99,8 +96,8 @@ public class ProgramInfo {
 
 	public static String getCompleteTitle() {
 		String title = getVersionTitle();
-		if (!titleHideRevision) {
-			title += " (" + SVN_REVISION + ")";
+		if (!titleHideCommit) {
+			title += " (" + GIT_COMMIT_HASH + ")";
 		}
 		return title;
 	}
@@ -109,4 +106,7 @@ public class ProgramInfo {
 		return userAgent;
 	}
 
+    public static String getGitCommitTime() {
+        return GIT_COMMIT_TIME;
+    }
 }
