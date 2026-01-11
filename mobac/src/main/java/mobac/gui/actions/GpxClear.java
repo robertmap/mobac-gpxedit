@@ -38,6 +38,40 @@ public class GpxClear implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		// Check for dirty GPX files before clearing
+		boolean hasDirty = false;
+		Iterator<MapLayer> mapLayersCheck = MainGUI.getMainGUI().previewMap.mapLayers.iterator();
+		while (mapLayersCheck.hasNext()) {
+			MapLayer layer = mapLayersCheck.next();
+			if (layer instanceof GpxLayer) {
+				GpxLayer gpxLayer = (GpxLayer) layer;
+				if (gpxLayer.getPanel() != null && gpxLayer.getPanel().getTreeModel() != null) {
+					javax.swing.tree.TreeModel model = gpxLayer.getPanel().getTreeModel();
+					javax.swing.tree.TreeNode root = (javax.swing.tree.TreeNode) model.getRoot();
+					for (int i = 0; i < root.getChildCount(); i++) {
+						Object userObj = ((javax.swing.tree.DefaultMutableTreeNode) root.getChildAt(i)).getUserObject();
+						if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+							if (((mobac.gui.gpxtree.GpxRootEntry) userObj).isDirty()) {
+								hasDirty = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if (hasDirty) break;
+		}
+		if (hasDirty) {
+			int result = javax.swing.JOptionPane.showConfirmDialog(null,
+				"There are unsaved GPX files. Clear anyway and lose all unsaved changes?",
+				"Unsaved Changes",
+				javax.swing.JOptionPane.YES_NO_OPTION,
+				javax.swing.JOptionPane.WARNING_MESSAGE);
+			if (result != javax.swing.JOptionPane.YES_OPTION) {
+				return;
+			}
+		}
+		// Proceed to clear all GPX layers
 		Iterator<MapLayer> mapLayers = MainGUI.getMainGUI().previewMap.mapLayers.iterator();
 		while (mapLayers.hasNext()) {
 			if (mapLayers.next() instanceof GpxLayer) {

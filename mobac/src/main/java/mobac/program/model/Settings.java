@@ -62,6 +62,26 @@ import static mobac.gui.MainGUI.LEFT_PANEL_MIN_SIZE;
 @XmlRootElement
 @XmlAccessorOrder(XmlAccessOrder.ALPHABETICAL)
 public class Settings {
+	/**
+	 * Stores the absolute paths of loaded GPX files in order for session restore.
+	 */
+	@XmlElementWrapper(name = "gpxSessionFiles")
+	@XmlElement(name = "gpxSessionFile")
+	public List<String> gpxSessionFiles = new ArrayList<>();
+
+	/**
+	 * Stores the visible/invisible state for each loaded GPX file (parallel to gpxSessionFiles).
+	 */
+	@XmlElementWrapper(name = "gpxSessionVisible")
+	@XmlElement(name = "gpxSessionVisibleEntry")
+	public List<Boolean> gpxSessionVisible = new ArrayList<>();
+
+	/**
+	 * Stores the expanded/collapsed tree paths as strings for session restore.
+	 */
+	@XmlElementWrapper(name = "gpxSessionExpandedPaths")
+	@XmlElement(name = "gpxSessionExpandedPath")
+	public List<String> gpxSessionExpandedPaths = new ArrayList<>();
 
 	public static final File FILE = new File(DirectoryManager.userSettingsDir, "settings.xml");
 	private static final Logger log = LoggerFactory.getLogger(Settings.class);

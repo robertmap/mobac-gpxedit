@@ -76,6 +76,15 @@ public class GpxSave implements ActionListener {
 			}
 			entry.getLayer().setFile(f);
 			GPXUtils.saveGpxFile(gpx, f);
+
+			// Clear dirty flag and update tree node if this is a GpxRootEntry
+			if (entry instanceof mobac.gui.gpxtree.GpxRootEntry) {
+				mobac.gui.gpxtree.GpxRootEntry rootEntry = (mobac.gui.gpxtree.GpxRootEntry) entry;
+				rootEntry.setDirty(false);
+				if (rootEntry.getNode() != null && panel.getTreeModel() != null) {
+					panel.getTreeModel().nodeChanged(rootEntry.getNode());
+				}
+			}
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);
 		}

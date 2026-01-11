@@ -22,6 +22,15 @@ import mobac.gui.mapview.layer.GpxLayer;
 import mobac.utilities.I18nUtils;
 
 public class GpxRootEntry extends GpxEntry {
+	private boolean dirty = false;
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
 
 	public GpxRootEntry(GpxLayer layer) {
 		this.setLayer(layer);

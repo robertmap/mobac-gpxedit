@@ -59,6 +59,9 @@ public class GpxLayer implements MapLayer {
 	private final boolean showWaypointName = true;
 	private final boolean showTracks = true;
 	private final boolean showRoutes = true;
+
+	// Visibility toggle for the layer
+	private boolean visible = true;
 	/**
 	 * the associated gpx file handle
 	 */
@@ -75,6 +78,7 @@ public class GpxLayer implements MapLayer {
 	}
 
 	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
+		if (!visible) return;
 		g.setColor(wptPointColor);
 		final MapSpace mapSpace = map.getMapSource().getMapSpace();
 		if (showWaypoints) {
@@ -102,6 +106,14 @@ public class GpxLayer implements MapLayer {
 				}
 			}
 		}
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	private boolean paintPoint(final WptType point, Color color, final Graphics2D g, boolean paintPointName,

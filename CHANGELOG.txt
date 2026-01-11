@@ -10,6 +10,19 @@
  - = Features that has been removed
 
 =======
+fork: 2.3.3-gpxedit-beta0.1 (2026-??-??)
+ + Added gpx (Waypoint) viewer/editor functonality
+ + Improved GPX file tree: added multi-selection and multi-delete support
+ + Added Copy/Move functionality for waypoints via context menu
+ + Enhanced context menu appearance and usability
+ + Enabled reordering of GPX files in the tree
+ + Session persistence: loaded files, file order, expanded/collapsed state, and visibility are now saved and restored
+ + Added warnings for missing files and unsaved changes on exit
+ + Fixed “Show on map” to handle edge cases and update immediately after waypoint edits
+ + Improved live map updates for waypoint position and name changes
+ + Fixed application exit logic to prevent unwanted closure and ensure proper save prompts
+ + Resolved compilation errors and improved code robustness
+
 2.3.4 (20??-??-??)
  + Dialog "Select distance around track" allows to increase the slider range
  ~ BSH map sources: updated BSH library to 3.0.0 snapshot ensure compatibility
@@ -824,7 +837,6 @@
   
  ! Fixed hard coded look and feel, which resulted in an 
     javax.swing.UnsupportedLookAndFeelException at other environments then Windows
- 
- 
-     
- 
+
+
+

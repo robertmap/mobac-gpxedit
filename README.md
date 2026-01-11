@@ -1,3 +1,24 @@
+# GPX Edit Fork of Mobile Atlas Creator
+
+This is a personal fork of [Mobile Atlas Creator (MOBAC)](https://mobac.sourceforge.io/), focused on adding simple and effective GPX/waypoint editing features. I created this fork because I couldn’t find a GPX/waypoint editor that fit my needs, so I (with help from GitHub Copilot) extended MOBAC to support my workflow.
+
+**Note:** This fork is not intended to be merged back into the main MOBAC repository. The code is functional but not up to the standards of the main project, and I do not plan to maintain it actively. However, I may update it as needed.
+
+## Features Added in This Fork
+
+- GPX (waypoint) viewer and editor functionality
+- Multi-selection and multi-delete support in the GPX file tree
+- Copy/Move waypoints via context menu
+- Enhanced context menu appearance and usability
+- Reordering of GPX files in the tree
+- Session persistence: loaded files, file order, expanded/collapsed state, and visibility
+- Warnings for missing files and unsaved changes on exit
+- “Show on map” improvements for edge cases and immediate waypoint edits
+- Live map updates for waypoint position and name changes
+- Improved application exit logic and save prompts
+- Compilation and robustness fixes
+
+ 
  # Mobile Atlas Creator - README
 
 Welcome to Mobile Atlas Creator README file for end users.

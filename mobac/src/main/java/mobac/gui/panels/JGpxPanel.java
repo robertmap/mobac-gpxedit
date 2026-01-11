@@ -55,6 +55,132 @@ import java.util.List;
  */
 public class JGpxPanel extends JCollapsiblePanel {
 
+	       /**
+	* Returns the root node of the GPX tree.
+	*/
+    public DefaultMutableTreeNode getRootNode() {
+	    return rootNode;
+    }
+	
+		/**
+		 * Saves the current GPX session (file paths and expanded/collapsed state) to Settings.
+		 */
+		public void saveGpxSession() {
+			mobac.program.model.Settings settings = mobac.program.model.Settings.getInstance();
+			// Save file paths in order
+			       settings.gpxSessionFiles.clear();
+			       settings.gpxSessionVisible.clear();
+			       for (int i = 0; i < rootNode.getChildCount(); i++) {
+				       Object userObj = ((DefaultMutableTreeNode) rootNode.getChildAt(i)).getUserObject();
+				       if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+					       mobac.gui.gpxtree.GpxRootEntry entry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+					       if (entry.getLayer() != null && entry.getLayer().getFile() != null) {
+						       settings.gpxSessionFiles.add(entry.getLayer().getFile().getAbsolutePath());
+						       settings.gpxSessionVisible.add(entry.getLayer().isVisible());
+					       }
+				       }
+			       }
+			       // Save expanded paths as strings
+			       settings.gpxSessionExpandedPaths.clear();
+			       java.util.Enumeration<TreePath> expanded = tree.getExpandedDescendants(new TreePath(rootNode));
+			       if (expanded != null) {
+				       while (expanded.hasMoreElements()) {
+					       TreePath path = expanded.nextElement();
+					       settings.gpxSessionExpandedPaths.add(treePathToString(path));
+				       }
+			       }
+		}
+
+		/**
+		 * Restores the GPX session (file paths and expanded/collapsed state) from Settings.
+		 */
+		public void restoreGpxSession() {
+			mobac.program.model.Settings settings = mobac.program.model.Settings.getInstance();
+			       if (settings.gpxSessionFiles == null || settings.gpxSessionFiles.isEmpty()) return;
+			       // Clear current model
+			       resetModel();
+			       // Load files in order, restoring visibility if available
+			       List<Boolean> visibleList = settings.gpxSessionVisible;
+				       java.util.List<String> missingFiles = new java.util.ArrayList<>();
+				       for (int i = 0; i < settings.gpxSessionFiles.size(); i++) {
+					       String filePath = settings.gpxSessionFiles.get(i);
+					       java.io.File file = new java.io.File(filePath);
+					       if (file.exists()) {
+						       try {
+							       mobac.data.gpx.gpx11.Gpx gpx = mobac.data.gpx.GPXUtils.loadGpxFile(file);
+							       mobac.gui.mapview.layer.GpxLayer gpxLayer = new mobac.gui.mapview.layer.GpxLayer(gpx);
+							       gpxLayer.setFile(file);
+							       // Restore visibility if available
+							       if (visibleList != null && i < visibleList.size()) {
+								       gpxLayer.setVisible(visibleList.get(i));
+							       }
+							       addGpxLayer(gpxLayer);
+						       } catch (Exception ex) {
+							       // Ignore files that fail to load
+						       }
+					       } else {
+						       missingFiles.add(filePath);
+					       }
+				       }
+				       if (!missingFiles.isEmpty()) {
+					       javax.swing.SwingUtilities.invokeLater(() -> {
+						       javax.swing.JOptionPane.showMessageDialog(
+							       this,
+							       "The following GPX files could not be found and were not restored:\n" +
+								       String.join("\n", missingFiles),
+							       "Missing GPX Files",
+							       javax.swing.JOptionPane.WARNING_MESSAGE
+						       );
+					       });
+				       }
+			       // Restore expanded paths
+			       if (settings.gpxSessionExpandedPaths != null) {
+				       for (String pathStr : settings.gpxSessionExpandedPaths) {
+					       TreePath path = stringToTreePath(pathStr);
+					       if (path != null) tree.expandPath(path);
+				       }
+			       }
+		}
+
+		// Helper: Convert TreePath to a string (by node user object toString)
+		private String treePathToString(TreePath path) {
+			Object[] objs = path.getPath();
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < objs.length; i++) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) objs[i];
+				Object userObj = node.getUserObject();
+				sb.append(userObj == null ? "null" : userObj.toString());
+				if (i < objs.length - 1) sb.append("/");
+			}
+			return sb.toString();
+		}
+
+		// Helper: Convert string back to TreePath (by matching user object toString)
+		private TreePath stringToTreePath(String str) {
+			String[] parts = str.split("/");
+			DefaultMutableTreeNode node = rootNode;
+			java.util.List<DefaultMutableTreeNode> pathNodes = new java.util.ArrayList<>();
+			pathNodes.add(node);
+			for (int i = 1; i < parts.length; i++) {
+				boolean found = false;
+				for (int j = 0; j < node.getChildCount(); j++) {
+					DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(j);
+					Object userObj = child.getUserObject();
+					if (userObj != null && userObj.toString().equals(parts[i])) {
+						node = child;
+						pathNodes.add(node);
+						found = true;
+						break;
+					}
+				}
+				if (!found) return null;
+			}
+			return new TreePath(pathNodes.toArray());
+		}
+	public PreviewMap getPreviewMap() {
+		return previewMap;
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	private final JTree tree;
@@ -62,6 +188,41 @@ public class JGpxPanel extends JCollapsiblePanel {
 	private final PreviewMap previewMap;
 	private DefaultMutableTreeNode rootNode;
 	private ArrayList<String> openedFiles;
+
+	/**
+	 * Removes a file from the openedFiles list.
+	 * @param path Absolute path of the file to remove
+	 */
+	public void removeOpenedFile(String path) {
+		openedFiles.remove(path);
+	}
+
+	/**
+	 * Removes multiple nodes (waypoints, tracks, segments, routes) from the tree.
+	 * Only non-root nodes are allowed.
+	 */
+	public static void removeMultipleNodes(javax.swing.JTree tree, java.util.List<DefaultMutableTreeNode> nodes) {
+		// Defensive: sort by depth, deepest first
+		nodes.sort((a, b) -> b.getLevel() - a.getLevel());
+		javax.swing.tree.DefaultTreeModel model = (javax.swing.tree.DefaultTreeModel) tree.getModel();
+		for (DefaultMutableTreeNode node : nodes) {
+			Object userObj = node.getUserObject();
+			if (userObj instanceof mobac.gui.gpxtree.WptEntry) {
+				mobac.gui.gpxtree.WptEntry wptEntry = (mobac.gui.gpxtree.WptEntry) userObj;
+				// Ensure the node is set for correct removal
+				wptEntry.setNode(node);
+				if (wptEntry.getNode() != null && wptEntry.getNode().getParent() != null) {
+					wptEntry.getLayer().getPanel().removeWpt(wptEntry);
+				}
+			} else if (userObj instanceof mobac.gui.gpxtree.TrkEntry
+					|| userObj instanceof mobac.gui.gpxtree.TrksegEntry
+					|| userObj instanceof mobac.gui.gpxtree.RteEntry) {
+				if (node.getParent() != null) {
+					model.removeNodeFromParent(node);
+				}
+			}
+		}
+	}
 
 	public JGpxPanel(PreviewMap previewMap) {
 		super("Gpx", new GridBagLayout());
@@ -75,7 +236,18 @@ public class JGpxPanel extends JCollapsiblePanel {
 		loadGpx.addActionListener(new GpxLoad(this));
 
 		JButton saveGpx = new JButton(I18nUtils.localizedStringForKey("rp_gpx_save_gpx"));
-		saveGpx.addActionListener(new GpxSave(this));
+		saveGpx.addActionListener(e -> {
+			int answer = javax.swing.JOptionPane.showConfirmDialog(
+				null,
+				"Saving will overwrite the file and deleted data will be lost.\nContinue?",
+				"Confirm Save",
+				javax.swing.JOptionPane.YES_NO_OPTION,
+				javax.swing.JOptionPane.WARNING_MESSAGE
+			);
+			if (answer == javax.swing.JOptionPane.YES_OPTION) {
+				new GpxSave(this).actionPerformed(null);
+			}
+		});
 
 		JButton clearGpx = new JButton(I18nUtils.localizedStringForKey("rp_gpx_clear_gpx"));
 		clearGpx.addActionListener(new GpxClear(this));
@@ -83,9 +255,31 @@ public class JGpxPanel extends JCollapsiblePanel {
 		JButton addPointGpx = new JButton(I18nUtils.localizedStringForKey("rp_gpx_add_wpt"));
 		addPointGpx.addActionListener(new GpxAddPoint(this));
 
-		rootNode = new DefaultMutableTreeNode(I18nUtils.localizedStringForKey("rp_gpx_default_node_name"));
+		// Root node is a dummy node, not a GpxRootEntry or String representing a file
+		rootNode = new DefaultMutableTreeNode("GPX Files");
 		tree = new JTree(rootNode);
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+
+		// Prevent selecting GPX file nodes with other nodes
+		tree.addTreeSelectionListener(e -> {
+			javax.swing.tree.TreePath[] paths = tree.getSelectionPaths();
+			if (paths == null || paths.length <= 1) return;
+			boolean hasRoot = false;
+			int rootIdx = -1;
+			for (int i = 0; i < paths.length; i++) {
+				javax.swing.tree.DefaultMutableTreeNode node = (javax.swing.tree.DefaultMutableTreeNode) paths[i].getLastPathComponent();
+				Object userObj = node.getUserObject();
+				if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+					hasRoot = true;
+					rootIdx = i;
+					break;
+				}
+			}
+			if (hasRoot) {
+				// Only allow the root node to remain selected
+				tree.setSelectionPath(paths[rootIdx]);
+			}
+		});
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 		JScrollPane treeView = new JScrollPane(tree);
@@ -93,6 +287,42 @@ public class JGpxPanel extends JCollapsiblePanel {
 		model = (DefaultTreeModel) tree.getModel();
 
 		tree.addMouseListener(new GpxTreeListener());
+
+		// --- Custom renderer for GPX file nodes (JLabel only) ---
+		   // Load icons once
+		   final javax.swing.ImageIcon iconFolderClosed = new javax.swing.ImageIcon(getClass().getResource("/mobac/resources/images/icon_folder_closed.png"));
+		   final javax.swing.ImageIcon iconFolderClosedInvisible = new javax.swing.ImageIcon(getClass().getResource("/mobac/resources/images/icon_folder_closed_invisible.png"));
+		   final javax.swing.ImageIcon iconFolderClosedDirty = new javax.swing.ImageIcon(getClass().getResource("/mobac/resources/images/icon_folder_closed_dirty.png"));
+		   final javax.swing.ImageIcon iconFolderClosedInvisibleDirty = new javax.swing.ImageIcon(getClass().getResource("/mobac/resources/images/icon_folder_closed_invisible_dirty.png"));
+
+		   tree.setCellRenderer(new javax.swing.tree.DefaultTreeCellRenderer() {
+			   @Override
+			   public java.awt.Component getTreeCellRendererComponent(javax.swing.JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+				   javax.swing.JLabel label = (javax.swing.JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+				   if (value instanceof javax.swing.tree.DefaultMutableTreeNode) {
+					   Object userObj = ((javax.swing.tree.DefaultMutableTreeNode) value).getUserObject();
+					   if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+						   mobac.gui.gpxtree.GpxRootEntry entry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+						   // Choose icon based on visible/dirty state
+						   if (entry.getLayer().isVisible()) {
+							   if (entry.isDirty()) {
+								   label.setIcon(iconFolderClosedDirty);
+							   } else {
+								   label.setIcon(iconFolderClosed);
+							   }
+						   } else {
+							   if (entry.isDirty()) {
+								   label.setIcon(iconFolderClosedInvisibleDirty);
+							   } else {
+								   label.setIcon(iconFolderClosedInvisible);
+							   }
+						   }
+						   label.setText(entry.toString());
+					   }
+				   }
+				   return label;
+			   }
+		   });
 
 		openedFiles = new ArrayList<>();
 
@@ -111,35 +341,41 @@ public class JGpxPanel extends JCollapsiblePanel {
 	 * treeview
 	 */
 	public GpxRootEntry addGpxLayer(GpxLayer layer) {
-		layer.setPanel(this);
-		GpxRootEntry gpxEntry = new GpxRootEntry(layer);
-		DefaultMutableTreeNode gpxNode = new DefaultMutableTreeNode(gpxEntry);
-		model.insertNodeInto(gpxNode, rootNode, rootNode.getChildCount());
-		TreePath path = new TreePath(gpxNode.getPath());
-		tree.scrollPathToVisible(new TreePath(path));
-		tree.setSelectionPath(path);
+		   GpxRootEntry gpxEntry = new GpxRootEntry(layer);
+		   // Mark as dirty if this is a new file (no file assigned yet)
+		   if (layer.getFile() == null) {
+			   gpxEntry.setDirty(true);
+		   }
+		   layer.setPanel(this);
+		   DefaultMutableTreeNode gpxNode = new DefaultMutableTreeNode(gpxEntry);
+		   gpxEntry.setNode(gpxNode); // Ensure node is set for GpxRootEntry
+		   model.insertNodeInto(gpxNode, rootNode, rootNode.getChildCount());
+		   TreePath path = new TreePath(gpxNode.getPath());
+		   tree.scrollPathToVisible(new TreePath(path));
+		   tree.setSelectionPath(path);
 
-		addRtes(layer, gpxNode);
-		addTrks(layer, gpxNode);
-		addWpts(layer, gpxNode);
+		   addRtes(layer, gpxNode);
+		   addTrks(layer, gpxNode);
+		   addWpts(layer, gpxNode);
 
-		if (layer.getFile() != null) {
-			openedFiles.add(layer.getFile().getAbsolutePath());
-		}
+		   if (layer.getFile() != null) {
+			   openedFiles.add(layer.getFile().getAbsolutePath());
+		   }
 
-		previewMap.mapLayers.add(layer);
-		return gpxEntry;
+		   previewMap.mapLayers.add(layer);
+		   return gpxEntry;
 	}
 
 	/**
 	 * @param layer
 	 * @param gpxNode
 	 */
-	private void addWpts(GpxLayer layer, DefaultMutableTreeNode gpxNode) {
+	public void addWpts(GpxLayer layer, DefaultMutableTreeNode gpxNode) {
 		List<WptType> wpts = layer.getGpx().getWpt();
 		for (WptType wpt : wpts) {
 			WptEntry wptEntry = new WptEntry(wpt, layer);
 			DefaultMutableTreeNode wptNode = new DefaultMutableTreeNode(wptEntry);
+			wptEntry.setNode(wptNode);
 			model.insertNodeInto(wptNode, gpxNode, gpxNode.getChildCount());
 		}
 	}
@@ -154,6 +390,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 		for (TrkType trk : trks) {
 			TrkEntry trkEntry = new TrkEntry(trk, layer);
 			DefaultMutableTreeNode trkNode = new DefaultMutableTreeNode(trkEntry);
+			trkEntry.setNode(trkNode);
 			model.insertNodeInto(trkNode, gpxNode, gpxNode.getChildCount());
 			// trkseg
 			List<TrksegType> trksegs = trk.getTrkseg();
@@ -161,6 +398,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 			for (TrksegType trkseg : trksegs) {
 				TrksegEntry trksegEntry = new TrksegEntry(trkseg, counter, layer);
 				DefaultMutableTreeNode trksegNode = new DefaultMutableTreeNode(trksegEntry);
+				trksegEntry.setNode(trksegNode);
 				model.insertNodeInto(trksegNode, trkNode, trkNode.getChildCount());
 				counter++;
 
@@ -169,6 +407,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 				for (WptType trkpt : trkpts) {
 					WptEntry trkptEntry = new WptEntry(trkpt, layer);
 					DefaultMutableTreeNode trkptNode = new DefaultMutableTreeNode(trkptEntry);
+					trkptEntry.setNode(trkptNode);
 					model.insertNodeInto(trkptNode, trksegNode, trksegNode.getChildCount());
 				}
 			}
@@ -186,12 +425,14 @@ public class JGpxPanel extends JCollapsiblePanel {
 		for (RteType rte : rtes) {
 			RteEntry rteEntry = new RteEntry(rte, layer);
 			DefaultMutableTreeNode rteNode = new DefaultMutableTreeNode(rteEntry);
+			rteEntry.setNode(rteNode);
 			model.insertNodeInto(rteNode, gpxNode, gpxNode.getChildCount());
 			// add rtepts
 			List<WptType> rtepts = rte.getRtept();
 			for (WptType rtept : rtepts) {
 				WptEntry rteptEntry = new WptEntry(rtept, layer);
 				DefaultMutableTreeNode rteptNode = new DefaultMutableTreeNode(rteptEntry);
+				rteptEntry.setNode(rteptNode);
 				model.insertNodeInto(rteptNode, rteNode, rteNode.getChildCount());
 			}
 		}
@@ -209,6 +450,19 @@ public class JGpxPanel extends JCollapsiblePanel {
 		WptEntry wptEntry = new WptEntry(wpt, gpxEntry.getLayer());
 		DefaultMutableTreeNode wptNode = new DefaultMutableTreeNode(wptEntry);
 		model.insertNodeInto(wptNode, gpxEntry.getNode(), gpxEntry.getNode().getChildCount());
+		// Mark the nearest ancestor GPX file node as dirty and update node
+		DefaultMutableTreeNode node = gpxEntry.getNode();
+		DefaultMutableTreeNode gpxFileNode = node;
+		while (gpxFileNode != null) {
+			Object userObj = gpxFileNode.getUserObject();
+			if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+				mobac.gui.gpxtree.GpxRootEntry rootEntry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+				rootEntry.setDirty(true);
+				model.nodeChanged(gpxFileNode);
+				break;
+			}
+			gpxFileNode = (DefaultMutableTreeNode) gpxFileNode.getParent();
+		}
 	}
 
 	/**
@@ -219,10 +473,37 @@ public class JGpxPanel extends JCollapsiblePanel {
 	 */
 	public void removeWpt(WptEntry wptEntry) {
 		DefaultMutableTreeNode wptNode = wptEntry.getNode();
-		model.removeNodeFromParent(wptNode);
-
-		// update layer (is changing the gpx enough? prolly not
-		// did remove it already...check whether its enough
+		if (wptNode == null || wptNode.getParent() == null) {
+			// Node already removed or not attached
+			return;
+		}
+		// Remove from GPX data model
+		GpxLayer layer = wptEntry.getLayer();
+		if (layer != null) {
+			mobac.data.gpx.gpx11.Gpx gpx = layer.getGpx();
+			gpx.getWpt().remove(wptEntry.getWpt());
+		}
+		DefaultMutableTreeNode gpxFileNode = wptNode;
+		// Find the parent GPX file node
+		while (gpxFileNode != null) {
+			Object userObj = gpxFileNode.getUserObject();
+			if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+				mobac.gui.gpxtree.GpxRootEntry rootEntry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+				rootEntry.setDirty(true);
+				model.nodeChanged(gpxFileNode);
+				// Remove the waypoint, then select the GPX file node
+				model.removeNodeFromParent(wptNode);
+				TreePath path = new TreePath(gpxFileNode.getPath());
+				tree.setSelectionPath(path);
+				tree.scrollPathToVisible(path);
+				return;
+			}
+			gpxFileNode = (DefaultMutableTreeNode) gpxFileNode.getParent();
+		}
+		// Fallback: just remove if no GPX file node found
+		if (wptNode.getParent() != null) {
+			model.removeNodeFromParent(wptNode);
+		}
 	}
 
 	public GpxEntry getSelectedEntry() {
@@ -230,15 +511,18 @@ public class JGpxPanel extends JCollapsiblePanel {
 		if (selection == null) {
 			return null;
 		}
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selection.getLastPathComponent();
-
-		GpxEntry gpxEntry = null;
-		try {
-			gpxEntry = (GpxEntry) selectedNode.getUserObject();
-			gpxEntry.setNode(selectedNode);
-		} catch (ClassCastException e) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection.getLastPathComponent();
+		// Walk up to the nearest GpxRootEntry
+		while (node != null) {
+			Object userObj = node.getUserObject();
+			if (userObj instanceof GpxRootEntry) {
+				GpxRootEntry rootEntry = (GpxRootEntry) userObj;
+				rootEntry.setNode(node);
+				return rootEntry;
+			}
+			node = (DefaultMutableTreeNode) node.getParent();
 		}
-		return gpxEntry;
+		return null;
 	}
 
 	public boolean isFileOpen(String path) {
@@ -249,7 +533,7 @@ public class JGpxPanel extends JCollapsiblePanel {
 	 * Resets the tree view. Used by GpxClear.
 	 */
 	public void resetModel() {
-		rootNode = new DefaultMutableTreeNode(I18nUtils.localizedStringForKey("rp_gpx_default_node_name"));
+		rootNode = new DefaultMutableTreeNode("GPX Files");
 		model.setRoot(rootNode);
 		openedFiles = new ArrayList<>();
 	}

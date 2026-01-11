@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'mobac.sourceforge.io'
-version = '2.3.3'
+version = '2.3.3-gpxedit-beta0.1'
 
 
 def gitBranchName = 'N/A'

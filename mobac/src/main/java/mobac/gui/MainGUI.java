@@ -144,6 +144,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -815,115 +816,126 @@ public class MainGUI extends JFrame implements MapEventListener {
 		atlasContentPanel.setVisible(enabled);
 	}
 
-	private void loadSettings() {
-		if (Profile.DEFAULT.exists()) {
-			try {
-				jAtlasTree.load(Profile.DEFAULT);
-			} catch (Exception e) {
-				log.error("Failed to load atlas", e);
-				GUIExceptionHandler.processException(e);
-				new AtlasNew().actionPerformed(null);
-			}
-		} else {
-			new AtlasNew().actionPerformed(null);
-		}
+	       private void loadSettings() {
+		       if (Profile.DEFAULT.exists()) {
+			       try {
+				       jAtlasTree.load(Profile.DEFAULT);
+			       } catch (Exception e) {
+				       log.error("Failed to load atlas", e);
+				       GUIExceptionHandler.processException(e);
+				       new AtlasNew().actionPerformed(null);
+			       }
+		       } else {
+			       new AtlasNew().actionPerformed(null);
+		       }
 
-		Settings settings = Settings.getInstance();
-		atlasNameTextField.setText(settings.elementName);
-		previewMap.settingsLoad();
-		int nextZoom = 0;
-		List<Integer> zoomList = settings.selectedZoomLevels;
-		if (zoomList != null) {
-			for (JZoomCheckBox currentZoomCb : cbZoom) {
-				for (int i = nextZoom; i < zoomList.size(); i++) {
-					int currentListZoom = zoomList.get(i);
-					if (currentZoomCb.getZoomLevel() == currentListZoom) {
-						currentZoomCb.setSelected(true);
-						nextZoom = 1;
-						break;
-					}
-				}
-			}
-		}
+		       Settings settings = Settings.getInstance();
+		       atlasNameTextField.setText(settings.elementName);
+		       previewMap.settingsLoad();
+		       int nextZoom = 0;
+		       List<Integer> zoomList = settings.selectedZoomLevels;
+		       if (zoomList != null) {
+			       for (JZoomCheckBox currentZoomCb : cbZoom) {
+				       for (int i = nextZoom; i < zoomList.size(); i++) {
+					       int currentListZoom = zoomList.get(i);
+					       if (currentZoomCb.getZoomLevel() == currentListZoom) {
+						       currentZoomCb.setSelected(true);
+						       nextZoom = 1;
+						       break;
+					       }
+				       }
+			       }
+		       }
 
-		coordinatesPanel.setNumberFormat(settings.coordinateNumberFormat);
+		       coordinatesPanel.setNumberFormat(settings.coordinateNumberFormat);
 
-		tileImageParametersPanel.loadSettings();
-		tileImageParametersPanel.atlasFormatChanged(jAtlasTree.getAtlas().getOutputFormat());
-		// mapSourceCombo
-		// .setSelectedItem(MapSourcesManager.getSourceByName(settings.
-		// mapviewMapSource));
+		       tileImageParametersPanel.loadSettings();
+		       tileImageParametersPanel.atlasFormatChanged(jAtlasTree.getAtlas().getOutputFormat());
+		       // mapSourceCombo
+		       // .setSelectedItem(MapSourcesManager.getSourceByName(settings.
+		       // mapviewMapSource));
 
-		setSize(settings.mainWindow.size);
-		Point windowLocation = settings.mainWindow.position;
-		if (windowLocation.x == -1 && windowLocation.y == -1) {
-			setLocationRelativeTo(null);
-		} else {
-			setLocation(windowLocation);
-		}
-		if (settings.mainWindow.maximized) {
-			setExtendedState(Frame.MAXIMIZED_BOTH);
-		}
+		       setSize(settings.mainWindow.size);
+		       Point windowLocation = settings.mainWindow.position;
+		       if (windowLocation.x == -1 && windowLocation.y == -1) {
+			       setLocationRelativeTo(null);
+		       } else {
+			       setLocation(windowLocation);
+		       }
+		       if (settings.mainWindow.maximized) {
+			       setExtendedState(Frame.MAXIMIZED_BOTH);
+		       }
 
-		leftPanel.setVisible(settings.mainWindow.leftPanelVisible);
-		leftPanel.setPreferredSize(new Dimension(settings.mainWindow.leftPanelWidth, 100));
-		rightPanel.setVisible(settings.mainWindow.rightPanelVisible);
+		       leftPanel.setVisible(settings.mainWindow.leftPanelVisible);
+		       leftPanel.setPreferredSize(new Dimension(settings.mainWindow.leftPanelWidth, 100));
+		       rightPanel.setVisible(settings.mainWindow.rightPanelVisible);
 
-		if (leftPanelContent != null) {
-			for (Component c : leftPanelContent.getComponents()) {
-				if (c instanceof JCollapsiblePanel) {
-					JCollapsiblePanel cp = (JCollapsiblePanel) c;
-					String name = cp.getName();
-					if (name != null && settings.mainWindow.collapsedPanels.contains(name)) {
-						cp.setCollapsed(true);
-					}
-				}
-			}
-		}
+		       if (leftPanelContent != null) {
+			       for (Component c : leftPanelContent.getComponents()) {
+				       if (c instanceof JCollapsiblePanel) {
+					       JCollapsiblePanel cp = (JCollapsiblePanel) c;
+					       String name = cp.getName();
+					       if (name != null && settings.mainWindow.collapsedPanels.contains(name)) {
+						       cp.setCollapsed(true);
+					       }
+				       }
+			       }
+		       }
 
-		updateBookmarksMenu();
-	}
+		       // Restore GPX session (loaded files, order, expanded/collapsed state)
+		       if (gpxPanel != null) {
+			       gpxPanel.restoreGpxSession();
+		       }
 
-	private void saveSettings() {
-		try {
-			jAtlasTree.save(Profile.DEFAULT);
+		       updateBookmarksMenu();
+	       }
 
-			Settings s = Settings.getInstance();
-			previewMap.settingsSave();
-			s.mapviewMapSource = previewMap.getMapSource().getName();
-			s.selectedZoomLevels = new SelectedZoomLevels(cbZoom).getZoomLevelList();
+	       private void saveSettings() {
+		       try {
+			       jAtlasTree.save(Profile.DEFAULT);
 
-			s.elementName = atlasNameTextField.getText();
-			s.coordinateNumberFormat = coordinatesPanel.getNumberFormat();
+			       Settings s = Settings.getInstance();
+			       previewMap.settingsSave();
+			       s.mapviewMapSource = previewMap.getMapSource().getName();
+			       s.selectedZoomLevels = new SelectedZoomLevels(cbZoom).getZoomLevelList();
 
-			tileImageParametersPanel.saveSettings();
-			boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
-			s.mainWindow.maximized = maximized;
-			if (!maximized) {
-				s.mainWindow.size = getSize();
-				s.mainWindow.position = getLocation();
-			}
-			s.mainWindow.collapsedPanels.clear();
-			if (leftPanelContent != null) {
-				for (Component c : leftPanelContent.getComponents()) {
-					if (c instanceof JCollapsiblePanel) {
-						JCollapsiblePanel cp = (JCollapsiblePanel) c;
-						if (cp.isCollapsed()) {
-							s.mainWindow.collapsedPanels.add(cp.getName());
-						}
-					}
-				}
-			}
-			s.mainWindow.leftPanelVisible = leftPanel.isVisible();
-			s.mainWindow.leftPanelWidth = leftPanel.getWidth();
-			s.mainWindow.rightPanelVisible = rightPanel.isVisible();
-			checkAndSaveSettings();
-		} catch (Exception e) {
-			GUIExceptionHandler.showExceptionDialog(e);
-			JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_settings_write_error"),
-					I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
-		}
-	}
+			       s.elementName = atlasNameTextField.getText();
+			       s.coordinateNumberFormat = coordinatesPanel.getNumberFormat();
+
+			       tileImageParametersPanel.saveSettings();
+			       boolean maximized = (getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
+			       s.mainWindow.maximized = maximized;
+			       if (!maximized) {
+				       s.mainWindow.size = getSize();
+				       s.mainWindow.position = getLocation();
+			       }
+			       s.mainWindow.collapsedPanels.clear();
+			       if (leftPanelContent != null) {
+				       for (Component c : leftPanelContent.getComponents()) {
+					       if (c instanceof JCollapsiblePanel) {
+						       JCollapsiblePanel cp = (JCollapsiblePanel) c;
+						       if (cp.isCollapsed()) {
+							       s.mainWindow.collapsedPanels.add(cp.getName());
+						       }
+					       }
+				       }
+			       }
+			       s.mainWindow.leftPanelVisible = leftPanel.isVisible();
+			       s.mainWindow.leftPanelWidth = leftPanel.getWidth();
+			       s.mainWindow.rightPanelVisible = rightPanel.isVisible();
+
+			       // Save GPX session (loaded files, order, expanded/collapsed state)
+			       if (gpxPanel != null) {
+				       gpxPanel.saveGpxSession();
+			       }
+
+			       checkAndSaveSettings();
+		       } catch (Exception e) {
+			       GUIExceptionHandler.showExceptionDialog(e);
+			       JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("msg_settings_write_error"),
+					       I18nUtils.localizedStringForKey("Error"), JOptionPane.ERROR_MESSAGE);
+		       }
+	       }
 
 	public void checkAndSaveSettings() throws JAXBException {
 		if (Settings.checkSettingsFileModified()) {
@@ -1226,7 +1238,40 @@ public class MainGUI extends JFrame implements MapEventListener {
 		}
 
 		public void windowClosing(WindowEvent event) {
-			saveSettings();
+			// Check for dirty GPX files before exit
+			boolean hasDirty = false;
+			if (gpxPanel != null) {
+				javax.swing.tree.DefaultMutableTreeNode rootNode = gpxPanel.getRootNode();
+				for (int i = 0; i < rootNode.getChildCount(); i++) {
+					Object userObj = ((javax.swing.tree.DefaultMutableTreeNode) rootNode.getChildAt(i)).getUserObject();
+					if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+						mobac.gui.gpxtree.GpxRootEntry entry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+						if (entry.isDirty()) {
+							hasDirty = true;
+							break;
+						}
+					}
+				}
+			}
+				   if (hasDirty) {
+					   int result = javax.swing.JOptionPane.showConfirmDialog(
+						   MainGUI.this,
+						   "There are unsaved GPX files. Exit anyway and lose changes?",
+						   "Unsaved GPX Files",
+						   javax.swing.JOptionPane.YES_NO_OPTION,
+						   javax.swing.JOptionPane.WARNING_MESSAGE
+					   );
+					   if (result != javax.swing.JOptionPane.YES_OPTION) {
+						   if (event.getSource() instanceof javax.swing.JFrame) {
+							   ((javax.swing.JFrame) event.getSource()).setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+						   }
+						   return;
+					   }
+				   }
+               saveSettings();
+               if (event.getSource() instanceof java.awt.Window) {
+                   ((java.awt.Window) event.getSource()).dispose();
+               }
 		}
 	}
 

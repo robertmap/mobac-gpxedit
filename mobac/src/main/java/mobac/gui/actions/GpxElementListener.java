@@ -30,6 +30,7 @@ import mobac.utilities.I18nUtils;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -97,12 +98,22 @@ public class GpxElementListener implements MouseListener {
 			}
 			mapController.enable();
 
+			DefaultMutableTreeNode node = gpxEntry.getNode();
+			DefaultMutableTreeNode gpxFileNode = node;
+			while (gpxFileNode != null) {
+				Object userObj = gpxFileNode.getUserObject();
+				if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+					mobac.gui.gpxtree.GpxRootEntry rootEntry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+					rootEntry.setDirty(true);
+					rootEntry.getLayer().getPanel().getTreeModel().nodeChanged(gpxFileNode);
+					break;
+				}
+				gpxFileNode = (DefaultMutableTreeNode) gpxFileNode.getParent();
+			}
 			if (gpxEntry.getClass().equals(RteEntry.class)) {
 				// RteEntry rte = (RteEntry) gpxEntry;
-
 			} else if (gpxEntry.getClass().equals(TrkEntry.class)) {
 				// TrkEntry trk = (TrkEntry) gpxEntry;
-
 			} else if (gpxEntry.getClass().equals(WptEntry.class)) {
 				WptEntry wptEntry = (WptEntry) gpxEntry;
 				WptType wpt = wptEntry.getWpt();
@@ -111,7 +122,6 @@ public class GpxElementListener implements MouseListener {
 				mapController.repaint();
 			} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
 				// GpxRootEntry root = (GpxRootEntry) gpxEntry;
-
 			}
 		}
 	}
@@ -120,6 +130,17 @@ public class GpxElementListener implements MouseListener {
 	 * Renames (if possible) the entry according to user input.
 	 */
 	private void renameEntry() {
+		DefaultMutableTreeNode node = gpxEntry.getNode();
+		DefaultMutableTreeNode rootNode = node;
+		while (rootNode.getParent() != null) {
+			rootNode = (DefaultMutableTreeNode) rootNode.getParent();
+		}
+		Object userObj = rootNode.getUserObject();
+		if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+			mobac.gui.gpxtree.GpxRootEntry rootEntry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+			rootEntry.setDirty(true);
+			rootEntry.getLayer().getPanel().getTreeModel().nodeChanged(rootNode);
+		}
 		if (gpxEntry.getClass().equals(TrksegEntry.class)) {
 			JOptionPane.showMessageDialog(null, I18nUtils.localizedStringForKey("rp_gpx_msg_can_not_rename_track"),
 					I18nUtils.localizedStringForKey("Error"), JOptionPane.INFORMATION_MESSAGE);
@@ -149,6 +170,24 @@ public class GpxElementListener implements MouseListener {
 				return;
 			}
 			wpt.getWpt().setName(name);
+			// Mark parent GPX file as dirty and update both nodes
+			DefaultMutableTreeNode gpxFileNode = wpt.getNode();
+			while (gpxFileNode != null) {
+				userObj = gpxFileNode.getUserObject();
+				if (userObj instanceof mobac.gui.gpxtree.GpxRootEntry) {
+					mobac.gui.gpxtree.GpxRootEntry rootEntry = (mobac.gui.gpxtree.GpxRootEntry) userObj;
+					rootEntry.setDirty(true);
+					rootEntry.getLayer().getPanel().getTreeModel().nodeChanged(gpxFileNode);
+					break;
+				}
+				gpxFileNode = (DefaultMutableTreeNode) gpxFileNode.getParent();
+			}
+			// Update the renamed waypoint node in the tree
+			   if (wpt.getLayer() != null && wpt.getLayer().getPanel() != null && wpt.getNode() != null) {
+				   wpt.getLayer().getPanel().getTreeModel().nodeChanged(wpt.getNode());
+				   // Repaint map to update waypoint label
+				   wpt.getLayer().getPanel().getPreviewMap().repaint();
+			   }
 		} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
 			GpxRootEntry root = (GpxRootEntry) gpxEntry;
 			String initialValue = root.getMetaDataName();
