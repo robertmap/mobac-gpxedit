@@ -18,6 +18,8 @@ This is a personal fork of [Mobile Atlas Creator (MOBAC)](https://mobac.sourcefo
 - Improved application exit logic and save prompts
 - Compilation and robustness fixes
 
+Download for Windows:
+https://github.com/robertmap/mobac-gpxedit/releases/download/2.3.3-gpxedit-beta0.1/Mobile.Atlas.Creator.2.3.3-gpxedit-beta0.1.zip
  
  # Mobile Atlas Creator - README
 
