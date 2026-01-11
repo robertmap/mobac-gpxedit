@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation files('../mobac/libs/bsh-3.0.0-20230205.094654-3.jar')
     implementation project(':mobac')
     implementation project(':mappacks:openstreetmap')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'

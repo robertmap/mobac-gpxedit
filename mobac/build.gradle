@@ -1,6 +1,12 @@
+
 plugins {
     id 'java-library'
     id 'edu.sc.seis.launch4j' version '3.0.6'
+    id 'application'
+}
+
+application {
+        mainClass = 'mobac.StartMOBAC'
 }
 
 dependencies {
@@ -12,7 +18,7 @@ dependencies {
     implementation "com.github.mapsforge.mapsforge:mapsforge-map-awt:${mapsforgeVersion}"
     implementation "com.github.mapsforge.mapsforge:mapsforge-map-reader:${mapsforgeVersion}"
     implementation "com.github.mapsforge.mapsforge:mapsforge-themes:${mapsforgeVersion}"
-    api 'org.beanshell:bsh:3.0.0-SNAPSHOT'
+    implementation files('libs/bsh-3.0.0-20230205.094654-3.jar')
     api 'commons-codec:commons-codec:1.15'
     api 'commons-io:commons-io:2.14.0'
     api 'org.apache.commons:commons-lang3:3.18.0'
