@@ -70,7 +70,8 @@ public class Settings {
 	public List<String> gpxSessionFiles = new ArrayList<>();
 
 	/**
-	 * Stores the visible/invisible state for each loaded GPX file (parallel to gpxSessionFiles).
+	 * Stores the visible/invisible state for each loaded GPX file (parallel to
+	 * gpxSessionFiles).
 	 */
 	@XmlElementWrapper(name = "gpxSessionVisible")
 	@XmlElement(name = "gpxSessionVisibleEntry")

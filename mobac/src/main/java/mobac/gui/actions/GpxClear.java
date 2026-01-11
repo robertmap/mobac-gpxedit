@@ -59,14 +59,13 @@ public class GpxClear implements ActionListener {
 					}
 				}
 			}
-			if (hasDirty) break;
+			if (hasDirty)
+				break;
 		}
 		if (hasDirty) {
 			int result = javax.swing.JOptionPane.showConfirmDialog(null,
-				"There are unsaved GPX files. Clear anyway and lose all unsaved changes?",
-				"Unsaved Changes",
-				javax.swing.JOptionPane.YES_NO_OPTION,
-				javax.swing.JOptionPane.WARNING_MESSAGE);
+					"There are unsaved GPX files. Clear anyway and lose all unsaved changes?", "Unsaved Changes",
+					javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE);
 			if (result != javax.swing.JOptionPane.YES_OPTION) {
 				return;
 			}

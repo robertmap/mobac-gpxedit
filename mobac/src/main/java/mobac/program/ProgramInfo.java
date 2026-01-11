@@ -28,9 +28,9 @@ public class ProgramInfo {
 	public static String PROG_NAME_SHORT = "MOBAC";
 
 	private static String VERSION = "unknown";
-    private static String GIT_BRANCH_NAME = "unknown";
+	private static String GIT_BRANCH_NAME = "unknown";
 	private static String GIT_COMMIT_HASH;
-    private static String GIT_COMMIT_TIME;
+	private static String GIT_COMMIT_TIME;
 	private static String userAgent = "";
 
 	/**
@@ -53,10 +53,10 @@ public class ProgramInfo {
 			if (in != null) {
 				Properties props = new Properties();
 				props.load(in);
-                GIT_BRANCH_NAME = props.getProperty("mobac.gitBranchName", GIT_BRANCH_NAME);
-                GIT_COMMIT_HASH = props.getProperty("mobac.gitCommitHash");
-                GIT_COMMIT_TIME = props.getProperty("mobac.gitCommitTime");
-                GIT_BRANCH_NAME = props.getProperty("mobac.gitBranchName");
+				GIT_BRANCH_NAME = props.getProperty("mobac.gitBranchName", GIT_BRANCH_NAME);
+				GIT_COMMIT_HASH = props.getProperty("mobac.gitCommitHash");
+				GIT_COMMIT_TIME = props.getProperty("mobac.gitCommitTime");
+				GIT_BRANCH_NAME = props.getProperty("mobac.gitBranchName");
 				VERSION = props.getProperty("mobac.version", VERSION);
 			}
 		} catch (Exception e) {
@@ -74,9 +74,9 @@ public class ProgramInfo {
 
 	public static String getRevisionStr() {
 		if (GIT_COMMIT_HASH == null) {
-            return GIT_BRANCH_NAME;
-        }
-        return String.format("%s (%s)", GIT_COMMIT_HASH, GIT_BRANCH_NAME);
+			return GIT_BRANCH_NAME;
+		}
+		return String.format("%s (%s)", GIT_COMMIT_HASH, GIT_BRANCH_NAME);
 	}
 
 	public static String getVersionTitle() {
@@ -106,7 +106,7 @@ public class ProgramInfo {
 		return userAgent;
 	}
 
-    public static String getGitCommitTime() {
-        return GIT_COMMIT_TIME;
-    }
+	public static String getGitCommitTime() {
+		return GIT_COMMIT_TIME;
+	}
 }

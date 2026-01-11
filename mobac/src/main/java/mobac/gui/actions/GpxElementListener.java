@@ -183,11 +183,11 @@ public class GpxElementListener implements MouseListener {
 				gpxFileNode = (DefaultMutableTreeNode) gpxFileNode.getParent();
 			}
 			// Update the renamed waypoint node in the tree
-			   if (wpt.getLayer() != null && wpt.getLayer().getPanel() != null && wpt.getNode() != null) {
-				   wpt.getLayer().getPanel().getTreeModel().nodeChanged(wpt.getNode());
-				   // Repaint map to update waypoint label
-				   wpt.getLayer().getPanel().getPreviewMap().repaint();
-			   }
+			if (wpt.getLayer() != null && wpt.getLayer().getPanel() != null && wpt.getNode() != null) {
+				wpt.getLayer().getPanel().getTreeModel().nodeChanged(wpt.getNode());
+				// Repaint map to update waypoint label
+				wpt.getLayer().getPanel().getPreviewMap().repaint();
+			}
 		} else if (gpxEntry.getClass().equals(GpxRootEntry.class)) {
 			GpxRootEntry root = (GpxRootEntry) gpxEntry;
 			String initialValue = root.getMetaDataName();

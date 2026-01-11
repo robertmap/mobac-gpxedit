@@ -172,3 +172,25 @@ spotless {
         endWithNewline()
     }
 }
+
+// Fix Spotless implicit dependency issues
+tasks.named('spotlessJava') {
+    dependsOn(
+        ':mapevaluator:processResources',
+        ':mapevaluator:compileJava',
+        ':mappacks:openstreetmap:compileJava',
+        ':mappacks:openstreetmap:processResources',
+        ':mappacks:region_america_north:compileJava',
+        ':mappacks:region_america_north:processResources',
+        ':mappacks:region_europe:compileJava',
+        ':mappacks:region_europe:processResources',
+        ':mappacks:region_europe_east:compileJava',
+        ':mappacks:region_europe_east:processResources',
+        ':mappacks:region_oceania:compileJava',
+        ':mappacks:region_oceania:processResources',
+        ':mobac:processResources',
+        ':mobac-run:compileJava',
+        ':tilestore-util:compileJava',
+        ':tilestore-util:processResources'
+    )
+}

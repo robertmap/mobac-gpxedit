@@ -78,7 +78,8 @@ public class GpxLayer implements MapLayer {
 	}
 
 	public void paint(JMapViewer map, Graphics2D g, int zoom, int minX, int minY, int maxX, int maxY) {
-		if (!visible) return;
+		if (!visible)
+			return;
 		g.setColor(wptPointColor);
 		final MapSpace mapSpace = map.getMapSource().getMapSpace();
 		if (showWaypoints) {
