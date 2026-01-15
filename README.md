@@ -21,17 +21,19 @@ This is a personal fork of [Mobile Atlas Creator (MOBAC)](https://mobac.sourcefo
 - Improved application exit logic and save prompts
 - Compilation and robustness fixes
 
-<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 48px;">
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-        <img src="images/mobac1.png" alt="Visible and dirty file indicators" width="296">
-        <img src="images/mobac2.png" alt="File functions" width="225">
-        <img src="images/mobac3.png" alt="Waypoint functions" width="182">
-    </div>
-    <div style="display: flex; flex-direction: column; gap: 20px;">
-        <img src="images/mobac4.png" alt="Details" width="131">
-        <img src="images/mobac5.png" alt="Edit data" width="178">
-    </div>
-</div>
+<table>
+    <tr>
+        <td style="vertical-align: top;">
+            <img src="images/mobac1.png" alt="Visible and dirty file indicators" width="296"><br>
+            <img src="images/mobac2.png" alt="File functions" width="225"><br>
+            <img src="images/mobac3.png" alt="Waypoint functions" width="182">
+        </td>
+        <td style="vertical-align: top; padding-left: 32px;">
+            <img src="images/mobac4.png" alt="Details" width="131"><br>
+            <img src="images/mobac5.png" alt="Edit data" width="178">
+        </td>
+    </tr>
+</table>
 <div style="margin-top: 24px;">
     <img src="images/mobac6.png" alt="Exit confirmation" width="397">
 </div>
