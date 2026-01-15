@@ -26,9 +26,11 @@ This is a personal fork of [Mobile Atlas Creator (MOBAC)](https://mobac.sourcefo
         <td style="vertical-align: top;">
             <img src="images/mobac1.png" alt="Visible and dirty file indicators" width="296"><br>
             <img src="images/mobac2.png" alt="File functions" width="225"><br>
-            <img src="images/mobac3.png" alt="Waypoint functions" width="182">
+            <img src="images/mobac3.png" alt="Waypoint functions" width="182"><br>
+            <img src="images/mobac8.png" alt="Additional feature screenshot" width="217">
         </td>
         <td style="vertical-align: top; padding-left: 32px;">
+            <img src="images/mobac7.png" alt="New feature screenshot" width="271"><br>
             <img src="images/mobac4.png" alt="Details" width="131"><br>
             <img src="images/mobac5.png" alt="Edit data" width="178">
         </td>
