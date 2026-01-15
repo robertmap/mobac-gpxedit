@@ -1,5 +1,8 @@
 # GPX Edit Fork of Mobile Atlas Creator
 
+Download for Windows:
+[Mobile.Atlas.Creator.2.3.3-gpxedit-beta0.1.zip](https://github.com/robertmap/mobac-gpxedit/releases/download/2.3.3-gpxedit-beta0.1/Mobile.Atlas.Creator.2.3.3-gpxedit-beta0.1.zip)
+
 This is a personal fork of [Mobile Atlas Creator (MOBAC)](https://mobac.sourceforge.io/), focused on adding simple and effective GPX/waypoint editing features. I created this fork because I couldn’t find a GPX/waypoint editor that fit my needs, so I (with help from GitHub Copilot) extended MOBAC to support my workflow.
 
 **Note:** This fork is not intended to be merged back into the main MOBAC repository. The code is functional but not up to the standards of the main project, and I do not plan to maintain it actively. However, I may update it as needed.
@@ -18,8 +21,20 @@ This is a personal fork of [Mobile Atlas Creator (MOBAC)](https://mobac.sourcefo
 - Improved application exit logic and save prompts
 - Compilation and robustness fixes
 
-Download for Windows:
-[Mobile.Atlas.Creator.2.3.3-gpxedit-beta0.1.zip](https://github.com/robertmap/mobac-gpxedit/releases/download/2.3.3-gpxedit-beta0.1/Mobile.Atlas.Creator.2.3.3-gpxedit-beta0.1.zip)
+<div style="display: flex; flex-direction: row; align-items: flex-start; gap: 48px;">
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <img src="images/mobac1.png" alt="Visible and dirty file indicators" width="296">
+        <img src="images/mobac2.png" alt="File functions" width="225">
+        <img src="images/mobac3.png" alt="Waypoint functions" width="182">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <img src="images/mobac4.png" alt="Details" width="131">
+        <img src="images/mobac5.png" alt="Edit data" width="178">
+    </div>
+</div>
+<div style="margin-top: 24px;">
+    <img src="images/mobac6.png" alt="Exit confirmation" width="397">
+</div>
  
  # Mobile Atlas Creator - README
 
